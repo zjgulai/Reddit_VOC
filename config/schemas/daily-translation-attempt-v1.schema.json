@@ -1,0 +1,238 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "daily-translation-attempt-v1",
+  "title": "Blocked daily translation attempt",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "attempt_id",
+    "run_id",
+    "status",
+    "stage",
+    "reason_codes",
+    "provider_call",
+    "translation_provider_call",
+    "translation_provider_attempt_made",
+    "translation_phase_attempt_made",
+    "semantic_validation_phase_attempt_made",
+    "request_count",
+    "retry_count",
+    "duration_ms",
+    "usage",
+    "responses",
+    "counts",
+    "items",
+    "provider_authorization_id"
+  ],
+  "properties": {
+    "schema_version": {"type": "string", "const": "daily-translation-attempt-v1"},
+    "attempt_id": {"type": "string", "minLength": 1, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"},
+    "run_id": {"type": "string", "minLength": 1, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"},
+    "status": {"type": "string", "const": "blocked"},
+    "stage": {"type": "string", "minLength": 1, "pattern": "^[a-z][a-z0-9_]{0,63}$"},
+    "reason_codes": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1, "pattern": "^[a-z][a-z0-9_]{0,127}$"}},
+    "provider_call": {"type": "boolean"},
+    "translation_provider_call": {"type": "boolean"},
+    "translation_provider_attempt_made": {"type": "boolean"},
+    "translation_phase_attempt_made": {"type": "boolean"},
+    "semantic_validation_phase_attempt_made": {"type": "boolean"},
+    "request_count": {"type": "integer", "minimum": 0},
+    "retry_count": {"type": "integer", "minimum": 0},
+    "duration_ms": {"type": "integer", "minimum": 0},
+    "usage": {
+      "type": "object",
+      "required": [
+        "prompt_tokens",
+        "completion_tokens",
+        "prompt_cache_hit_tokens",
+        "prompt_cache_miss_tokens",
+        "total_tokens"
+      ],
+      "properties": {
+        "prompt_tokens": {"type": "integer", "minimum": 0},
+        "completion_tokens": {"type": "integer", "minimum": 0},
+        "prompt_cache_hit_tokens": {"type": "integer", "minimum": 0},
+        "prompt_cache_miss_tokens": {"type": "integer", "minimum": 0},
+        "total_tokens": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "responses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "sequence",
+          "phase",
+          "outcome",
+          "retryable",
+          "duration_ms",
+          "response_id",
+          "actual_model",
+          "system_fingerprint",
+          "finish_reason",
+          "usage"
+        ],
+        "properties": {
+          "sequence": {"type": "integer", "minimum": 1},
+          "phase": {"type": "string", "enum": ["translation", "semantic_validation"]},
+          "outcome": {"type": "string", "minLength": 1},
+          "retryable": {"type": "boolean"},
+          "duration_ms": {"type": "integer", "minimum": 0},
+          "response_id": {"type": ["string", "null"]},
+          "actual_model": {"type": ["string", "null"]},
+          "system_fingerprint": {"type": ["string", "null"]},
+          "finish_reason": {"type": ["string", "null"]},
+          "usage": {
+            "type": "object",
+            "required": [
+              "prompt_tokens",
+              "completion_tokens",
+              "prompt_cache_hit_tokens",
+              "prompt_cache_miss_tokens",
+              "total_tokens"
+            ],
+            "properties": {
+              "prompt_tokens": {"type": "integer", "minimum": 0},
+              "completion_tokens": {"type": "integer", "minimum": 0},
+              "prompt_cache_hit_tokens": {"type": "integer", "minimum": 0},
+              "prompt_cache_miss_tokens": {"type": "integer", "minimum": 0},
+              "total_tokens": {"type": "integer", "minimum": 0}
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "counts": {
+      "type": "object",
+      "required": ["posts", "items"],
+      "properties": {
+        "posts": {"type": "integer", "minimum": 0},
+        "items": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["stable_id", "input_sha256", "status", "error_codes"],
+        "properties": {
+          "stable_id": {"type": "string", "minLength": 1},
+          "input_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "status": {"type": "string", "enum": ["pending", "blocked", "accepted"]},
+          "error_codes": {"type": "array", "items": {"type": "string", "minLength": 1}}
+        },
+        "additionalProperties": false
+      }
+    },
+    "provider_authorization_id": {"type": ["string", "null"]},
+    "provider_attempt_ledger": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "authorization_id",
+        "release_sha256",
+        "run_id",
+        "attempt_id",
+        "status",
+        "ledger_sha256",
+        "ledger_tip",
+        "event_count",
+        "reservation_count",
+        "external_attempt_count",
+        "retry_count",
+        "unknown_attempt_count",
+        "usage",
+        "attempts"
+      ],
+      "properties": {
+        "schema_version": {"type": "string", "const": "provider-attempt-ledger-binding-v2"},
+        "authorization_id": {"type": "string", "minLength": 1, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,255}$"},
+        "release_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "run_id": {"type": "string", "minLength": 1, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,255}$"},
+        "attempt_id": {"type": "string", "minLength": 1, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,255}$"},
+        "status": {"type": "string", "const": "blocked"},
+        "ledger_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "ledger_tip": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "event_count": {"type": "integer", "minimum": 0},
+        "reservation_count": {"type": "integer", "minimum": 0},
+        "external_attempt_count": {"type": "integer", "minimum": 0},
+        "retry_count": {"type": "integer", "minimum": 0},
+        "unknown_attempt_count": {"type": "integer", "minimum": 0},
+        "usage": {
+          "type": "object",
+          "required": [
+            "prompt_tokens",
+            "completion_tokens",
+            "prompt_cache_hit_tokens",
+            "prompt_cache_miss_tokens",
+            "total_tokens"
+          ],
+          "properties": {
+            "prompt_tokens": {"type": "integer", "minimum": 0},
+            "completion_tokens": {"type": "integer", "minimum": 0},
+            "prompt_cache_hit_tokens": {"type": "integer", "minimum": 0},
+            "prompt_cache_miss_tokens": {"type": "integer", "minimum": 0},
+            "total_tokens": {"type": "integer", "minimum": 0}
+          },
+          "additionalProperties": false
+        },
+        "attempts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "sequence",
+              "phase",
+              "request_payload_sha256",
+              "reservation_entry_hash",
+              "start_entry_hash",
+              "closure_event_type",
+              "closure_entry_hash",
+              "external_attempt_made",
+              "result",
+              "response_metadata_sha256",
+              "usage"
+            ],
+            "properties": {
+              "sequence": {"type": "integer", "minimum": 1},
+              "phase": {"type": "string", "enum": ["translation", "semantic_validation"]},
+              "request_payload_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+              "reservation_entry_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+              "start_entry_hash": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+              "closure_event_type": {"type": "string", "enum": ["terminal", "unknown"]},
+              "closure_entry_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+              "external_attempt_made": {"type": "boolean"},
+              "result": {"type": "string", "minLength": 1, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,255}$"},
+              "response_metadata_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+              "usage": {
+                "type": "object",
+                "required": [
+                  "prompt_tokens",
+                  "completion_tokens",
+                  "prompt_cache_hit_tokens",
+                  "prompt_cache_miss_tokens",
+                  "total_tokens"
+                ],
+                "properties": {
+                  "prompt_tokens": {"type": "integer", "minimum": 0},
+                  "completion_tokens": {"type": "integer", "minimum": 0},
+                  "prompt_cache_hit_tokens": {"type": "integer", "minimum": 0},
+                  "prompt_cache_miss_tokens": {"type": "integer", "minimum": 0},
+                  "total_tokens": {"type": "integer", "minimum": 0}
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

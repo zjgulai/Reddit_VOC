@@ -1,0 +1,58 @@
+{
+  "schema_version": "task38_runtime_implementation_receipt_v1",
+  "generated_at_utc": "2026-07-14T13:28:07Z",
+  "scope": "local_implementation_and_read_only_remote_admission",
+  "implemented": {
+    "v2_profile_admission": {
+      "run_id": "backfill_momcozy_v2_20250101_20260711",
+      "profile_sha256": "38706378f42c6648fe43bb50f60947863816363d65714f16a3092f40d91b604d",
+      "candidate_term_count": 75,
+      "delta_term_count": 69,
+      "legacy_run_mutated": false,
+      "provider_call": false
+    },
+    "more_child_contract_discovery": {
+      "endpoint": "/api/v1/reddit/app/fetch_comment_replies",
+      "documentation_url": "https://docs.tikhub.io/411145963e0",
+      "documented_request_fields": [
+        "post_id",
+        "cursor",
+        "sort_type",
+        "need_format"
+      ],
+      "cursor_source": "$.data.postInfoById.commentForest.trees[*].more.cursor",
+      "response_schema_verified_by_provider_call": false,
+      "local_cursor_extraction_implemented": true
+    }
+  },
+  "verification": {
+    "command": "PYTHONPATH=/Users/pray/project/Reddit_VOC/src UV_PROJECT_ENVIRONMENT=/tmp/reddit-voc-py311-test /Users/pray/.local/bin/uv run --no-project --python /Users/pray/.local/bin/python3.11 --with pytest pytest -q tests/test_tikhub_collector.py tests/test_backfill_profile.py tests/test_backfill_cli.py tests/test_backfill_provider.py tests/test_backfill_storage.py tests/test_backfill_merge.py",
+    "result": "240 passed, 218 subtests passed in 7.47s",
+    "profile_admission_result": "ready_for_new_isolated_run"
+  },
+  "remote_read_only_admission": {
+    "remote": "ubuntu@101.34.52.232",
+    "staging_root_present": true,
+    "historical_run_root_present": true,
+    "tikhub_api_key_available_to_noninteractive_shell": false,
+    "provider_call": false,
+    "provider_attempt_made": false
+  },
+  "source_hashes": {
+    "src/reddit_voc/backfill_profile.py": "eca5806451b484620925092a50a02aaddd23ee5a8d0d3beb370972464025f07d",
+    "src/reddit_voc/backfill_cli.py": "e01f80cb89c4b3b5a2b6fb88bac0bd252babdc5ee517a1f032b9d39526700417",
+    "src/reddit_voc/tikhub.py": "48a9f56ce3b1e362110290eb694079890238558d1933072934d124ddcabf1172",
+    "tests/test_backfill_profile.py": "26d1b585d919c6782965c1fa666ebb15503519913199a2f8f5978cb9e70bdaa8",
+    "tests/test_backfill_cli.py": "6a96bd6423a1cbe0923459945641f4de2221a89c6e8d4e872ae5a6f05b763d56",
+    "tests/test_tikhub_collector.py": "3b2cc9f211cad9c876057b8a28e46f3af4df98ebf8e4fda2b21441f499d5f827"
+  },
+  "boundaries": {
+    "production_unchanged": true,
+    "production_merge": false,
+    "git_push": false,
+    "live_send": false,
+    "provider_call": false,
+    "provider_attempt_made": false
+  },
+  "next_blocker": "Inject TIKHUB_API_KEY through the approved remote one-shot secret channel, then freeze and execute a new exact one-request reply-schema probe packet."
+}

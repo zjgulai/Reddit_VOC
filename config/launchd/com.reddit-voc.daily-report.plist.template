@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "https://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.reddit-voc.daily-report</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>/Users/pray/project/Reddit_VOC/scripts/run_daily_report.sh</string>
+  </array>
+  <key>WorkingDirectory</key>
+  <string>/Users/pray/project/Reddit_VOC</string>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key>
+    <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    <key>PYTHONPATH</key>
+    <string>/Users/pray/project/Reddit_VOC/src</string>
+    <key>REDDIT_VOC_TIMEZONE</key>
+    <string>Asia/Shanghai</string>
+    <key>REDDIT_VOC_RUN_HOUR</key>
+    <string>7</string>
+    <key>REDDIT_VOC_TRANSLATION_MODE</key>
+    <string>dry_run</string>
+    <key>REDDIT_VOC_DATABASE_PATH</key>
+    <string>/Users/pray/project/Reddit_VOC/data/reddit_voc.sqlite3</string>
+    <key>REDDIT_VOC_OUTPUT_DIR</key>
+    <string>/Users/pray/project/Reddit_VOC/outputs</string>
+    <key>REDDIT_VOC_REPORT_OUTPUT_DIR</key>
+    <string>/Users/pray/project/Reddit_VOC/outputs</string>
+    <key>REDDIT_VOC_LOG_DIR</key>
+    <string>/Users/pray/project/Reddit_VOC/logs</string>
+    <key>DINGTALK_REQUIRED_KEYWORD</key>
+    <string>LL</string>
+  </dict>
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Hour</key>
+    <integer>8</integer>
+    <key>Minute</key>
+    <integer>0</integer>
+  </dict>
+  <key>StandardOutPath</key>
+  <string>/Users/pray/project/Reddit_VOC/logs/daily-report.out.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/pray/project/Reddit_VOC/logs/daily-report.err.log</string>
+</dict>
+</plist>

@@ -1,0 +1,386 @@
+{
+  "schema_version": "momcozy_product_entity_ledger_v1",
+  "ledger_version": "momcozy-product-entity-ledger-2026-07-15.v1",
+  "source_evidence": {
+    "official_catalog": "docs/analysis/momcozy-historical-collection-audit-20260714/official-product-name-catalog.csv",
+    "internal_spu_review": "docs/analysis/momcozy-historical-collection-audit-20260714/internal-spu-master-join.json",
+    "tag_dictionary": "dim_tag_v6.3_final.csv"
+  },
+  "brand": {
+    "brand_id": "momcozy",
+    "aliases": [
+      "Momcozy"
+    ]
+  },
+  "comparison_brand_aliases": [
+    "Baby Bjorn",
+    "BabyBjorn",
+    "Boppy",
+    "Comfelie",
+    "Dr. Brown's",
+    "Dr Browns",
+    "Elvie",
+    "Ergobaby",
+    "Haakaa",
+    "Kindred Bravely",
+    "Lansinoh",
+    "Medela",
+    "Nanit",
+    "Owlet",
+    "Philips Avent",
+    "Avent",
+    "Spectra",
+    "Tommee Tippee",
+    "Wabi Baby",
+    "Wabi",
+    "Willow"
+  ],
+  "context_window_chars": 96,
+  "categories": [
+    {
+      "category_id": "breast_pump",
+      "name_en": "Breast Pump",
+      "name_cn": "吸奶器",
+      "context_terms": [
+        "breast pump",
+        "wearable pump",
+        "hands-free pump",
+        "hands free pump",
+        "pumping",
+        "pump"
+      ]
+    },
+    {
+      "category_id": "bottle_washer",
+      "name_en": "Bottle Washer and Sterilizer",
+      "name_cn": "奶瓶清洗消毒器",
+      "context_terms": [
+        "baby bottle washer",
+        "bottle washer",
+        "washer and sterilizer",
+        "sterilizer",
+        "washer"
+      ]
+    },
+    {
+      "category_id": "baby_monitor",
+      "name_en": "Baby Monitor",
+      "name_cn": "婴儿监视器",
+      "context_terms": [
+        "video baby monitor",
+        "baby monitor",
+        "video monitor",
+        "monitor camera",
+        "monitor"
+      ]
+    }
+  ],
+  "families": [
+    {
+      "family_id": "m5-smart",
+      "name_en": "M5 Smart Wearable Breast Pump",
+      "name_cn": "M5 Smart 穿戴式吸奶器",
+      "category_id": "breast_pump",
+      "family_only_reason": "smart_variant_not_explicit_in_internal_spu",
+      "aliases": [
+        {
+          "value": "M5 Smart Wearable Breast Pump",
+          "match_type": "strong_name"
+        },
+        {
+          "value": "Momcozy M5 Smart",
+          "match_type": "strong_name"
+        },
+        {
+          "value": "M5 Smart",
+          "match_type": "contextual_alias"
+        },
+        {
+          "value": "M5",
+          "match_type": "contextual_alias"
+        }
+      ]
+    },
+    {
+      "family_id": "m6-mobile-style",
+      "name_en": "M6 Mobile Style Hands-free Slim Breast Pump",
+      "name_cn": "M6 Mobile Style 免手持纤薄吸奶器",
+      "category_id": "breast_pump",
+      "family_only_reason": null,
+      "aliases": [
+        {
+          "value": "Momcozy Mobile Style",
+          "match_type": "strong_name"
+        },
+        {
+          "value": "Mobile Style Hands-free Slim Breast Pump",
+          "match_type": "strong_name"
+        },
+        {
+          "value": "Mobile Style",
+          "match_type": "contextual_alias"
+        },
+        {
+          "value": "M6",
+          "match_type": "contextual_alias"
+        }
+      ]
+    },
+    {
+      "family_id": "m9-mobile-flow",
+      "name_en": "M9 Mobile Flow Hands-Free Breast Pump",
+      "name_cn": "M9 Mobile Flow 免手持吸奶器",
+      "category_id": "breast_pump",
+      "family_only_reason": null,
+      "aliases": [
+        {
+          "value": "Momcozy Mobile Flow",
+          "match_type": "strong_name"
+        },
+        {
+          "value": "Mobile Flow Hands-Free Breast Pump",
+          "match_type": "strong_name"
+        },
+        {
+          "value": "Mobile Flow",
+          "match_type": "contextual_alias"
+        },
+        {
+          "value": "M9",
+          "match_type": "contextual_alias"
+        }
+      ]
+    },
+    {
+      "family_id": "s9-pro",
+      "name_en": "S9 Pro Wearable Breast Pump",
+      "name_cn": "S9 Pro 穿戴式吸奶器",
+      "category_id": "breast_pump",
+      "family_only_reason": "multiple_internal_version_candidates",
+      "aliases": [
+        {
+          "value": "S9 Pro Wearable Breast Pump",
+          "match_type": "strong_name"
+        },
+        {
+          "value": "Momcozy S9 Pro",
+          "match_type": "strong_name"
+        },
+        {
+          "value": "S9 Pro",
+          "match_type": "contextual_alias"
+        },
+        {
+          "value": "S9",
+          "match_type": "contextual_alias"
+        }
+      ]
+    },
+    {
+      "family_id": "s12-pro-quick",
+      "name_en": "S12 Pro Quick Wearable Breast Pump",
+      "name_cn": "S12 Pro Quick 穿戴式吸奶器",
+      "category_id": "breast_pump",
+      "family_only_reason": "multiple_internal_version_candidates_quick_variant_not_explicit",
+      "aliases": [
+        {
+          "value": "S12 Pro Quick Wearable Breast Pump",
+          "match_type": "strong_name"
+        },
+        {
+          "value": "Momcozy S12 Pro Quick",
+          "match_type": "strong_name"
+        },
+        {
+          "value": "S12 Pro Quick",
+          "match_type": "contextual_alias"
+        },
+        {
+          "value": "S12 Pro",
+          "match_type": "contextual_alias"
+        },
+        {
+          "value": "S12",
+          "match_type": "contextual_alias"
+        }
+      ]
+    },
+    {
+      "family_id": "v1-pro",
+      "name_en": "V1 Pro Hospital-Grade Wearable Breast Pump",
+      "name_cn": "V1 Pro 医院级穿戴式吸奶器",
+      "category_id": "breast_pump",
+      "family_only_reason": "multiple_internal_version_candidates",
+      "aliases": [
+        {
+          "value": "V1 Pro Hospital-Grade Wearable Breast Pump",
+          "match_type": "strong_name"
+        },
+        {
+          "value": "Momcozy V1 Pro",
+          "match_type": "strong_name"
+        },
+        {
+          "value": "V1 Pro",
+          "match_type": "contextual_alias"
+        },
+        {
+          "value": "V1",
+          "match_type": "contextual_alias"
+        }
+      ]
+    },
+    {
+      "family_id": "v2-pro",
+      "name_en": "V2 Pro Hospital-Grade Wearable Breast Pump",
+      "name_cn": "V2 Pro 医院级穿戴式吸奶器",
+      "category_id": "breast_pump",
+      "family_only_reason": null,
+      "aliases": [
+        {
+          "value": "V2 Pro Hospital-Grade Wearable Breast Pump",
+          "match_type": "strong_name"
+        },
+        {
+          "value": "Momcozy V2 Pro",
+          "match_type": "strong_name"
+        },
+        {
+          "value": "V2 Pro",
+          "match_type": "contextual_alias"
+        },
+        {
+          "value": "V2",
+          "match_type": "contextual_alias"
+        }
+      ]
+    },
+    {
+      "family_id": "air-1",
+      "name_en": "Air 1 Ultra-slim Breast Pump",
+      "name_cn": "Air 1 超薄吸奶器",
+      "category_id": "breast_pump",
+      "family_only_reason": null,
+      "aliases": [
+        {
+          "value": "Momcozy Air 1 Ultra-slim Breast Pump",
+          "match_type": "strong_name"
+        },
+        {
+          "value": "Air 1 Ultra-slim Breast Pump",
+          "match_type": "strong_name"
+        },
+        {
+          "value": "Air 1",
+          "match_type": "contextual_alias"
+        },
+        {
+          "value": "Air1",
+          "match_type": "contextual_alias"
+        }
+      ]
+    },
+    {
+      "family_id": "kleanpal-pro",
+      "name_en": "KleanPal Pro Baby Bottle Washer and Sterilizer",
+      "name_cn": "KleanPal Pro 奶瓶清洗消毒器",
+      "category_id": "bottle_washer",
+      "family_only_reason": null,
+      "aliases": [
+        {
+          "value": "Momcozy KleanPal Pro Baby Bottle Washer",
+          "match_type": "strong_name"
+        },
+        {
+          "value": "KleanPal Pro Baby Bottle Washer",
+          "match_type": "strong_name"
+        },
+        {
+          "value": "KleanPal Pro",
+          "match_type": "contextual_alias"
+        },
+        {
+          "value": "KleanPal",
+          "match_type": "contextual_alias"
+        }
+      ]
+    },
+    {
+      "family_id": "bm03-video-monitor",
+      "name_en": "BM03 Full HD Video Baby Monitor",
+      "name_cn": "BM03 全高清婴儿监视器",
+      "category_id": "baby_monitor",
+      "family_only_reason": null,
+      "aliases": [
+        {
+          "value": "Momcozy 5.5-inch Full HD Video Baby Monitor BM03",
+          "match_type": "strong_name"
+        },
+        {
+          "value": "Full HD Video Baby Monitor BM03",
+          "match_type": "strong_name"
+        },
+        {
+          "value": "BM03",
+          "match_type": "contextual_alias"
+        }
+      ]
+    }
+  ],
+  "exact_spu_ledger": [
+    {
+      "family_id": "m6-mobile-style",
+      "spu_id": "SPU000167",
+      "spu_name": "M6 吸奶器",
+      "mapping_status": "approved_for_publication",
+      "publish_exact_spu": true,
+      "governance_reason": null,
+      "evidence": "internal English title contains Mobile Style and M6"
+    },
+    {
+      "family_id": "m9-mobile-flow",
+      "spu_id": "SPU000168",
+      "spu_name": "M9 吸奶器",
+      "mapping_status": "approved_for_publication",
+      "publish_exact_spu": true,
+      "governance_reason": null,
+      "evidence": "internal English title contains Mobile Flow and M9"
+    },
+    {
+      "family_id": "v2-pro",
+      "spu_id": "SPU000932",
+      "spu_name": "V2 Pro 吸奶器",
+      "mapping_status": "approved_for_publication",
+      "publish_exact_spu": true,
+      "governance_reason": null,
+      "evidence": "internal SPU name identifies V2 Pro breast pump"
+    },
+    {
+      "family_id": "air-1",
+      "spu_id": "SPU000209",
+      "spu_name": "Air 1 吸奶器",
+      "mapping_status": "approved_for_publication",
+      "publish_exact_spu": true,
+      "governance_reason": null,
+      "evidence": "internal SPU name identifies Air 1 breast pump"
+    },
+    {
+      "family_id": "kleanpal-pro",
+      "spu_id": "SPU000714",
+      "spu_name": "BS03 全自动清洗消毒器",
+      "mapping_status": "approved_for_publication",
+      "publish_exact_spu": true,
+      "governance_reason": null,
+      "evidence": "internal English title identifies KleanPal Pro bottle washer"
+    },
+    {
+      "family_id": "bm03-video-monitor",
+      "spu_id": "SPU000176",
+      "spu_name": "BM03 婴儿监视器",
+      "mapping_status": "verified_blocked",
+      "publish_exact_spu": false,
+      "governance_reason": "taxonomy_drift_dictionary_temperature_vs_baby_monitor",
+      "evidence": "internal and official sources identify a baby monitor while the tag dictionary classifies this SPU as temperature"
+    }
+  ]
+}

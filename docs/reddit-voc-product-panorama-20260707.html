@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Momcozy Reddit VOC 产品全景图 - 2026-07-07</title>
+  <style>
+    :root {
+      --bg: #071018;
+      --panel: #0f1b26;
+      --panel-2: #122434;
+      --stroke: #29445d;
+      --text: #e6f0fa;
+      --muted: #8ea5b8;
+      --green: #3ddc97;
+      --blue: #55b7ff;
+      --yellow: #f5c451;
+      --red: #ff6b7a;
+      --purple: #b58cff;
+      --cyan: #35d4d8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: radial-gradient(circle at 18% 0%, rgba(85, 183, 255, 0.14), transparent 30%), var(--bg);
+      color: var(--text);
+      font-family: Inter, "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      line-height: 1.5;
+    }
+    .page {
+      max-width: 1680px;
+      margin: 0 auto;
+      padding: 34px;
+    }
+    .topbar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: end;
+      margin-bottom: 24px;
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 34px;
+      letter-spacing: 0;
+      font-weight: 760;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 15px;
+    }
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+    .badge {
+      border: 1px solid var(--stroke);
+      background: rgba(18, 36, 52, 0.9);
+      border-radius: 8px;
+      padding: 7px 10px;
+      color: var(--muted);
+      font: 12px/1.2 "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      white-space: nowrap;
+    }
+    .canvas {
+      border: 1px solid var(--stroke);
+      border-radius: 8px;
+      background:
+        linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(15,27,38,0.96), rgba(7,16,24,0.98));
+      background-size: 28px 28px, 28px 28px, 100% 100%;
+      overflow: hidden;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
+    }
+    svg { display: block; width: 100%; height: auto; }
+    .node { fill: #0f1b26; stroke: var(--stroke); stroke-width: 1.4; rx: 8; }
+    .node-blue { stroke: var(--blue); }
+    .node-green { stroke: var(--green); }
+    .node-yellow { stroke: var(--yellow); }
+    .node-purple { stroke: var(--purple); }
+    .node-red { stroke: var(--red); }
+    .node-cyan { stroke: var(--cyan); }
+    .label { fill: var(--text); font: 700 18px Inter, "PingFang SC", sans-serif; }
+    .small { fill: var(--muted); font: 13px Inter, "PingFang SC", sans-serif; }
+    .mono { fill: #bdd2e4; font: 12px "JetBrains Mono", ui-monospace, monospace; }
+    .cap { fill: var(--muted); font: 11px "JetBrains Mono", ui-monospace, monospace; letter-spacing: .04em; }
+    .flow { fill: none; stroke: #496b88; stroke-width: 2; marker-end: url(#arrow); }
+    .flow-green { stroke: var(--green); }
+    .flow-yellow { stroke: var(--yellow); }
+    .flow-red { stroke: var(--red); stroke-dasharray: 8 6; }
+    .band { fill: rgba(85, 183, 255, 0.06); stroke: rgba(85, 183, 255, 0.25); stroke-width: 1; rx: 8; }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+    .card {
+      border: 1px solid var(--stroke);
+      border-radius: 8px;
+      background: rgba(15, 27, 38, 0.88);
+      padding: 16px;
+      min-height: 210px;
+    }
+    .card h2 {
+      margin: 0 0 10px;
+      font-size: 16px;
+      color: var(--text);
+    }
+    .card ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .card li { margin: 6px 0; }
+    .metric {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin: 16px 0;
+    }
+    .metric div {
+      border: 1px solid var(--stroke);
+      background: rgba(18, 36, 52, 0.7);
+      border-radius: 8px;
+      padding: 12px 14px;
+    }
+    .metric strong {
+      display: block;
+      font: 700 23px "JetBrains Mono", ui-monospace, monospace;
+      color: var(--green);
+    }
+    .metric span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+    @media (max-width: 980px) {
+      .topbar { grid-template-columns: 1fr; }
+      .badges { justify-content: flex-start; }
+      .cards, .metric { grid-template-columns: 1fr; }
+      .page { padding: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <div>
+        <h1>Momcozy Reddit VOC 产品全景图</h1>
+        <div class="subtitle">目标形态：北京时间 07:00 采集前滚 24 小时新帖，08:00 通过钉钉发送中文 HTML 舆情故事线与明细表链接。</div>
+      </div>
+      <div class="badges">
+        <span class="badge">production unchanged</span>
+        <span class="badge">provider_call=false</span>
+        <span class="badge">live_send=false</span>
+        <span class="badge">updated=2026-07-07</span>
+      </div>
+    </header>
+
+    <section class="metric" aria-label="证据摘要">
+      <div><strong>55</strong><span>历史 Momcozy Reddit threads 已解析</span></div>
+      <div><strong>2215</strong><span>历史评论用于关键词扩展</span></div>
+      <div><strong>0</strong><span>历史 JSON 解析失败</span></div>
+      <div><strong>14</strong><span>默认每日 subreddit 覆盖池</span></div>
+    </section>
+
+    <section class="canvas" aria-label="产品工作流全景图">
+      <svg viewBox="0 0 1600 1040" role="img" aria-labelledby="title desc">
+        <title id="title">Momcozy Reddit VOC 产品工作流与技术方案</title>
+        <desc id="desc">展示数据源、采集、过滤、分析、报告、钉钉交付和治理边界。</desc>
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#6f8daa"></path>
+          </marker>
+        </defs>
+
+        <rect class="band" x="34" y="54" width="1532" height="144"></rect>
+        <text class="cap" x="54" y="86">SOURCE AND RECALL SURFACE</text>
+        <rect class="node node-blue" x="54" y="106" width="238" height="70"></rect>
+        <text class="label" x="74" y="134">TikHub Reddit APP</text>
+        <text class="small" x="74" y="157">subreddit feed + dynamic search</text>
+        <rect class="node node-blue" x="318" y="106" width="238" height="70"></rect>
+        <text class="label" x="338" y="134">Reddit browser .json</text>
+        <text class="small" x="338" y="157">read-only smoke / fallback</text>
+        <rect class="node node-cyan" x="582" y="106" width="238" height="70"></rect>
+        <text class="label" x="602" y="134">历史数据回灌</text>
+        <text class="small" x="602" y="157">55 threads + 2215 comments</text>
+        <rect class="node node-yellow" x="846" y="106" width="318" height="70"></rect>
+        <text class="label" x="866" y="134">关键词与社区配置</text>
+        <text class="small" x="866" y="157">brand / product / category / competitor</text>
+        <rect class="node node-purple" x="1190" y="106" width="344" height="70"></rect>
+        <text class="label" x="1210" y="134">Subreddit 分层池</text>
+        <text class="small" x="1210" y="157">P0 pump, P1 mixed baby, P2 fallback</text>
+
+        <rect class="band" x="34" y="238" width="1532" height="186"></rect>
+        <text class="cap" x="54" y="270">DAILY COLLECTION AT 07:00 ASIA/SHANGHAI</text>
+        <rect class="node node-green" x="54" y="292" width="210" height="92"></rect>
+        <text class="label" x="74" y="322">窗口计算</text>
+        <text class="small" x="74" y="346">[D-1 07:00, D 07:00)</text>
+        <text class="mono" x="74" y="368">daily_window(run_hour=7)</text>
+        <rect class="node node-green" x="320" y="292" width="250" height="92"></rect>
+        <text class="label" x="340" y="322">发现候选帖子</text>
+        <text class="small" x="340" y="346">subreddit new feed + search</text>
+        <text class="mono" x="340" y="368">sort=new, limit<=100</text>
+        <rect class="node node-yellow" x="626" y="292" width="302" height="92"></rect>
+        <text class="label" x="646" y="322">两段过滤</text>
+        <text class="small" x="646" y="346">新帖 created_at in window</text>
+        <text class="small" x="646" y="368">再做 brand/category relevance</text>
+        <rect class="node node-green" x="984" y="292" width="260" height="92"></rect>
+        <text class="label" x="1004" y="322">详情与评论拉取</text>
+        <text class="small" x="1004" y="346">batch details + comments</text>
+        <text class="mono" x="1004" y="368">max TikHub batch=30</text>
+        <rect class="node node-cyan" x="1300" y="292" width="234" height="92"></rect>
+        <text class="label" x="1320" y="322">标准化入库</text>
+        <text class="small" x="1320" y="346">raw / thread / comment</text>
+        <text class="mono" x="1320" y="368">sqlite + artifact hash</text>
+
+        <path class="flow flow-green" d="M 264 338 L 318 338"></path>
+        <path class="flow flow-green" d="M 570 338 L 624 338"></path>
+        <path class="flow flow-green" d="M 928 338 L 982 338"></path>
+        <path class="flow flow-green" d="M 1244 338 L 1298 338"></path>
+        <path class="flow" d="M 173 176 C 173 218 158 242 158 290"></path>
+        <path class="flow" d="M 437 176 C 437 218 445 242 445 290"></path>
+        <path class="flow" d="M 1005 176 C 1005 218 777 238 777 290"></path>
+        <path class="flow" d="M 1362 176 C 1362 218 445 236 445 290"></path>
+
+        <rect class="band" x="34" y="464" width="1532" height="170"></rect>
+        <text class="cap" x="54" y="496">VOC ENRICHMENT AND REPORTING</text>
+        <rect class="node node-purple" x="54" y="520" width="264" height="78"></rect>
+        <text class="label" x="74" y="548">关键词命中解释</text>
+        <text class="small" x="74" y="572">matched brand/product/category/competitor</text>
+        <rect class="node node-purple" x="366" y="520" width="264" height="78"></rect>
+        <text class="label" x="386" y="548">轻量舆情分析</text>
+        <text class="small" x="386" y="572">sentiment, topic, severity, pain points</text>
+        <rect class="node node-yellow" x="678" y="520" width="264" height="78"></rect>
+        <text class="label" x="698" y="548">中文化与明细整合</text>
+        <text class="small" x="698" y="572">帖子翻译 + 评论同单元格汇总</text>
+        <rect class="node node-cyan" x="990" y="520" width="244" height="78"></rect>
+        <text class="label" x="1010" y="548">中文 HTML 日报</text>
+        <text class="small" x="1010" y="572">完整洞察故事线 + 底部明细</text>
+        <rect class="node node-cyan" x="1282" y="520" width="252" height="78"></rect>
+        <text class="label" x="1302" y="548">结构化交付物</text>
+        <text class="small" x="1302" y="572">XLSX / CSV / JSONL / PNG</text>
+
+        <path class="flow" d="M 318 560 L 364 560"></path>
+        <path class="flow" d="M 630 560 L 676 560"></path>
+        <path class="flow" d="M 942 560 L 988 560"></path>
+        <path class="flow" d="M 1234 560 L 1280 560"></path>
+        <path class="flow" d="M 1417 384 C 1417 438 186 452 186 518"></path>
+
+        <rect class="band" x="34" y="674" width="1532" height="192"></rect>
+        <text class="cap" x="54" y="706">DELIVERY, OPERATIONS AND CONTROL GATES</text>
+        <rect class="node node-blue" x="54" y="730" width="288" height="94"></rect>
+        <text class="label" x="74" y="760">08:00 钉钉发送</text>
+        <text class="small" x="74" y="784">HTML report link first</text>
+        <text class="mono" x="74" y="806">requires artifact_base_url</text>
+        <rect class="node node-yellow" x="386" y="730" width="288" height="94"></rect>
+        <text class="label" x="406" y="760">定时调度</text>
+        <text class="small" x="406" y="784">launchd collect + report</text>
+        <text class="mono" x="406" y="806">run_daily_collect/report.sh</text>
+        <rect class="node node-red" x="718" y="730" width="288" height="94"></rect>
+        <text class="label" x="738" y="760">授权闸门</text>
+        <text class="small" x="738" y="784">TikHub key / DingTalk webhook</text>
+        <text class="mono" x="738" y="806">no secret persisted</text>
+        <rect class="node node-green" x="1050" y="730" width="220" height="94"></rect>
+        <text class="label" x="1070" y="760">验收分层</text>
+        <text class="small" x="1070" y="784">unit, dry-run, smoke</text>
+        <text class="mono" x="1070" y="806">not equivalent to live</text>
+        <rect class="node node-purple" x="1314" y="730" width="220" height="94"></rect>
+        <text class="label" x="1334" y="760">运营复核</text>
+        <text class="small" x="1334" y="784">P2 噪音和召回率复盘</text>
+        <text class="mono" x="1334" y="806">3-5 day precision gate</text>
+
+        <path class="flow flow-green" d="M 1112 598 C 1112 646 198 660 198 728"></path>
+        <path class="flow flow-green" d="M 1408 598 C 1408 650 198 662 198 728"></path>
+        <path class="flow" d="M 342 776 L 384 776"></path>
+        <path class="flow flow-red" d="M 862 730 C 862 692 198 692 198 728"></path>
+        <path class="flow" d="M 674 776 L 716 776"></path>
+        <path class="flow" d="M 1006 776 L 1048 776"></path>
+        <path class="flow" d="M 1270 776 L 1312 776"></path>
+
+        <rect class="band" x="34" y="900" width="1532" height="96"></rect>
+        <text class="cap" x="54" y="932">CURRENT BOUNDARY</text>
+        <text class="label" x="54" y="962">已完成：关键词与社区扩展、07:00 窗口一致性、HTML/XLSX/CSV/PNG 交付链路本地化。</text>
+        <text class="small" x="54" y="984">未完成：真实 TikHub provider call、真实 DingTalk live send、可公网访问的 artifact hosting、P2 社区 3-5 天精度复核。</text>
+      </svg>
+    </section>
+
+    <section class="cards" aria-label="策略摘要">
+      <article class="card">
+        <h2>关键词策略</h2>
+        <ul>
+          <li>新增 `KleanPal`, `DinerPal`, `PureHug` 等 Momcozy 非泵奶产品线。</li>
+          <li>`bottle washer`, `bottle sterilizer`, `pump parts` 可独立召回。</li>
+          <li>`baby carrier`, `high chair`, `sound machine` 必须带品牌、产品或竞品上下文。</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h2>社区策略</h2>
+        <ul>
+          <li>P0：泵奶社区每日采集，保证高精度基础盘。</li>
+          <li>P1：购买决策、babywearing、mixed feeding、NICU 等场景补充。</li>
+          <li>P2：泛育儿社区只做搜索或 fallback，避免噪音扩散。</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h2>报告策略</h2>
+        <ul>
+          <li>中文 HTML 报告承载完整洞察故事线。</li>
+          <li>底部明细表保留帖子链接、翻译、评论整合和分析标签。</li>
+          <li>XLSX/CSV 作为运营二次分析入口，PNG 作为群内快速浏览卡片。</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h2>控制边界</h2>
+        <ul>
+          <li>当前无本地 TikHub key、DingTalk webhook、artifact base URL。</li>
+          <li>provider_call 与 live_send 仍需显式环境变量和授权参数。</li>
+          <li>本轮未写入 secret，未执行真实发送，production unchanged。</li>
+        </ul>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

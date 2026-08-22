@@ -1,0 +1,49 @@
+{
+  "schema_version": "data_analytics_artifact_validation_v2",
+  "validated_at_utc": "2026-07-14T13:13:05Z",
+  "artifact_sha256": "6117f464d99d4157ccd28cc8a5af5fed4c5403a25ce470da6e7fdb8ebbde0a3b",
+  "manifest_title": "Momcozy Historical Collection Audit",
+  "surface": "report",
+  "snapshot_status": "ready",
+  "dataset_count": 20,
+  "snapshot_row_count": 560,
+  "source_count": 33,
+  "block_count": 37,
+  "card_count": 12,
+  "chart_count": 4,
+  "table_count": 15,
+  "internal_spu_name_rows": 254,
+  "delta_probe_rows": 69,
+  "delta_coverage_class_rows": 4,
+  "comment_debt_priority_rows": 96,
+  "comment_gap_bucket_rows": 5,
+  "orphan_recovery_parent_rows": 4,
+  "notebook_validation_checks": 68,
+  "delta_offline_validation_checks": 20,
+  "comment_debt_audit_checks": 31,
+  "comment_debt_validation_checks": 30,
+  "validate_artifact": {
+    "ok": true,
+    "dataset_count": 20,
+    "source_count": 33,
+    "message": "Artifact payload is valid. Follow the selected delivery surface for rendering or export."
+  },
+  "render_artifact": {
+    "ok": true,
+    "widget_type": "artifact",
+    "surface": "report"
+  },
+  "boundaries": {
+    "provider_call": false,
+    "provider_attempt_made": false,
+    "production_unchanged": true,
+    "production_merge": false,
+    "git_push": false,
+    "live_send": false,
+    "remote_write": false,
+    "remote_content_exported": false,
+    "remote_usernames_exported": false,
+    "local_product_tests_run": false,
+    "database_write": "local-analysis-output-only"
+  }
+}

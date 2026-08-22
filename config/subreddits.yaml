@@ -1,0 +1,65 @@
+version: 1
+updated: "2026-07-07"
+default_window:
+  timezone: Asia/Shanghai
+  run_hour: 7
+tiers:
+  p0:
+    - name: ExclusivelyPumping
+      reason: Pumping-focused community; strongest category relevance.
+    - name: BreastPumping
+      reason: Direct breast-pumping discussion.
+    - name: breastfeeding
+      reason: Large breastfeeding community with pump discussions.
+    - name: HumansPumpingMilk
+      reason: Pumping-focused long-tail community.
+    - name: breastpumps
+      reason: Product-specific pump selection, fit, output and troubleshooting discussion.
+  p1:
+    - name: Buyingforbaby
+      reason: Baby gear purchase decisions; historical Momcozy KleanPal and bottle washer recall.
+    - name: BabyBumps
+      reason: Pregnancy and pump purchase decision stage.
+    - name: beyondthebump
+      reason: Postpartum product experience and pain points.
+    - name: workingmoms
+      reason: Return-to-work and pumping-at-work scenarios.
+    - name: NewParents
+      reason: New parent troubleshooting and product advice.
+    - name: babywearing
+      reason: Momcozy carrier and fit-check discussions; use contextual category matching.
+    - name: moderatelygranolamoms
+      reason: Mixed feeding, product-material, bottle washer and low-tox baby gear discussions.
+    - name: FormulaFeeders
+      reason: Mixed feeding, bottle washer, sterilizer and pump failure transition context.
+    - name: parentsofmultiples
+      reason: High pumping workload, twins and multiples scenarios.
+    - name: NICUParents
+      reason: Pumping and milk-supply stress in NICU context; strict keyword matching required.
+  p2:
+    - name: Mommit
+      reason: General mother community; lower precision.
+    - name: pregnant
+      reason: Pre-purchase research.
+    - name: Parenting
+      reason: Broad community; use stricter keyword threshold.
+    - name: toddlers
+      reason: Baby gear and feeding-product follow-up; lower precision.
+    - name: ScienceBasedParenting
+      reason: Evidence-oriented product, health and safety discussions; strict keyword matching required.
+    - name: SAHP
+      reason: Stay-at-home parent workflow and product pain discussions; lower precision.
+    - name: BabyBumpsCanada
+      reason: Regional purchase and insurance context found in historical data.
+    - name: BabyBumpsandBeyondAu
+      reason: Regional pregnancy and postpartum community found in historical data.
+    - name: daddit
+      reason: Broad parenting and baby gear purchasing; use only for search fallback.
+collection_policy:
+  p0: daily
+  p1: daily_if_capacity
+  p2: search_or_fallback_only
+keyword_policy:
+  p0: brand_or_category
+  p1: brand_or_category_with_contextual_terms
+  p2: brand_or_product_or_competitor_required

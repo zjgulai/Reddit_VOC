@@ -1,0 +1,30 @@
+[Unit]
+Description=Reddit VOC data release shadow validator
+Documentation=file:///opt/reddit-voc-insights-site/docs/reddit-voc-v2-ui-data-dingtalk-implementation-plan-20260722.md
+After=local-fs.target
+ConditionPathIsDirectory=/opt/reddit-voc-insights-data
+
+[Service]
+Type=oneshot
+User=ubuntu
+Group=ubuntu
+UMask=0077
+EnvironmentFile=/etc/reddit-voc-insights/data-publisher.env
+ExecStart=/usr/bin/python3 /opt/reddit-voc-insights-publisher/scripts/run_reddit_data_release_once.py --root /opt/reddit-voc-insights-data --candidate-release-id ${REDDIT_VOC_CANDIDATE_DATA_RELEASE_ID} --expected-current-release-id ${REDDIT_VOC_EXPECTED_CURRENT_DATA_RELEASE_ID} --mode shadow --attempt-receipt ${REDDIT_VOC_DATA_ATTEMPT_RECEIPT}
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/reddit-voc-insights-data
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+RestrictAddressFamilies=AF_UNIX
+SystemCallArchitectures=native
+TimeoutStartSec=15min
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,3015 @@
+{
+  "base_dataset_version": "reddit_voc_site_snapshot_20260714_v1",
+  "base_manifest_sha256": "f04edef8dc73c8975e4bba56cbeefd8b734fd86f2c5a95aa2a041325503720ef",
+  "boundaries": {
+    "database_write": false,
+    "live_send": false,
+    "production_unchanged": true,
+    "provider_call": false
+  },
+  "dictionary_sha256": "22664c9c446ddfa17446852079f507ab75b5af3d4dde6e4e3f3e44c195582e14",
+  "dictionary_version": "dim_tag_v6.3_final",
+  "method": {
+    "dictionary_reference_dimensions": [
+      "aipl_node",
+      "consumer_card",
+      "story_lines",
+      "problem_type",
+      "intent_type",
+      "business_impact",
+      "strategy_package",
+      "biz_action",
+      "dept_owner"
+    ],
+    "label_verdicts": [
+      "correct",
+      "incorrect",
+      "ambiguous"
+    ],
+    "persona_boundary": "consumer_card is a tag-to-insight-card reference, not a user-level persona_id; true persona tags require the independent dim_persona pipeline",
+    "post_sample_target_per_tag": 3,
+    "review_unit": "one tag assignment on one post or VOC-eligible comment",
+    "samples_per_tag": 10,
+    "sampling": "deterministic SHA-256 ranking, stratified by entity type and source",
+    "selection": "top aspect tags by total matched entities",
+    "taxonomy_fit_values": [
+      "fit",
+      "mismatch",
+      "ambiguous"
+    ],
+    "top_tag_count": 10
+  },
+  "review_state": {
+    "independent_human_review": false,
+    "reviewer_type": "codex_context_review",
+    "status": "pending"
+  },
+  "schema_version": "reddit_voc_tag_semantic_sample_v1",
+  "tags": [
+    {
+      "definition": "消费者表达正面反馈相关体验（positive_feedback），典型表达包括：thank you; thanks; great; love it; excellent等",
+      "dictionary_reference": {
+        "aipl_node": "L2",
+        "biz_action": "产品中心：围绕正向反馈激励与复购引导主题做专项优化和闭环",
+        "business_impact": "复购率,品牌信任",
+        "consumer_card": "画像卡",
+        "dept_owner": "产品中心",
+        "intent_type": "口碑推荐",
+        "problem_type": "服务售后",
+        "story_lines": "信任恢复",
+        "strategy_package": "复购激活包"
+      },
+      "governance_review": {
+        "note": "",
+        "reason_code": "pending",
+        "status": "pending"
+      },
+      "keywords_en": [
+        "thank you",
+        "thanks",
+        "great",
+        "love it",
+        "excellent",
+        "amazing"
+      ],
+      "name_cn": "正面反馈",
+      "name_en": "Positive Feedback",
+      "population": {
+        "comment_entities": 298,
+        "name_cn": "正面反馈",
+        "name_en": "Positive Feedback",
+        "post_entities": 27,
+        "tag_id": "L0-SVC-019",
+        "tag_sentiment": "正向",
+        "theme": "客服售后",
+        "total_entities": 325
+      },
+      "sample_counts": {
+        "by_source_stratum": {
+          "historical_canonical": 3,
+          "imported_archive": 3,
+          "tencent_production_primary": 4
+        },
+        "comments": 7,
+        "posts": 3,
+        "total": 10
+      },
+      "samples": [
+        {
+          "audit_id": "L0-SVC-019:post:1uvek3e",
+          "context_excerpt": "… get the Eufy S1 now. But if my E20 will hold up, I might get another pump just to try it out. Considering one of the Momcozy wearables or the Zomee Fit. My only issue with the E20 was battery life and struggling to align my nipples which would sometimes result in no output. Otherwise I loved them. So my questions are: \\-How long did your Eufy pump (or pumps in general) last you? \\-Pump recommendations if I liked the Eufy but struggled with alignment \\-Anyone have the Eufy E20 and the S1 and can compare? Thank you!",
+          "created_at_utc": "2026-07-13T15:20:22.831000+00:00",
+          "entity_id": "1uvek3e",
+          "entity_type": "post",
+          "evidence_keywords": [
+            "thank you"
+          ],
+          "post_id": "1uvek3e",
+          "reddit_id": "t3_1uvek3e",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "tencent_production_primary"
+          ],
+          "source_stratum": "tencent_production_primary",
+          "stable_rank": "12fc0cce447af7766f27c085cba611d1860bbbb6d1c0dbd94090c57b45affacd",
+          "subreddit": "ExclusivelyPumping"
+        },
+        {
+          "audit_id": "L0-SVC-019:post:1p78z49",
+          "context_excerpt": "…x. I have hyperlactation, so the large capacity containers are a must. I also have very forceable letdowns (like Niagara Falls) so I’m concerned if a wearable can even handle that. I own a wall corded spectra right now that has been amazing and never let me down as far as clogged ducts or emptying the breast. (This is a must). So I think I need something powerful which makes me lean towards the V2 Pro. Does anyone use these models who is an oversupplier and strong letdowns? Your thoughts are appreciated. Thank you!",
+          "created_at_utc": "2025-11-26T14:22:21+00:00",
+          "entity_id": "1p78z49",
+          "entity_type": "post",
+          "evidence_keywords": [
+            "thank you"
+          ],
+          "post_id": "1p78z49",
+          "reddit_id": "t3_1p78z49",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "historical_canonical",
+            "imported_archive"
+          ],
+          "source_stratum": "historical_canonical",
+          "stable_rank": "66cec076b660b77ab175f37370bf27f7d5d1dea49adf2a94845d3927dbae84b1",
+          "subreddit": "ExclusivelyPumping"
+        },
+        {
+          "audit_id": "L0-SVC-019:post:1gcvt3l",
+          "context_excerpt": "… dear sisters, whilst pumping one boobie at a time because one of my Elvie Stride connect kit caps is cracked and will not provide suction. This isn’t the first time it’s happened either. I use this pump one day a week, 2 times while I’m at work, so it’s not like it’s got a lot of mileage. I’m not particularly rough with assembly/disassembly either. I got this pump so I could IDEALLY pump both boobies at the same time, but alas, here we are. Any advice on where I can troubleshoot is greatly appreciated. Thank you 🙏",
+          "created_at_utc": "2024-10-26T21:48:51+00:00",
+          "entity_id": "1gcvt3l",
+          "entity_type": "post",
+          "evidence_keywords": [
+            "thank you"
+          ],
+          "post_id": "1gcvt3l",
+          "reddit_id": "t3_1gcvt3l",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "imported_archive"
+          ],
+          "source_stratum": "imported_archive",
+          "stable_rank": "12994787cc2392ae10aa2bfa6906e52a14ad7a5aca4ba7b793b4591c2a992618",
+          "subreddit": "HumansPumpingMilk"
+        },
+        {
+          "audit_id": "L0-SVC-019:comment:t1_owbfpoz",
+          "context_excerpt": "Oh that’s interesting!! I think i misunderstood the instructions as I thought it was boiling water to sterilise if you didn’t have a steriliser (we were in hospital for 6 days so I definitely don’t have my full brain) - I shall try boiling them & washing & starting again and see if that fixes the problem thank you!! Xx",
+          "created_at_utc": "2026-07-08T16:29:35.850000+00:00",
+          "entity_id": "t1_owbfpoz",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "thank you"
+          ],
+          "post_id": "1uqqgsq",
+          "reddit_id": "t1_owbfpoz",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "tencent_production_primary"
+          ],
+          "source_stratum": "tencent_production_primary",
+          "stable_rank": "082f6f5f71d2556c50e7d8a2489ac7b45a3e5b395505921cdd5c151fec5a0f02",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-SVC-019:comment:t1_np2v5n7",
+          "context_excerpt": "Oh thank you. Doing that first thing tomorrow:)",
+          "created_at_utc": "2025-11-16T02:09:44+00:00",
+          "entity_id": "t1_np2v5n7",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "thank you"
+          ],
+          "post_id": "1oy9ibh",
+          "reddit_id": "t1_np2v5n7",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "historical_canonical",
+            "imported_archive"
+          ],
+          "source_stratum": "historical_canonical",
+          "stable_rank": "024e3a09ab1df7c1c063bec6fb31d0626eea5ead40749b9ed9276add46c65581",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-SVC-019:comment:t1_oa31sdf",
+          "context_excerpt": "…out in almost an hour of pumping. I stayed full after (I have an oversupply). Two days ago, I purchased the Momcozy Air 1, Clear top so you can see if nip is centered and I love it. My first pump with it, I filled the cups within 15 minutes, poured, and pumped another 15 minutes. The cups were almost half full. Amazing! The inserts I used the first couple of times (Legendary Milk) are now replaced with my Pumpin Pals. They feel better with Pumpin Pals. This pumping journey can get quite expensive until we find what…",
+          "created_at_utc": "2026-03-12T18:28:36+00:00",
+          "entity_id": "t1_oa31sdf",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "love it"
+          ],
+          "post_id": "1rqxo0n",
+          "reddit_id": "t1_oa31sdf",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "imported_archive"
+          ],
+          "source_stratum": "imported_archive",
+          "stable_rank": "0234ec70aa5a976699ba8e8e713f8c2b670d24be7a6729df13c47e8bce1d04be",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-SVC-019:comment:t1_ow77osl",
+          "context_excerpt": "Thank you! So basically the suction isn’t that efficient?",
+          "created_at_utc": "2026-07-08T00:56:21.875000+00:00",
+          "entity_id": "t1_ow77osl",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "thank you"
+          ],
+          "post_id": "1uqb9v3",
+          "reddit_id": "t1_ow77osl",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "tencent_production_primary"
+          ],
+          "source_stratum": "tencent_production_primary",
+          "stable_rank": "08756e18f7316200965fcdc2885cca9d6074ce6c08718b5bd4d0ed5f92c3ab54",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-SVC-019:comment:t1_nqtzue1",
+          "context_excerpt": "Awesome thank you!!! I set up my DIY rhythm last night. Going to try it out tomorrow afternoon :) I will report back!!",
+          "created_at_utc": "2025-11-26T05:14:46+00:00",
+          "entity_id": "t1_nqtzue1",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "thank you"
+          ],
+          "post_id": "1p49ylj",
+          "reddit_id": "t1_nqtzue1",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "historical_canonical",
+            "imported_archive"
+          ],
+          "source_stratum": "historical_canonical",
+          "stable_rank": "03aa9117f4e9ccc151e4bb7181f1063c267e381f59f9cf3722b04c1d9b4a6223",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-SVC-019:comment:t1_mb8mcrs",
+          "context_excerpt": "Possibly. I would have to look into it. That is good advice. Thank you.",
+          "created_at_utc": "2025-02-06T04:24:42+00:00",
+          "entity_id": "t1_mb8mcrs",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "thank you"
+          ],
+          "post_id": "1iie3wv",
+          "reddit_id": "t1_mb8mcrs",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "imported_archive"
+          ],
+          "source_stratum": "imported_archive",
+          "stable_rank": "02df63dcfa9a7e65bb07e322092587a5ff25e72576739bd2c5ddcc5cf47e2598",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-SVC-019:comment:t1_owdhdyu",
+          "context_excerpt": "Oh sorry, someone had told me they put in their providers info and the request was sent to their OB, I just figured that’s how it worked. Thank you.",
+          "created_at_utc": "2026-07-08T21:49:53.459000+00:00",
+          "entity_id": "t1_owdhdyu",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "thank you"
+          ],
+          "post_id": "1ur3j66",
+          "reddit_id": "t1_owdhdyu",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "tencent_production_primary"
+          ],
+          "source_stratum": "tencent_production_primary",
+          "stable_rank": "160acce1813344743d37eee61f5df2c114157a91427e57e27517e337b30a192a",
+          "subreddit": null
+        }
+      ],
+      "tag_id": "L0-SVC-019",
+      "theme": "客服售后"
+    },
+    {
+      "definition": "用户认为商品价格低于预期价值，如收到后觉得质量、功能远超售价，且不包含单纯低价或促销类评价。",
+      "dictionary_reference": {
+        "aipl_node": "P1",
+        "biz_action": "产品部：围绕物超所值主题做专项优化和闭环",
+        "business_impact": "转化率,复购率",
+        "consumer_card": "决策旅程卡",
+        "dept_owner": "产品中心",
+        "intent_type": "口碑推荐",
+        "problem_type": "价格促销",
+        "story_lines": "价值感争议",
+        "strategy_package": "价值表达优化包"
+      },
+      "governance_review": {
+        "note": "",
+        "reason_code": "pending",
+        "status": "pending"
+      },
+      "keywords_en": [
+        "worth it",
+        "good value",
+        "good for the price",
+        "great deal",
+        "excellent value",
+        "money well spent"
+      ],
+      "name_cn": "物超所值",
+      "name_en": "Excellent Value",
+      "population": {
+        "comment_entities": 84,
+        "name_cn": "物超所值",
+        "name_en": "Excellent Value",
+        "post_entities": 12,
+        "tag_id": "L0-CHL-003",
+        "tag_sentiment": "正向",
+        "theme": "价格价值感",
+        "total_entities": 96
+      },
+      "sample_counts": {
+        "by_source_stratum": {
+          "historical_canonical": 3,
+          "imported_archive": 3,
+          "tencent_production_primary": 4
+        },
+        "comments": 7,
+        "posts": 3,
+        "total": 10
+      },
+      "samples": [
+        {
+          "audit_id": "L0-CHL-003:post:1utibay",
+          "context_excerpt": "Bottle washer/ Sanitizer worth it? Expecting baby number 2 any day and debating if splurging on a bottle washer/sanitizer is worth it. We have a dishwasher but never used it for bottles with our first since I usually find food residue on \"clean\" dishes and I also find it does not completely dry the dishes. Because of this I feel like I would be too paranoid to put bottles in and would just end up re-washing by hand anyways. Did you find getting a washer/sterilizer worth it? And what brand would you recommend?",
+          "created_at_utc": "2026-07-11T12:04:25.510000+00:00",
+          "entity_id": "1utibay",
+          "entity_type": "post",
+          "evidence_keywords": [
+            "worth it"
+          ],
+          "post_id": "1utibay",
+          "reddit_id": "t3_1utibay",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "tencent_production_primary"
+          ],
+          "source_stratum": "tencent_production_primary",
+          "stable_rank": "2228bca517f1c34fa21822094c9f22326be23b8f1b2289c46c24ddbd5e237d4f",
+          "subreddit": "Mommit"
+        },
+        {
+          "audit_id": "L0-CHL-003:post:1qfloqk",
+          "context_excerpt": "MomCozy Bottle Washer- worth it? I am due with #2 any day now. Knowing how my experience was the first time around, I am already prepared to be an exclusive pumper (I did it for 10m with my first). We got the MomCozy bottle washer around Black Friday. Just started putting it together, and now my husband strongly disagrees that we need it because of how much distilled water we will have to use each time. I am curious what other people’s experiences are. I know many rave about the convenience and efficiency, but are …",
+          "created_at_utc": "2026-01-17T19:00:38+00:00",
+          "entity_id": "1qfloqk",
+          "entity_type": "post",
+          "evidence_keywords": [
+            "worth it"
+          ],
+          "post_id": "1qfloqk",
+          "reddit_id": "t3_1qfloqk",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "historical_canonical",
+            "imported_archive"
+          ],
+          "source_stratum": "historical_canonical",
+          "stable_rank": "3e4707e121ad66d056c7c8a910c1176d056b65e3ef8f0daa626ce57a551316fd",
+          "subreddit": "ExclusivelyPumping"
+        },
+        {
+          "audit_id": "L0-CHL-003:post:1lkj0s7",
+          "context_excerpt": "…id I was gonna think about it, one of the other cashiers spoke up and said it was a 10/10, so I impulsively bought it. I'm pregnant and my insurance has already provided me with a Spectra S1. I expect to return to work (30 minute commute) when my baby is 4-6 months. What are your thoughts on the Elvie Stride Plus (not the 2)? Should I keep it? Is having a wearable worth it? I originally wasn't sure if I was gonna get a wearable because I know they're not always the best at emptying you but this seemed like a steal.",
+          "created_at_utc": "2025-06-25T22:05:31+00:00",
+          "entity_id": "1lkj0s7",
+          "entity_type": "post",
+          "evidence_keywords": [
+            "worth it"
+          ],
+          "post_id": "1lkj0s7",
+          "reddit_id": "t3_1lkj0s7",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "imported_archive"
+          ],
+          "source_stratum": "imported_archive",
+          "stable_rank": "07763becab3961d2da3cf1ba52abd310070f66af8369136c6ada8b36d8c42d9c",
+          "subreddit": "ExclusivelyPumping"
+        },
+        {
+          "audit_id": "L0-CHL-003:comment:t1_owci1cj",
+          "context_excerpt": "It's called the fridge method and it's not recommended for NICU or premie babies but it definitely saved my sanity! Definitely do your own research and decide if it's worth it for you!",
+          "created_at_utc": "2026-07-08T19:12:16.664000+00:00",
+          "entity_id": "t1_owci1cj",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "worth it"
+          ],
+          "post_id": "1uqvvz5",
+          "reddit_id": "t1_owci1cj",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "tencent_production_primary"
+          ],
+          "source_stratum": "tencent_production_primary",
+          "stable_rank": "3d7a6be90a67f6758037014ff711117e0d94711d77d6a4d5ef33db65bcb48a0c",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-CHL-003:comment:t1_my6rn5n",
+          "context_excerpt": "10000000% worth it. Especially as an EP mom.",
+          "created_at_utc": "2025-06-17T01:30:19+00:00",
+          "entity_id": "t1_my6rn5n",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "worth it"
+          ],
+          "post_id": "1ld1bcf",
+          "reddit_id": "t1_my6rn5n",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "historical_canonical",
+            "imported_archive"
+          ],
+          "source_stratum": "historical_canonical",
+          "stable_rank": "1395875d6b935080c1e494e33b457748f0d631915c5450d7f0e992321f9c3e5f",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-CHL-003:comment:t1_lhuilbj",
+          "context_excerpt": "On a more positive side note, I do not have personal experience with wearables yet and I assume someone has likely already mentioned this in your replies; but I read a lot about there being an “adjustment period” for many people with wearables in general. I often see pumps get resold after the first or first few tries, but it really may be worth it for you to keep messing with the settings and see if you respond better to the willow later.",
+          "created_at_utc": "2024-08-13T02:08:10+00:00",
+          "entity_id": "t1_lhuilbj",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "worth it"
+          ],
+          "post_id": "1eqr8dz",
+          "reddit_id": "t1_lhuilbj",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "imported_archive"
+          ],
+          "source_stratum": "imported_archive",
+          "stable_rank": "015d55ccf5d5200e725980af12d3a17ff5b55d7ef9c40cc50c843d047270ceae",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-CHL-003:comment:t1_owp8452",
+          "context_excerpt": "You can’t go wrong with Spectra. I have both the pink (S2) and blue ones (S1) and I wish I would’ve gotten the blue one the first time so I could’ve gotten a hands free pump this time. It’s battery powered so you don’t have to be plugged in to a wall and it is as close to hospital grade as it gets. You typically have to pay for a portion of the S1 and the S2 is free. I think it’s worth it for the portability",
+          "created_at_utc": "2026-07-10T13:59:40.704000+00:00",
+          "entity_id": "t1_owp8452",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "worth it"
+          ],
+          "post_id": "1useatj",
+          "reddit_id": "t1_owp8452",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "tencent_production_primary"
+          ],
+          "source_stratum": "tencent_production_primary",
+          "stable_rank": "52c114811f3ac6de51017a4c3b4ea2ca8c93a28be0e02a08aa4eca281b541b57",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-CHL-003:comment:t1_msad6hk",
+          "context_excerpt": "Same here. 10/10 on my bottle washer. But I'd probably say the same thing if I had the baby brezza one. I just got a great deal on the Momcozy one used lol.",
+          "created_at_utc": "2025-05-14T15:43:51+00:00",
+          "entity_id": "t1_msad6hk",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "great deal"
+          ],
+          "post_id": "1kkvihg",
+          "reddit_id": "t1_msad6hk",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "historical_canonical",
+            "imported_archive"
+          ],
+          "source_stratum": "historical_canonical",
+          "stable_rank": "13c0f06d30a5addfb2f8cd4309140be09260ff62001253ccf693442bec622b22",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-CHL-003:comment:t1_m5w2adz",
+          "context_excerpt": "…he full 30 mins. With the spectra, even if I pumped for the full 30 mins, I’d maybe get an extra half ounce combined compared to stopping at 15-20 mins, so it wasn’t really worth it to me. My boobs were also very sore because I had to have it on the highest setting and have to manipulate the flanges while pumping, or I just wouldn’t get the same output. With the m9, I pump the full 30 minutes because it doesn’t feel like 30 mins actually goes by. According to the app, I’ve been averaging 7.06 oz a session, but I al…",
+          "created_at_utc": "2025-01-07T16:10:37+00:00",
+          "entity_id": "t1_m5w2adz",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "worth it"
+          ],
+          "post_id": "1e5186x",
+          "reddit_id": "t1_m5w2adz",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "imported_archive"
+          ],
+          "source_stratum": "imported_archive",
+          "stable_rank": "046b1604bc0565d6fc8ade59e51841d0b7b951fddc9c5a2f71c2a21388849db9",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-CHL-003:comment:t1_owepsrl",
+          "context_excerpt": "Good job following the instructions to get a good fit! Have you tried heading outside for a walk right after you put him in? Sometimes the movement and outdoors can help calm them. An Ergo Embrace could be a good step. It won't last you very much longer, but if you can find one used on marketplace, totally worth it!",
+          "created_at_utc": "2026-07-09T01:45:06.672000+00:00",
+          "entity_id": "t1_owepsrl",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "worth it"
+          ],
+          "post_id": "1urbov0",
+          "reddit_id": "t1_owepsrl",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "tencent_production_primary"
+          ],
+          "source_stratum": "tencent_production_primary",
+          "stable_rank": "6a552bf70f9806c812ee9f57ac5b2a47a1b9c0576698db883319eb96497d247e",
+          "subreddit": null
+        }
+      ],
+      "tag_id": "L0-CHL-003",
+      "theme": "价格价值感"
+    },
+    {
+      "definition": "用户在Zendesk工单中提及客服响应、售后支持或问题升级等体验，判断标准为涉及客服交互过程，不包含产品本身质量评价。",
+      "dictionary_reference": {
+        "aipl_node": "L2",
+        "biz_action": "产品中心：围绕客服响应速度与解决能力主题做专项优化和闭环",
+        "business_impact": "客服成本,口碑/评分",
+        "consumer_card": "决策旅程卡",
+        "dept_owner": "产品中心",
+        "intent_type": "售后跟进",
+        "problem_type": "服务售后",
+        "story_lines": "服务体验断点",
+        "strategy_package": "售后服务SOP包"
+      },
+      "governance_review": {
+        "note": "",
+        "reason_code": "pending",
+        "status": "pending"
+      },
+      "keywords_en": [
+        "customer service",
+        "support",
+        "help",
+        "assistance",
+        "response",
+        "reply"
+      ],
+      "name_cn": "客服体验",
+      "name_en": "Customer Service Experience",
+      "population": {
+        "comment_entities": 81,
+        "name_cn": "客服体验",
+        "name_en": "Customer Service Experience",
+        "post_entities": 8,
+        "tag_id": "L0-SVC-010",
+        "tag_sentiment": "中性",
+        "theme": "客服售后",
+        "total_entities": 89
+      },
+      "sample_counts": {
+        "by_source_stratum": {
+          "historical_canonical": 4,
+          "imported_archive": 3,
+          "tencent_production_primary": 3
+        },
+        "comments": 7,
+        "posts": 3,
+        "total": 10
+      },
+      "samples": [
+        {
+          "audit_id": "L0-SVC-010:post:1uq90k8",
+          "context_excerpt": "…’s day gift that I asked for. It has been great to use up until a few days ago. We are literally 13 months out from purchase date and it won’t power on at all. We contacted customer service and they were like, sorry you are 1 month out of your 1 year warranty. Literally no help, but we’re like here’s a coupon for another one if you want. Like absolutely not. Why would I buy another one that breaks so quickly? For spending almost $300 on a product, we had hoped to use it with our next kid. So stay away from the bott…",
+          "created_at_utc": "2026-07-07T21:41:08.578000+00:00",
+          "entity_id": "1uq90k8",
+          "entity_type": "post",
+          "evidence_keywords": [
+            "customer service"
+          ],
+          "post_id": "1uq90k8",
+          "reddit_id": "t3_1uq90k8",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "tencent_production_primary"
+          ],
+          "source_stratum": "tencent_production_primary",
+          "stable_rank": "e8017b2d613ff0e8f870add16c4507091be8b8af80946edca0f5ded71d6fa802",
+          "subreddit": "momcozyofficial"
+        },
+        {
+          "audit_id": "L0-SVC-010:post:1jpschr",
+          "context_excerpt": "…f time. Anyhow, when the package arrived, I was shocked to find only breast milk storage bags inside. Keep in mind these pumps are $400 🥲 the disrespect.. I contacted their customer service, and they claimed the storage bags were a 'gift' for purchasing the pumps. However, they informed me that the pumps are currently out of stock in all their warehouses. Like what? Who’s in charge here? Why would you still manage to accept the payment &amp; still send the “gift” ? I'm extremely disappointed and wanted to warn you …",
+          "created_at_utc": "2025-04-02T16:06:31+00:00",
+          "entity_id": "1jpschr",
+          "entity_type": "post",
+          "evidence_keywords": [
+            "customer service"
+          ],
+          "post_id": "1jpschr",
+          "reddit_id": "t3_1jpschr",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "historical_canonical",
+            "imported_archive"
+          ],
+          "source_stratum": "historical_canonical",
+          "stable_rank": "f60126e7eebb87820bb2a2d71448ae4b05f2b3ecb8b4ef5a42a4be79f0f0fd4d",
+          "subreddit": "ExclusivelyPumping"
+        },
+        {
+          "audit_id": "L0-SVC-010:post:x46ds3",
+          "context_excerpt": "…th limited features. Recently it has lost a noticeable amount of power since I first bought it. I do use it often, about 4x per day for last 10 months. I have tried calling customer service but each time my concerns are mostly disregarded with little support. Also, in regards to customer service, Medela is only available M-F, 8 to 5p which really sucks when you have an issue at 5:30p on a Friday and cannot get anything to work. I find it highly unacceptable that a medical supply company is not available for more su…",
+          "created_at_utc": "2022-09-02T16:48:40+00:00",
+          "entity_id": "x46ds3",
+          "entity_type": "post",
+          "evidence_keywords": [
+            "customer service"
+          ],
+          "post_id": "x46ds3",
+          "reddit_id": "t3_x46ds3",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "imported_archive"
+          ],
+          "source_stratum": "imported_archive",
+          "stable_rank": "193098e6632bc19a52fb2e80a40050696ffdeaf8b45d8ba0c021325edcfdee12",
+          "subreddit": "BabyBumps"
+        },
+        {
+          "audit_id": "L0-SVC-010:comment:t1_owqerte",
+          "context_excerpt": "…om another commenter: If an item wasn’t shipped immediately it’s because the product is out of stock and they are awaiting a restock. I also ordered a pack of extra filters which haven’t shipped out yet. I contacted customer service, they emailed me back within a day, and told me the date of restock and put my name on a priority list for immediate shipment. Every other product I’ve purchased was shipped out immediately. I was a tad peeved they didn’t mention stock before purchase, and I had to reach out personally.",
+          "created_at_utc": "2026-07-10T17:03:22.377000+00:00",
+          "entity_id": "t1_owqerte",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "customer service"
+          ],
+          "post_id": "1usqihm",
+          "reddit_id": "t1_owqerte",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "tencent_production_primary"
+          ],
+          "source_stratum": "tencent_production_primary",
+          "stable_rank": "922110fb89988f831962285e38f3ce63629c4dc1e0950165f19ef59cadcdb3f7",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-SVC-010:comment:t1_mrx9et8",
+          "context_excerpt": "…lvie or willow) or get wearable cups for my Motif Luna. I’ve started weaning so it doesn’t make sense for me now, but I just really don’t recommend momcozy long term. Great customer service, terrible products. It’s important to note my first replacement was issued on December 26th. My baby was born December 9th and stopped latching at 5 days old. That’s how long one of the pumps lasted the second one went out in February. The first replacement went out in March. I gave up in April when the last one stopped working …",
+          "created_at_utc": "2025-05-12T15:02:24+00:00",
+          "entity_id": "t1_mrx9et8",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "customer service"
+          ],
+          "post_id": "1kku6ue",
+          "reddit_id": "t1_mrx9et8",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "historical_canonical",
+            "imported_archive"
+          ],
+          "source_stratum": "historical_canonical",
+          "stable_rank": "039b2002fc8fcf909f8f86413d187b57eb0bfade32ba01d8f99747b33fc8f0c7",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-SVC-010:comment:t1_lhtocbm",
+          "context_excerpt": "Ugh, I remember the breast pump research rabbit hole well. 😵‍💫 Did you reach out to Willow for help with the Go?I’ve found their customer service really helpful when I couldn’t figure out something with my duckbill. They apparently are also super willing to send free replacement parts and discount codes. I found Willow Go great once my supply regulated and I was wearing the right size insert, but I know what you mean about washing parts. I bought a few extra parts and put everything in the dishwasher for my sanity …",
+          "created_at_utc": "2024-08-12T23:01:45+00:00",
+          "entity_id": "t1_lhtocbm",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "customer service"
+          ],
+          "post_id": "1eqr8dz",
+          "reddit_id": "t1_lhtocbm",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "imported_archive"
+          ],
+          "source_stratum": "imported_archive",
+          "stable_rank": "0f59138ae20e92f591ac116d91edcf204728f3310753e9f577272716d7bce61a",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-SVC-010:comment:t1_ox3ys31",
+          "context_excerpt": "…hen I’ve cleaned with a pump wipe between pumps and there is a little condensation but stay together and function correctly when the compression of my bra is on them. (BUT, customer service was great on replacing one of my pumps that had a wonky battery and less strong suction just had to go back and forth email wise) Eufy s1 - I have rhe pros with the charging case, charging case is really nice to have but I wouldn’t say necessary or outrageously more convenient. Love the app and all its features, super comfortabl…",
+          "created_at_utc": "2026-07-12T16:35:07.628000+00:00",
+          "entity_id": "t1_ox3ys31",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "customer service"
+          ],
+          "post_id": "1uuixrn",
+          "reddit_id": "t1_ox3ys31",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "tencent_production_primary"
+          ],
+          "source_stratum": "tencent_production_primary",
+          "stable_rank": "e4b0704a9516c52fa41646f493996f604a5a208b0f89f316ad9af638108846f4",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-SVC-010:comment:t1_nkn8tey",
+          "context_excerpt": "I feel like they’ve determined it’s cheaper to just replace them and maintain a good reputation through customer service rather than invest the money in actually improving the product. Sucks because I really enjoy a lot of their other products.",
+          "created_at_utc": "2025-10-21T18:43:50+00:00",
+          "entity_id": "t1_nkn8tey",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "customer service"
+          ],
+          "post_id": "1oc8s59",
+          "reddit_id": "t1_nkn8tey",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "historical_canonical",
+            "imported_archive"
+          ],
+          "source_stratum": "historical_canonical",
+          "stable_rank": "0eb4f2897577de782bde078b0fdc07f32cce5fb77b6b82503160efde25fe6ad5",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-SVC-010:comment:t1_hlx7ig3",
+          "context_excerpt": "just called customer service, the agent gave me two options when i asked to get a different unit - sonata and pump in style. The agent said the pump in style suction is different from flex, hence she recommends the sonata, but the accessories are not compatible with flex, so i will need to get a new set of part. The warehouse is sending me brand new sonata today and will need to return the broken one back.",
+          "created_at_utc": "2021-11-24T17:13:10+00:00",
+          "entity_id": "t1_hlx7ig3",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "customer service"
+          ],
+          "post_id": "quw5lr",
+          "reddit_id": "t1_hlx7ig3",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "imported_archive"
+          ],
+          "source_stratum": "imported_archive",
+          "stable_rank": "1a1bce5884f1e3f629fae4556ad88b42da183ccec99d8ba8767bc1130e720e76",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-SVC-010:comment:t1_nklpl6i",
+          "context_excerpt": "Everyone’s talking about how great that their customer service which is great (especially because a lot of customer service for pumps suck - looking at you Elvie) but I think the point more so is look at all these examples of the motors dying after just a few months. For a product that’s $250+ that shouldn’t be happening. I’ve been pumping for six months and have had no issues with my motor on my Elvie stride. Some people haven’t had momcozy issues but a vast majority have. Again it’s great that they replace it but…",
+          "created_at_utc": "2025-10-21T14:08:47+00:00",
+          "entity_id": "t1_nklpl6i",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "customer service"
+          ],
+          "post_id": "1oc8s59",
+          "reddit_id": "t1_nklpl6i",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "historical_canonical",
+            "imported_archive"
+          ],
+          "source_stratum": "historical_canonical",
+          "stable_rank": "16bb951fb65d8277909498363c9b2da18f17ecce478d70430a3d779a586602b5",
+          "subreddit": null
+        }
+      ],
+      "tag_id": "L0-SVC-010",
+      "theme": "客服售后"
+    },
+    {
+      "definition": "消费者在驾驶、家务等场景中，使用无线免提功能通话或听音，评价清晰便捷且无需手持，排除有线耳机或蓝牙仅连接但未使用免提的情况。",
+      "dictionary_reference": {
+        "aipl_node": "L1",
+        "biz_action": "产品部：围绕产品属性-无线主题做专项优化",
+        "business_impact": "口碑/评分,复购率",
+        "consumer_card": "场景任务卡",
+        "dept_owner": "产品中心",
+        "intent_type": "口碑推荐",
+        "problem_type": "产品性能",
+        "story_lines": "卖点认知偏差",
+        "strategy_package": "核心卖点校准包"
+      },
+      "governance_review": {
+        "note": "",
+        "reason_code": "pending",
+        "status": "pending"
+      },
+      "keywords_en": [
+        "wireless",
+        "hands free",
+        "hands-free",
+        "bluetooth",
+        "cordless",
+        "no cord"
+      ],
+      "name_cn": "无线免提",
+      "name_en": "Wireless Hands-Free",
+      "population": {
+        "comment_entities": 51,
+        "name_cn": "无线免提",
+        "name_en": "Wireless Hands-Free",
+        "post_entities": 10,
+        "tag_id": "L0-GEN-020",
+        "tag_sentiment": "正向",
+        "theme": "产品属性-无线",
+        "total_entities": 61
+      },
+      "sample_counts": {
+        "by_source_stratum": {
+          "historical_canonical": 4,
+          "imported_archive": 4,
+          "tencent_production_primary": 2
+        },
+        "comments": 7,
+        "posts": 3,
+        "total": 10
+      },
+      "samples": [
+        {
+          "audit_id": "L0-GEN-020:post:1upvgit",
+          "context_excerpt": "…aw a post from someone who said hitting the motor would help. I tried, but it did not in my case. \\- While I was waiting for the Momcozy smell to resolve, I bought a Chicco hands free in bra pump, and while not perfect, this has been the most reliable for me. It is a bit wonky to put together - I still get leaks maybe 20% of the time - but the yield is much higher than with the Medela or the Momcozy (when anything comes at all!). By way of example: I had about 5 ml after pumping for 16 minutes with Momcozy on one b…",
+          "created_at_utc": "2026-07-07T13:41:14.983000+00:00",
+          "entity_id": "1upvgit",
+          "entity_type": "post",
+          "evidence_keywords": [
+            "hands free"
+          ],
+          "post_id": "1upvgit",
+          "reddit_id": "t3_1upvgit",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "tencent_production_primary"
+          ],
+          "source_stratum": "tencent_production_primary",
+          "stable_rank": "1652ffc37894a9191ddcbda449e57b3b9090c3727c76bea5a8c3e79d89aad501",
+          "subreddit": "ExclusivelyPumping"
+        },
+        {
+          "audit_id": "L0-GEN-020:post:1jkoib4",
+          "context_excerpt": "A friend handed down her MomCozy M9 to me. I pumped for 30 minutes and got 25% of the milk I usually get from my Spectra in this time. Is that normal? How can I make it work better, aside from new parts? I was so looking forward to hands free pumping. 😭",
+          "created_at_utc": "2025-03-26T22:23:14+00:00",
+          "entity_id": "1jkoib4",
+          "entity_type": "post",
+          "evidence_keywords": [
+            "hands free"
+          ],
+          "post_id": "1jkoib4",
+          "reddit_id": "t3_1jkoib4",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "historical_canonical",
+            "imported_archive"
+          ],
+          "source_stratum": "historical_canonical",
+          "stable_rank": "4f134b4a7051a2e19b3ae8f1a20f22b7a4f764d5ded5a07bc71a978a077bbe7d",
+          "subreddit": "ExclusivelyPumping"
+        },
+        {
+          "audit_id": "L0-GEN-020:post:1hdu0ph",
+          "context_excerpt": "… more colostrum now than with my first. Just looking for opinions on what works best, I know it’s different for everyone and their preference. I am definitely looking for a hands free option, but plan to get an at home work horse as well eventually. I know insurance doesn’t cover all of the ones I’m interested in (lucky me with UHC 🥴) but plan to use my HSA anyways. I can see that cleaning and lots of parts is a big thing and am not looking forward to that, but for the pump strength and abilities it may be worth it…",
+          "created_at_utc": "2024-12-14T03:32:17+00:00",
+          "entity_id": "1hdu0ph",
+          "entity_type": "post",
+          "evidence_keywords": [
+            "hands free"
+          ],
+          "post_id": "1hdu0ph",
+          "reddit_id": "t3_1hdu0ph",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "imported_archive"
+          ],
+          "source_stratum": "imported_archive",
+          "stable_rank": "4e050990549fad2db4dc8ab370b4439eae668bfaa28ed1c29d5f2604947f4cb0",
+          "subreddit": "ExclusivelyPumping"
+        },
+        {
+          "audit_id": "L0-GEN-020:comment:t1_owp8452",
+          "context_excerpt": "You can’t go wrong with Spectra. I have both the pink (S2) and blue ones (S1) and I wish I would’ve gotten the blue one the first time so I could’ve gotten a hands free pump this time. It’s battery powered so you don’t have to be plugged in to a wall and it is as close to hospital grade as it gets. You typically have to pay for a portion of the S1 and the S2 is free. I think it’s worth it for the portability",
+          "created_at_utc": "2026-07-10T13:59:40.704000+00:00",
+          "entity_id": "t1_owp8452",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "hands free"
+          ],
+          "post_id": "1useatj",
+          "reddit_id": "t1_owp8452",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "tencent_production_primary"
+          ],
+          "source_stratum": "tencent_production_primary",
+          "stable_rank": "413d53f204a5b24e25575862d073c450a5eaa9b8fad329182ce7469bf5ceed20",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-GEN-020:comment:t1_nsxa8jc",
+          "context_excerpt": "…do fine for me, took slightly longer to empty per breast than the hand pump but more than made up for it as I could do both breasts at once so less time overall and have my hands free. Bought a second set of these wearables. The nicu had a spectra. I hated being chained to a wall far enough away that I couldn't touch my baby and my supply was less than my wearables. But it meant not having to carry one more bag while healing so I used it quite a bit. Baby went to a rehab center that had medela pumps. they were a li…",
+          "created_at_utc": "2025-12-08T12:13:29+00:00",
+          "entity_id": "t1_nsxa8jc",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "hands free"
+          ],
+          "post_id": "1ph0m5h",
+          "reddit_id": "t1_nsxa8jc",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "historical_canonical",
+            "imported_archive"
+          ],
+          "source_stratum": "historical_canonical",
+          "stable_rank": "1e2c869ffe544f72e74932572a50633387b64fcea696a0d24b2a077e8e035670",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-GEN-020:comment:t1_nzzn6vh",
+          "context_excerpt": "I have rented the medela symphony from medela (very good customer service!) I am currently 10 weeks pp, 99.99% of my baby's feeds are directly on the breast but I pump once a day so she can have a bottle overnight while I sleep and to start building a stash. I rented it after having tried out 2 different hands free pumps, I found the noise waaaay too over stimulating! I see that some of the people have found them quite loud but I would disagree! The sound of hands free pumps at 3am would drive me insane!",
+          "created_at_utc": "2026-01-16T20:47:20+00:00",
+          "entity_id": "t1_nzzn6vh",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "hands free"
+          ],
+          "post_id": "1qebzqz",
+          "reddit_id": "t1_nzzn6vh",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "imported_archive"
+          ],
+          "source_stratum": "imported_archive",
+          "stable_rank": "0c409150d86c5f32d07ed95cde17fff9b2868572d9d1de922e959ccfe89d8c9d",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-GEN-020:comment:t1_mgfgwr4",
+          "context_excerpt": "I agree with you fully on forward facing. Do they advertise side carry as hands free? Because in the pic it looks like it’s being used as support. I used my stretchy like that for breastfeeding support all the time, with a hand on the baby at all times and readjusting right after feeding. The kangaroo carry is very close to safe. You don’t ever HAVE to carry a baby legs in but it’s fine to do so if you do it properly. Hug hold has much less room for error though. The fabric on the pic is too high though, and should…",
+          "created_at_utc": "2025-03-07T00:44:06+00:00",
+          "entity_id": "t1_mgfgwr4",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "hands free"
+          ],
+          "post_id": "1j541eg",
+          "reddit_id": "t1_mgfgwr4",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "historical_canonical",
+            "imported_archive"
+          ],
+          "source_stratum": "historical_canonical",
+          "stable_rank": "2d23c4c21509fa565e8a385bfa45bc380c5b5584f8228de5d4b277b1f2acf19e",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-GEN-020:comment:t1_o6jbs0z",
+          "context_excerpt": "…to an outlet. For what it’s worth I got the Elvie Stride with my second and left the Spectra completely. For me the wearable cups were a complete game changer. I loved being able to walk around and be completely hands free. No more worrying about having the right bra. The amount of pieces to clean with the Elvie are minimal, which was also important to me as cleaning after pumping was one of my most dreaded tasks. Everyone is different though so it’s nice that you have some options. I wish you well on this journey!",
+          "created_at_utc": "2026-02-21T02:30:32+00:00",
+          "entity_id": "t1_o6jbs0z",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "hands free"
+          ],
+          "post_id": "1r5p9tt",
+          "reddit_id": "t1_o6jbs0z",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "imported_archive"
+          ],
+          "source_stratum": "imported_archive",
+          "stable_rank": "186abc95e6a58b12c62db5384889302ef1aebbad0b837f5d8b1bcf132df0f7df",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-GEN-020:comment:t1_nkwezy7",
+          "context_excerpt": "I used momcozy with my last pregnancy not for every pump the died and I had to get replacements all the time This time around im using the spectra and the spectra hands free and its a solid duo The they hands free spectra feels like its sucking out my whole soul and I can't move around because idk how to function with something that strong yet",
+          "created_at_utc": "2025-10-23T03:51:00+00:00",
+          "entity_id": "t1_nkwezy7",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "hands free"
+          ],
+          "post_id": "1oc8s59",
+          "reddit_id": "t1_nkwezy7",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "historical_canonical",
+            "imported_archive"
+          ],
+          "source_stratum": "historical_canonical",
+          "stable_rank": "68d49cf6c7972948f2ef860c509760e78a547436ddb0e1e32d9bb56edac31926",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-GEN-020:comment:t1_oaauvk8",
+          "context_excerpt": "…le friendly and the S2 at night since I’m not going anywhere and it has to be plugged in. Other solid options are Baby Buddha 2.0. It’s strong but great for use with mobile/hands free cups. In my experience it works well for this since it has a higher vacuum. Definitely a learning curve to get used to. Pumpables Genie Advanced. Another solid choice. It’s small but also powerful. It has more customization abilities than the BB 2.0, and it can be gentler than the BB also. Generally not offered under any DMEs I’ve see…",
+          "created_at_utc": "2026-03-13T21:52:58+00:00",
+          "entity_id": "t1_oaauvk8",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "hands free"
+          ],
+          "post_id": "1rsjyr7",
+          "reddit_id": "t1_oaauvk8",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "imported_archive"
+          ],
+          "source_stratum": "imported_archive",
+          "stable_rank": "188d7c092d5ac72626a566879edba6ebdd3e82c0990943d19ffa81007961e2af",
+          "subreddit": null
+        }
+      ],
+      "tag_id": "L0-GEN-020",
+      "theme": "产品属性-无线"
+    },
+    {
+      "definition": "用户因产品特定功能(如静音、APP控制、免手扶等)正好满足其具体需求而购买",
+      "dictionary_reference": {
+        "aipl_node": "P1",
+        "biz_action": "产品中心：围绕购买动机主题做专项优化和闭环",
+        "business_impact": "转化率",
+        "consumer_card": "决策旅程卡",
+        "dept_owner": "产品中心",
+        "intent_type": "产品咨询",
+        "problem_type": "产品性能",
+        "story_lines": "品牌破冰效率",
+        "strategy_package": "价值表达优化包"
+      },
+      "governance_review": {
+        "note": "",
+        "reason_code": "pending",
+        "status": "pending"
+      },
+      "keywords_en": [
+        "needed something",
+        "exactly what i needed",
+        "looking for",
+        "the only one",
+        "specific feature",
+        "hands-free"
+      ],
+      "name_cn": "功能需求驱动购买",
+      "name_en": "Feature-Driven Purchase",
+      "population": {
+        "comment_entities": 36,
+        "name_cn": "功能需求驱动购买",
+        "name_en": "Feature-Driven Purchase",
+        "post_entities": 25,
+        "tag_id": "L0-GEN-164",
+        "tag_sentiment": "中性",
+        "theme": "购买动机",
+        "total_entities": 61
+      },
+      "sample_counts": {
+        "by_source_stratum": {
+          "historical_canonical": 4,
+          "imported_archive": 3,
+          "tencent_production_primary": 3
+        },
+        "comments": 7,
+        "posts": 3,
+        "total": 10
+      },
+      "samples": [
+        {
+          "audit_id": "L0-GEN-164:post:1uvqfxq",
+          "context_excerpt": "Does anyone actually have supply this low? Is it worth continuing to pump? I’m almost 6 weeks postpartum and genuinely looking for experiences from anyone who started with an extremely low supply. Some of my recent pump outputs have been: **15, 12, 9, 9, 10, 8, 4, 4, 2, 0, 13, 12, 7 mL per session.** July 12: **5, 14, 13, 8, 3, 3, 8 mL = 54 mL total (1.83 oz)** July 13 so far: **3, 8, 5, 2 mL = 18 mL (0.61 oz)** Yes, these are **mL, not ounces**. I’ve dealt with flange issues, nipple soreness and painful pumping fo…",
+          "created_at_utc": "2026-07-13T22:29:02.335000+00:00",
+          "entity_id": "1uvqfxq",
+          "entity_type": "post",
+          "evidence_keywords": [
+            "looking for"
+          ],
+          "post_id": "1uvqfxq",
+          "reddit_id": "t3_1uvqfxq",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "tencent_production_primary"
+          ],
+          "source_stratum": "tencent_production_primary",
+          "stable_rank": "2e5a7c353f1d8c507bd1681cec57534a510df73253d0e4620b3c7078b7d15657",
+          "subreddit": "ExclusivelyPumping"
+        },
+        {
+          "audit_id": "L0-GEN-164:post:1q8f5gs",
+          "context_excerpt": "Momcozy Bottle Washer! Looking for all the tips and tricks with this luxury of a product! Few questions: 1. Do you always use the steam feature every cycle? 2. Is there a way to turn off the automatic heated dry other than manually pausing it? ETA: or Grownsy/Papablic since they’re basically identical",
+          "created_at_utc": "2026-01-09T17:52:04+00:00",
+          "entity_id": "1q8f5gs",
+          "entity_type": "post",
+          "evidence_keywords": [
+            "looking for"
+          ],
+          "post_id": "1q8f5gs",
+          "reddit_id": "t3_1q8f5gs",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "historical_canonical",
+            "imported_archive"
+          ],
+          "source_stratum": "historical_canonical",
+          "stable_rank": "09359db429efb6ffaabca97fea1b79dda622a8e5deedc6cea9b69dc19b8fdcdc",
+          "subreddit": "ExclusivelyPumping"
+        },
+        {
+          "audit_id": "L0-GEN-164:post:1qymhj5",
+          "context_excerpt": "Elvie stride has been the worst experience of all 3 babies This is just a warning for all moms looking for a hospital grade wearable pump. The Elvie Stride is the WORST pump I’ve ever experienced. I have used the Elvie wearables the last 2 babies and loved it! I didn’t like how the willow required you to use their bags … so an investment up front and then an investment throughout. That being said I still envy the willow’s ability to essentially do yoga in and yet the elvie if I reach back in the car for a toddler t…",
+          "created_at_utc": "2026-02-07T19:10:38+00:00",
+          "entity_id": "1qymhj5",
+          "entity_type": "post",
+          "evidence_keywords": [
+            "looking for"
+          ],
+          "post_id": "1qymhj5",
+          "reddit_id": "t3_1qymhj5",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "imported_archive"
+          ],
+          "source_stratum": "imported_archive",
+          "stable_rank": "51192610655662d19fbcd2fa735707f05e17cce52f90c2a8b57b4facbb698bcb",
+          "subreddit": "ExclusivelyPumping"
+        },
+        {
+          "audit_id": "L0-GEN-164:comment:t1_owicmpu",
+          "context_excerpt": "Try joining us at r/ babywearing (not sure if this sub allows links to other subs)! If you need padding and support, I think it's a soft structured carrier you're looking for rather than wraps or slings. I'm not sure what you mean \"open at the sides\" but the more experienced ones at the sub might be able to help you (:",
+          "created_at_utc": "2026-07-09T15:29:43.517000+00:00",
+          "entity_id": "t1_owicmpu",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "looking for"
+          ],
+          "post_id": "1ursya6",
+          "reddit_id": "t1_owicmpu",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "tencent_production_primary"
+          ],
+          "source_stratum": "tencent_production_primary",
+          "stable_rank": "7904ca658fe2f8f0b3647cdc550ae5b86a80fac7f66c208468ace5248bc3baa5",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-GEN-164:comment:t1_o865qxh",
+          "context_excerpt": "…ng product under the sun. I don’t want to bash them since a lot of people find their products to be a good value for the money, but still, you get what you pay for. Are you looking for lightweight? All natural materials? Budget? Good for hot weather? What country are you in? Happy baby OG and Sakura Bloom Scout are other carriers with apron style waists and natural materials, but are H back. You should be able to find them second hand for &lt;$100 if you aren’t picky. A Tula Free to Grow or Standard (I think those …",
+          "created_at_utc": "2026-03-02T03:38:02+00:00",
+          "entity_id": "t1_o865qxh",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "looking for"
+          ],
+          "post_id": "1rihtrg",
+          "reddit_id": "t1_o865qxh",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "historical_canonical",
+            "imported_archive"
+          ],
+          "source_stratum": "historical_canonical",
+          "stable_rank": "059b03c19408a046892b3ebdd988646dfebe718fd228fc1155a7c04dc4e61640",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-GEN-164:comment:t1_nfp5mv3",
+          "context_excerpt": "Same I love my willow go! I tried a lot of wearables and this was the only one that gave me the same output as my spectra!",
+          "created_at_utc": "2025-09-23T01:36:03+00:00",
+          "entity_id": "t1_nfp5mv3",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "the only one"
+          ],
+          "post_id": "1nnn2k7",
+          "reddit_id": "t1_nfp5mv3",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "imported_archive"
+          ],
+          "source_stratum": "imported_archive",
+          "stable_rank": "02c92c5bd43dbb04300a86deb95a93a5a3f52975931c76bbc5a098d187129bcf",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-GEN-164:comment:t1_ox3ys31",
+          "context_excerpt": "…as so painful, I just didn’t give them a chance, I’m considering trying again now that I know you’re supposed to have inserts pretty much exactly at measurement not 2-3 mm bigger than measurement like most pumps Baby buddah - really really like these, feel like they’re similar output and strength to my spectra, but it’s not as “wearable” or discreet as some of the other options I’ve tried. Long winded but hopefully that gave some insight as to what you’re looking for, or reassured that the Eufy s1 is a great pick 😊",
+          "created_at_utc": "2026-07-12T16:35:07.628000+00:00",
+          "entity_id": "t1_ox3ys31",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "looking for"
+          ],
+          "post_id": "1uuixrn",
+          "reddit_id": "t1_ox3ys31",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "tencent_production_primary"
+          ],
+          "source_stratum": "tencent_production_primary",
+          "stable_rank": "ef9a56c2c779de991f64ab0f0a1514fe9452f9b742d1ccf0e561a28b06d2d9cd",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-GEN-164:comment:t1_o6mdj8a",
+          "context_excerpt": "…e and I just ran into the same issue again — second pair in four months. I wouldn’t have bought the same unit twice, but we were traveling, in a pinch, and it was literally the only one left in stock at Target. This time I decided to tear it apart instead of tossing it. There’s no real hard reset that actually works on these things, so I pulled the battery to force a reset. What I found was pretty frustrating. They only sealed one side of the pump for water resistance. I’m not sure how anyone thought sealing half t…",
+          "created_at_utc": "2026-02-21T16:20:49+00:00",
+          "entity_id": "t1_o6mdj8a",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "the only one"
+          ],
+          "post_id": "1lyrhqh",
+          "reddit_id": "t1_o6mdj8a",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "historical_canonical",
+            "imported_archive"
+          ],
+          "source_stratum": "historical_canonical",
+          "stable_rank": "314b402508ce0a826e1318824322cbf4586aaa139b42a5d6217f424c775ac777",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-GEN-164:comment:t1_mhyh7qi",
+          "context_excerpt": "Thank you for this. We’re down a rabbit hole right now. Just shy of 2 months before baby arrives. We got the spectra through our insurance but looking for the right portable is overwhelming. We’re between the m5 and m9, but kind of apprehensive about the m5 quality. We’ve keep seeing the v1 pro come up a lot too. Since you have both, the spectra and the v1 pro, are you exclusively using the v1? Is it portable enough to do things around the house while pumping?",
+          "created_at_utc": "2025-03-15T18:07:42+00:00",
+          "entity_id": "t1_mhyh7qi",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "looking for"
+          ],
+          "post_id": "1e5186x",
+          "reddit_id": "t1_mhyh7qi",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "imported_archive"
+          ],
+          "source_stratum": "imported_archive",
+          "stable_rank": "04ea3d64de4ea105c4851d240e87bde24094f01fcc6b8c6b398282fddb4aa450",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-GEN-164:comment:t1_o889yr3",
+          "context_excerpt": "Hope &amp; Plum is a pretty darn ethical company, as someone who candidly works for them (in the warehouse). I second finding a lending library, and then seeing what carrier style works for you in general. Some people like H back, some X back. Try different carriers out. Heck, try a ring sling. They don't have batting so they're more breathable! And more affordable as well. BST groups on facebook are a godsend, join one and start looking for something you'd like!",
+          "created_at_utc": "2026-03-02T13:58:06+00:00",
+          "entity_id": "t1_o889yr3",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "looking for"
+          ],
+          "post_id": "1rihtrg",
+          "reddit_id": "t1_o889yr3",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "historical_canonical",
+            "imported_archive"
+          ],
+          "source_stratum": "historical_canonical",
+          "stable_rank": "49ae81f7f6694fffa390537fb66bf03a11d7b73cd57c83cc2904f125c9272f68",
+          "subreddit": null
+        }
+      ],
+      "tag_id": "L0-GEN-164",
+      "theme": "购买动机"
+    },
+    {
+      "definition": "该标签指消费者在办公、会议等职业环境中使用产品/服务的体验反馈，需明确提及工作相关场景，排除个人生活或休闲用途。",
+      "dictionary_reference": {
+        "aipl_node": "L1",
+        "biz_action": "产品中心：围绕使用场景-工作主题做专项优化",
+        "business_impact": "口碑/评分",
+        "consumer_card": "场景任务卡",
+        "dept_owner": "产品中心",
+        "intent_type": "产品咨询",
+        "problem_type": "产品性能",
+        "story_lines": "场景使用冲突",
+        "strategy_package": "场景适配优化包"
+      },
+      "governance_review": {
+        "note": "",
+        "reason_code": "pending",
+        "status": "pending"
+      },
+      "keywords_en": [
+        "at work",
+        "while working",
+        "working mom",
+        "office",
+        "wfh",
+        "work from home"
+      ],
+      "name_cn": "工作场景",
+      "name_en": "Working Scenario",
+      "population": {
+        "comment_entities": 46,
+        "name_cn": "工作场景",
+        "name_en": "Working Scenario",
+        "post_entities": 11,
+        "tag_id": "L0-GEN-075",
+        "tag_sentiment": "中性",
+        "theme": "使用场景-工作",
+        "total_entities": 57
+      },
+      "sample_counts": {
+        "by_source_stratum": {
+          "historical_canonical": 4,
+          "imported_archive": 4,
+          "tencent_production_primary": 2
+        },
+        "comments": 7,
+        "posts": 3,
+        "total": 10
+      },
+      "samples": [
+        {
+          "audit_id": "L0-GEN-075:post:1uusbbu",
+          "context_excerpt": "…the 20th. I planned to pump, but I got a used pump from a friend & it’s missing the piece to connect the motor to the bottles. I’m on unpaid leave so have no income so I’m not sure how else to get it. My partner was never paid for his leave like expected so we’re having trouble making ends meet rn. I just need it to make sure my baby will be able to eat while I’m at work. If anyone’s willing to help it would be greatly appreciated! [Amazon Wishlist](https://www.amazon.com/hz/wishlist/ls/1R5VTEUNF2RTD?ref_=wl_share)",
+          "created_at_utc": "2026-07-12T21:37:13.439000+00:00",
+          "entity_id": "1uusbbu",
+          "entity_type": "post",
+          "evidence_keywords": [
+            "at work"
+          ],
+          "post_id": "1uusbbu",
+          "reddit_id": "t3_1uusbbu",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "tencent_production_primary"
+          ],
+          "source_stratum": "tencent_production_primary",
+          "stable_rank": "08c2e1b40839455300c908aa1b7834b3bc4fa74f0cff1c87f6da89a7fb3533a0",
+          "subreddit": "Assistance"
+        },
+        {
+          "audit_id": "L0-GEN-075:post:1pxtyok",
+          "context_excerpt": "…urt my supply. Right now I pump 6-10oz depending on the pump, and baby is drinking 3.5-4oz 7-8 times a day. So I am looking into a wearable/portable pump to pump at my desk while working, so I can add back in a 9am and 3pm pump, and maybe use it for my noon pump too. It would also be nice to be able to pump while away from home for more than 3 hours on the weekends. I am looking at the momcozy v1 pro because it has a strong pump, is under $200, has high capacity in-bra cups, and read it works OK with big breasts (I…",
+          "created_at_utc": "2025-12-28T15:27:17+00:00",
+          "entity_id": "1pxtyok",
+          "entity_type": "post",
+          "evidence_keywords": [
+            "while working"
+          ],
+          "post_id": "1pxtyok",
+          "reddit_id": "t3_1pxtyok",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "historical_canonical",
+            "imported_archive"
+          ],
+          "source_stratum": "historical_canonical",
+          "stable_rank": "0f34591f096193f05a4db866631e85e7d21e9eda4e4dbfb8f810c3ce9a3b4414",
+          "subreddit": "ExclusivelyPumping"
+        },
+        {
+          "audit_id": "L0-GEN-075:post:1ddo4m0",
+          "context_excerpt": "Lansinoh wearable pump keeps leaking Hi all, I've been back at work and pumping now for a couple months. I've had a recurring issue where milk gets into the wrong spout and ends up getting sucked up into the pump. I'm concerned for mold and don't want to use the pump for this reason. Has anyone used lansinoh and had this issue? How can I clean the pump? Anyone with a wearable have any advice? Lansinoh customer service has replaced the pump already once before but it has happened again. I don't see any issues with t…",
+          "created_at_utc": "2024-06-11T20:23:15+00:00",
+          "entity_id": "1ddo4m0",
+          "entity_type": "post",
+          "evidence_keywords": [
+            "at work"
+          ],
+          "post_id": "1ddo4m0",
+          "reddit_id": "t3_1ddo4m0",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "imported_archive"
+          ],
+          "source_stratum": "imported_archive",
+          "stable_rank": "0dcec2bd78a75ce87ee2dbba9600807b4b09d17d60a9885562b8c0103a6bc36f",
+          "subreddit": "breastfeeding"
+        },
+        {
+          "audit_id": "L0-GEN-075:comment:t1_ox8fxdz",
+          "context_excerpt": "…is why this was my first purchase for my second baby. My second is getting breastfed right now but I also pump 1-2 times a day, use a boon trove and we had to supplement a bit with formula. So all in all, there’s still enough to run the bottle washer at least once a day. I will anyway be back at work in a few weeks and given they need breastmilk / formula until 12 months, this feels like a worthy investment. If you’re a SAHM who plans to exclusively breastfeed and is successfully able to, this may not be necessary.",
+          "created_at_utc": "2026-07-13T08:08:08.448000+00:00",
+          "entity_id": "t1_ox8fxdz",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "at work"
+          ],
+          "post_id": "1uv50py",
+          "reddit_id": "t1_ox8fxdz",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "tencent_production_primary"
+          ],
+          "source_stratum": "tencent_production_primary",
+          "stable_rank": "275dd69dfbc4d49e2e9459ea8c69ce529e59b44df7501bc40dbf7f7aec086366",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-GEN-075:comment:t1_o6odig0",
+          "context_excerpt": "Get a eufy! It is the best investment we have made. If you can swing the cost it's so worth it. I get similar output to my spectra, I've had no issues with the pumps not suctioning, the heat element is lovely, and they're fairly quiet. We got the charging case which is really nice for having at work but not a necessity so you could save a little money by skipping that.",
+          "created_at_utc": "2026-02-21T22:30:44+00:00",
+          "entity_id": "t1_o6odig0",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "at work"
+          ],
+          "post_id": "1rav2uo",
+          "reddit_id": "t1_o6odig0",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "historical_canonical",
+            "imported_archive"
+          ],
+          "source_stratum": "historical_canonical",
+          "stable_rank": "162d72ca32b52b4a6f3f3e1f76654e1c9b06e4bd5f8ef9a8640cfc7e031e285a",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-GEN-075:comment:t1_oabhqwg",
+          "context_excerpt": "I actually prefer the motif Luna over the spectra bc I didn’t like the vibration feature that makes the spectra so popular. And the Luna uses the exact same parts as the spectra so it’s easy to get replacements. It’s also quieter and smaller which I love for pumping at work",
+          "created_at_utc": "2026-03-14T00:00:28+00:00",
+          "entity_id": "t1_oabhqwg",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "at work"
+          ],
+          "post_id": "1rsjyr7",
+          "reddit_id": "t1_oabhqwg",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "imported_archive"
+          ],
+          "source_stratum": "imported_archive",
+          "stable_rank": "00ccfa55122a715251914e8d1d888bf3f3360a73432aca009e1107e99a8cead2",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-GEN-075:comment:t1_ml8mnbj",
+          "context_excerpt": "I have the pros and love them! They are quiet and I wear them while working the front desk at a school. I can pause them when someone pops into my office and resume as soon as they leave if I'm feeling weird about it.",
+          "created_at_utc": "2025-04-03T18:02:30+00:00",
+          "entity_id": "t1_ml8mnbj",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "while working"
+          ],
+          "post_id": "1jpschr",
+          "reddit_id": "t1_ml8mnbj",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "historical_canonical",
+            "imported_archive"
+          ],
+          "source_stratum": "historical_canonical",
+          "stable_rank": "36b61248dac9fbf96692118196ad70b51aa59a882cff7be13fa92fcc248dbf85",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-GEN-075:comment:t1_oaa70ll",
+          "context_excerpt": "…dha for most of my pumping. For my second, my insurance covered the S1 so I added that one and the Eufy S1s. I love all of these pumps and fit my various needs. My S2 lives at work since I have a dedicated pump space and it doesn't need to be moved around. My S1 is my main pump at home, I'm usually sitting but have the option to move about the house. Baby Buddha is now my backup primary pump -- when I travel or need to do more than 1 pump on the go. Eufy is my \"on the go\" pump. Medela manual is when I need to relie…",
+          "created_at_utc": "2026-03-13T19:53:23+00:00",
+          "entity_id": "t1_oaa70ll",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "at work"
+          ],
+          "post_id": "1rsjyr7",
+          "reddit_id": "t1_oaa70ll",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "imported_archive"
+          ],
+          "source_stratum": "imported_archive",
+          "stable_rank": "05b1b10ce5845bd30d447e6779c4a9e2b35a2ce300e032fa5bd5e88c4ec8c444",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-GEN-075:comment:t1_ml2hkto",
+          "context_excerpt": "I had the willow 2.0 with the breast milk bags and loved them! Easy to pump into and no transferring milk from container to container at work.",
+          "created_at_utc": "2025-04-02T18:44:49+00:00",
+          "entity_id": "t1_ml2hkto",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "at work"
+          ],
+          "post_id": "1jpschr",
+          "reddit_id": "t1_ml2hkto",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "historical_canonical",
+            "imported_archive"
+          ],
+          "source_stratum": "historical_canonical",
+          "stable_rank": "4d013e69596aca1cbab617abd0f1b5178946fa12eaecb4c09d72c32912ebe76a",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-GEN-075:comment:t1_mkvn8ui",
+          "context_excerpt": "Not the elvie stride, but the OG pumps. I decided to wear them while I was at work (I’m a night nurse). I leaned forward slightly and poured 5 oz into my bra which made it to my damn ankles. I had to do a full outfit change and was pissed the rest of the night lol.",
+          "created_at_utc": "2025-04-01T16:29:41+00:00",
+          "entity_id": "t1_mkvn8ui",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "at work"
+          ],
+          "post_id": "1joq4nw",
+          "reddit_id": "t1_mkvn8ui",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "imported_archive"
+          ],
+          "source_stratum": "imported_archive",
+          "stable_rank": "08df1b4c91b49201f35514dd3c32ac1e74799c48a773f1b43a55e53e354cebf1",
+          "subreddit": null
+        }
+      ],
+      "tag_id": "L0-GEN-075",
+      "theme": "使用场景-工作"
+    },
+    {
+      "definition": "用户明确表示 Momcozy 的输出与主泵或竞品相当，甚至更优。",
+      "dictionary_reference": {
+        "aipl_node": "L1",
+        "biz_action": "产品中心：围绕竞品对比支持主题做专项优化",
+        "business_impact": "转化率,口碑/评分",
+        "consumer_card": "决策旅程卡",
+        "dept_owner": "产品中心",
+        "intent_type": "竞品对比",
+        "problem_type": "产品性能",
+        "story_lines": "竞品隔离诊断",
+        "strategy_package": "竞品差异化包"
+      },
+      "governance_review": {
+        "note": "",
+        "reason_code": "pending",
+        "status": "pending"
+      },
+      "keywords_en": [
+        "same output as spectra",
+        "better output",
+        "equal output",
+        "empty me",
+        "works as well as",
+        "pumps just as much"
+      ],
+      "name_cn": "出奶量不输主泵/竞品",
+      "name_en": "Milk Output Comparable to Main Pump/Competitor",
+      "population": {
+        "comment_entities": 49,
+        "name_cn": "出奶量不输主泵/竞品",
+        "name_en": "Milk Output Comparable to Main Pump/Competitor",
+        "post_entities": 7,
+        "tag_id": "L2-PUMP-030",
+        "tag_sentiment": "正向",
+        "theme": "竞品对比支持",
+        "total_entities": 56
+      },
+      "sample_counts": {
+        "by_source_stratum": {
+          "historical_canonical": 4,
+          "imported_archive": 3,
+          "tencent_production_primary": 3
+        },
+        "comments": 7,
+        "posts": 3,
+        "total": 10
+      },
+      "samples": [
+        {
+          "audit_id": "L2-PUMP-030:post:1uvdo4h",
+          "context_excerpt": "… have plenty of time, but am overwhelmed by choices for wearable pumps. Last time, the only big brands were Elvie and Willow. I bought the Willow Go and hated it. It didn’t empty me, and I’d get clogged ducts every time I used it. It also occasionally didn’t line up to suction quite right and would make me bleed without pain. I ended up using my pink Spectra almost exclusively and had to quit pumping earlier than I would’ve preferred because it was too hard after returning to work. What I’m looking for: -Large capa…",
+          "created_at_utc": "2026-07-13T14:48:00.883000+00:00",
+          "entity_id": "1uvdo4h",
+          "entity_type": "post",
+          "evidence_keywords": [
+            "empty me"
+          ],
+          "post_id": "1uvdo4h",
+          "reddit_id": "t3_1uvdo4h",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "tencent_production_primary"
+          ],
+          "source_stratum": "tencent_production_primary",
+          "stable_rank": "6611991193383a549de07aeed5bb1672c904a8457f086b30a3cd56275fdc4e66",
+          "subreddit": "ExclusivelyPumping"
+        },
+        {
+          "audit_id": "L2-PUMP-030:post:1ph0m5h",
+          "context_excerpt": "…estioning the spectra. I continue to measure my nipple size, and I use the same flanges for both the v1 and spectra, but it takes me 45 minutes to empty with either, and even after that the spectra doesn’t seem like I’m really empty but I feel like I am with the V1. But if I use the v1 and get a better output, sometimes I second guess on if it was really just a better session and I was lucky, or if I respond better to it. What was everyone’s experience? Or any tips to know if the v1 really empties me? I’m 5wpp btw!",
+          "created_at_utc": "2025-12-08T02:18:55+00:00",
+          "entity_id": "1ph0m5h",
+          "entity_type": "post",
+          "evidence_keywords": [
+            "better output"
+          ],
+          "post_id": "1ph0m5h",
+          "reddit_id": "t3_1ph0m5h",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "historical_canonical",
+            "imported_archive"
+          ],
+          "source_stratum": "historical_canonical",
+          "stable_rank": "07fe530093cbc31457f1b33b6d452c556b23874a59ab7eba06048b5c36ed7af5",
+          "subreddit": "ExclusivelyPumping"
+        },
+        {
+          "audit_id": "L2-PUMP-030:post:1qbe11l",
+          "context_excerpt": "Spectra sucks I’m 3w pp and getting terrible output with blue spectra. Like 30 mins gets me 2oz combined. I’ve been sized by an LC for flanges and have been using the correct ones. I’ve been using my Eufy S1 pros as my main pump and I get 3-4oz combined but keep thinking I should be getting more. I have just enough to feed her right now but I wanted to see if anyone else was getting better output either wearables? Any recommendations for a better wall/hospital grade pump??",
+          "created_at_utc": "2026-01-13T01:37:11+00:00",
+          "entity_id": "1qbe11l",
+          "entity_type": "post",
+          "evidence_keywords": [
+            "better output"
+          ],
+          "post_id": "1qbe11l",
+          "reddit_id": "t3_1qbe11l",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "imported_archive"
+          ],
+          "source_stratum": "imported_archive",
+          "stable_rank": "8dc60362a1bb7eee95351df40098ea0b8acff197645413d34cd321593a02b7da",
+          "subreddit": "ExclusivelyPumping"
+        },
+        {
+          "audit_id": "L2-PUMP-030:comment:t1_ox3ys31",
+          "context_excerpt": "… are: Momcozy m5 - obviously you have these so my input is irrelevant Willow Go - actually really like these much more than I expected to, I get pretty good output and even better output the days and weeks I’m using them more frequently. Replacement parts are fairly affordable with willows website having sales fairly regularly. App could be better but still works. I like that they’re a pretty discreet silhouette In my bra with the taller shape of them better matching my larger boobs. Others like the eufy are shorte…",
+          "created_at_utc": "2026-07-12T16:35:07.628000+00:00",
+          "entity_id": "t1_ox3ys31",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "better output"
+          ],
+          "post_id": "1uuixrn",
+          "reddit_id": "t1_ox3ys31",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "tencent_production_primary"
+          ],
+          "source_stratum": "tencent_production_primary",
+          "stable_rank": "675b240c90d3aac3f1709b419c156c249f41c297d7d09b7f7f89d03163a1848f",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L2-PUMP-030:comment:t1_n2x73u8",
+          "context_excerpt": "I have the Medela Swing Maxi as my main pump and the M5 as my portables. I do actually quite rate the M5 - I get equal output from it as my Medela, I can get at least 3 pumps off one charge and although it's a bit harder on my nips than the Maxi it's only an issue if I use it for like...3+ pumps in a row. So once I dropped my day pumps a bit and/or could pump while my baby played or napped and so use the Maxi more I went down to being less reliant on the M5 . But something to bear in mind if you anticipate using it…",
+          "created_at_utc": "2025-07-13T16:32:06+00:00",
+          "entity_id": "t1_n2x73u8",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "equal output"
+          ],
+          "post_id": "1lyrhqh",
+          "reddit_id": "t1_n2x73u8",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "historical_canonical",
+            "imported_archive"
+          ],
+          "source_stratum": "historical_canonical",
+          "stable_rank": "0dbc73453b30640fa77fd89246700bdbd5eb49e2577a0c1c8e86ae57f97139ca",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L2-PUMP-030:comment:t1_lycdlvr",
+          "context_excerpt": "…s my output but it’s a nice feature to have. Controlling the pump through the app is the best part. I would highly recommend it for this feature alone. I find reaching into the bra to click around on buttons in a wearable often causes the wearables to shift out of place. I can wear my Eufy while walking around the house, driving, and while on a walk/pushing a stroller. Like any wearable, it doesn’t empty me as well or as quickly as my Spectra. If Spectra takes me 10-15 minutes to empty, the wearables take me 20-25.",
+          "created_at_utc": "2024-11-22T01:22:44+00:00",
+          "entity_id": "t1_lycdlvr",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "empty me"
+          ],
+          "post_id": "1gwuu6a",
+          "reddit_id": "t1_lycdlvr",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "imported_archive"
+          ],
+          "source_stratum": "imported_archive",
+          "stable_rank": "08320f846afe39c9e7d0397d76104d1b08019d835ccac8bf53d36d7fa369717f",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L2-PUMP-030:comment:t1_owhathb",
+          "context_excerpt": "I was a DDD+ with oversupply, I could not get a wearable to sit right or empty me to save my life! I ended up just using my spectra exclusively",
+          "created_at_utc": "2026-07-09T12:37:03.745000+00:00",
+          "entity_id": "t1_owhathb",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "empty me"
+          ],
+          "post_id": "1urnqki",
+          "reddit_id": "t1_owhathb",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "tencent_production_primary"
+          ],
+          "source_stratum": "tencent_production_primary",
+          "stable_rank": "8fa7a3a625e5e0b00080d3d71bf9f787d0d720db7da00a450195e97c8dacca2f",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L2-PUMP-030:comment:t1_n30taq7",
+          "context_excerpt": "I have the M5 and it works well for me, but they’re the only wearables I’ve ever tried. Was using the Medela symphony from the hospital for the first month but hated being tied to an outlet (especially having to care for twins) so bought the M5 to try it out and got better output. I am on my second set right now (a little over 13 months into pumping) and the motors are kinda slowing down again but I find it comfortable to use.",
+          "created_at_utc": "2025-07-14T04:33:40+00:00",
+          "entity_id": "t1_n30taq7",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "better output"
+          ],
+          "post_id": "1lyrhqh",
+          "reddit_id": "t1_n30taq7",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "historical_canonical",
+            "imported_archive"
+          ],
+          "source_stratum": "historical_canonical",
+          "stable_rank": "20ff1f2a3c2cf9adacfb6690304ec686ffc7f6dc4ef7185862c67be48b195132",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L2-PUMP-030:comment:t1_m9qw7ub",
+          "context_excerpt": "I have the pump in style and the spectra s1 and I very much dislike the pump in style. My issue with it is it doesn’t automatically shut off and it doesn’t empty me, it’s almost as if it not strong enough. I have to spend an extra 10-15 minutes to get that completely empty feeling as with the spectra I only have to pump 20 minutes and I’m completely empty.",
+          "created_at_utc": "2025-01-29T01:35:05+00:00",
+          "entity_id": "t1_m9qw7ub",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "empty me"
+          ],
+          "post_id": "1ic49s2",
+          "reddit_id": "t1_m9qw7ub",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "imported_archive"
+          ],
+          "source_stratum": "imported_archive",
+          "stable_rank": "0e6fa98330e77eb5d031a7e1758f91d89113d9690ace274235cbfb5ff235fb9f",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L2-PUMP-030:comment:t1_nxldegx",
+          "context_excerpt": "I second this. I used them as my primary since 1 month postpartum. Still do 8 months later. I get a better output as well.",
+          "created_at_utc": "2026-01-04T08:20:54+00:00",
+          "entity_id": "t1_nxldegx",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "better output"
+          ],
+          "post_id": "1q3grht",
+          "reddit_id": "t1_nxldegx",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "historical_canonical",
+            "imported_archive"
+          ],
+          "source_stratum": "historical_canonical",
+          "stable_rank": "295d5b87b81c3674794798370c4758b3961f29df51e7b25f478109fd84ebea96",
+          "subreddit": null
+        }
+      ],
+      "tag_id": "L2-PUMP-030",
+      "theme": "竞品对比支持"
+    },
+    {
+      "definition": "用户考虑购买吸奶器配件时，通常出现在使用后或咨询场景，判断标准为主动询问配件型号或价格，边界排除已下单或仅浏览行为。",
+      "dictionary_reference": {
+        "aipl_node": "L3",
+        "biz_action": "产品部：围绕复购行为主题做专项优化和闭环",
+        "business_impact": "复购率,品牌信任",
+        "consumer_card": "场景任务卡",
+        "dept_owner": "产品中心",
+        "intent_type": "产品咨询",
+        "problem_type": "个性化",
+        "story_lines": "复购准备度",
+        "strategy_package": "复购激活包"
+      },
+      "governance_review": {
+        "note": "",
+        "reason_code": "pending",
+        "status": "pending"
+      },
+      "keywords_en": [
+        "need new parts",
+        "looking for accessories",
+        "extra flanges",
+        "replacement parts",
+        "want to buy more",
+        "need additional items"
+      ],
+      "name_cn": "考虑购买配件",
+      "name_en": "Considering Accessory Purchase",
+      "population": {
+        "comment_entities": 46,
+        "name_cn": "考虑购买配件",
+        "name_en": "Considering Accessory Purchase",
+        "post_entities": 9,
+        "tag_id": "L2-PUMP-007",
+        "tag_sentiment": "正向",
+        "theme": "复购行为",
+        "total_entities": 55
+      },
+      "sample_counts": {
+        "by_source_stratum": {
+          "historical_canonical": 3,
+          "imported_archive": 3,
+          "tencent_production_primary": 4
+        },
+        "comments": 7,
+        "posts": 3,
+        "total": 10
+      },
+      "samples": [
+        {
+          "audit_id": "L2-PUMP-007:post:1uu22vi",
+          "context_excerpt": "… it at first, but you literally just suction it on and don’t do anything, it doesn’t move and you don’t squeeze it lol \\- Don’t forget, you can get a free pump and bags and replacement parts through insurance in the US! **Products! Consumerism!** \\- We loved the Newton bassinet. Being able to grab her easily during the night was amazing, and the quality is great. \\- Put all the expensive items on your registry! Crib, stroller, car seat, bassinet, etc. You’re going to need them eventually, so let people help if they…",
+          "created_at_utc": "2026-07-12T01:48:15.812000+00:00",
+          "entity_id": "1uu22vi",
+          "entity_type": "post",
+          "evidence_keywords": [
+            "replacement parts"
+          ],
+          "post_id": "1uu22vi",
+          "reddit_id": "t3_1uu22vi",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "tencent_production_primary"
+          ],
+          "source_stratum": "tencent_production_primary",
+          "stable_rank": "198ade0cc2eddb4b9b4e758a8bc648cb84f1ab52f80762d843c056c67517d4cf",
+          "subreddit": "beyondthebump"
+        },
+        {
+          "audit_id": "L2-PUMP-007:post:1hw9xgi",
+          "context_excerpt": "…goes up to a level 12 on letdown (bacon) mode rather than just 5 which for me is not usually enough to draw milk out in a timely manner * I emailed momcozy to enquire about replacement parts being unavailable in Australia, and they express posted to me an entire new pump setup. I still bought aftermarket replacement parts from China but thought that was really great customer service - albeit a little over the top So thats my review - I really can't fault it, its a great pump and hopefully this helps someone else as…",
+          "created_at_utc": "2025-01-08T03:09:03+00:00",
+          "entity_id": "1hw9xgi",
+          "entity_type": "post",
+          "evidence_keywords": [
+            "replacement parts"
+          ],
+          "post_id": "1hw9xgi",
+          "reddit_id": "t3_1hw9xgi",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "historical_canonical",
+            "imported_archive"
+          ],
+          "source_stratum": "historical_canonical",
+          "stable_rank": "1a38812808a3e548a44bf41447c3aec3cdb404cb35d9e623b366d8dd0275b4f1",
+          "subreddit": "ExclusivelyPumping"
+        },
+        {
+          "audit_id": "L2-PUMP-007:post:1nuclab",
+          "context_excerpt": "…, about 5 1/2 months in, the motor died completely. Does anyone have experience with the Elvie Stride 2? How does it match up to the original stride? I’m concerned that the replacement parts are not readily available. Also concerned about longevity given my 1st experience. Also, who has experience with Willow Go in comparison to the Elvie? I love the idea of 7 oz cup sizes so I’m not pausing to empty the cups and then starting the session up again. I also know the motor is slightly stronger. I often had my Elvie cl…",
+          "created_at_utc": "2025-09-30T13:01:56+00:00",
+          "entity_id": "1nuclab",
+          "entity_type": "post",
+          "evidence_keywords": [
+            "replacement parts"
+          ],
+          "post_id": "1nuclab",
+          "reddit_id": "t3_1nuclab",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "imported_archive"
+          ],
+          "source_stratum": "imported_archive",
+          "stable_rank": "391912ffcffd93360a01ee57efcf9353c4823f742e70da183da09e14f8b8d0f7",
+          "subreddit": "ExclusivelyPumping"
+        },
+        {
+          "audit_id": "L2-PUMP-007:comment:t1_owlr59j",
+          "context_excerpt": "Upvote! I worked with Aeroflow to get a Spectra s1 through insurance at a highly discounted price plus reordering replacement parts has been supremely easy, which is so nice in the thick of postpartum.",
+          "created_at_utc": "2026-07-10T00:27:59.131000+00:00",
+          "entity_id": "t1_owlr59j",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "replacement parts"
+          ],
+          "post_id": "1us592o",
+          "reddit_id": "t1_owlr59j",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "tencent_production_primary"
+          ],
+          "source_stratum": "tencent_production_primary",
+          "stable_rank": "5004751255c2e6c12b883d45b0a29bdc1ef3dcee6285f423e360e78a2dcbb0ec",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L2-PUMP-007:comment:t1_nqcblc2",
+          "context_excerpt": "I will save you as people have saved me!! Replacement parts diaphragm/duckbills for the lanisoh discrete duo &amp; motif aura are exactly the same as Eufy. I tried myself when aeroflow had no stock in eufy and they work just the same. Protip if you order from them through insurance you get two sets with the discrete duo (not sure about the motif one)",
+          "created_at_utc": "2025-11-23T11:18:06+00:00",
+          "entity_id": "t1_nqcblc2",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "replacement parts"
+          ],
+          "post_id": "1p49ylj",
+          "reddit_id": "t1_nqcblc2",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "historical_canonical",
+            "imported_archive"
+          ],
+          "source_stratum": "historical_canonical",
+          "stable_rank": "03de9512e864a12d89eba87e9c139ee70bbd4f70260a8aadcea958a910281559",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L2-PUMP-007:comment:t1_it2bf63",
+          "context_excerpt": "If you’re not using all original spectra parts or spectra branded replacement parts, don’t tell them. I read it can affect getting a replacement. I’m not sure if it would matter if the motor died, but just something to note!",
+          "created_at_utc": "2022-10-20T12:56:36+00:00",
+          "entity_id": "t1_it2bf63",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "replacement parts"
+          ],
+          "post_id": "y8vtu8",
+          "reddit_id": "t1_it2bf63",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "imported_archive"
+          ],
+          "source_stratum": "imported_archive",
+          "stable_rank": "103232a52de55ec2ebd0c2abc56991a47ea9d8836c71bc03ae0fa52bae658361",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L2-PUMP-007:comment:t1_ox3ys31",
+          "context_excerpt": "…n my 2nd exclusively pumping journey and realizing I may have a slight case of elastic nipples this time around and have been primarily using willow Gos lately (need to get replacement parts for my eufy) and they work really well with stretchier anatomy. Their inserts are great, and I find the most comfortable pumps are the ones where I’m in a bit of a tighter bra and use pumping spray. Other wearables I’ve tried are: Momcozy m5 - obviously you have these so my input is irrelevant Willow Go - actually really like t…",
+          "created_at_utc": "2026-07-12T16:35:07.628000+00:00",
+          "entity_id": "t1_ox3ys31",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "replacement parts"
+          ],
+          "post_id": "1uuixrn",
+          "reddit_id": "t1_ox3ys31",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "tencent_production_primary"
+          ],
+          "source_stratum": "tencent_production_primary",
+          "stable_rank": "a94d095133f28ad68c2bd734e29af310fe2f4e481d6a70694c5343f4e1fd3b78",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L2-PUMP-007:comment:t1_nkmxxey",
+          "context_excerpt": "Did you not get a pump through your insurance? I bought a momcozy V1 pro as a secondary but I got my spectra 1 through insurance and they send me free replacement parts monthly. All US insurances are required to have some form of breast pump coverage because it’s classified as a necessity for the baby",
+          "created_at_utc": "2025-10-21T17:52:54+00:00",
+          "entity_id": "t1_nkmxxey",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "replacement parts"
+          ],
+          "post_id": "1oc8s59",
+          "reddit_id": "t1_nkmxxey",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "historical_canonical",
+            "imported_archive"
+          ],
+          "source_stratum": "historical_canonical",
+          "stable_rank": "2875d48b1b7ff5e0ba3a64ff1d6a9b17ce44c95c6efd385ddc71a5755690bb65",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L2-PUMP-007:comment:t1_o9ws732",
+          "context_excerpt": "Same here with the Elvie strides, I really liked them. Luckily bought all my replacement parts second hand (unopened) or else that would’ve been really expensive.",
+          "created_at_utc": "2026-03-11T19:40:43+00:00",
+          "entity_id": "t1_o9ws732",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "replacement parts"
+          ],
+          "post_id": "1rqxo0n",
+          "reddit_id": "t1_o9ws732",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "imported_archive"
+          ],
+          "source_stratum": "imported_archive",
+          "stable_rank": "15162920ecdf36399b8687123d7a71c140e9e290cef24083f8ddc390741abb89",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L2-PUMP-007:comment:t1_owl8c5x",
+          "context_excerpt": "Go to Aeroflow breast pumps They process everything through your insurance and show you which pumps you can choose based on your insurance. I got a baby Buddha 2.0 and I love it. It's perfect. They also check in with you very often about needing replacement parts and more bags. I haven't had to buy anything related to breast pumping at all. Additionally, they'll send you a pregnancy back brace and compression socks during your pregnancy.",
+          "created_at_utc": "2026-07-09T22:49:29.020000+00:00",
+          "entity_id": "t1_owl8c5x",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "replacement parts"
+          ],
+          "post_id": "1us592o",
+          "reddit_id": "t1_owl8c5x",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "tencent_production_primary"
+          ],
+          "source_stratum": "tencent_production_primary",
+          "stable_rank": "cee6068d1f75392305524960a48954ba47808831501e0d8be1149fa67de7986c",
+          "subreddit": null
+        }
+      ],
+      "tag_id": "L2-PUMP-007",
+      "theme": "复购行为"
+    },
+    {
+      "definition": "消费者在评价中明确表示愿意向他人推荐，或使用“必买”“安利”等强烈推荐词汇；不含一般性好评或被动推荐。",
+      "dictionary_reference": {
+        "aipl_node": "L3",
+        "biz_action": "产品中心：围绕推荐意愿复购准备度主题做专项优化和闭环",
+        "business_impact": "复购率,口碑/评分",
+        "consumer_card": "画像卡",
+        "dept_owner": "产品中心",
+        "intent_type": "口碑推荐",
+        "problem_type": "个性化",
+        "story_lines": "复购准备度",
+        "strategy_package": "复购激活包"
+      },
+      "governance_review": {
+        "note": "",
+        "reason_code": "pending",
+        "status": "pending"
+      },
+      "keywords_en": [
+        "highly recommend",
+        "definitely recommend",
+        "would recommend",
+        "buy again",
+        "repurchase",
+        "told my friend"
+      ],
+      "name_cn": "强烈推荐",
+      "name_en": "Highly Recommended",
+      "population": {
+        "comment_entities": 49,
+        "name_cn": "强烈推荐",
+        "name_en": "Highly Recommended",
+        "post_entities": 3,
+        "tag_id": "L0-GEN-103",
+        "tag_sentiment": "正向",
+        "theme": "推荐意愿",
+        "total_entities": 52
+      },
+      "sample_counts": {
+        "by_source_stratum": {
+          "historical_canonical": 3,
+          "imported_archive": 4,
+          "tencent_production_primary": 3
+        },
+        "comments": 7,
+        "posts": 3,
+        "total": 10
+      },
+      "samples": [
+        {
+          "audit_id": "L0-GEN-103:post:1uu22vi",
+          "context_excerpt": "…ore milk out of it. I got the Pumpin Pals silicone flanges and I thought I had a huge nipples, but I ended up using the XS (blue) ones. They were amazing and so comfortable highly recommend!! \\- I didn’t use a wearable pump because they kind of suck so keep that in mind. It might mess up your supply if you use it right off the bat / all the time because they just aren’t as strong as the other pumps. Obviously some people need to use them, but if you can, I would use a stronger one. \\- LOVED the Haaka. I haaka’d one…",
+          "created_at_utc": "2026-07-12T01:48:15.812000+00:00",
+          "entity_id": "1uu22vi",
+          "entity_type": "post",
+          "evidence_keywords": [
+            "highly recommend"
+          ],
+          "post_id": "1uu22vi",
+          "reddit_id": "t3_1uu22vi",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "tencent_production_primary"
+          ],
+          "source_stratum": "tencent_production_primary",
+          "stable_rank": "80ee5172e3cb58ce8ea26eeb36c8fffac9f5843724d6f75fd87e7cabc1adb4f6",
+          "subreddit": "beyondthebump"
+        },
+        {
+          "audit_id": "L0-GEN-103:post:1g2urtk",
+          "context_excerpt": "…o create a freezer stash. The momcozy m9 has a setting on the app that is specifically for boosting your milk supply. Within just a few pumps I already started to pump 6-6.5oz. I even went back to the m5 and was still pumping 6-6.5oz. Cleaning the m9 is a little more time consuming but I feel like with the output I’m getting it’s worth it. It is pricey but I found discount codes on tik tok that made it cheaper along with adding it to my Amazon registry and getting an additional discount. Overall highly recommend!!!",
+          "created_at_utc": "2024-10-13T17:22:11+00:00",
+          "entity_id": "1g2urtk",
+          "entity_type": "post",
+          "evidence_keywords": [
+            "highly recommend"
+          ],
+          "post_id": "1g2urtk",
+          "reddit_id": "t3_1g2urtk",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "imported_archive"
+          ],
+          "source_stratum": "imported_archive",
+          "stable_rank": "3060c0321ab1f6ba52f23ab2ab40658947cc110d6918b33781c355ea9d792ea6",
+          "subreddit": "ExclusivelyPumping"
+        },
+        {
+          "audit_id": "L0-GEN-103:post:1ndsx3n",
+          "context_excerpt": "What is the worst pump youve used? I got the spectra 2 as a hand-me- down from my sister in law, tried multiple flanges and omg I thought my nipples were going to fall off!!! What pumps didn’t work/worked best for you? Since then i moved on to the second hand-me-down pump the in style medela (which i was originally avoiding because i hate the color yellow lol) and its been such a life saver I highly recommend it!!",
+          "created_at_utc": "2025-09-10T22:57:56+00:00",
+          "entity_id": "1ndsx3n",
+          "entity_type": "post",
+          "evidence_keywords": [
+            "highly recommend"
+          ],
+          "post_id": "1ndsx3n",
+          "reddit_id": "t3_1ndsx3n",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "imported_archive"
+          ],
+          "source_stratum": "imported_archive",
+          "stable_rank": "6908bcd6d44ccb4b44358c4a9f5694eaa8f78e242b4d43ae30f8af4fbce3e1fd",
+          "subreddit": "ExclusivelyPumping"
+        },
+        {
+          "audit_id": "L0-GEN-103:comment:t1_owjejwj",
+          "context_excerpt": "I loved my Pumpables Genie Advanced portable and it worked for me just as well as my Spectra S2 but was smaller and lighter and I could wear it on a lanyard around my next. I also had wearables, but they didn’t work as well as the PGA or Spectra and I had lower output. I highly recommend the PGA if you want a portable.",
+          "created_at_utc": "2026-07-09T18:05:30.010000+00:00",
+          "entity_id": "t1_owjejwj",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "highly recommend"
+          ],
+          "post_id": "1urx2im",
+          "reddit_id": "t1_owjejwj",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "tencent_production_primary"
+          ],
+          "source_stratum": "tencent_production_primary",
+          "stable_rank": "b7975c66fe68d3f03901e3b5c1a932d9d1bdc75e04ac39a7de43f2a64d9fc4e1",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-GEN-103:comment:t1_nyrfnaj",
+          "context_excerpt": "It is common to lose supply with wearables. They are not designed to be a primary pump and have inadequate suction. I would recommend getting a wall pump asap and continue pumping at least 8ppd until you regulate (~8-12 weeks). If you are looking to increase your supply I would add in a power pump and ideal pump every 2 hours during the day at 3 hours overnight. Hydration, rest, eating well and protein also play a huge part in supply.",
+          "created_at_utc": "2026-01-10T09:46:10+00:00",
+          "entity_id": "t1_nyrfnaj",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "would recommend"
+          ],
+          "post_id": "1q8woen",
+          "reddit_id": "t1_nyrfnaj",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "historical_canonical",
+            "imported_archive"
+          ],
+          "source_stratum": "historical_canonical",
+          "stable_rank": "0096cfd1ac2b38833594b9bdf1ac3d62e6e4dbfed60282a8b9e1acd0e63b9a1d",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-GEN-103:comment:t1_mhn5vo2",
+          "context_excerpt": "Hey! I got the Eufy pump! It’s been amazing. I started using it 3 days postpartum and have not had any problems or troubles! I find it works really well, it’s very quiet and I honestly don’t even notice them on me. The heating tech feature is so nice too if I’m being honest. I bought a bunch of spare parts for it for when the time comes to switch over but so far so good! I highly highly recommend the pump!",
+          "created_at_utc": "2025-03-13T21:54:09+00:00",
+          "entity_id": "t1_mhn5vo2",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "highly recommend"
+          ],
+          "post_id": "1gwuu6a",
+          "reddit_id": "t1_mhn5vo2",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "imported_archive"
+          ],
+          "source_stratum": "imported_archive",
+          "stable_rank": "057f71d93f79fb67d6b89ec33541003f8a48407c724a2ecf0af322b2180bab6b",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-GEN-103:comment:t1_oweppu6",
+          "context_excerpt": "I used a mommed s21 (it was like $80 on Amazon) as my first wearable and it remained my favorite after trying the eufy, willow, and baby Buddha after. Highly recommend!",
+          "created_at_utc": "2026-07-09T01:44:38.775000+00:00",
+          "entity_id": "t1_oweppu6",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "highly recommend"
+          ],
+          "post_id": "1urbexj",
+          "reddit_id": "t1_oweppu6",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "tencent_production_primary"
+          ],
+          "source_stratum": "tencent_production_primary",
+          "stable_rank": "c12cfe8b235025b0b79f21d5cfde9503c58a2f05bc7c5430856a53331d8cd11f",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-GEN-103:comment:t1_nsw5t02",
+          "context_excerpt": "I was able to scope a used one up from offer up for considerably cheaper, and I've fallen in love with it! I use it daily on pump parts, bottles and binkies. It's honestly so so nice to have, I highly recommend getting one if you can swing it",
+          "created_at_utc": "2025-12-08T05:44:58+00:00",
+          "entity_id": "t1_nsw5t02",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "highly recommend"
+          ],
+          "post_id": "1pgy054",
+          "reddit_id": "t1_nsw5t02",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "historical_canonical",
+            "imported_archive"
+          ],
+          "source_stratum": "historical_canonical",
+          "stable_rank": "063bfad9382ece3ac3afe7d64a6d18a5118ee1fda92a4f937e3af42d2e817e71",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-GEN-103:comment:t1_obs9ybp",
+          "context_excerpt": "I would recommend the eufy over the mom cozy ones. Many of my friends had their mom cozy ones not last as long as I’ve had my eufy!",
+          "created_at_utc": "2026-03-22T04:19:41+00:00",
+          "entity_id": "t1_obs9ybp",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "would recommend"
+          ],
+          "post_id": "1s092up",
+          "reddit_id": "t1_obs9ybp",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "imported_archive"
+          ],
+          "source_stratum": "imported_archive",
+          "stable_rank": "0c1350ff60146504501fb939fe318c459d766ac1f07d6202f2e3b26d17fc9f0e",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L0-GEN-103:comment:t1_o8675vm",
+          "context_excerpt": "I would recommend the ergobaby original 💓 on my second bb with my original and have no complaints. Great for back carrying too!",
+          "created_at_utc": "2026-03-02T03:47:29+00:00",
+          "entity_id": "t1_o8675vm",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "would recommend"
+          ],
+          "post_id": "1rihtrg",
+          "reddit_id": "t1_o8675vm",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "historical_canonical",
+            "imported_archive"
+          ],
+          "source_stratum": "historical_canonical",
+          "stable_rank": "3178be218bac18c73b43248f6567a31efe987b1ba834079a3be95054eaede54a",
+          "subreddit": null
+        }
+      ],
+      "tag_id": "L0-GEN-103",
+      "theme": "推荐意愿"
+    },
+    {
+      "definition": "用户因法兰尺寸、乳头弹性或贴合问题出现疼痛、不适、位置难调等负面体验。",
+      "dictionary_reference": {
+        "aipl_node": "L1",
+        "biz_action": "产品部：围绕法兰尺码不合适主题做专项优化和闭环",
+        "business_impact": "退货率,口碑/评分",
+        "consumer_card": "场景任务卡",
+        "dept_owner": "产品中心",
+        "intent_type": "故障",
+        "problem_type": "产品性能",
+        "story_lines": "场景使用冲突",
+        "strategy_package": "场景适配优化包"
+      },
+      "governance_review": {
+        "note": "",
+        "reason_code": "pending",
+        "status": "pending"
+      },
+      "keywords_en": [
+        "wrong flange size",
+        "flange hurts",
+        "nipple pain",
+        "elastic nipples",
+        "flange doesn't fit",
+        "need different flange size"
+      ],
+      "name_cn": "法兰尺码不合适",
+      "name_en": "Flange Size Mismatch",
+      "population": {
+        "comment_entities": 32,
+        "name_cn": "法兰尺码不合适",
+        "name_en": "Flange Size Mismatch",
+        "post_entities": 4,
+        "tag_id": "L2-PUMP-016",
+        "tag_sentiment": "负向",
+        "theme": "使用舒适度",
+        "total_entities": 36
+      },
+      "sample_counts": {
+        "by_source_stratum": {
+          "historical_canonical": 3,
+          "imported_archive": 3,
+          "tencent_production_primary": 4
+        },
+        "comments": 7,
+        "posts": 3,
+        "total": 10
+      },
+      "samples": [
+        {
+          "audit_id": "L2-PUMP-016:post:1uuixrn",
+          "context_excerpt": "…use at night or occasionally in the car. I don’t like it for a few reasons and am looking to purchase a new one. I don’t find it comfortable and experience pinching. I have elastic nipples and have tried multiple size inserts, but they all pinch. I could tolerate this if I didn’t have so much trouble aligning my nipple, though. Since I mainly use it at night, having to fiddle with it for 5 minutes to get it to work is too laborious. I’ve tried all the tricks but nothing consistently works. I‘m leaning towards the E…",
+          "created_at_utc": "2026-07-12T15:43:51.363000+00:00",
+          "entity_id": "1uuixrn",
+          "entity_type": "post",
+          "evidence_keywords": [
+            "elastic nipples"
+          ],
+          "post_id": "1uuixrn",
+          "reddit_id": "t3_1uuixrn",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "tencent_production_primary"
+          ],
+          "source_stratum": "tencent_production_primary",
+          "stable_rank": "3c42476cdf9fd683362b4197578a6b2a2f46b74b64ebc34a6d16e021aef43272",
+          "subreddit": "ExclusivelyPumping"
+        },
+        {
+          "audit_id": "L2-PUMP-016:post:1utlerw",
+          "context_excerpt": "…rted resenting pumping. I read about the legendary inserts, so now I tried that, but I pumped for 40 min at max output and am still feeling full. I triple checked my nipple placement and everything. I get way more with my sisters hand me down M5 and am wondering if I return the Eufy and just buy a new M5? Any help would be great as I’ve seen so many people have success with the Eufy! I do think I may have elastic nipples? Also, should I size down with the flange for Eufy? I thought I read somewhere that could help?",
+          "created_at_utc": "2026-07-11T14:20:55.977000+00:00",
+          "entity_id": "1utlerw",
+          "entity_type": "post",
+          "evidence_keywords": [
+            "elastic nipples"
+          ],
+          "post_id": "1utlerw",
+          "reddit_id": "t3_1utlerw",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "tencent_production_primary"
+          ],
+          "source_stratum": "tencent_production_primary",
+          "stable_rank": "4fb9fcc47200f601f6992b321616d5981263574086b7ccc18afcd5ece1301eff",
+          "subreddit": "ExclusivelyPumping"
+        },
+        {
+          "audit_id": "L2-PUMP-016:post:1uqtyku",
+          "context_excerpt": "Good wearables for elastic nipples? Second time exclusive pumper here and looking for recommendation!I tried the Momcozy m5 and the Elvie stride made my last breastfeeding journey and had absolutely no luck getting milk to come out with either one. I think the tunnels of both were just too short for elastic nipples as they’d hit the front of the cup with every pull. I’m using the Zomee mothers nature h1 pump now as my primary pump but wondering if anyone with elastic nipples has had luck with any of the newer weara…",
+          "created_at_utc": "2026-07-08T14:16:09.070000+00:00",
+          "entity_id": "1uqtyku",
+          "entity_type": "post",
+          "evidence_keywords": [
+            "elastic nipples"
+          ],
+          "post_id": "1uqtyku",
+          "reddit_id": "t3_1uqtyku",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "tencent_production_primary"
+          ],
+          "source_stratum": "tencent_production_primary",
+          "stable_rank": "7df66302cba0ee269ea1ab0570469952833ace0c046511e892e771ac45efe909",
+          "subreddit": "ExclusivelyPumping"
+        },
+        {
+          "audit_id": "L2-PUMP-016:comment:t1_ox3ys31",
+          "context_excerpt": "…d ones.. but, I haven’t used the s2 so I can’t give personal feedback on that one. Currently on my 2nd exclusively pumping journey and realizing I may have a slight case of elastic nipples this time around and have been primarily using willow Gos lately (need to get replacement parts for my eufy) and they work really well with stretchier anatomy. Their inserts are great, and I find the most comfortable pumps are the ones where I’m in a bit of a tighter bra and use pumping spray. Other wearables I’ve tried are: Momc…",
+          "created_at_utc": "2026-07-12T16:35:07.628000+00:00",
+          "entity_id": "t1_ox3ys31",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "elastic nipples"
+          ],
+          "post_id": "1uuixrn",
+          "reddit_id": "t1_ox3ys31",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "tencent_production_primary"
+          ],
+          "source_stratum": "tencent_production_primary",
+          "stable_rank": "1c5ccfdd4941994f142c73387d095ccf4e0e8aca07b171faa933cbbbc05942f2",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L2-PUMP-016:comment:t1_nknzks4",
+          "context_excerpt": "…amount of parts vs my Eufy s1 was annoying, and as someone who pumps 4-6oz from each side, the pour on it was annoying. Ended up getting baby buddha 2.0 to use and works great with the v2 cups and my elastic nipples. I got the air 1 too, I actually like it and got a replacement because my hubs and or charging case wouldn't light up led lights so they sent me a whole new set. Even tried the Lacevo but didn't work out so now just selling it, me and silicone flanges just don't mesh. I always go back to my Eufy though.",
+          "created_at_utc": "2025-10-21T20:47:34+00:00",
+          "entity_id": "t1_nknzks4",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "elastic nipples"
+          ],
+          "post_id": "1oc8s59",
+          "reddit_id": "t1_nknzks4",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "historical_canonical",
+            "imported_archive"
+          ],
+          "source_stratum": "historical_canonical",
+          "stable_rank": "1770eda06537f9abaeec8b3e684cd9e6ff5c8b45d489118d455a88290536e647",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L2-PUMP-016:comment:t1_ltwxp2a",
+          "context_excerpt": "You might have elastic nipples! I switched to silicone flanges with my spectra and it was a game changer for me! Pumping isn’t painful at ALL!! I don’t mind pumping and now EP for my baby. He’s almost 9 months old and we’re going to make it to a year!",
+          "created_at_utc": "2024-10-26T21:34:58+00:00",
+          "entity_id": "t1_ltwxp2a",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "elastic nipples"
+          ],
+          "post_id": "1gcjaew",
+          "reddit_id": "t1_ltwxp2a",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "imported_archive"
+          ],
+          "source_stratum": "imported_archive",
+          "stable_rank": "11e6079e683e0cefb928f5a56455772b652be56747a74c5030bfe855a809c4a5",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L2-PUMP-016:comment:t1_o9cu2tx",
+          "context_excerpt": "…h them so I reached out to customer service who sent me a whole new set but I still had the same issue. I actually had to start giving my baby mostly formula :( I have very elastic nipples which just aren't compatible with the pumps. My nipples would get swollen and it was painful and they would not move back and forth. I switched back to the lansinoh and my supply is coming back to the point that I'm mostly giving my baby breast milk and not formula. The pumps are so expensive and it was such a bummer. I now have …",
+          "created_at_utc": "2026-03-08T18:28:51+00:00",
+          "entity_id": "t1_o9cu2tx",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "elastic nipples"
+          ],
+          "post_id": "1r4878c",
+          "reddit_id": "t1_o9cu2tx",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "historical_canonical",
+            "imported_archive"
+          ],
+          "source_stratum": "historical_canonical",
+          "stable_rank": "7d675ab2e5b7e3b919f0266559d513aaf3ea8c40da2e40705e0c0d7b375033cc",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L2-PUMP-016:comment:t1_lxj2fio",
+          "context_excerpt": "Just here to follow up on this! I figured out that it was my flanges that was causing me to take SO long to pump. I do still only use the Baby Buddha which has been amazing but the flanges made a world of a difference for me considering I have elastic nipples. I bought the silicone pumpables flanges and have loved them!",
+          "created_at_utc": "2024-11-17T01:58:06+00:00",
+          "entity_id": "t1_lxj2fio",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "elastic nipples"
+          ],
+          "post_id": "1gdcz62",
+          "reddit_id": "t1_lxj2fio",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "imported_archive"
+          ],
+          "source_stratum": "imported_archive",
+          "stable_rank": "1447365c588bc6c7c13d2269661afde0cf833db64ba2ba7012be47cacfe737e3",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L2-PUMP-016:comment:t1_nkrhgvl",
+          "context_excerpt": "3 months into twins BF/Mostly pumping because premature babies and nicu but me and my elastic nipples wouldnt have survived without my M6, regular pumps just suck my nipples in and hurt too much even with items like pumpin pals specifically targeting elastic nipples multiple different flanges and sizes nothing works as well as my momcozy m6 🤷🏼‍♀️",
+          "created_at_utc": "2025-10-22T11:53:16+00:00",
+          "entity_id": "t1_nkrhgvl",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "elastic nipples"
+          ],
+          "post_id": "1oc8s59",
+          "reddit_id": "t1_nkrhgvl",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "historical_canonical",
+            "imported_archive"
+          ],
+          "source_stratum": "historical_canonical",
+          "stable_rank": "8ceac5900330d12f100471aed5f5e9684b2b2132e0a58a17570b66943ab4df0a",
+          "subreddit": null
+        },
+        {
+          "audit_id": "L2-PUMP-016:comment:t1_ndkhpd1",
+          "context_excerpt": "Hate the Pump in Style and all wearables. Hate all silicone flanges and all non Spectra brand flanges (silicone pulls on my nipples and other brand flanges are too short for my elastic nipples). LOVE the Spectra.",
+          "created_at_utc": "2025-09-11T02:50:04+00:00",
+          "entity_id": "t1_ndkhpd1",
+          "entity_type": "comment",
+          "evidence_keywords": [
+            "elastic nipples"
+          ],
+          "post_id": "1ndsx3n",
+          "reddit_id": "t1_ndkhpd1",
+          "review": {
+            "label_verdict": "pending",
+            "note": "",
+            "reason_code": "pending",
+            "taxonomy_fit": "pending"
+          },
+          "source_kinds": [
+            "imported_archive"
+          ],
+          "source_stratum": "imported_archive",
+          "stable_rank": "156dcb92b9504176e847a47208555278e183c0980e67d6f7e83a05596f42e3cb",
+          "subreddit": null
+        }
+      ],
+      "tag_id": "L2-PUMP-016",
+      "theme": "使用舒适度"
+    }
+  ]
+}

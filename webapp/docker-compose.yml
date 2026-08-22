@@ -1,0 +1,27 @@
+services:
+  reddit_voc_site_app:
+    container_name: reddit_voc_site_app
+    build:
+      context: ..
+      dockerfile: webapp/Dockerfile
+    image: reddit-voc-site:20260707
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:18337:8080"
+    volumes:
+      - ../config:/app/config:ro
+      - ../data:/app/data
+      - ../outputs:/app/outputs
+      - ../logs:/app/logs
+      - ../src:/app/src:ro
+      - ../scripts:/app/scripts:ro
+      - ../docs:/app/docs:ro
+    networks:
+      - reddit_voc_site_net
+      - lighthouse_ai_video_net
+
+networks:
+  reddit_voc_site_net:
+    name: reddit_voc_site_net
+  lighthouse_ai_video_net:
+    external: true

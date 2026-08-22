@@ -1,0 +1,27 @@
+{
+  "schema_version": "reddit_voc_period_coverage_profile_v1",
+  "profile_version": "reddit-voc-observed-coverage-20260715-v2",
+  "applies_to_base_dataset_version": "reddit_voc_site_snapshot_20260715_v2",
+  "applies_to_base_manifest_sha256": "124104c1271ec3d45669176ed7b5157fdacb0e816a587f8db5f7ad4adc25381e",
+  "query_profile_version": "reddit-voc-fused-observed-source-contract-20260715-v2",
+  "source_set_version": "reddit_voc_site_snapshot_20260715_v2",
+  "tag_dictionary_version": "dim_tag_v6.3_final",
+  "tag_dictionary_sha256": "22664c9c446ddfa17446852079f507ab75b5af3d4dde6e4e3f3e44c195582e14",
+  "product_catalog_version": "momcozy-product-entity-ledger-2026-07-15.v1",
+  "product_catalog_sha256": "cc66f565d64c19d0624baf9821ff4e765c692c8d85b8a4d7368214ab555451ab",
+  "event_time_coverage": "partial",
+  "search_has_next_truncates_window": true,
+  "hydration_policy_version": "fused-mixed-thread-observation-20260715-v2",
+  "comment_coverage_status": "mixed",
+  "schema_drift": false,
+  "id_conflicts": 0,
+  "source_missing": false,
+  "recent_partition": false,
+  "claim_scope": "frozen_observed_fused_snapshot_not_full_reddit_population",
+  "reason_codes": [
+    "v2_search_has_next_and_cursor_debt_present",
+    "comment_depth_mixes_thread_complete_and_observed_first_page",
+    "same_frozen_observed_source_contract_applies_to_all_report_windows",
+    "comparisons_are_provisional_observed_sample_not_population_direction"
+  ]
+}

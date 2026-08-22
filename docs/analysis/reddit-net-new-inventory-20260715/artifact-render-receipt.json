@@ -1,0 +1,11 @@
+{
+  "schema_version": "data_analytics_artifact_render_receipt.v1",
+  "rendered_at": "2026-07-15T03:31:32Z",
+  "artifact": "docs/analysis/reddit-net-new-inventory-20260715/artifact.json",
+  "ok": true,
+  "widget_type": "artifact",
+  "surface": "report",
+  "manifest_title": "Reddit 净新增帖子全源盘点",
+  "render_attempts": 1,
+  "delivery_mode": "mcp-app"
+}

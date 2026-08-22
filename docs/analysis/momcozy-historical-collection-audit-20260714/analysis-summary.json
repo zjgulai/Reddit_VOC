@@ -1,0 +1,404 @@
+{
+  "as_of_date": "2026-07-14",
+  "collection_evidence": {
+    "cross_source_identity_reconciliation": {
+      "deduplicated_union_comments": 4730,
+      "deduplicated_union_posts": 410,
+      "identity_only": true,
+      "local_only_comments": 1505,
+      "local_only_posts": 109,
+      "local_task37_overlap_comments": 2023,
+      "local_task37_overlap_posts": 78,
+      "merge_plan_actions": {
+        "attach_new_comments_to_existing_local_posts": 34,
+        "insert_comments_with_new_parent_posts": 1168,
+        "insert_task37_only_comments": 1202,
+        "insert_task37_only_posts": 223,
+        "preserve_comments_on_local_only_posts": 1484,
+        "preserve_comments_on_overlap_posts": 21,
+        "preserve_local_only_comments": 1505,
+        "preserve_local_only_posts": 109,
+        "recoverable_by_exact_task37_comment_id": 6,
+        "recoverable_by_task37_parent_only": 2,
+        "recoverable_production_orphan_comments": 8,
+        "remaining_unlinked_production_comments": 10
+      },
+      "merge_plan_status": "identity_plan_frozen_not_executable",
+      "production_only_orphan_comments_with_task37_parent": 2,
+      "production_orphan_comment_ids_exact_in_task37": 6,
+      "production_orphan_comments_remaining": 10,
+      "production_orphan_comments_structurally_recoverable": 8,
+      "remote_write": false,
+      "task37_only_comments": 1202,
+      "task37_only_posts": 223,
+      "window_start_utc": "2025-01-01T00:00:00+00:00"
+    },
+    "imported_archive": {
+      "comments": 4153,
+      "coverage_grade": {
+        "full": 132,
+        "partial": 4
+      },
+      "files": 136,
+      "net_new_comments": 2259,
+      "net_new_posts": 88,
+      "post_date_range": [
+        "2013-04-28",
+        "2026-03-22"
+      ],
+      "posts": 136,
+      "provider_call": false
+    },
+    "local_canonical_union": {
+      "latest_comment_utc": "2026-07-13T22:59:14.878000+00:00",
+      "latest_post_utc": "2026-07-13T22:37:05.321000+00:00",
+      "linked_comments": 4549,
+      "posts": 221,
+      "requested_window_linked_comments": 3528,
+      "requested_window_posts": 187,
+      "validation_status": "passed"
+    },
+    "production_read_only_snapshot": {
+      "captured_at_utc": "2026-07-14T12:30:47.887809+00:00",
+      "comment_max_utc": "2026-07-13T22:59:14.878000+00:00",
+      "comments": 414,
+      "database_identity_unchanged_since_prior_snapshot": true,
+      "new_comments_since_prior_snapshot": 0,
+      "new_posts_since_prior_snapshot": 0,
+      "post_max_utc": "2026-07-13T22:37:05.321000+00:00",
+      "post_min_utc": "2026-07-07T00:50:56.094000+00:00",
+      "posts": 85,
+      "production_unchanged": true
+    },
+    "task37_remote_staging": {
+      "analyses": 3526,
+      "candidate_statuses": {
+        "excluded": 6,
+        "hydrated": 157,
+        "hydrated/post_only_coverage": 1,
+        "hydrated/unresolved_more": 95
+      },
+      "candidates": 259,
+      "comments": 3225,
+      "historical_coverage_complete": false,
+      "minimum_first_comment_page_request_floor": 96,
+      "offline_local_only_comment_increment": 21,
+      "production_unchanged": true,
+      "provider_request_count": 1199,
+      "remaining_provider_budget": 1,
+      "reported_gap_after_offline_union": 2082,
+      "task37_provider_call": false,
+      "threads": 301,
+      "unresolved_candidate_comment_rows": 752,
+      "unresolved_comment_candidates": 96,
+      "unresolved_more_nodes": 148
+    },
+    "v2_delta_offline_coverage": {
+      "coverage_classes": {
+        "comment_only_existing_lexical_evidence": 4,
+        "post_and_comment_existing_lexical_evidence": 37,
+        "post_only_existing_lexical_evidence": 9,
+        "zero_existing_lexical_evidence": 19
+      },
+      "distinct_evidence_parent_post_ids": 299,
+      "distinct_matching_comment_ids": 1141,
+      "distinct_matching_post_ids": 242,
+      "provider_lanes_completed": 0,
+      "remote_content_exported": false,
+      "terms": 69,
+      "terms_with_comment_evidence": 41,
+      "terms_with_post_surface_evidence": 46,
+      "top_probe_term": "\"Momcozy BM03\""
+    }
+  },
+  "comment_coverage_debt": {
+    "candidates": 96,
+    "independent_validation_status": "passed",
+    "local_only_comment_increment": 21,
+    "minimum_first_comment_page_request_floor": 96,
+    "more_nodes": 148,
+    "remaining_reported_gap": 2082,
+    "remaining_task37_provider_budget": 1,
+    "remaining_unlinked_production_orphans": 10,
+    "structurally_recoverable_production_orphans": 8,
+    "task37_comment_rows": 752
+  },
+  "delta_offline_coverage": {
+    "coverage_classes": {
+      "comment_only_existing_lexical_evidence": 4,
+      "post_and_comment_existing_lexical_evidence": 37,
+      "post_only_existing_lexical_evidence": 9,
+      "zero_existing_lexical_evidence": 19
+    },
+    "distinct_evidence_parent_post_ids": 299,
+    "independent_validation_status": "passed",
+    "provider_lanes_completed": 0,
+    "terms": 69,
+    "terms_with_comment_evidence": 41,
+    "terms_with_post_surface_evidence": 46,
+    "top_probe_candidates": [
+      {
+        "coverage_class": "zero_existing_lexical_evidence",
+        "evidence_parent_posts": 0,
+        "group": "official_catalog_aliases",
+        "priority_rank": 1,
+        "priority_tier": "P0",
+        "provider_discovery_still_required": true,
+        "term": "\"Momcozy BM03\""
+      },
+      {
+        "coverage_class": "zero_existing_lexical_evidence",
+        "evidence_parent_posts": 0,
+        "group": "official_catalog_aliases",
+        "priority_rank": 2,
+        "priority_tier": "P0",
+        "provider_discovery_still_required": true,
+        "term": "\"Momcozy DeepClean\""
+      },
+      {
+        "coverage_class": "zero_existing_lexical_evidence",
+        "evidence_parent_posts": 0,
+        "group": "official_catalog_aliases",
+        "priority_rank": 3,
+        "priority_tier": "P0",
+        "provider_discovery_still_required": true,
+        "term": "\"Momcozy S12 Pro Quick\""
+      },
+      {
+        "coverage_class": "zero_existing_lexical_evidence",
+        "evidence_parent_posts": 0,
+        "group": "momcozy_model_gap",
+        "priority_rank": 4,
+        "priority_tier": "P0",
+        "provider_discovery_still_required": true,
+        "term": "\"Momcozy BS03\""
+      },
+      {
+        "coverage_class": "zero_existing_lexical_evidence",
+        "evidence_parent_posts": 0,
+        "group": "momcozy_model_gap",
+        "priority_rank": 5,
+        "priority_tier": "P0",
+        "provider_discovery_still_required": true,
+        "term": "\"Momcozy BumpEase\""
+      },
+      {
+        "coverage_class": "zero_existing_lexical_evidence",
+        "evidence_parent_posts": 0,
+        "group": "momcozy_model_gap",
+        "priority_rank": 6,
+        "priority_tier": "P0",
+        "provider_discovery_still_required": true,
+        "term": "\"Momcozy Dreamlign\""
+      },
+      {
+        "coverage_class": "zero_existing_lexical_evidence",
+        "evidence_parent_posts": 0,
+        "group": "momcozy_model_gap",
+        "priority_rank": 7,
+        "priority_tier": "P0",
+        "provider_discovery_still_required": true,
+        "term": "\"Momcozy Ergonest\""
+      },
+      {
+        "coverage_class": "zero_existing_lexical_evidence",
+        "evidence_parent_posts": 0,
+        "group": "momcozy_model_gap",
+        "priority_rank": 8,
+        "priority_tier": "P0",
+        "provider_discovery_still_required": true,
+        "term": "\"Momcozy Ergowrap\""
+      },
+      {
+        "coverage_class": "zero_existing_lexical_evidence",
+        "evidence_parent_posts": 0,
+        "group": "momcozy_model_gap",
+        "priority_rank": 9,
+        "priority_tier": "P0",
+        "provider_discovery_still_required": true,
+        "term": "\"Momcozy Mobile Flow\""
+      },
+      {
+        "coverage_class": "zero_existing_lexical_evidence",
+        "evidence_parent_posts": 0,
+        "group": "owner_alias_gap",
+        "priority_rank": 10,
+        "priority_tier": "P0",
+        "provider_discovery_still_required": true,
+        "term": "\"mcozy\""
+      }
+    ]
+  },
+  "dictionary_quality": {
+    "binary_difference_only_utf8_bom": true,
+    "binary_equal": false,
+    "blank_cells": 0,
+    "candidate_crlf_count": 2347,
+    "candidate_has_utf8_bom": false,
+    "candidate_rows": 2346,
+    "candidate_sha256": "cf60ff63b6d2237156e7d12beb3a2014a5351ced07ffed18e6f2ef8c872e5995",
+    "cross_sentiment_shared_keyword_count": 338,
+    "final_crlf_count": 2347,
+    "final_has_utf8_bom": true,
+    "final_rows": 2346,
+    "final_sha256": "22664c9c446ddfa17446852079f507ab75b5af3d4dde6e4e3f3e44c195582e14",
+    "invalid_keyword_json_rows": 0,
+    "scope_distribution": {
+      "L0-通用": 403,
+      "L1-品线专属": 160,
+      "L2-SPU专属": 1225,
+      "L2-品类专属": 558
+    },
+    "semantic_equal": true,
+    "sentiment_distribution": {
+      "中性": 337,
+      "正向": 901,
+      "负向": 1108
+    },
+    "shared_keyword_phrase_count": 1692,
+    "unique_candidate_tag_ids": 2346,
+    "unique_final_tag_ids": 2346
+  },
+  "evidence_gate": {
+    "decision": "allowed-with-label",
+    "forbidden_claims": [
+      "historical competitor/SPU coverage is complete",
+      "official catalog product IDs are internal SPU IDs",
+      "the May internal product-master snapshot proves current active status or effective dates",
+      "BS03 and BM03 are the same model",
+      "Task 37 issued a TikHub request",
+      "one remaining Task 37 request can close the 96 partial comment candidates",
+      "reported comment-count gaps equal guaranteed retrievable comments",
+      "production was merged or accepted",
+      "DingTalk was sent"
+    ],
+    "supported_claims": [
+      "dictionary and local source snapshots were analyzed read-only",
+      "the Phase 3 v3.5 internal product master joins all 254 dictionary SPU IDs to exact Chinese and English product names",
+      "the 75-term / 69-delta search profile remains unchanged after rejecting 772 unreviewed heuristic spoken variants",
+      "the official Momcozy storefront catalog was captured read-only for product-name evidence",
+      "competitor archive ingestion is complete for the supplied 136 files",
+      "Task 37 staging remains partial",
+      "Task 37 and the local canonical union were reconciled exactly at Reddit post/comment ID grain",
+      "the identity-only local plus Task 37 union contains 410 posts and 4,730 linked comments in the requested window",
+      "all 69 V2 delta terms were profiled offline: 19 have zero lexical evidence, 4 are comment-only, 9 are post-only, and 37 appear in both post and comment surfaces",
+      "offline lexical evidence prioritizes probes but does not complete any Provider discovery lane",
+      "all 96 Task 37 partial comment candidates were reconciled by exact ID; seven gain 21 local-only comments but all retain a reported-count gap",
+      "the current one-request reserve is below the 96-request first-comment-page floor and is not a closure budget",
+      "one Task 37 parent post makes eight production orphan comments structurally recoverable; ten still lack parent evidence",
+      "the v2 search profile is a non-activated candidate"
+    ]
+  },
+  "governed_brand_count": 18,
+  "governed_brands": [
+    "Baby Bjorn",
+    "Boppy",
+    "Comfelie",
+    "Dr. Brown's",
+    "Elvie",
+    "Ergobaby",
+    "Haakaa",
+    "Kindred Bravely",
+    "Lansinoh",
+    "Medela",
+    "Momcozy",
+    "Nanit",
+    "Owlet",
+    "Philips Avent",
+    "Spectra",
+    "Tommee Tippee",
+    "Wabi Baby",
+    "Willow"
+  ],
+  "governed_competitor_count": 17,
+  "internal_spu_master_profile": {
+    "active_status_present": false,
+    "authority_grade": "project_documented_internal_product_master_snapshot",
+    "dictionary_spu_matches": 254,
+    "effective_date_present": false,
+    "english_named_matches": 254,
+    "named_matches": 254,
+    "product_master_rows": 431,
+    "spoken_keyword_variants_not_activated": 772,
+    "verified_single_official_family_bindings": 6,
+    "version": "Phase 3 v3.5"
+  },
+  "official_catalog_profile": {
+    "canonical_product_family_count": 18,
+    "captured_at_utc": "2026-07-14T11:56:19.090943+00:00",
+    "catalog_product_count": 406,
+    "full_internal_spu_join_complete": false,
+    "official_candidate_term_count": 6,
+    "source_authority": "Momcozy official Shopify storefront",
+    "unresolved_internal_aliases": [
+      {
+        "alias": "BS03",
+        "internal_spu_id": "SPU000714",
+        "reason": "No exact BS03 title or handle exists in the current official catalog; BM03 is a different model string and is not treated as equivalent."
+      }
+    ],
+    "verified_existing_alias_count": 24
+  },
+  "schema_version": "momcozy_historical_collection_audit_v1",
+  "search_profile": {
+    "candidate_term_count": 75,
+    "delta_term_count": 69,
+    "group_coverage": [
+      {
+        "covered_by_legacy": 0,
+        "delta_terms": 1,
+        "group": "owner_alias_gap",
+        "recommended_terms": 1
+      },
+      {
+        "covered_by_legacy": 5,
+        "delta_terms": 20,
+        "group": "momcozy_model_gap",
+        "recommended_terms": 25
+      },
+      {
+        "covered_by_legacy": 0,
+        "delta_terms": 6,
+        "group": "official_catalog_aliases",
+        "recommended_terms": 6
+      },
+      {
+        "covered_by_legacy": 0,
+        "delta_terms": 17,
+        "group": "governed_competitors",
+        "recommended_terms": 17
+      },
+      {
+        "covered_by_legacy": 1,
+        "delta_terms": 25,
+        "group": "category_anchors",
+        "recommended_terms": 26
+      }
+    ],
+    "legacy_distinct_semantic_term_count": 12,
+    "legacy_term_count": 15
+  },
+  "spu_profile": {
+    "distinct_spu_ids": 254,
+    "distinct_voc_categories": 24,
+    "heuristic_spoken_variants_not_activated": 772,
+    "internal_master_active_status_present": false,
+    "internal_master_effective_date_present": false,
+    "internal_spu_english_named_matches": 254,
+    "internal_spu_model_field_present": 162,
+    "internal_spu_name_join_complete": true,
+    "internal_spu_named_matches": 254,
+    "named_model_voc_categories": [
+      "BS03 全自动清洗消毒器",
+      "M5 吸奶器",
+      "M9 吸奶器"
+    ],
+    "pump_base_eligible_rules": 470,
+    "spu_name_column_present": false,
+    "spu_tag_rows": 1225,
+    "supported_model_spu_aliases": {
+      "m5": "SPU001001001003016",
+      "m9": "SPU000168"
+    }
+  }
+}

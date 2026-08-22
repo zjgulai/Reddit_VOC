@@ -1,0 +1,63 @@
+{
+  "boundaries": {
+    "database_write": "local-analysis-output-only",
+    "live_send": false,
+    "local_product_tests_run": false,
+    "production_unchanged": true,
+    "provider_attempt_made": false,
+    "provider_call": false,
+    "remote_content_exported": false,
+    "remote_usernames_exported": false,
+    "remote_write": false
+  },
+  "checks": {
+    "all_candidates_still_have_gap": true,
+    "all_checkpoints_partial_page_one": true,
+    "audit_checks_passed": true,
+    "audit_contains_no_content_or_user_keys": true,
+    "audit_source_hash_matches": true,
+    "exact_task37_orphans_6": true,
+    "independent_rows_match_audit": true,
+    "local_increment_candidates_7": true,
+    "local_increment_rows_21": true,
+    "local_product_tests_not_run": true,
+    "minimum_request_floor_96": true,
+    "more_nodes_148": true,
+    "one_request_insufficient": true,
+    "parent_only_recovery_2": true,
+    "priority_ranks_complete": true,
+    "private_content_has_all_orphans": true,
+    "production_orphans_18": true,
+    "production_unchanged": true,
+    "provider_not_called": true,
+    "remaining_gap_2082": true,
+    "remaining_unlinked_10": true,
+    "remote_content_not_exported": true,
+    "remote_database_hash_pinned": true,
+    "remote_query_only": true,
+    "remote_quick_check_ok": true,
+    "remote_usernames_not_exported": true,
+    "rows_96": true,
+    "status_split_95_1": true,
+    "structural_recovery_8": true,
+    "top_priority_gap_566": true
+  },
+  "recomputed": {
+    "candidates": 96,
+    "local_increment_candidates": 7,
+    "local_increment_rows": 21,
+    "more_nodes": 148,
+    "remaining_reported_gap": 2082,
+    "remaining_unlinked_production_orphans": 10,
+    "structurally_recoverable_production_orphans": 8
+  },
+  "schema_version": "momcozy_comment_coverage_debt_validation_v1",
+  "source": {
+    "audit_path": "docs/analysis/momcozy-historical-collection-audit-20260714/comment-coverage-debt-audit.json",
+    "audit_sha256": "ad1c30366d8b40ef6c4803b2345adb30f775d11605e843a4040c4e1fd4591bff",
+    "remote_database_mode": "sqlite_uri_mode_ro_immutable_query_only",
+    "remote_database_sha256": "8356981018466164fe1f84953bd1e1e19010114817dd9689a31b996d9cc51497"
+  },
+  "status": "passed",
+  "validated_at_utc": "2026-07-14T13:06:07.640292+00:00"
+}

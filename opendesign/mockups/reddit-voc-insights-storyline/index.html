@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reddit VOC 洞察故事线结构对照</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #161616;
+        --paper: #f7f4ec;
+        --card: #fffdf7;
+        --muted: #6f6a5f;
+        --line: #2b2a27;
+        --accent: #c84a36;
+        --safe: #306746;
+        --held: #8a6b21;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        color: var(--ink);
+        background:
+          linear-gradient(rgba(22,22,22,.035) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(22,22,22,.035) 1px, transparent 1px),
+          var(--paper);
+        background-size: 24px 24px;
+        font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+      }
+
+      main { max-width: 1760px; margin: 0 auto; padding: 28px; }
+      h1, h2, h3, .scribble { font-family: "Marker Felt", "Comic Sans MS", "PingFang SC", sans-serif; }
+      h1 { font-size: 34px; margin: 0 0 6px; }
+      h2 { font-size: 25px; margin: 0; }
+      h3 { font-size: 17px; margin: 0 0 8px; }
+      p { margin: 0; line-height: 1.55; }
+
+      .intro {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr;
+        gap: 20px;
+        align-items: end;
+        padding-bottom: 18px;
+        border-bottom: 3px solid var(--line);
+      }
+
+      .intro-note {
+        border: 2px dashed var(--line);
+        background: rgba(255,255,255,.5);
+        padding: 12px 14px;
+        transform: rotate(-.35deg);
+      }
+
+      .truth-strip {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 10px;
+        margin: 18px 0 22px;
+      }
+
+      .truth {
+        min-height: 88px;
+        padding: 10px 12px;
+        border: 2px solid var(--line);
+        background: var(--card);
+        box-shadow: 3px 3px 0 rgba(22,22,22,.13);
+      }
+
+      .truth strong { display: block; font-size: 20px; margin-top: 5px; }
+      .truth small { color: var(--muted); }
+      .truth.blocked strong { color: var(--accent); }
+
+      .options {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(360px, 1fr));
+        gap: 20px;
+        align-items: start;
+      }
+
+      .option {
+        border: 3px solid var(--line);
+        background: rgba(255,253,247,.92);
+        box-shadow: 7px 7px 0 rgba(22,22,22,.15);
+        min-height: 1040px;
+        padding: 15px;
+        position: relative;
+      }
+
+      .option:nth-child(1) { transform: rotate(-.12deg); }
+      .option:nth-child(2) { transform: rotate(.08deg); }
+      .option:nth-child(3) { transform: rotate(-.05deg); }
+
+      .badge {
+        display: inline-block;
+        border: 2px solid var(--line);
+        border-radius: 999px;
+        padding: 3px 9px;
+        font-size: 12px;
+        background: #fff;
+      }
+
+      .badge.recommended { color: #fff; background: var(--safe); border-color: var(--safe); }
+      .badge.held { color: var(--held); border-color: var(--held); }
+      .option-head { display: flex; justify-content: space-between; gap: 10px; align-items: start; margin-bottom: 10px; }
+      .option-sub { color: var(--muted); font-size: 13px; margin: 5px 0 12px; }
+
+      .frame {
+        border: 2px solid var(--line);
+        background: #fff;
+        padding: 10px;
+        margin: 10px 0;
+      }
+
+      .frame.dashed { border-style: dashed; }
+      .frame.accent { border-left: 7px solid var(--accent); }
+      .frame.safe { border-left: 7px solid var(--safe); }
+      .frame.held { border-left: 7px solid var(--held); }
+
+      .tiny-nav {
+        display: flex;
+        gap: 7px;
+        flex-wrap: wrap;
+        padding-bottom: 8px;
+        border-bottom: 2px solid var(--line);
+        font-size: 12px;
+      }
+
+      .tiny-nav span { border: 1.5px solid var(--line); padding: 3px 6px; }
+      .tiny-nav .active { background: var(--ink); color: #fff; }
+
+      .grid-4, .grid-3, .grid-2 {
+        display: grid;
+        gap: 8px;
+      }
+
+      .grid-4 { grid-template-columns: repeat(4, 1fr); }
+      .grid-3 { grid-template-columns: repeat(3, 1fr); }
+      .grid-2 { grid-template-columns: repeat(2, 1fr); }
+
+      .metric, .cell {
+        border: 1.7px solid var(--line);
+        padding: 7px;
+        min-height: 54px;
+        background: rgba(247,244,236,.55);
+      }
+
+      .metric b { display: block; font-size: 17px; }
+      .metric small, .cell small { color: var(--muted); }
+      .blocked-text { color: var(--accent); font-weight: 600; }
+
+      .chart {
+        height: 114px;
+        border: 1.7px solid var(--line);
+        position: relative;
+        overflow: hidden;
+        background: repeating-linear-gradient(0deg, transparent 0 22px, rgba(22,22,22,.08) 23px 24px);
+      }
+
+      .chart::after {
+        content: "";
+        position: absolute;
+        left: 8px; right: 8px; bottom: 17px;
+        height: 48px;
+        border-top: 3px solid var(--ink);
+        border-radius: 55% 45% 0 0;
+        transform: skewY(-5deg);
+      }
+
+      .bars { height: 104px; display: flex; gap: 6px; align-items: end; padding: 8px; border: 1.7px solid var(--line); }
+      .bars i { flex: 1; border: 1.5px solid var(--line); background: #ddd8ca; min-height: 20px; }
+      .bars i:nth-child(1) { height: 72%; }
+      .bars i:nth-child(2) { height: 92%; }
+      .bars i:nth-child(3) { height: 48%; }
+      .bars i:nth-child(4) { height: 62%; }
+      .bars i:nth-child(5) { height: 36%; }
+
+      .queue { display: grid; gap: 6px; }
+      .queue div { display: grid; grid-template-columns: 1.2fr .75fr .8fr; gap: 5px; border-bottom: 1px dashed var(--line); padding: 5px 0; font-size: 12px; }
+
+      .timeline { position: relative; margin-left: 14px; padding-left: 18px; border-left: 3px solid var(--line); }
+      .timeline .step { position: relative; margin: 0 0 14px; padding: 9px; border: 1.7px solid var(--line); background: #fff; }
+      .timeline .step::before { content: ""; width: 11px; height: 11px; border: 2px solid var(--line); border-radius: 50%; background: var(--paper); position: absolute; left: -26px; top: 14px; }
+
+      .matrix {
+        display: grid;
+        grid-template-columns: 90px repeat(4, 1fr);
+        border-top: 1.7px solid var(--line);
+        border-left: 1.7px solid var(--line);
+        font-size: 11px;
+      }
+
+      .matrix div { min-height: 48px; padding: 5px; border-right: 1.7px solid var(--line); border-bottom: 1.7px solid var(--line); }
+      .matrix .hot { background: repeating-linear-gradient(45deg, #ddd8ca 0 5px, #fff 5px 10px); }
+      .matrix .held-cell { color: var(--held); background: #fff9df; }
+
+      .annotation {
+        font-family: "Marker Felt", "Comic Sans MS", "PingFang SC", sans-serif;
+        color: var(--accent);
+        font-size: 14px;
+        margin: 6px 0;
+      }
+
+      .decision {
+        margin-top: 22px;
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        gap: 18px;
+      }
+
+      .decision > div { border: 3px solid var(--line); background: var(--card); padding: 14px; }
+      ul { margin: 8px 0 0; padding-left: 20px; line-height: 1.55; }
+      .foot { margin-top: 16px; color: var(--muted); font-size: 12px; }
+
+      @media (max-width: 1280px) {
+        .options { grid-template-columns: 1fr; }
+        .option { min-height: auto; }
+      }
+
+      @media (max-width: 760px) {
+        main { padding: 15px; }
+        .intro, .decision { grid-template-columns: 1fr; }
+        .truth-strip { grid-template-columns: 1fr; }
+        .grid-4 { grid-template-columns: repeat(2, 1fr); }
+        .grid-3 { grid-template-columns: 1fr; }
+        .option { min-width: 0; width: 100%; overflow: hidden; }
+        .option-head { flex-direction: column; }
+        .frame, .cell, .metric { min-width: 0; overflow-wrap: anywhere; }
+        .matrix { grid-template-columns: 68px repeat(4, minmax(58px, 1fr)); overflow-x: auto; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="intro">
+        <div>
+          <h1>Reddit VOC 洞察故事线 · 三种结构对照</h1>
+          <p>目标：以 Momcozy → 品线 → 品类 → SPU 为主干，以竞品作对照，把“观察—诊断—行动—证据”连成一个运营闭环。</p>
+        </div>
+        <div class="intro-note scribble">
+          这是一张低保真思考稿。方框代表信息位置，不代表最终视觉；示意图不代表可发布的真实同比结果。
+        </div>
+      </section>
+
+      <section class="truth-strip" aria-label="当前数据边界">
+        <div class="truth"><small>合并候选快照</small><strong>234 帖 / 4,589 评论</strong><small>净增 +13 / +40</small></div>
+        <div class="truth"><small>最新采集状态</small><strong>PARTIAL</strong><small>允许观察，不等于完整覆盖</small></div>
+        <div class="truth"><small>安全的近期变化</small><strong>日趋势：方向性</strong><small>窗口内结构与证据可展示</small></div>
+        <div class="truth blocked"><small>正式比较指标</small><strong>周 / 月 / 同比：—</strong><small>覆盖账本与可比期尚不足</small></div>
+        <div class="truth blocked"><small>SPU 实体归属</small><strong>尚未建立</strong><small>M5/M9 仅作候选，不进 KPI</small></div>
+      </section>
+
+      <section class="options">
+        <article class="option">
+          <div class="option-head">
+            <div><h2>A. 运营闭环指挥台</h2><p class="option-sub">一页回答：发生什么 → 为什么 → 谁来做 → 证据在哪</p></div>
+            <span class="badge recommended">推荐主方案</span>
+          </div>
+
+          <div class="frame">
+            <div class="tiny-nav"><span class="active">洞察总览</span><span>日报</span><span>周报</span><span>月报</span><span>案例证据</span></div>
+            <p class="annotation">↳ 顶部永久显示覆盖状态，先告诉运营人员“这组数能不能比较”</p>
+            <div class="frame held">
+              <b>数据边界</b>　截至时间 / 来源组合 / coverage=partial / 比较状态=不可发布
+            </div>
+            <div class="grid-4">
+              <div class="metric"><small>Momcozy 讨论</small><b>观察值</b><small>同窗口样本</small></div>
+              <div class="metric"><small>负向问题</small><b>观察值</b><small>可下钻证据</small></div>
+              <div class="metric"><small>高优先级信号</small><b>观察值</b><small>责任部门可见</small></div>
+              <div class="metric"><small>同比 / 环比</small><b class="blocked-text">—</b><small>覆盖不足</small></div>
+            </div>
+            <h3 style="margin-top:12px">1. 发生了什么</h3>
+            <div class="chart"></div>
+            <p class="annotation">↳ 先复用现有 Line / StackedBar，只讲窗口内声量与情感结构</p>
+            <h3 style="margin-top:12px">2. 集中在哪里 / 为什么</h3>
+            <div class="grid-2">
+              <div class="cell"><b>品牌对照</b><div class="bars"><i></i><i></i><i></i><i></i><i></i></div><small>样本提及，不叫市场份额</small></div>
+              <div class="cell"><b>问题 × 意图</b><div class="bars"><i></i><i></i><i></i><i></i><i></i></div><small>痛点 / 推荐 / 购买意图</small></div>
+            </div>
+            <h3 style="margin-top:12px">3. 运营应该做什么</h3>
+            <div class="frame accent queue">
+              <div><b>待解决信号</b><b>责任人</b><b>下一动作</b></div>
+              <div><span>高风险产品问题</span><span>产品 / QA</span><span>核验样本</span></div>
+              <div><span>竞品优势集中</span><span>市场 / 内容</span><span>补充话术</span></div>
+              <div><span>高意向未转化</span><span>增长 / CRM</span><span>设计验证</span></div>
+            </div>
+            <h3 style="margin-top:12px">4. 原始证据</h3>
+            <div class="frame dashed">点击任何图表 → 统一证据抽屉：帖子 / 评论摘录、标签命中、品牌与主体绑定、来源链接</div>
+          </div>
+          <p><b>适合：</b>运营负责人每日打开；现有真实合同可分阶段落地，UI 改动可控。</p>
+          <p><b>代价：</b>先建立统一指标状态和行动队列契约；SPU 模块需等实体分配成熟再开启。</p>
+        </article>
+
+        <article class="option">
+          <div class="option-head">
+            <div><h2>B. 按决策节奏分册</h2><p class="option-sub">日报、周报、月报不再复用同一正文，各自服务不同会议</p></div>
+            <span class="badge">保守演进</span>
+          </div>
+
+          <div class="frame">
+            <div class="tiny-nav"><span>洞察</span><span class="active">日报</span><span>周报</span><span>月报</span></div>
+            <div class="frame held"><b>日报 · 07:00—07:00</b><br><small>覆盖 partial｜只展示本窗口观察值｜日趋势 directional-only</small></div>
+            <div class="timeline">
+              <div class="step"><h3>① 昨天发生了什么</h3><div class="grid-3"><div class="metric"><b>声量</b><small>观察值</small></div><div class="metric"><b>情感</b><small>构成</small></div><div class="metric"><b>高危</b><small>证据数</small></div></div></div>
+              <div class="step"><h3>② 哪些信号值得马上看</h3><div class="chart"></div><small>窗口内小时趋势 / 异常峰值 / 社区集中</small></div>
+              <div class="step"><h3>③ 今天谁处理什么</h3><div class="queue"><div><b>问题</b><b>Owner</b><b>动作</b></div><div><span>信号 A</span><span>产品</span><span>核验</span></div><div><span>信号 B</span><span>内容</span><span>响应</span></div></div></div>
+            </div>
+
+            <div class="frame safe"><h3>周报结构</h3><p>结构变化 → 品牌/问题集中 → 机会与风险 → 下周优先级</p><p class="blocked-text">WoW 区域：覆盖合格前显示“不可比较”，不显示百分比</p></div>
+            <div class="frame safe"><h3>月报结构</h3><p>长期结构 → 品类/SPU 组合 → AIPL/问题演化 → 资源决策与复盘</p><p class="blocked-text">MoM / YoY 区域：基线不足时显示缺口与补采计划</p></div>
+            <p class="annotation">↳ 现有报告入口和主要视觉保持，重点改正文顺序与指标语义</p>
+          </div>
+          <p><b>适合：</b>你最看重日报/周报/月报，并希望尽量保留当前 UI。</p>
+          <p><b>代价：</b>跨周期洞察会分散；运营总览还需要独立入口串联。</p>
+        </article>
+
+        <article class="option">
+          <div class="option-head">
+            <div><h2>C. Momcozy SPU 作战室</h2><p class="option-sub">从品牌层层钻到 SPU，用竞品和问题矩阵组织行动</p></div>
+            <span class="badge held">目标态 / 暂缓上线</span>
+          </div>
+
+          <div class="frame">
+            <div class="grid-2">
+              <div class="frame dashed">
+                <h3>产品树筛选</h3>
+                <p>Momcozy</p>
+                <p>└ 品线</p>
+                <p>　└ 品类</p>
+                <p>　　└ SPU</p>
+                <p class="blocked-text">实体归属合同缺失</p>
+              </div>
+              <div>
+                <div class="metric"><small>当前选中</small><b>Momcozy / 品类 / SPU</b></div>
+                <div class="metric" style="margin-top:8px"><small>竞品对照</small><b>Spectra / Medela / Elvie…</b><small>同品类、同窗口、同覆盖</small></div>
+              </div>
+            </div>
+
+            <h3 style="margin-top:12px">SPU × 问题热力图</h3>
+            <div class="matrix">
+              <div></div><div>舒适</div><div>噪音</div><div>清洁</div><div>效率</div>
+              <div><b>SPU A</b></div><div class="hot">证据</div><div>证据</div><div class="hot">证据</div><div>证据</div>
+              <div><b>SPU B</b></div><div>证据</div><div class="held-cell">held</div><div>证据</div><div class="hot">证据</div>
+              <div><b>竞品 C</b></div><div class="hot">证据</div><div>证据</div><div>证据</div><div class="hot">证据</div>
+            </div>
+            <p class="annotation">↳ 每一格都必须回到实体归属证据，不能靠型号字符串直接计数</p>
+
+            <h3 style="margin-top:12px">情感 → 问题 → 意图</h3>
+            <div class="frame dashed" style="height:120px; display:flex; align-items:center; justify-content:center">[复用 Sankey 展示壳]　负向 → 清洁问题 → 换购/求助</div>
+
+            <h3 style="margin-top:12px">经营动作卡</h3>
+            <div class="grid-2">
+              <div class="cell"><b>业务影响</b><br>risk_level / business_impact</div>
+              <div class="cell"><b>责任与策略</b><br>dept_owner / strategy_package / biz_action</div>
+            </div>
+            <div class="frame accent"><b>上线前硬门槛</b><ul><li>独立 dim_spu</li><li>entity_spu_assignment + evidence_span</li><li>品牌上下文与多义消歧</li><li>公开 SPU 聚合及隐私验证</li></ul></div>
+          </div>
+          <p><b>适合：</b>产品、市场、研发围绕具体品类/SPU 做季度经营决策。</p>
+          <p><b>代价：</b>数据工程量最大；当前直接启用会制造虚假精确度。</p>
+        </article>
+      </section>
+
+      <section class="decision">
+        <div>
+          <h2>建议组合：A 做洞察主线，B 做报告分册，C 作为受控模块</h2>
+          <ul>
+            <li>洞察页采用 A 的运营闭环，不再把“语义门禁”当作首页主故事；治理审计移入“数据质量/方法”区。</li>
+            <li>日报、周报、月报采用 B 的不同决策节奏，保留当前导航与现有组件风格。</li>
+            <li>C 不单独重做全站；待 SPU 归属通过门禁后，作为洞察页中的“品类/SPU 作战室”模块开启。</li>
+          </ul>
+        </div>
+        <div>
+          <h2>第一批只做可信能力</h2>
+          <ul>
+            <li>发布 partial observational snapshot，但不自动切生产。</li>
+            <li>上线窗口内趋势、品牌样本提及、社区/问题/意图、行动队列、证据下钻。</li>
+            <li>周/月/同比控件保留位置；coverage 不合格时显示“— + 原因 + 补采要求”。</li>
+            <li>M5/M9 与其他 SPU 均先进入 candidate/held，禁止直接进入 KPI。</li>
+            <li>案例广场保留现有 38 条精选 + 12 条历史内容，只接入审批通过的增量案例。</li>
+          </ul>
+        </div>
+      </section>
+
+      <p class="foot">状态：设计探索；production unchanged=true · provider_call=false · database_write=false · live_send=false · deploy=false</p>
+    </main>
+  </body>
+</html>

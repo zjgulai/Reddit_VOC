@@ -1,0 +1,289 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+[data-report-capture-root] *,
+[data-report-capture-root] *::before,
+[data-report-capture-root] *::after {
+  animation: none !important;
+  caret-color: transparent !important;
+  scroll-behavior: auto !important;
+  transition: none !important;
+}
+
+[data-report-capture-root] {
+  color-scheme: light;
+  isolation: isolate;
+  pointer-events: none;
+}
+
+[data-report-capture-root] .recharts-tooltip-wrapper,
+[data-report-capture-root] [role="tooltip"] {
+  display: none !important;
+}
+
+@layer base {
+  :root {
+    --primary: theme('colors.primary.DEFAULT');
+    --primary-hover: theme('colors.primary.hover');
+    --primary-light: theme('colors.primary.light');
+    --brand-coral: theme('colors.brand.primary');
+    --bg: theme('colors.surface.DEFAULT');
+    --bg-secondary: theme('colors.surface.secondary');
+    --bg-tertiary: theme('colors.surface.tertiary');
+    --bg-warm: theme('colors.surface.warm');
+    --text: theme('colors.foreground.DEFAULT');
+    --text-secondary: theme('colors.foreground.secondary');
+    --text-muted: theme('colors.foreground.muted');
+    --border: theme('colors.border.DEFAULT');
+    --border-hover: theme('colors.border.hover');
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    color: var(--text);
+    background-color: var(--bg-secondary);
+    line-height: 1.7;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+  }
+
+  #root {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    text-align: left;
+    border: none;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+  }
+
+  ::selection {
+    background-color: var(--primary-light);
+    color: var(--text);
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-6 py-3 rounded-button text-white font-medium text-body transition-all duration-200 ease-smooth;
+    background-color: var(--primary);
+    box-shadow: theme('boxShadow.button');
+  }
+  .btn-primary:hover {
+    background-color: var(--primary-hover);
+    box-shadow: theme('boxShadow.button');
+  }
+  .btn-primary:active {
+    box-shadow: none;
+  }
+  .btn-primary:focus-visible,
+  .btn-secondary:focus-visible,
+  .btn-ghost:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center px-6 py-3 rounded-button font-medium text-body transition-all duration-200 ease-smooth;
+    background-color: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover {
+    background-color: var(--bg-tertiary);
+    border-color: var(--border-hover);
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded-button font-medium text-body-sm transition-all duration-200 ease-smooth;
+    background-color: transparent;
+    color: var(--text-secondary);
+  }
+  .btn-ghost:hover {
+    background-color: var(--bg-tertiary);
+    color: var(--text);
+  }
+
+  .card {
+    @apply rounded-card p-6;
+    background-color: var(--bg);
+    border: 1px solid var(--border);
+    box-shadow: none;
+  }
+
+  .interactive-card {
+    @apply card transition-colors duration-200 ease-smooth;
+    cursor: pointer;
+  }
+  .interactive-card:hover {
+    background-color: var(--bg-warm);
+    border-color: var(--border-hover);
+  }
+  .interactive-card:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+
+  .overlay {
+    @apply rounded-panel;
+    background-color: var(--bg);
+    border: 1px solid var(--border);
+    box-shadow: theme('boxShadow.elevated');
+  }
+
+  .card-warm {
+    @apply card;
+    background-color: var(--bg-warm);
+    border-color: var(--primary-light);
+  }
+
+  .card-bordered {
+    @apply card;
+    border-color: var(--border);
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 rounded-input border transition-all duration-200 ease-smooth outline-none text-body;
+    border-color: var(--border);
+    background-color: var(--bg);
+    color: var(--text);
+  }
+  .input-field::placeholder {
+    color: var(--text-muted);
+  }
+  .input-field:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 14%, transparent);
+  }
+
+  .badge {
+    @apply inline-flex items-center px-3.5 py-1.5 rounded-badge text-tiny font-medium;
+    background-color: var(--primary-light);
+    color: var(--primary);
+  }
+
+  .badge-success {
+    @apply badge;
+    background-color: theme('colors.status.successBg');
+    color: theme('colors.status.success');
+  }
+
+  .badge-warning {
+    @apply badge;
+    background-color: theme('colors.status.warningBg');
+    color: theme('colors.status.warning');
+  }
+
+  .badge-error {
+    @apply badge;
+    background-color: theme('colors.status.errorBg');
+    color: theme('colors.status.error');
+  }
+
+  .nav-link {
+    @apply text-body-sm font-medium transition-colors duration-200;
+    color: var(--text-secondary);
+  }
+  .nav-link:hover {
+    color: var(--text);
+  }
+  .nav-link-active {
+    color: var(--primary);
+  }
+
+  .section-title {
+    @apply text-h2 font-semibold;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+
+  .section-subtitle {
+    @apply text-body text-foreground-secondary mt-3 max-w-2xl;
+    letter-spacing: -0.01em;
+  }
+
+  .divider {
+    @apply h-px w-full;
+    background-color: theme('colors.border.divider');
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.5s ease-out forwards;
+  }
+
+  .animate-slide-in-right {
+    animation: slideInRight 0.4s ease-out forwards;
+  }
+
+  .stagger-1 { animation-delay: 0.1s; }
+  .stagger-2 { animation-delay: 0.2s; }
+  .stagger-3 { animation-delay: 0.3s; }
+  .stagger-4 { animation-delay: 0.4s; }
+  .stagger-5 { animation-delay: 0.5s; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, #FAFAFA 25%, #F5F5F5 50%, #FAFAFA 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 6px;
+}
+
+/* Page transition animations */
+.page-transition-enter {
+  opacity: 0;
+  transform: translateY(8px);
+}
+.page-transition-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.page-transition-exit {
+  opacity: 1;
+}
+.page-transition-exit-active {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}

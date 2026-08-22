@@ -1,0 +1,29 @@
+services:
+  reddit_voc_libretranslate:
+    container_name: reddit_voc_libretranslate
+    image: libretranslate/libretranslate:v1.9.6
+    restart: unless-stopped
+    cpus: 1.5
+    mem_limit: 3g
+    expose:
+      - "5000"
+    environment:
+      - LT_UPDATE_MODELS=true
+      - LT_LOAD_ONLY=en,zh
+    volumes:
+      - reddit_voc_libretranslate_models:/home/libretranslate/.local:rw
+    networks:
+      - reddit_voc_site_net
+    healthcheck:
+      test: ["CMD-SHELL", "./venv/bin/python scripts/healthcheck.py"]
+      interval: 20s
+      timeout: 8s
+      retries: 8
+      start_period: 120s
+
+volumes:
+  reddit_voc_libretranslate_models:
+
+networks:
+  reddit_voc_site_net:
+    external: true

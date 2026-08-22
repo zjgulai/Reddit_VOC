@@ -1,0 +1,352 @@
+{
+  "candidate_groups": {
+    "category_anchors": [
+      "\"breast pump\"",
+      "\"wearable breast pump\"",
+      "\"hands-free breast pump\"",
+      "\"bottle washer sterilizer\"",
+      "\"bottle sterilizer\"",
+      "\"bottle warmer\"",
+      "\"baby food maker\"",
+      "\"baby formula maker\"",
+      "\"baby feeding set\"",
+      "\"breast milk storage bags\"",
+      "\"breast milk chiller\"",
+      "\"breast pump parts\"",
+      "\"colostrum collector\"",
+      "\"lactation massager\"",
+      "\"baby thermometer\"",
+      "\"baby humidifier\"",
+      "\"diaper pail\"",
+      "\"nursing bra\"",
+      "\"pumping bra\"",
+      "\"baby carrier\"",
+      "\"high chair\"",
+      "\"pregnancy pillow\"",
+      "\"nursing pillow\"",
+      "\"baby monitor\"",
+      "\"sound machine\"",
+      "\"white noise machine\""
+    ],
+    "governed_competitors": [
+      "\"babybjorn\"",
+      "\"boppy\"",
+      "\"comfelie\"",
+      "\"dr. brown\"",
+      "\"elvie\"",
+      "\"ergobaby\"",
+      "\"haakaa\"",
+      "\"kindred bravely\"",
+      "\"lansinoh\"",
+      "\"medela\"",
+      "\"nanit\"",
+      "\"owlet\"",
+      "\"philips avent\"",
+      "\"spectra\"",
+      "\"tommee tippee\"",
+      "\"wabi baby\"",
+      "\"willow\""
+    ],
+    "momcozy_model_gap": [
+      "\"Momcozy M5\"",
+      "\"Momcozy M6\"",
+      "\"Momcozy M9\"",
+      "\"Momcozy S9\"",
+      "\"Momcozy S9 Pro\"",
+      "\"Momcozy S12\"",
+      "\"Momcozy S12 Pro\"",
+      "\"Momcozy V1\"",
+      "\"Momcozy V1 Pro\"",
+      "\"Momcozy V2\"",
+      "\"Momcozy V2 Pro\"",
+      "\"Momcozy Air 1\"",
+      "\"Momcozy Mobile Flow\"",
+      "\"Momcozy W1\"",
+      "\"Momcozy KleanPal\"",
+      "\"Momcozy KleanPal Pro\"",
+      "\"Momcozy D8\"",
+      "\"Momcozy DinerPal\"",
+      "\"Momcozy PureHug\"",
+      "\"Momcozy WeeSnug\"",
+      "\"Momcozy BumpEase\"",
+      "\"Momcozy Ergonest\"",
+      "\"Momcozy Dreamlign\"",
+      "\"Momcozy Ergowrap\"",
+      "\"Momcozy BS03\""
+    ],
+    "official_catalog_aliases": [
+      "\"Momcozy M5 Smart\"",
+      "\"Momcozy Mobile Style\"",
+      "\"Momcozy S12 Pro Quick\"",
+      "\"Momcozy Wellness 1\"",
+      "\"Momcozy DeepClean\"",
+      "\"Momcozy BM03\""
+    ],
+    "owner_alias_gap": [
+      "\"mcozy\""
+    ]
+  },
+  "candidate_term_count": 75,
+  "competitor_term_bindings": [
+    {
+      "basis": "L0-BRD-001",
+      "brand": "Baby Bjorn",
+      "term": "\"babybjorn\""
+    },
+    {
+      "basis": "L0-BRD-002",
+      "brand": "Boppy",
+      "term": "\"boppy\""
+    },
+    {
+      "basis": "L0-BRD-003",
+      "brand": "Comfelie",
+      "term": "\"comfelie\""
+    },
+    {
+      "basis": "L0-BRD-004",
+      "brand": "Dr. Brown's",
+      "term": "\"dr. brown\""
+    },
+    {
+      "basis": "L0-BRD-005",
+      "brand": "Elvie",
+      "term": "\"elvie\""
+    },
+    {
+      "basis": "L0-BRD-006",
+      "brand": "Ergobaby",
+      "term": "\"ergobaby\""
+    },
+    {
+      "basis": "L0-BRD-007",
+      "brand": "Haakaa",
+      "term": "\"haakaa\""
+    },
+    {
+      "basis": "L0-BRD-008",
+      "brand": "Kindred Bravely",
+      "term": "\"kindred bravely\""
+    },
+    {
+      "basis": "L0-BRD-009",
+      "brand": "Lansinoh",
+      "term": "\"lansinoh\""
+    },
+    {
+      "basis": "L0-BRD-010",
+      "brand": "Medela",
+      "term": "\"medela\""
+    },
+    {
+      "basis": "L0-BRD-012",
+      "brand": "Nanit",
+      "term": "\"nanit\""
+    },
+    {
+      "basis": "L0-BRD-013",
+      "brand": "Owlet",
+      "term": "\"owlet\""
+    },
+    {
+      "basis": "L0-BRD-014",
+      "brand": "Philips Avent",
+      "term": "\"philips avent\""
+    },
+    {
+      "basis": "L0-BRD-015",
+      "brand": "Spectra",
+      "term": "\"spectra\""
+    },
+    {
+      "basis": "L0-BRD-016",
+      "brand": "Tommee Tippee",
+      "term": "\"tommee tippee\""
+    },
+    {
+      "basis": "L0-BRD-017",
+      "brand": "Wabi Baby",
+      "term": "\"wabi baby\""
+    },
+    {
+      "basis": "L0-BRD-018",
+      "brand": "Willow",
+      "term": "\"willow\""
+    }
+  ],
+  "delta_term_count": 69,
+  "delta_terms": [
+    "\"mcozy\"",
+    "\"Momcozy M6\"",
+    "\"Momcozy S9\"",
+    "\"Momcozy S9 Pro\"",
+    "\"Momcozy S12 Pro\"",
+    "\"Momcozy V1\"",
+    "\"Momcozy V1 Pro\"",
+    "\"Momcozy V2\"",
+    "\"Momcozy V2 Pro\"",
+    "\"Momcozy Air 1\"",
+    "\"Momcozy Mobile Flow\"",
+    "\"Momcozy W1\"",
+    "\"Momcozy KleanPal Pro\"",
+    "\"Momcozy D8\"",
+    "\"Momcozy DinerPal\"",
+    "\"Momcozy WeeSnug\"",
+    "\"Momcozy BumpEase\"",
+    "\"Momcozy Ergonest\"",
+    "\"Momcozy Dreamlign\"",
+    "\"Momcozy Ergowrap\"",
+    "\"Momcozy BS03\"",
+    "\"Momcozy M5 Smart\"",
+    "\"Momcozy Mobile Style\"",
+    "\"Momcozy S12 Pro Quick\"",
+    "\"Momcozy Wellness 1\"",
+    "\"Momcozy DeepClean\"",
+    "\"Momcozy BM03\"",
+    "\"babybjorn\"",
+    "\"boppy\"",
+    "\"comfelie\"",
+    "\"dr. brown\"",
+    "\"elvie\"",
+    "\"ergobaby\"",
+    "\"haakaa\"",
+    "\"kindred bravely\"",
+    "\"lansinoh\"",
+    "\"medela\"",
+    "\"nanit\"",
+    "\"owlet\"",
+    "\"philips avent\"",
+    "\"spectra\"",
+    "\"tommee tippee\"",
+    "\"wabi baby\"",
+    "\"willow\"",
+    "\"wearable breast pump\"",
+    "\"hands-free breast pump\"",
+    "\"bottle washer sterilizer\"",
+    "\"bottle sterilizer\"",
+    "\"bottle warmer\"",
+    "\"baby food maker\"",
+    "\"baby formula maker\"",
+    "\"baby feeding set\"",
+    "\"breast milk storage bags\"",
+    "\"breast milk chiller\"",
+    "\"breast pump parts\"",
+    "\"colostrum collector\"",
+    "\"lactation massager\"",
+    "\"baby thermometer\"",
+    "\"baby humidifier\"",
+    "\"diaper pail\"",
+    "\"nursing bra\"",
+    "\"pumping bra\"",
+    "\"baby carrier\"",
+    "\"high chair\"",
+    "\"pregnancy pillow\"",
+    "\"nursing pillow\"",
+    "\"baby monitor\"",
+    "\"sound machine\"",
+    "\"white noise machine\""
+  ],
+  "execution_contract": {
+    "git_push_authorized": false,
+    "live_send": false,
+    "new_run_required": true,
+    "pre_provider_order": [
+      "freeze exact profile SHA",
+      "import and deduplicate existing 136-file archive offline",
+      "run query-only admission",
+      "prepare one-page-per-lane discovery probe packet"
+    ],
+    "production_merge_authorized": false,
+    "provider_authorization_required": true
+  },
+  "generated_on": "2026-07-14",
+  "legacy_frozen_run": {
+    "distinct_semantic_term_count": 12,
+    "immutable": true,
+    "run_id": "backfill_momcozy_20250101_20260711",
+    "term_count": 15,
+    "terms": [
+      "Momcozy",
+      "momcozy",
+      "\"Momcozy\"",
+      "\"momcozy\"",
+      "\"mom cozy\"",
+      "\"Momcozy M5\"",
+      "\"Momcozy S12\"",
+      "\"Momcozy M9\"",
+      "\"Momcozy KleanPal\"",
+      "\"Momcozy bottle washer\"",
+      "\"Momcozy baby carrier\"",
+      "\"Momcozy PureHug\"",
+      "\"wearable pump\"",
+      "\"breast pump\"",
+      "\"bottle washer\""
+    ]
+  },
+  "official_product_term_bindings": [
+    {
+      "family_id": "m5-smart",
+      "internal_mapping_status": "dictionary_alias_supported",
+      "official_catalog_product_id": 8673508131014,
+      "official_title": "M5 Smart Wearable Breast Pump – Upgraded with App Control",
+      "official_url": "https://momcozy.com/products/m5-smart-wearable-breast-pump-upgraded-with-app-control",
+      "term": "\"Momcozy M5 Smart\""
+    },
+    {
+      "family_id": "m6-mobile-style",
+      "internal_mapping_status": "official_title_only_no_internal_spu_join",
+      "official_catalog_product_id": 7918308491462,
+      "official_title": "Momcozy Mobile Style™ Hands-free Slim Breast Pump | M6",
+      "official_url": "https://momcozy.com/products/momcozy-mobile-style-hands-free-breast-pump",
+      "term": "\"Momcozy Mobile Style\""
+    },
+    {
+      "family_id": "s12-pro-quick",
+      "internal_mapping_status": "official_title_only_no_internal_spu_join",
+      "official_catalog_product_id": 8782433452230,
+      "official_title": "S12 Pro Quick Wearable Breast Pump",
+      "official_url": "https://momcozy.com/products/s12-pro-quick-wearable-breast-pump",
+      "term": "\"Momcozy S12 Pro Quick\""
+    },
+    {
+      "family_id": "wellness-1-w1",
+      "internal_mapping_status": "official_title_only_no_internal_spu_join",
+      "official_catalog_product_id": 8732385247430,
+      "official_title": "Momcozy Wellness 1 Warm-Massage Wearable Breast Pump - W1",
+      "official_url": "https://momcozy.com/products/momcozy-wellness-1-warm-massage-wearable-breast-pump-w1",
+      "term": "\"Momcozy Wellness 1\""
+    },
+    {
+      "family_id": "deepclean-d8",
+      "internal_mapping_status": "official_title_only_no_internal_spu_join",
+      "official_catalog_product_id": 8757327102150,
+      "official_title": "Pre-order: Momcozy DeepClean Baby Bottle Washer (D8)",
+      "official_url": "https://momcozy.com/products/momcozy-deepclean-baby-bottle-washer-d8",
+      "term": "\"Momcozy DeepClean\""
+    },
+    {
+      "family_id": "bm03-video-monitor",
+      "internal_mapping_status": "official_title_only_no_internal_spu_join",
+      "official_catalog_product_id": 8249495093446,
+      "official_title": "Momcozy 5.5-inch Full HD Video Baby Monitor - BM03",
+      "official_url": "https://momcozy.com/products/momcozy-5-5-full-hd-video-baby-monitor-bm03",
+      "term": "\"Momcozy BM03\""
+    }
+  ],
+  "schema_version": "momcozy_reddit_search_profile_v2_candidate",
+  "source_dictionary": {
+    "path": "dim_tag_v6.3_final.csv",
+    "row_count": 2346,
+    "sha256": "22664c9c446ddfa17446852079f507ab75b5af3d4dde6e4e3f3e44c195582e14"
+  },
+  "source_official_catalog": {
+    "authority": "Momcozy official Shopify storefront",
+    "canonical_product_family_count": 18,
+    "captured_at_utc": "2026-07-14T11:56:19.090943+00:00",
+    "catalog_product_count": 406,
+    "full_internal_spu_join_complete": false,
+    "path": "docs/analysis/momcozy-historical-collection-audit-20260714/official-product-catalog-snapshot.json",
+    "sha256": "40108149304495e7b1ca94834ab1afaedc928d02be22a1f7ca8a25de52f6e579"
+  },
+  "status": "reviewed_candidate_not_activated"
+}

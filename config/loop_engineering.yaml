@@ -1,0 +1,37 @@
+version: 1
+updated: "2026-07-07"
+target: reddit_voc_momcozy_daily_monitor
+components:
+  objective:
+    purpose: bounded_business_outcome
+    configured_for: daily_momcozy_reddit_voc_digest
+    gate: no_scope_expansion_beyond_readonly_evidence_and_digest
+  state:
+    purpose: persistent_loop_memory
+    configured_for: sqlite_artifacts_kiro_plan_progress_findings
+    gate: no_production_db_writes_no_secrets_in_repo
+  policy:
+    purpose: allowed_actions_and_stop_conditions
+    configured_for: browser_json_dom_tikhub_gated_rss_fallback
+    gate: stop_on_login_wall_captcha_provider_call_or_live_send_need
+  executor:
+    purpose: next_small_safe_action
+    configured_for: local_dry_run_fixture_readonly_smoke_adapter_execution
+    gate: dry_run_default_credentialed_browser_read_requires_user_confirmation
+  evaluator:
+    purpose: evidence_based_loop_decision
+    configured_for: unit_tests_fixture_counts_coverage_grade_artifact_presence
+    gate: do_not_promote_partial_or_readonly_evidence_to_production_acceptance
+iteration_policy:
+  max_actions_per_loop: 5
+  default_mode: dry_run
+  provider_call_default: false
+  live_send_default: false
+  stop_conditions:
+    - login_wall
+    - captcha
+    - provider_call_required
+    - live_send_required
+    - secret_exposure_risk
+    - comment_coverage_unknown
+

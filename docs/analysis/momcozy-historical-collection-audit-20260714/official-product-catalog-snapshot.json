@@ -1,0 +1,394 @@
+{
+  "boundary": {
+    "forbidden_use": "Do not infer a complete spu_id-to-product-title mapping.",
+    "full_internal_spu_join_complete": false,
+    "live_send": false,
+    "official_catalog_product_id_is_not_internal_spu_id": true,
+    "production_unchanged": true,
+    "provider_call": false,
+    "safe_use": "Search-alias enrichment and official product-name evidence only."
+  },
+  "canonical_product_families": [
+    {
+      "candidate_search_terms": [
+        "\"Momcozy M5 Smart\""
+      ],
+      "dictionary_runtime_aliases": [
+        "M5"
+      ],
+      "family_id": "m5-smart",
+      "internal_mapping_status": "dictionary_alias_supported",
+      "internal_spu_ids": [
+        "SPU001001001003016"
+      ],
+      "official_catalog_product_id": 8673508131014,
+      "official_handle": "m5-smart-wearable-breast-pump-upgraded-with-app-control",
+      "official_title": "M5 Smart Wearable Breast Pump – Upgraded with App Control",
+      "official_url": "https://momcozy.com/products/m5-smart-wearable-breast-pump-upgraded-with-app-control",
+      "product_type": "Breast Pump",
+      "published_at": "2025-10-14T08:01:28-04:00",
+      "updated_at": "2026-07-14T07:56:20-04:00"
+    },
+    {
+      "candidate_search_terms": [
+        "\"Momcozy Mobile Style\""
+      ],
+      "dictionary_runtime_aliases": [
+        "M6"
+      ],
+      "family_id": "m6-mobile-style",
+      "internal_mapping_status": "official_title_only_no_internal_spu_join",
+      "internal_spu_ids": [],
+      "official_catalog_product_id": 7918308491462,
+      "official_handle": "momcozy-mobile-style-hands-free-breast-pump",
+      "official_title": "Momcozy Mobile Style™ Hands-free Slim Breast Pump | M6",
+      "official_url": "https://momcozy.com/products/momcozy-mobile-style-hands-free-breast-pump",
+      "product_type": "Breast Pump",
+      "published_at": "2024-04-24T06:48:48-04:00",
+      "updated_at": "2026-07-14T07:56:20-04:00"
+    },
+    {
+      "candidate_search_terms": [],
+      "dictionary_runtime_aliases": [
+        "M9",
+        "Mobile Flow"
+      ],
+      "family_id": "m9-mobile-flow",
+      "internal_mapping_status": "dictionary_alias_supported",
+      "internal_spu_ids": [
+        "SPU000168"
+      ],
+      "official_catalog_product_id": 8189195354310,
+      "official_handle": "momcozy-mobile-flow-hands-free-breast-pump",
+      "official_title": "Momcozy Mobile Flow™ Hands-Free Breast Pump | M9",
+      "official_url": "https://momcozy.com/products/momcozy-mobile-flow-hands-free-breast-pump",
+      "product_type": "Breast Pump",
+      "published_at": "2024-06-13T06:56:31-04:00",
+      "updated_at": "2026-07-14T07:56:20-04:00"
+    },
+    {
+      "candidate_search_terms": [],
+      "dictionary_runtime_aliases": [
+        "S9",
+        "S9 Pro"
+      ],
+      "family_id": "s9-pro",
+      "internal_mapping_status": "official_title_only_no_internal_spu_join",
+      "internal_spu_ids": [],
+      "official_catalog_product_id": 7668466286790,
+      "official_handle": "momcozy-s9-pro-wearable-breast-pump",
+      "official_title": "S9 Pro Wearable Breast Pump Upgraded - Long Battery Life",
+      "official_url": "https://momcozy.com/products/momcozy-s9-pro-wearable-breast-pump",
+      "product_type": "Breast Pump",
+      "published_at": "2022-09-26T22:39:16-04:00",
+      "updated_at": "2026-07-14T07:56:25-04:00"
+    },
+    {
+      "candidate_search_terms": [
+        "\"Momcozy S12 Pro Quick\""
+      ],
+      "dictionary_runtime_aliases": [
+        "S12",
+        "S12 Pro"
+      ],
+      "family_id": "s12-pro-quick",
+      "internal_mapping_status": "official_title_only_no_internal_spu_join",
+      "internal_spu_ids": [],
+      "official_catalog_product_id": 8782433452230,
+      "official_handle": "s12-pro-quick-wearable-breast-pump",
+      "official_title": "S12 Pro Quick Wearable Breast Pump",
+      "official_url": "https://momcozy.com/products/s12-pro-quick-wearable-breast-pump",
+      "product_type": "Breast Pump",
+      "published_at": "2026-03-04T22:23:32-05:00",
+      "updated_at": "2026-07-14T07:56:25-04:00"
+    },
+    {
+      "candidate_search_terms": [],
+      "dictionary_runtime_aliases": [
+        "V1",
+        "V1 Pro"
+      ],
+      "family_id": "v1-pro",
+      "internal_mapping_status": "official_title_only_no_internal_spu_join",
+      "internal_spu_ids": [],
+      "official_catalog_product_id": 7810285306054,
+      "official_handle": "v1-pro-hospital-grade-wearable-breast-pump",
+      "official_title": "V1 Pro Hospital-Grade Wearable Breast Pump",
+      "official_url": "https://momcozy.com/products/v1-pro-hospital-grade-wearable-breast-pump",
+      "product_type": "Breast Pump",
+      "published_at": "2024-10-14T23:58:26-04:00",
+      "updated_at": "2026-07-14T07:56:25-04:00"
+    },
+    {
+      "candidate_search_terms": [],
+      "dictionary_runtime_aliases": [
+        "V2",
+        "V2 Pro"
+      ],
+      "family_id": "v2-pro",
+      "internal_mapping_status": "official_title_only_no_internal_spu_join",
+      "internal_spu_ids": [],
+      "official_catalog_product_id": 7819384094918,
+      "official_handle": "v2pro-hands-free-breast-pump-ultra-light-potent",
+      "official_title": "V2 Pro Hospital-Grade Wearable Breast Pump - Ultra-light & Potent",
+      "official_url": "https://momcozy.com/products/v2pro-hands-free-breast-pump-ultra-light-potent",
+      "product_type": "Breast Pump",
+      "published_at": "2024-11-08T03:18:51-05:00",
+      "updated_at": "2026-07-14T07:56:25-04:00"
+    },
+    {
+      "candidate_search_terms": [],
+      "dictionary_runtime_aliases": [
+        "Air 1"
+      ],
+      "family_id": "air-1",
+      "internal_mapping_status": "official_title_only_no_internal_spu_join",
+      "internal_spu_ids": [],
+      "official_catalog_product_id": 8469876015302,
+      "official_handle": "momcozy-air-1-ultra-slim-breast-pump",
+      "official_title": "Momcozy Air 1 Ultra-slim Breast Pump",
+      "official_url": "https://momcozy.com/products/momcozy-air-1-ultra-slim-breast-pump",
+      "product_type": "Breast Pump",
+      "published_at": "2025-03-02T22:29:58-05:00",
+      "updated_at": "2026-07-14T07:56:20-04:00"
+    },
+    {
+      "candidate_search_terms": [
+        "\"Momcozy Wellness 1\""
+      ],
+      "dictionary_runtime_aliases": [
+        "W1"
+      ],
+      "family_id": "wellness-1-w1",
+      "internal_mapping_status": "official_title_only_no_internal_spu_join",
+      "internal_spu_ids": [],
+      "official_catalog_product_id": 8732385247430,
+      "official_handle": "momcozy-wellness-1-warm-massage-wearable-breast-pump-w1",
+      "official_title": "Momcozy Wellness 1 Warm-Massage Wearable Breast Pump - W1",
+      "official_url": "https://momcozy.com/products/momcozy-wellness-1-warm-massage-wearable-breast-pump-w1",
+      "product_type": "Breast Pump",
+      "published_at": "2026-03-09T21:53:46-04:00",
+      "updated_at": "2026-07-14T07:56:25-04:00"
+    },
+    {
+      "candidate_search_terms": [],
+      "dictionary_runtime_aliases": [
+        "KleanPal",
+        "KleanPal Pro"
+      ],
+      "family_id": "kleanpal-pro",
+      "internal_mapping_status": "official_title_only_no_internal_spu_join",
+      "internal_spu_ids": [],
+      "official_catalog_product_id": 8137262497990,
+      "official_handle": "momcozy-kleanpal-pro-baby-bottle-washer",
+      "official_title": "Momcozy KleanPal Pro Baby Bottle Washer and Sterilizer",
+      "official_url": "https://momcozy.com/products/momcozy-kleanpal-pro-baby-bottle-washer",
+      "product_type": "Washer",
+      "published_at": "2024-04-29T04:58:28-04:00",
+      "updated_at": "2026-07-14T07:56:20-04:00"
+    },
+    {
+      "candidate_search_terms": [
+        "\"Momcozy DeepClean\""
+      ],
+      "dictionary_runtime_aliases": [
+        "D8"
+      ],
+      "family_id": "deepclean-d8",
+      "internal_mapping_status": "official_title_only_no_internal_spu_join",
+      "internal_spu_ids": [],
+      "official_catalog_product_id": 8757327102150,
+      "official_handle": "momcozy-deepclean-baby-bottle-washer-d8",
+      "official_title": "Pre-order: Momcozy DeepClean Baby Bottle Washer (D8)",
+      "official_url": "https://momcozy.com/products/momcozy-deepclean-baby-bottle-washer-d8",
+      "product_type": "Washer",
+      "published_at": "2026-05-21T04:47:06-04:00",
+      "updated_at": "2026-07-14T07:56:25-04:00"
+    },
+    {
+      "candidate_search_terms": [],
+      "dictionary_runtime_aliases": [
+        "DinerPal"
+      ],
+      "family_id": "dinerpal",
+      "internal_mapping_status": "official_title_only_no_internal_spu_join",
+      "internal_spu_ids": [],
+      "official_catalog_product_id": 8318913511622,
+      "official_handle": "momcozy-dinerpal-high-chair",
+      "official_title": "Momcozy DinerPal High Chair",
+      "official_url": "https://momcozy.com/products/momcozy-dinerpal-high-chair",
+      "product_type": "baby care",
+      "published_at": "2024-10-11T22:30:44-04:00",
+      "updated_at": "2026-07-14T07:56:20-04:00"
+    },
+    {
+      "candidate_search_terms": [],
+      "dictionary_runtime_aliases": [
+        "PureHug"
+      ],
+      "family_id": "purehug",
+      "internal_mapping_status": "official_title_only_no_internal_spu_join",
+      "internal_spu_ids": [],
+      "official_catalog_product_id": 7913015771334,
+      "official_handle": "ergonomic-cozy-and-lightweight-baby-carrier",
+      "official_title": "PureHug Baby Carrier - Ergonomic Cozy & Lightweight",
+      "official_url": "https://momcozy.com/products/ergonomic-cozy-and-lightweight-baby-carrier",
+      "product_type": "Carriers",
+      "published_at": "2023-12-29T03:09:29-05:00",
+      "updated_at": "2026-07-14T07:56:25-04:00"
+    },
+    {
+      "candidate_search_terms": [],
+      "dictionary_runtime_aliases": [
+        "WeeSnug"
+      ],
+      "family_id": "weesnug",
+      "internal_mapping_status": "official_title_only_no_internal_spu_join",
+      "internal_spu_ids": [],
+      "official_catalog_product_id": 8529520951494,
+      "official_handle": "momcozy-weesnug-newborn-carrier",
+      "official_title": "WeeSnug Newborn Carrier (0-12M)",
+      "official_url": "https://momcozy.com/products/momcozy-weesnug-newborn-carrier",
+      "product_type": "Carriers",
+      "published_at": "2025-06-10T03:17:19-04:00",
+      "updated_at": "2026-07-14T07:56:25-04:00"
+    },
+    {
+      "candidate_search_terms": [],
+      "dictionary_runtime_aliases": [
+        "BumpEase",
+        "Ergonest"
+      ],
+      "family_id": "bumpease-ergonest",
+      "internal_mapping_status": "official_title_only_no_internal_spu_join",
+      "internal_spu_ids": [],
+      "official_catalog_product_id": 8239681470662,
+      "official_handle": "momcozy-bellyembrace-maternity-belly-band",
+      "official_title": "BumpEase - Momcozy Ergonest Maternity Belly Band",
+      "official_url": "https://momcozy.com/products/momcozy-bellyembrace-maternity-belly-band",
+      "product_type": "Belly band",
+      "published_at": "2024-06-20T21:42:36-04:00",
+      "updated_at": "2026-07-14T07:56:20-04:00"
+    },
+    {
+      "candidate_search_terms": [],
+      "dictionary_runtime_aliases": [
+        "Dreamlign"
+      ],
+      "family_id": "dreamlign",
+      "internal_mapping_status": "official_title_only_no_internal_spu_join",
+      "internal_spu_ids": [],
+      "official_catalog_product_id": 8482599567558,
+      "official_handle": "momcozy-pregnancy-pillow-for-sleeping",
+      "official_title": "Momcozy dreamlign pregnancy Pillow",
+      "official_url": "https://momcozy.com/products/momcozy-pregnancy-pillow-for-sleeping",
+      "product_type": "Pillow",
+      "published_at": "2025-03-26T05:34:21-04:00",
+      "updated_at": "2026-07-14T07:56:20-04:00"
+    },
+    {
+      "candidate_search_terms": [],
+      "dictionary_runtime_aliases": [
+        "Ergowrap"
+      ],
+      "family_id": "ergowrap",
+      "internal_mapping_status": "official_title_only_no_internal_spu_join",
+      "internal_spu_ids": [],
+      "official_catalog_product_id": 8491794956486,
+      "official_handle": "momcozy-ergowrap-postpartum-belly-band",
+      "official_title": "Momcozy Ergowrap™ Postpartum Belly Wrap - Postpartum Belly Band",
+      "official_url": "https://momcozy.com/products/momcozy-ergowrap-postpartum-belly-band",
+      "product_type": "Belly band",
+      "published_at": "2025-04-17T04:31:05-04:00",
+      "updated_at": "2026-07-14T07:56:20-04:00"
+    },
+    {
+      "candidate_search_terms": [
+        "\"Momcozy BM03\""
+      ],
+      "dictionary_runtime_aliases": [
+        "BM03"
+      ],
+      "family_id": "bm03-video-monitor",
+      "internal_mapping_status": "official_title_only_no_internal_spu_join",
+      "internal_spu_ids": [],
+      "official_catalog_product_id": 8249495093446,
+      "official_handle": "momcozy-5-5-full-hd-video-baby-monitor-bm03",
+      "official_title": "Momcozy 5.5-inch Full HD Video Baby Monitor - BM03",
+      "official_url": "https://momcozy.com/products/momcozy-5-5-full-hd-video-baby-monitor-bm03",
+      "product_type": "Baby Monitor",
+      "published_at": "2026-05-21T05:05:14-04:00",
+      "updated_at": "2026-07-14T07:56:20-04:00"
+    }
+  ],
+  "captured_at_utc": "2026-07-14T11:56:19.090943+00:00",
+  "checks": {
+    "bs03_not_equated_to_bm03": true,
+    "canonical_families_18": true,
+    "catalog_handles_unique": true,
+    "catalog_pages_terminate": true,
+    "catalog_product_ids_unique": true,
+    "catalog_products_nonzero": true,
+    "existing_aliases_verified_24": true,
+    "official_candidate_terms_6": true
+  },
+  "official_catalog_candidate_terms": [
+    "\"Momcozy M5 Smart\"",
+    "\"Momcozy Mobile Style\"",
+    "\"Momcozy S12 Pro Quick\"",
+    "\"Momcozy Wellness 1\"",
+    "\"Momcozy DeepClean\"",
+    "\"Momcozy BM03\""
+  ],
+  "schema_version": "momcozy_official_product_catalog_snapshot_v1",
+  "source": {
+    "agent_instructions_url": "https://momcozy.com/agents.md",
+    "authority": "Momcozy official Shopify storefront",
+    "catalog_product_count": 406,
+    "catalog_urls": [
+      "https://momcozy.com/collections/all/products.json?limit=250&page=1",
+      "https://momcozy.com/collections/all/products.json?limit=250&page=2"
+    ],
+    "page_counts": [
+      250,
+      156
+    ],
+    "page_sha256": [
+      "6d16a97c2b28e600671ceb3830391e58119fa9a428fa91f02a3cd6fcb490d917",
+      "e177b5fefa45aec5a8319e0e438cdcb922cdea302d04c06200aa2eb2da77d928"
+    ]
+  },
+  "unresolved_internal_aliases": [
+    {
+      "alias": "BS03",
+      "internal_spu_id": "SPU000714",
+      "reason": "No exact BS03 title or handle exists in the current official catalog; BM03 is a different model string and is not treated as equivalent."
+    }
+  ],
+  "verified_existing_aliases": [
+    "Air 1",
+    "BumpEase",
+    "D8",
+    "DinerPal",
+    "Dreamlign",
+    "Ergonest",
+    "Ergowrap",
+    "KleanPal",
+    "KleanPal Pro",
+    "M5",
+    "M6",
+    "M9",
+    "Mobile Flow",
+    "PureHug",
+    "S12",
+    "S12 Pro",
+    "S9",
+    "S9 Pro",
+    "V1",
+    "V1 Pro",
+    "V2",
+    "V2 Pro",
+    "W1",
+    "WeeSnug"
+  ]
+}

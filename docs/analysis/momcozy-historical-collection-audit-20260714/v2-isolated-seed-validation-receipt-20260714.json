@@ -1,0 +1,58 @@
+{
+  "schema_version": "momcozy_v2_isolated_seed_validation_v1",
+  "generated_at_utc": "2026-07-14T13:35:40Z",
+  "run_id": "backfill_momcozy_v2_20250101_20260714",
+  "window": {
+    "start_utc": "2025-01-01T00:00:00Z",
+    "effective_end_utc": "2026-07-14T13:32:19Z"
+  },
+  "profile": {
+    "sha256": "38706378f42c6648fe43bb50f60947863816363d65714f16a3092f40d91b604d",
+    "delta_term_count": 69,
+    "required_lanes_sha256": "e39b1327be39e0f5937b28360737f3a1e7b3b7aba6cfde4907eb07e2450ec948"
+  },
+  "staging": {
+    "database_path": "data/backfill/backfill_momcozy_v2_20250101_20260714/reddit_voc_backfill.sqlite3",
+    "database_sha256": "e6cfe7056761d254fd11bf3774b19f33cf72b9b83bac8540c5c81581c30c2356",
+    "status": "seed_complete",
+    "max_provider_requests": 69,
+    "provider_request_count": 0,
+    "provider_attempts": 0,
+    "provider_call": false,
+    "live_send": false
+  },
+  "seed": {
+    "files_total": 136,
+    "files_imported": 102,
+    "files_outside_window": 34,
+    "parse_errors": 0,
+    "raw_artifacts": 136,
+    "threads": 102,
+    "comments": 3132,
+    "analyses": 3234,
+    "unlinked_comments": 0,
+    "raw_payload_sha256": "a3a4420b4de8c40b9d152ea324d36ab8df987244d2689c822fe3834f381ff675"
+  },
+  "validation": {
+    "all_raw_artifacts_verified": true,
+    "all_raw_artifacts_seed_lane": true,
+    "seed_files_match_raw_artifacts": true,
+    "parent_integrity": true,
+    "provider_ledger_empty": true,
+    "byte_identical_replay": true,
+    "seed_report_sha256": "9ab629659f689037cbb6ec7bec3e35e549bd7754993dd936466a528038999efe"
+  },
+  "implementation_hashes": {
+    "src/reddit_voc/backfill_seed.py": "148a222cb650e39587e8ce2c4e920db2df357709032ee2d7bbe607949629e85a",
+    "src/reddit_voc/backfill_cli.py": "9d6b34576507127d7ac2ab7c3ed5b9b412e8e06c0c2057fb2ff189d5ef62220e",
+    "tests/test_backfill_cli.py": "285d0d976e6a3cae3e9e87b7bddac0a054460500eaf89abd891d69e8dce86ab3"
+  },
+  "boundaries": {
+    "production_unchanged": true,
+    "production_merge": false,
+    "git_push": false,
+    "live_send": false,
+    "provider_call": false,
+    "provider_attempt_made": false
+  }
+}

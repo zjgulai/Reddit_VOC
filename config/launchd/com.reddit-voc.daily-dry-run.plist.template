@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.reddit-voc.daily-dry-run</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>/Users/pray/project/Reddit_VOC/scripts/run_local_daily_dry_run.sh</string>
+  </array>
+
+  <key>WorkingDirectory</key>
+  <string>/Users/pray/project/Reddit_VOC</string>
+
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>REDDIT_VOC_DATABASE_PATH</key>
+    <string>/Users/pray/project/Reddit_VOC/data/reddit_voc.sqlite3</string>
+    <key>REDDIT_VOC_OUTPUT_DIR</key>
+    <string>/Users/pray/project/Reddit_VOC/outputs</string>
+    <key>REDDIT_VOC_LOG_DIR</key>
+    <string>/Users/pray/project/Reddit_VOC/logs</string>
+  </dict>
+
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Hour</key>
+    <integer>4</integer>
+    <key>Minute</key>
+    <integer>0</integer>
+  </dict>
+
+  <key>StandardOutPath</key>
+  <string>/Users/pray/project/Reddit_VOC/logs/launchd-dry-run.out.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/pray/project/Reddit_VOC/logs/launchd-dry-run.err.log</string>
+</dict>
+</plist>

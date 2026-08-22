@@ -1,0 +1,60 @@
+{
+  "schema_version": "reddit_voc_persona_config_v1",
+  "config_version": "reddit_voc_evidence_personas_20260715_v2",
+  "dataset_version": "reddit_voc_personas_20260715_v2",
+  "minimum_distinct_pseudonyms": 10,
+  "source_priority": [
+    "tencent_production_primary",
+    "tencent_isolated_staging",
+    "tencent_v2_search_hydrated",
+    "tencent_existing_post_comment_hydration",
+    "historical_canonical",
+    "imported_archive"
+  ],
+  "personas": [
+    {
+      "persona_id": "PER-SCENE-WORK-001",
+      "persona_kind": "content_evidence_cohort",
+      "name_cn": "工作场景需求群",
+      "definition": "内容中出现并通过语义门禁的明确工作场景需求。",
+      "source_tag_ids": [
+        "L0-GEN-075"
+      ],
+      "evidence_logic": "ANY promoted tag",
+      "avatar": {
+        "source_filename": "persona-work-scenario.svg",
+        "asset_path": "assets/persona-work-scenario.svg",
+        "media_type": "image/svg+xml",
+        "width": 512,
+        "height": 512,
+        "synthetic": true,
+        "real_user_image": false,
+        "derived_from_reddit_media": false,
+        "identity_claim": false,
+        "alt_text": "工作场景需求群的合成编辑插画，非真实用户"
+      }
+    },
+    {
+      "persona_id": "PER-BEHAVIOR-ADVOCATE-001",
+      "persona_kind": "content_evidence_cohort",
+      "name_cn": "显式推荐表达群",
+      "definition": "内容中出现并通过语义门禁的明确推荐表达。",
+      "source_tag_ids": [
+        "L0-GEN-103"
+      ],
+      "evidence_logic": "ANY promoted tag",
+      "avatar": {
+        "source_filename": "persona-explicit-advocate.svg",
+        "asset_path": "assets/persona-explicit-advocate.svg",
+        "media_type": "image/svg+xml",
+        "width": 512,
+        "height": 512,
+        "synthetic": true,
+        "real_user_image": false,
+        "derived_from_reddit_media": false,
+        "identity_claim": false,
+        "alt_text": "显式推荐表达群的合成编辑插画，非真实用户"
+      }
+    }
+  ]
+}

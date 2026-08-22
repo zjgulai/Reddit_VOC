@@ -1,0 +1,91 @@
+{
+  "boundaries": {
+    "brand_control_inferred_from_moderator_event": false,
+    "database_write": false,
+    "deploy": false,
+    "explicit_automation_is_commercial_evidence": false,
+    "live_send": false,
+    "production_unchanged": true,
+    "provider_call": false,
+    "remote_write": false
+  },
+  "commercial_relation_levels": {
+    "C0": "商业关系未知",
+    "C1": "商业内容线索",
+    "C2": "疑似商业传播模式",
+    "C3": "已确认商业关联"
+  },
+  "fixed_momcozy_event": {
+    "brand_control_confirmed": false,
+    "commercial_relation": "C2",
+    "governance_authority": "subreddit_moderator",
+    "integrity_level": "I3",
+    "post_ids": [
+      "1kkvihg",
+      "1l2aofi",
+      "1n2q1do",
+      "1o1pqox",
+      "1u2gvn4"
+    ]
+  },
+  "governance_authorities": [
+    "subreddit_moderator",
+    "reddit_platform",
+    "other_platform"
+  ],
+  "integrity_levels": {
+    "I0": "无可用完整性结论",
+    "I1": "待复核信号",
+    "I2": "疑似非自然传播",
+    "I3": "外部社区治理事件",
+    "I4": "已确认不当干预"
+  },
+  "qualified_organic_exclusion": {
+    "commercial_relation": "C3",
+    "integrity_level": "I4",
+    "operator": "and"
+  },
+  "review_lifecycle": {
+    "in_review": [
+      "resolved_confirmed",
+      "resolved_dismissed"
+    ],
+    "queued": [
+      "in_review"
+    ],
+    "resolved_confirmed": [],
+    "resolved_dismissed": []
+  },
+  "response_transitions": {
+    "confirmed": [
+      "disputed",
+      "retracted"
+    ],
+    "disputed": [
+      "confirmed",
+      "retracted"
+    ],
+    "retracted": [
+      "confirmed",
+      "disputed"
+    ],
+    "unanswered": [
+      "confirmed",
+      "disputed",
+      "retracted"
+    ]
+  },
+  "policy_version": "reddit-voc-content-integrity-2026-07-16.v1",
+  "response_lifecycle": [
+    "unanswered",
+    "disputed",
+    "confirmed",
+    "retracted"
+  ],
+  "schema_version": "reddit_voc_content_integrity_policy_v1",
+  "signal_types": [
+    "content",
+    "behavior",
+    "link"
+  ]
+}

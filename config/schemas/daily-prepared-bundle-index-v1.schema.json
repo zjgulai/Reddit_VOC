@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "daily-prepared-bundle-index-v1",
+  "title": "Immutable prepared daily report bundle index",
+  "type": "object",
+  "required": ["schema_version", "artifact_version_id", "entries"],
+  "properties": {
+    "schema_version": {"type": "string", "const": "daily-prepared-bundle-index-v1"},
+    "artifact_version_id": {"type": "string", "pattern": "^[0-9]{8}T[0-9]{12}Z-[0-9a-f]{32}$"},
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["scope", "relative_path", "byte_size", "sha256"],
+        "properties": {
+          "scope": {"type": "string", "enum": ["private", "public"]},
+          "relative_path": {"type": "string", "minLength": 1, "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]*$"},
+          "byte_size": {"type": "integer", "minimum": 0},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

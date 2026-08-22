@@ -1,0 +1,44 @@
+canonical_indicator_id,indicator_name,aliases,registry_role,tag_mapping_code,storyline_code,production_code,superset_dataset,requires_external_data,status,notes
+BM-1,VOC_NPS_adjusted,BM-1|BM-1_NPS|BM-1-ProxyNPS,business_metric,BM-1_NPS,BM-1,BM-1-ProxyNPS,mv_atomic_indicators_v1,false,stable,North-star NPS aliases across tag mapping storyline and Superset.
+BM-2,ATI,BM-2|BM-2_ATI,business_metric,BM-2_ATI,BM-2,,,false,stable,Advertising trust index.
+BM-3,ITI,BM-3|BM-3_ITI,business_metric,BM-3_ITI,BM-3,,,false,stable,Information transparency index.
+BM-4,CEG,BM-4,business_metric,,BM-4,,,true,review,Requires competitor sentiment bridge.
+BM-5,SLI,BM-5,business_metric,,BM-5,,,true,review,Requires cross-platform time-lag calculation.
+MK-1,SCI,MK-1|MK-1_SCI,business_metric,MK-1_SCI,MK-1,,,false,stable,Seeding conversion confidence.
+MK-2,PPD,MK-2|MK-2_PPD,business_metric,MK-2_PPD,MK-2,,,false,stable,Price perception deviation.
+MK-3,PFR,MK-3,business_metric,,MK-3,,,true,review,Requires P2-to-L1 journey linkage.
+SL-1,PMF,SL-1|SL-1_PMF,business_metric,SL-1_PMF,SL-1,,,false,stable,Purchase motivation force.
+SL-2,PAI,SL-2|SL-2_PAI,business_metric,SL-2_PAI,SL-2,,,false,stable,Promotion authenticity index.
+SL-3,ICL,SL-3,business_metric,,SL-3,,,true,review,Requires inventory or logistics external data.
+PD-1,PLH,PD-1|PD-1_PLH,business_metric,PD-1_PLH,PD-1,,,false,stable,Product-line health.
+PD-2,TUI,PD-2|PD-2_TUI,business_metric,PD-2_TUI,PD-2,,,false,stable,Tag urgency index.
+PD-3,SPH,PD-3|PD-3_SPH,business_metric,PD-3_SPH,PD-3,,,false,stable,SPU problem heat.
+PD-4,DA,PD-4,business_metric,,PD-4,,,true,review,Requires stable weekly time series.
+PD-5,SPC,PD-5,business_metric,,PD-5,,,true,review,Requires strategy package execution data.
+PD-6,QVC,PD-6|PD-6_QVC,business_metric,PD-6_QVC,PD-6,,,false,stable,Quality volatility coefficient.
+PD-7,PHM,PD-7|PD-7_PHM,business_metric,PD-7_PHM,,,,false,stable,Product hook metric from tag mapping.
+PD-8,PCS,PD-8|PD-8_PCS,business_metric,PD-8_PCS,,,,false,stable,Product comparison signal from tag mapping.
+PD-9,AQI,PD-9|PD-9_AQI,business_metric,PD-9_AQI,,,,false,stable,Accessory quality index from tag mapping.
+PD-10,GAP,PD-10|PD-10_GAP,business_metric,PD-10_GAP,,,,false,stable,Gap signal from tag mapping.
+SC-1,LSS,SC-1|SC-1_LSS,business_metric,SC-1_LSS,SC-1,,,false,stable,Logistics satisfaction score.
+SC-2,CLCR,SC-2|SC-2_CLCR,business_metric,SC-2_CLCR,SC-2,,,false,stable,Cross-border logistics complaint rate.
+SC-3,PCR,SC-3|SC-3_PCR,business_metric,SC-3_PCR,SC-3,,,false,stable,Packaging complaint rate.
+SC-4,LTD,SC-4,business_metric,,SC-4,,,true,review,Requires tracking or promised delivery data.
+CS-1,CSS,CS-1|CS-1_CSS,business_metric,CS-1_CSS,CS-1,,,false,stable,Customer service satisfaction.
+CS-2,RPI,CS-2,business_metric,,CS-2,,,true,review,Requires return and exchange process evidence.
+CS-3,EUR,CS-3|CS-3_EUR,business_metric,CS-3_EUR,CS-3,,,false,stable,Escalation rate.
+CS-4,TRR,CS-4,business_metric,,CS-4,,,true,review,Requires same-user recovery journey.
+CS-5,CTT,CS-5|CS-5_CTT,business_metric,CS-5_CTT,,,,false,stable,Customer touchpoint timing from tag mapping.
+CS-6,RSE,CS-6|CS-6_RSE,business_metric,CS-6_RSE,,,,false,stable,Resolution signal effectiveness from tag mapping.
+CL-1,RWI,CL-1|CL-1_RWI,business_metric,CL-1_RWI,CL-1,,,false,stable,Recommendation willingness index.
+CL-2,RSS,CL-2|CL-2_RSS,business_metric,CL-2_RSS,CL-2,,,false,stable,Repurchase signal strength.
+CL-3,NMPI,CL-3,business_metric,,CL-3,,,true,review,Requires persona and resale signal.
+CL-4,CAS,CL-4,business_metric,,CL-4,,,true,review,Requires cohort inactivity tracking.
+CL-5,UAR,CL-5|CL-5_UAR,business_metric,CL-5_UAR,,,,false,stable,User advocacy ratio from tag mapping.
+OQ-1,P0R,OQ-1,business_metric,,OQ-1,,,false,review,Storyline exists but tag mapping is not yet formalized.
+OQ-2,SSR,OQ-2|OQ-2_SSR,business_metric,OQ-2_SSR,OQ-2,,,false,stable,Safety signal rate.
+OQ-3,DSR,OQ-3,business_metric,,OQ-3,,,true,review,Requires department SLA operation data.
+OQ-4,REE,OQ-4,business_metric,,OQ-4,,,false,review,Storyline exists but tag mapping is not yet formalized.
+SAT-*,AIPL satisfaction score,SAT-*|SAT-A|SAT-I|SAT-P1|SAT-P2|SAT-L1|SAT-L2|SAT-L3,system_metric,,,SAT-*,mv_atomic_indicators_v1,false,stable,Dynamic Superset indicator emitted as SAT- plus aipl_node.
+SYS-COVERAGE,Tag coverage,SYS-COVERAGE|BM-2-Coverage,system_metric,,,BM-2-Coverage,mv_atomic_indicators_v1,false,stable,Production technical coverage metric; not BM-2 ATI.
+SYS-NEG-RATE,Negative review rate,SYS-NEG-RATE|BM-3-NegRate,system_metric,,,BM-3-NegRate,mv_atomic_indicators_v1,false,stable,Production negative-rate metric; not BM-3 ITI.

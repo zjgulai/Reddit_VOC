@@ -1,0 +1,136 @@
+{
+  "colors": {
+    "primary": {
+      "DEFAULT": "#B84F37",
+      "hover": "#9F402D",
+      "light": "#FFF1EA",
+      "muted": "#F7C8B1"
+    },
+    "surface": {
+      "DEFAULT": "#FFFFFF",
+      "secondary": "#FAF8F5",
+      "tertiary": "#F7F4F0",
+      "warm": "#FFF8F4",
+      "soft": "#F5F1EC"
+    },
+    "foreground": {
+      "DEFAULT": "#1D1B19",
+      "secondary": "#625D58",
+      "muted": "#77716B",
+      "inverse": "#FFFFFF"
+    },
+    "border": {
+      "DEFAULT": "#E7E0D9",
+      "hover": "#CFC5BC",
+      "divider": "#EEE8E2"
+    },
+    "status": {
+      "success": "#17825D",
+      "successBg": "#E9F5EF",
+      "warning": "#A66B00",
+      "warningBg": "#FFF5DE",
+      "error": "#C64E4B",
+      "errorBg": "#FCEDEC",
+      "info": "#56677A",
+      "infoBg": "#EEF2F5"
+    },
+    "brand": {
+      "primary": "#F0A07A",
+      "interaction": "#B84F37",
+      "secondary": "#D19A5C",
+      "tertiary": "#C64E4B",
+      "competitor": "#56677A"
+    },
+    "sentiment": {
+      "positive": "#17825D",
+      "negative": "#C64E4B",
+      "neutral": "#8A847E"
+    },
+    "neutral": {
+      "white": "#FFFFFF",
+      "gray100": "#F5F1EC",
+      "gray200": "#E7E0D9",
+      "gray300": "#D8D0C8",
+      "gray400": "#8A847E",
+      "gray500": "#77716B",
+      "gray600": "#625D58",
+      "gray700": "#423E3A",
+      "gray900": "#1D1B19"
+    },
+    "export": {
+      "brandHex": "#F0A07A",
+      "interaction": "#B84F37",
+      "title": "#1D1B19",
+      "subtitle": "#625D58",
+      "meta": "#77716B",
+      "border": "#E7E0D9",
+      "headerBg": "#FFF1EA",
+      "tableBorder": "#F0A07A",
+      "rowAlt": "#FAF8F5",
+      "white": "#FFFFFF"
+    },
+    "chart": [
+      "#F0A07A",
+      "#56677A",
+      "#C64E4B",
+      "#17825D",
+      "#A66B00",
+      "#8A847E",
+      "#7A6256",
+      "#4F7D78",
+      "#9A5B49",
+      "#6C7280",
+      "#79658C",
+      "#607B94"
+    ]
+  },
+  "typography": {
+    "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Helvetica Neue, Arial, sans-serif",
+    "sizes": {
+      "display": { "size": "32px", "lineHeight": "1.2", "weight": 600, "letterSpacing": "-0.02em" },
+      "h1": { "size": "24px", "lineHeight": "1.3", "weight": 600, "letterSpacing": "-0.02em" },
+      "h2": { "size": "20px", "lineHeight": "1.4", "weight": 600, "letterSpacing": "-0.015em" },
+      "h3": { "size": "16px", "lineHeight": "1.5", "weight": 600, "letterSpacing": "-0.01em" },
+      "h4": { "size": "15px", "lineHeight": "1.5", "weight": 600, "letterSpacing": "0" },
+      "body": { "size": "15px", "lineHeight": "1.7", "weight": 400, "letterSpacing": "0" },
+      "bodySm": { "size": "14px", "lineHeight": "1.6", "weight": 400, "letterSpacing": "0" },
+      "caption": { "size": "13px", "lineHeight": "1.5", "weight": 400, "letterSpacing": "0" },
+      "tiny": { "size": "12px", "lineHeight": "1.4", "weight": 500, "letterSpacing": "0" }
+    }
+  },
+  "spacing": {
+    "page": { "desktop": "32px", "tablet": "24px", "mobile": "16px" },
+    "section": { "desktop": "48px", "tablet": "32px", "mobile": "24px" },
+    "card": { "large": "32px", "standard": "24px", "compact": "16px" },
+    "gap": { "card": "24px", "component": "12px" },
+    "button": { "standard": "12px 24px", "compact": "10px 20px" },
+    "input": "12px 16px"
+  },
+  "radius": {
+    "card": "12px",
+    "panel": "16px",
+    "button": "10px",
+    "input": "10px",
+    "badge": "9999px",
+    "icon": "10px",
+    "avatar": "50%"
+  },
+  "shadows": {
+    "card": "none",
+    "cardHover": "none",
+    "elevated": "0 12px 32px rgba(29,27,25,0.12), 0 2px 8px rgba(29,27,25,0.06)",
+    "button": "0 2px 8px rgba(184,79,55,0.18)"
+  },
+  "animation": {
+    "duration": { "fast": "150ms", "standard": "200ms", "slow": "300ms" },
+    "easing": "cubic-bezier(0.4, 0, 0.2, 1)"
+  },
+  "breakpoints": {
+    "mobile": "640px",
+    "tablet": "1024px",
+    "desktop": "1440px"
+  },
+  "maxWidth": {
+    "container": "1440px"
+  }
+}

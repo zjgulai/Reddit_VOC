@@ -1,0 +1,1 @@
+{"cadence":"daily","destination_fingerprint":"fd55cbb632cfa5e433beb1d72d0867336b2c8ddec91d6cfb919202be9eceafae","expires_at_utc":"2026-08-31T00:30:00+00:00","max_scheduled_runs":30,"policy_id":"task32aa-daily-live-20260802-20260831","required_keyword":"LL","schema_version":"reddit-voc-bounded-daily-live-policy-v1","starts_at_utc":"2026-08-01T08:41:23+00:00"}

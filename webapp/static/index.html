@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Momcozy Reddit VOC Console</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="brand-block">
+          <div class="brand-mark">M</div>
+          <div>
+            <div class="brand-title">Momcozy VOC</div>
+            <div class="brand-subtitle">Reddit 监听控制台</div>
+          </div>
+        </div>
+        <nav class="nav" aria-label="主导航">
+          <button class="nav-item active" data-view="collection">采集模块</button>
+          <button class="nav-item" data-view="dashboard">数据看板</button>
+          <button class="nav-item" data-view="insights">舆情洞察</button>
+        </nav>
+        <div class="side-status">
+          <span class="status-dot" id="healthDot"></span>
+          <span id="healthText">连接中</span>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Rolling 24h Reddit VOC</p>
+            <h1>Momcozy 品牌与品类舆情工作台</h1>
+          </div>
+          <div class="top-actions">
+            <select id="scopeSelect" aria-label="数据范围">
+              <option value="latest">最近批次</option>
+              <option value="all">历史累计</option>
+            </select>
+            <button id="refreshBtn" class="primary">刷新</button>
+          </div>
+        </header>
+
+        <section class="view active" id="collectionView" aria-labelledby="collectionTitle">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Automation Settings</p>
+              <h2 id="collectionTitle">采集与推送参数</h2>
+            </div>
+            <span class="badge">只读配置展示</span>
+          </div>
+          <div class="config-grid">
+            <label class="field">
+              <span>每日启动采集时间</span>
+              <input id="collectionTime" type="time" value="07:00" />
+            </label>
+            <label class="field">
+              <span>采集时间窗口</span>
+              <input id="windowHours" type="number" min="1" max="168" value="24" />
+            </label>
+            <label class="field">
+              <span>每日推送到钉钉时间</span>
+              <input id="reportTime" type="time" value="08:00" />
+            </label>
+            <label class="field">
+              <span>采集 Provider</span>
+              <select id="providerSelect">
+                <option value="tikhub">TikHub Reddit API</option>
+                <option value="browser_json">Browser .json</option>
+                <option value="rss">RSS fallback</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Subreddit listing limit</span>
+              <input id="listingLimit" type="number" min="10" max="500" value="100" />
+            </label>
+            <label class="field">
+              <span>单日详情上限</span>
+              <input id="detailLimit" type="number" min="1" max="200" value="50" />
+            </label>
+            <label class="field wide">
+              <span>钉钉可访问产物 base URL</span>
+              <input id="artifactBaseUrl" type="url" placeholder="https://reddit.brand.lute-tlz-dddd.top/artifacts/" />
+            </label>
+            <label class="field">
+              <span>翻译模式</span>
+              <select id="translationMode">
+                <option value="dry_run">dry_run</option>
+                <option value="provider">provider</option>
+                <option value="local">local</option>
+              </select>
+            </label>
+          </div>
+          <div class="panel-grid">
+            <article class="panel">
+              <div class="panel-title">社区覆盖</div>
+              <div id="subredditTiers" class="tier-list"></div>
+            </article>
+            <article class="panel">
+              <div class="panel-title">关键词覆盖</div>
+              <div id="keywordSummary" class="keyword-list"></div>
+            </article>
+            <article class="panel command-panel">
+              <div class="panel-title">执行命令草案</div>
+              <pre id="commandTemplate"></pre>
+            </article>
+          </div>
+        </section>
+
+        <section class="view" id="dashboardView" aria-labelledby="dashboardTitle">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Reddit Records</p>
+              <h2 id="dashboardTitle">帖子与评论明细</h2>
+            </div>
+            <div class="metric-row compact">
+              <span id="postMetric">0 帖</span>
+              <span id="commentMetric">0 评论</span>
+            </div>
+          </div>
+          <div class="filters">
+            <input id="searchInput" type="search" placeholder="搜索标题、正文、关键词、评论" />
+            <select id="subredditFilter"><option value="">全部社区</option></select>
+            <select id="sentimentFilter"><option value="">全部情感</option></select>
+            <select id="severityFilter"><option value="">全部严重度</option></select>
+          </div>
+          <div class="table-shell">
+            <table>
+              <thead>
+                <tr>
+                  <th>时间</th>
+                  <th>社区</th>
+                  <th>帖子</th>
+                  <th>情感</th>
+                  <th>主题</th>
+                  <th>评论</th>
+                  <th>覆盖</th>
+                </tr>
+              </thead>
+              <tbody id="postsTable"></tbody>
+            </table>
+          </div>
+          <aside class="detail-drawer" id="detailDrawer">
+            <div class="drawer-head">
+              <div>
+                <p class="eyebrow">Selected Post</p>
+                <h3 id="drawerTitle">选择一条帖子查看评论整合</h3>
+              </div>
+              <a id="drawerLink" href="#" target="_blank" rel="noreferrer">打开原帖</a>
+            </div>
+            <div id="drawerContent" class="drawer-content"></div>
+          </aside>
+        </section>
+
+        <section class="view" id="insightsView" aria-labelledby="insightsTitle">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Insight Story</p>
+              <h2 id="insightsTitle">舆情洞察</h2>
+            </div>
+            <span class="badge" id="insightScopeBadge">最近批次</span>
+          </div>
+          <div class="insight-grid">
+            <article class="story-panel">
+              <div class="panel-title">洞察故事线</div>
+              <div id="storyLines" class="story-lines"></div>
+            </article>
+            <article class="panel">
+              <div class="panel-title">情感分布</div>
+              <div id="sentimentChart" class="bar-list"></div>
+            </article>
+            <article class="panel">
+              <div class="panel-title">议题分布</div>
+              <div id="topicChart" class="bar-list"></div>
+            </article>
+            <article class="panel">
+              <div class="panel-title">痛点分布</div>
+              <div id="painChart" class="bar-list"></div>
+            </article>
+          </div>
+          <div class="artifact-layout">
+            <article class="artifact-preview">
+              <div class="panel-title">最新 HTML 舆情报告</div>
+              <iframe id="reportFrame" title="最新 HTML 舆情报告"></iframe>
+              <a id="reportLink" href="#" target="_blank" rel="noreferrer">打开单 HTML 报告</a>
+            </article>
+            <article class="panel">
+              <div class="panel-title">近期产物</div>
+              <div id="artifactList" class="artifact-list"></div>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script src="/static/app.js"></script>
+  </body>
+</html>

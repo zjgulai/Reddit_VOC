@@ -1,0 +1,32 @@
+{
+  "schema_version": "reddit_voc_risk_theme_gate_policy_v1",
+  "policy_version": "reddit-voc-risk-theme-gate-candidate-20260715-v2",
+  "status": "draft",
+  "minimum_observed_entities": 2,
+  "minimum_distinct_posts": 2,
+  "minimum_communities": 2,
+  "minimum_brand_binding_rate": 0.5,
+  "applies_to_base_dataset_version": "reddit_voc_site_snapshot_20260715_v2",
+  "applies_to_base_manifest_sha256": "124104c1271ec3d45669176ed7b5157fdacb0e816a587f8db5f7ad4adc25381e",
+  "candidate_basis": {
+    "window_mode": "rolling_30_closed_days",
+    "window_start_utc": "2026-06-14T16:00:00+00:00",
+    "window_end_utc": "2026-07-14T16:00:00+00:00",
+    "observed_theme_count": 37,
+    "promoted_theme_count_in_window": 0,
+    "themes_meeting_all_candidate_thresholds": 4,
+    "distribution": {
+      "observed_entities": {"min": 1, "median": 1, "max": 58},
+      "distinct_posts": {"min": 1, "median": 1, "max": 52},
+      "communities_excluding_unknown": {"min": 1, "median": 1, "max": 19},
+      "brand_binding_rate": {"min": 0.028571, "median": 0.5, "max": 1.0}
+    }
+  },
+  "governance_boundary": {
+    "approval_required_before_freeze": true,
+    "high_priority_kpi_must_remain_null_while_draft": true,
+    "dictionary_priority_is_not_overridden": true,
+    "risk_level_to_priority_mapping_applied": false,
+    "unknown_subreddit_counts_toward_community_breadth": false
+  }
+}

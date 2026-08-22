@@ -1,0 +1,6 @@
+name = "momcozy-reddit-workbench"
+compatibility_date = "2026-07-12"
+
+# Cloudflare Pages 配置
+[site]
+bucket = "./dist"

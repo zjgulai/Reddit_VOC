@@ -1,0 +1,53 @@
+services:
+  web:
+    image: reddit-voc-insights:${RELEASE_SHA:?RELEASE_SHA must be set}
+    pull_policy: never
+    container_name: reddit_voc_insights_web
+    restart: unless-stopped
+    user: "101:101"
+    read_only: true
+    init: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,size=32m,uid=101,gid=101,mode=1777
+    volumes:
+      - "${REDDIT_VOC_DATA_ROOT:?REDDIT_VOC_DATA_ROOT must be set}:/srv/reddit-voc-data:ro"
+    ports:
+      - "${INSIGHTS_BIND_ADDRESS:-172.20.0.1}:${INSIGHTS_PORT:-18338}:8080"
+    networks:
+      - insights
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 100
+    mem_limit: 256m
+    cpus: 0.50
+    environment:
+      NGINX_ENTRYPOINT_QUIET_LOGS: "1"
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          wget -q -O /dev/null http://127.0.0.1:8080/healthz &&
+          wget -q -O /dev/null http://127.0.0.1:8080/data/reddit-voc/current-release.json
+      interval: 10s
+      timeout: 3s
+      retries: 6
+      start_period: 5s
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+    labels:
+      com.reddit-voc.component: insights-site
+      com.reddit-voc.release: ${RELEASE_SHA}
+
+networks:
+  insights:
+    name: reddit_voc_insights_net
+    driver: bridge
+    internal: false
+    driver_opts:
+      com.docker.network.bridge.enable_ip_masquerade: "false"
+      com.docker.network.bridge.enable_icc: "false"

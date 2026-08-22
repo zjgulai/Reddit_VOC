@@ -1,0 +1,35 @@
+{
+  "schema_version": "reddit_voc_tag_repair_development_evidence_v1",
+  "evidence_version": "reddit_voc_tag_repair_development_evidence_20260714_v1",
+  "base_dataset_version": "reddit_voc_site_snapshot_20260714_v1",
+  "base_manifest_sha256": "f04edef8dc73c8975e4bba56cbeefd8b734fd86f2c5a95aa2a041325503720ef",
+  "prior_repair_dataset_version": "reddit_voc_tag_repair_20260714_v1",
+  "prior_repair_manifest_sha256": "99dfb8bc7605ae2069822a4df99dd06b7832a4783c73c92e9d002b3e546ec8f1",
+  "prior_assignments_sha256": "1d7f9fe477cc01a35f5ecdcab4e01a62105859e5a444d46110b98eb44234405d",
+  "prior_review_sample_sha256": "99be90bf85932359feedd00cd791d51329f3b43aab99901ec303007602ade5b8",
+  "prior_challenge_cases_sha256": "459cb1f98210fb894aebd8ff9c4eb099171e3e701e2fd047d1cd2279243ac3b7",
+  "reviewed_assignment_filter": {
+    "predicate_version": "reddit_semantic_predicates_20260714_v1",
+    "predicate_statuses": ["needs_review"],
+    "target_tag_ids": [
+      "L2-PUMP-016",
+      "L0-CHL-003",
+      "L2-PUMP-030",
+      "L2-PUMP-007"
+    ]
+  },
+  "reviewed_assignment_count": 92,
+  "purpose": "rule_development_only_excluded_from_v2_validation",
+  "reviewer": {
+    "type": "codex_context_review",
+    "version": "reddit_tag_repair_v2_rule_development_20260714_v1",
+    "independent_human_review": false,
+    "note": "All v1 needs_review candidates were inspected before the v2 policy was frozen."
+  },
+  "boundaries": {
+    "production_unchanged": true,
+    "provider_call": false,
+    "database_write": false,
+    "live_send": false
+  }
+}

@@ -1,0 +1,506 @@
+{
+  "assignment_id_formula": "sha256(canonical_json_v1({voc_id,cohort_id,cohort_config_sha256,snapshot_id,scope,source_stratum,persona_fact_ids,governed_signal_fact_ids,signal_evidence_refs,evidence_scope,voc_tag_ids}))",
+  "availability_thresholds": {
+    "directional_sample_min": 10,
+    "stable_sample_min": 30,
+    "unavailable_below": 10
+  },
+  "boundaries": {
+    "author_level_personas": false,
+    "counts_are_content_entities_not_users": true,
+    "demographics_supported": false,
+    "parent_persona_inheritance": false,
+    "population_share_supported": false,
+    "production_unchanged": true,
+    "provider_call": false,
+    "real_user_images": false
+  },
+  "bridge_summary": {
+    "bridge_edge_count": 141,
+    "bridged_persona_tag_count": 79,
+    "cohort_count": 8,
+    "unbridged_persona_tag_count": 3
+  },
+  "bridge_version": "persona_cohort_bridge_v1",
+  "cohorts": [
+    {
+      "avatar": {
+        "alt_text": "竞品比较者的合成编辑插画，非真实用户",
+        "derived_from_reddit_media": false,
+        "fallback_public_asset_path": "assets/persona-fallback-neutral.svg",
+        "fallback_source_asset_path": "docs/superpowers/assets/reddit-voc-personas-v3/persona-fallback-neutral.svg",
+        "height": 512,
+        "identity_claim": false,
+        "media_type": "image/svg+xml",
+        "public_asset_path": "assets/persona-competitor-comparer.svg",
+        "real_user_image": false,
+        "source_asset_path": "docs/superpowers/assets/reddit-voc-personas-v3/persona-competitor-comparer.svg",
+        "synthetic": true,
+        "width": 512
+      },
+      "cohort_id": "competitor_comparer",
+      "definition": "在同一 VOC 中形成竞品比较主题，或同时具备画像桥接证据与受治理竞品实体证据的内容群组。",
+      "name_cn": "竞品比较者",
+      "persona_tag_ids": [
+        "PER-EMOTION-013",
+        "PER-HOW-004",
+        "PER-HOW-005",
+        "PER-HOW-016",
+        "PER-WHO-002",
+        "PER-WHO-006"
+      ],
+      "trigger_paths": [
+        {
+          "path_id": "bridge_with_competitor",
+          "required_brand_roles_any": [
+            "competitor"
+          ],
+          "required_problem_ids_any": [],
+          "required_scenario_ids_any": [],
+          "required_topic_ids_any": [],
+          "required_voc_tag_ids_any": [],
+          "requires_bridge_match": true
+        },
+        {
+          "path_id": "topic",
+          "required_brand_roles_any": [],
+          "required_problem_ids_any": [],
+          "required_scenario_ids_any": [],
+          "required_topic_ids_any": [
+            "competitor_comparison"
+          ],
+          "required_voc_tag_ids_any": [],
+          "requires_bridge_match": false
+        }
+      ]
+    },
+    {
+      "avatar": {
+        "alt_text": "舒适适配与产出关注者的合成编辑插画，非真实用户",
+        "derived_from_reddit_media": false,
+        "fallback_public_asset_path": "assets/persona-fallback-neutral.svg",
+        "fallback_source_asset_path": "docs/superpowers/assets/reddit-voc-personas-v3/persona-fallback-neutral.svg",
+        "height": 512,
+        "identity_claim": false,
+        "media_type": "image/svg+xml",
+        "public_asset_path": "assets/persona-fit-output-optimizer.svg",
+        "real_user_image": false,
+        "source_asset_path": "docs/superpowers/assets/reddit-voc-personas-v3/persona-fit-output-optimizer.svg",
+        "synthetic": true,
+        "width": 512
+      },
+      "cohort_id": "fit_output_optimizer",
+      "definition": "同一 VOC 中存在舒适适配、产出供应或泄漏问题证据的内容群组；画像原子只增强解释。",
+      "name_cn": "舒适适配与产出关注者",
+      "persona_tag_ids": [
+        "PER-EMOTION-001",
+        "PER-EMOTION-005",
+        "PER-EMOTION-006",
+        "PER-EMOTION-008",
+        "PER-WHAT-003",
+        "PER-WHAT-004",
+        "PER-WHAT-006",
+        "PER-WHAT-007",
+        "PER-WHAT-008",
+        "PER-WHAT-009",
+        "PER-WHO-008",
+        "PER-WHO-009",
+        "PER-WHO-011",
+        "PER-WHO-012",
+        "PER-WHY-001",
+        "PER-WHY-004",
+        "PER-WHY-007",
+        "PER-WHY-008",
+        "PER-WHY-012",
+        "PER-WHY-013"
+      ],
+      "trigger_paths": [
+        {
+          "path_id": "governed_problem",
+          "required_brand_roles_any": [],
+          "required_problem_ids_any": [
+            "fit_comfort",
+            "leakage",
+            "output_supply"
+          ],
+          "required_scenario_ids_any": [],
+          "required_topic_ids_any": [],
+          "required_voc_tag_ids_any": [],
+          "requires_bridge_match": false
+        }
+      ]
+    },
+    {
+      "avatar": {
+        "alt_text": "操作与故障求助者的合成编辑插画，非真实用户",
+        "derived_from_reddit_media": false,
+        "fallback_public_asset_path": "assets/persona-fallback-neutral.svg",
+        "fallback_source_asset_path": "docs/superpowers/assets/reddit-voc-personas-v3/persona-fallback-neutral.svg",
+        "height": 512,
+        "identity_claim": false,
+        "media_type": "image/svg+xml",
+        "public_asset_path": "assets/persona-operations-troubleshooter.svg",
+        "real_user_image": false,
+        "source_asset_path": "docs/superpowers/assets/reddit-voc-personas-v3/persona-operations-troubleshooter.svg",
+        "synthetic": true,
+        "width": 512
+      },
+      "cohort_id": "operations_troubleshooter",
+      "definition": "同一 VOC 中存在故障排查主题或受治理操作痛点的内容群组；画像原子不能单独触发。",
+      "name_cn": "操作与故障求助者",
+      "persona_tag_ids": [
+        "PER-EMOTION-002",
+        "PER-TECH-002",
+        "PER-TECH-003",
+        "PER-WHAT-002",
+        "PER-WHAT-004",
+        "PER-WHEN-010",
+        "PER-WHO-001",
+        "PER-WHO-005",
+        "PER-WHY-001",
+        "PER-WHY-002",
+        "PER-WHY-003",
+        "PER-WHY-004",
+        "PER-WHY-005",
+        "PER-WHY-006",
+        "PER-WHY-012",
+        "PER-WHY-013"
+      ],
+      "trigger_paths": [
+        {
+          "path_id": "governed_problem",
+          "required_brand_roles_any": [],
+          "required_problem_ids_any": [
+            "operations_pain"
+          ],
+          "required_scenario_ids_any": [],
+          "required_topic_ids_any": [],
+          "required_voc_tag_ids_any": [],
+          "requires_bridge_match": false
+        },
+        {
+          "path_id": "topic",
+          "required_brand_roles_any": [],
+          "required_problem_ids_any": [],
+          "required_scenario_ids_any": [],
+          "required_topic_ids_any": [
+            "troubleshooting"
+          ],
+          "required_voc_tag_ids_any": [],
+          "requires_bridge_match": false
+        }
+      ]
+    },
+    {
+      "avatar": {
+        "alt_text": "产品评估者的合成编辑插画，非真实用户",
+        "derived_from_reddit_media": false,
+        "fallback_public_asset_path": "assets/persona-fallback-neutral.svg",
+        "fallback_source_asset_path": "docs/superpowers/assets/reddit-voc-personas-v3/persona-fallback-neutral.svg",
+        "height": 512,
+        "identity_claim": false,
+        "media_type": "image/svg+xml",
+        "public_asset_path": "assets/persona-product-evaluator.svg",
+        "real_user_image": false,
+        "source_asset_path": "docs/superpowers/assets/reddit-voc-personas-v3/persona-product-evaluator.svg",
+        "synthetic": true,
+        "width": 512
+      },
+      "cohort_id": "product_evaluator",
+      "definition": "同一 VOC 中出现产品评估主题或任一已晋级画像桥接证据的内容群组。",
+      "name_cn": "产品评估者",
+      "persona_tag_ids": [
+        "PER-EMOTION-005",
+        "PER-EMOTION-008",
+        "PER-HOW-002",
+        "PER-HOW-003",
+        "PER-HOW-004",
+        "PER-HOW-005",
+        "PER-HOW-010",
+        "PER-HOW-012",
+        "PER-TECH-001",
+        "PER-TECH-002",
+        "PER-TECH-003",
+        "PER-WHAT-001",
+        "PER-WHAT-002",
+        "PER-WHAT-003",
+        "PER-WHAT-004",
+        "PER-WHAT-005",
+        "PER-WHAT-006",
+        "PER-WHAT-007",
+        "PER-WHAT-008",
+        "PER-WHAT-009",
+        "PER-WHAT-011",
+        "PER-WHAT-012",
+        "PER-WHO-005",
+        "PER-WHO-006",
+        "PER-WHO-007"
+      ],
+      "trigger_paths": [
+        {
+          "path_id": "bridge",
+          "required_brand_roles_any": [],
+          "required_problem_ids_any": [],
+          "required_scenario_ids_any": [],
+          "required_topic_ids_any": [],
+          "required_voc_tag_ids_any": [],
+          "requires_bridge_match": true
+        },
+        {
+          "path_id": "topic",
+          "required_brand_roles_any": [],
+          "required_problem_ids_any": [],
+          "required_scenario_ids_any": [],
+          "required_topic_ids_any": [
+            "product_evaluation"
+          ],
+          "required_voc_tag_ids_any": [],
+          "requires_bridge_match": false
+        }
+      ]
+    },
+    {
+      "avatar": {
+        "alt_text": "选购决策者的合成编辑插画，非真实用户",
+        "derived_from_reddit_media": false,
+        "fallback_public_asset_path": "assets/persona-fallback-neutral.svg",
+        "fallback_source_asset_path": "docs/superpowers/assets/reddit-voc-personas-v3/persona-fallback-neutral.svg",
+        "height": 512,
+        "identity_claim": false,
+        "media_type": "image/svg+xml",
+        "public_asset_path": "assets/persona-purchase-decision.svg",
+        "real_user_image": false,
+        "source_asset_path": "docs/superpowers/assets/reddit-voc-personas-v3/persona-purchase-decision.svg",
+        "synthetic": true,
+        "width": 512
+      },
+      "cohort_id": "purchase_decision",
+      "definition": "同一 VOC 中出现选购决策主题或任一已晋级画像桥接证据的内容群组。",
+      "name_cn": "选购决策者",
+      "persona_tag_ids": [
+        "PER-EMOTION-011",
+        "PER-EMOTION-012",
+        "PER-EMOTION-013",
+        "PER-HOW-005",
+        "PER-HOW-006",
+        "PER-HOW-008",
+        "PER-HOW-009",
+        "PER-HOW-010",
+        "PER-HOW-011",
+        "PER-HOW-012",
+        "PER-HOW-013",
+        "PER-HOW-014",
+        "PER-HOW-015",
+        "PER-HOW-016",
+        "PER-WHAT-010",
+        "PER-WHAT-011",
+        "PER-WHAT-012",
+        "PER-WHAT-013",
+        "PER-WHEN-009",
+        "PER-WHO-003"
+      ],
+      "trigger_paths": [
+        {
+          "path_id": "bridge",
+          "required_brand_roles_any": [],
+          "required_problem_ids_any": [],
+          "required_scenario_ids_any": [],
+          "required_topic_ids_any": [],
+          "required_voc_tag_ids_any": [],
+          "requires_bridge_match": true
+        },
+        {
+          "path_id": "topic",
+          "required_brand_roles_any": [],
+          "required_problem_ids_any": [],
+          "required_scenario_ids_any": [],
+          "required_topic_ids_any": [
+            "purchase_decision"
+          ],
+          "required_voc_tag_ids_any": [],
+          "requires_bridge_match": false
+        }
+      ]
+    },
+    {
+      "avatar": {
+        "alt_text": "推荐表达群的合成编辑插画，非真实用户",
+        "derived_from_reddit_media": false,
+        "fallback_public_asset_path": "assets/persona-fallback-neutral.svg",
+        "fallback_source_asset_path": "docs/superpowers/assets/reddit-voc-personas-v3/persona-fallback-neutral.svg",
+        "height": 512,
+        "identity_claim": false,
+        "media_type": "image/svg+xml",
+        "public_asset_path": "assets/persona-explicit-advocate.svg",
+        "real_user_image": false,
+        "source_asset_path": "docs/superpowers/assets/reddit-voc-evidence-personas/persona-explicit-advocate.svg",
+        "synthetic": true,
+        "width": 512
+      },
+      "cohort_id": "recommendation_expression",
+      "definition": "同一 VOC 中已晋级显式推荐标签 L0-GEN-103 的内容群组；画像原子只增强解释。",
+      "name_cn": "推荐表达群",
+      "persona_tag_ids": [
+        "PER-EMOTION-001",
+        "PER-EMOTION-008",
+        "PER-EMOTION-010",
+        "PER-HOW-006",
+        "PER-HOW-007",
+        "PER-HOW-009",
+        "PER-HOW-010",
+        "PER-HOW-011"
+      ],
+      "trigger_paths": [
+        {
+          "path_id": "promoted_voc_tag",
+          "required_brand_roles_any": [],
+          "required_problem_ids_any": [],
+          "required_scenario_ids_any": [],
+          "required_topic_ids_any": [],
+          "required_voc_tag_ids_any": [
+            "L0-GEN-103"
+          ],
+          "requires_bridge_match": false
+        }
+      ]
+    },
+    {
+      "avatar": {
+        "alt_text": "工作与家庭场景适配者的合成编辑插画，非真实用户",
+        "derived_from_reddit_media": false,
+        "fallback_public_asset_path": "assets/persona-fallback-neutral.svg",
+        "fallback_source_asset_path": "docs/superpowers/assets/reddit-voc-personas-v3/persona-fallback-neutral.svg",
+        "height": 512,
+        "identity_claim": false,
+        "media_type": "image/svg+xml",
+        "public_asset_path": "assets/persona-work-scenario.svg",
+        "real_user_image": false,
+        "source_asset_path": "docs/superpowers/assets/reddit-voc-evidence-personas/persona-work-scenario.svg",
+        "synthetic": true,
+        "width": 512
+      },
+      "cohort_id": "scenario_adapter",
+      "definition": "同一 VOC 中出现工作或家庭场景证据，或任一已晋级画像桥接证据的内容群组。",
+      "name_cn": "工作与家庭场景适配者",
+      "persona_tag_ids": [
+        "PER-EMOTION-001",
+        "PER-EMOTION-007",
+        "PER-EMOTION-009",
+        "PER-HOW-001",
+        "PER-HOW-002",
+        "PER-HOW-004",
+        "PER-WHAT-002",
+        "PER-WHAT-004",
+        "PER-WHAT-005",
+        "PER-WHEN-001",
+        "PER-WHEN-002",
+        "PER-WHEN-003",
+        "PER-WHEN-004",
+        "PER-WHEN-005",
+        "PER-WHEN-006",
+        "PER-WHEN-007",
+        "PER-WHEN-008",
+        "PER-WHEN-009",
+        "PER-WHEN-010",
+        "PER-WHEN-011",
+        "PER-WHEN-012",
+        "PER-WHO-003",
+        "PER-WHO-004",
+        "PER-WHO-008",
+        "PER-WHO-009",
+        "PER-WHO-010",
+        "PER-WHO-011",
+        "PER-WHO-012",
+        "PER-WHY-002",
+        "PER-WHY-003",
+        "PER-WHY-005",
+        "PER-WHY-009"
+      ],
+      "trigger_paths": [
+        {
+          "path_id": "bridge",
+          "required_brand_roles_any": [],
+          "required_problem_ids_any": [],
+          "required_scenario_ids_any": [],
+          "required_topic_ids_any": [],
+          "required_voc_tag_ids_any": [],
+          "requires_bridge_match": true
+        },
+        {
+          "path_id": "governed_scenario",
+          "required_brand_roles_any": [],
+          "required_problem_ids_any": [],
+          "required_scenario_ids_any": [
+            "family_scenario",
+            "work_scenario"
+          ],
+          "required_topic_ids_any": [],
+          "required_voc_tag_ids_any": [],
+          "requires_bridge_match": false
+        }
+      ]
+    },
+    {
+      "avatar": {
+        "alt_text": "服务支持需求者的合成编辑插画，非真实用户",
+        "derived_from_reddit_media": false,
+        "fallback_public_asset_path": "assets/persona-fallback-neutral.svg",
+        "fallback_source_asset_path": "docs/superpowers/assets/reddit-voc-personas-v3/persona-fallback-neutral.svg",
+        "height": 512,
+        "identity_claim": false,
+        "media_type": "image/svg+xml",
+        "public_asset_path": "assets/persona-service-support-seeker.svg",
+        "real_user_image": false,
+        "source_asset_path": "docs/superpowers/assets/reddit-voc-personas-v3/persona-service-support-seeker.svg",
+        "synthetic": true,
+        "width": 512
+      },
+      "cohort_id": "service_support_seeker",
+      "definition": "同一 VOC 中存在客服或支持问题证据的内容群组；画像原子不能单独触发。",
+      "name_cn": "服务支持需求者",
+      "persona_tag_ids": [
+        "PER-EMOTION-002",
+        "PER-EMOTION-004",
+        "PER-TECH-002",
+        "PER-TECH-003",
+        "PER-WHEN-010",
+        "PER-WHEN-011",
+        "PER-WHO-001",
+        "PER-WHO-004",
+        "PER-WHO-005",
+        "PER-WHY-001",
+        "PER-WHY-004",
+        "PER-WHY-006",
+        "PER-WHY-012",
+        "PER-WHY-013"
+      ],
+      "trigger_paths": [
+        {
+          "path_id": "governed_problem",
+          "required_brand_roles_any": [],
+          "required_problem_ids_any": [
+            "customer_service",
+            "support"
+          ],
+          "required_scenario_ids_any": [],
+          "required_topic_ids_any": [],
+          "required_voc_tag_ids_any": [],
+          "requires_bridge_match": false
+        }
+      ]
+    }
+  ],
+  "config_version": "reddit_voc_persona_cohorts_20260716_v3",
+  "dictionary_binding": {
+    "asset_path": "data/reference/reddit-voc-v3/dim_persona_v1.csv",
+    "bytes": 35755,
+    "row_count": 82,
+    "sha256": "279b313509141eb0f7432040818e261178fd9f75ec67a947a0cb9e6211799b1e"
+  },
+  "schema_version": "reddit_voc_persona_cohort_config_v1",
+  "unbridged_persona_tag_ids": [
+    "PER-EMOTION-003",
+    "PER-WHY-010",
+    "PER-WHY-011"
+  ]
+}

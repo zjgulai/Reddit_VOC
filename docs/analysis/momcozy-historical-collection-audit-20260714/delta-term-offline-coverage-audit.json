@@ -1,0 +1,5421 @@
+{
+  "aggregate": {
+    "by_group": {
+      "category_anchors": {
+        "comment_covered_terms": 17,
+        "comment_only_existing_lexical_evidence": 3,
+        "post_surface_covered_terms": 16,
+        "terms": 25,
+        "zero_existing_lexical_evidence": 6
+      },
+      "governed_competitors": {
+        "comment_covered_terms": 14,
+        "comment_only_existing_lexical_evidence": 1,
+        "post_surface_covered_terms": 13,
+        "terms": 17,
+        "zero_existing_lexical_evidence": 3
+      },
+      "momcozy_model_gap": {
+        "comment_covered_terms": 10,
+        "comment_only_existing_lexical_evidence": 0,
+        "post_surface_covered_terms": 14,
+        "terms": 20,
+        "zero_existing_lexical_evidence": 6
+      },
+      "official_catalog_aliases": {
+        "comment_covered_terms": 0,
+        "comment_only_existing_lexical_evidence": 0,
+        "post_surface_covered_terms": 3,
+        "terms": 6,
+        "zero_existing_lexical_evidence": 3
+      },
+      "owner_alias_gap": {
+        "comment_covered_terms": 0,
+        "comment_only_existing_lexical_evidence": 0,
+        "post_surface_covered_terms": 0,
+        "terms": 1,
+        "zero_existing_lexical_evidence": 1
+      }
+    },
+    "coverage_classes": {
+      "comment_only_existing_lexical_evidence": 4,
+      "post_and_comment_existing_lexical_evidence": 37,
+      "post_only_existing_lexical_evidence": 9,
+      "zero_existing_lexical_evidence": 19
+    },
+    "distinct_evidence_parent_post_ids": 299,
+    "distinct_matching_comment_ids": 1141,
+    "distinct_matching_post_ids": 242,
+    "terms": 69,
+    "terms_with_comment_evidence": 41,
+    "terms_with_post_surface_evidence": 46
+  },
+  "boundaries": {
+    "database_write": "local-analysis-output-only",
+    "live_send": false,
+    "local_product_tests_run": false,
+    "offline_coverage_evidence_only": true,
+    "production_unchanged": true,
+    "provider_attempt_made": false,
+    "provider_call": false,
+    "remote_content_exported": false,
+    "remote_usernames_exported": false,
+    "remote_write": false,
+    "search_profile_changed": false
+  },
+  "checks": {
+    "delta_terms_69": true,
+    "delta_terms_unique": true,
+    "every_delta_term_has_one_group": true,
+    "every_term_classified": true,
+    "local_linked_comments_3528": true,
+    "local_requested_posts_187": true,
+    "no_provider_lane_marked_complete": true,
+    "potential_union_comments_4730": true,
+    "potential_union_posts_410": true,
+    "profile_sha256_matches": true,
+    "remote_database_sha256_matches": true,
+    "remote_linked_comments_3225": true,
+    "remote_output_identity_and_counts_only": true,
+    "remote_query_only": true,
+    "remote_quick_check_ok": true,
+    "remote_requested_posts_301": true,
+    "remote_required_comment_columns": true,
+    "remote_required_post_columns": true
+  },
+  "generated_at_utc": "2026-07-14T12:47:24.082214+00:00",
+  "method": {
+    "comment_surface": "comment body",
+    "interpretation": "Lexical evidence already present in collected content. It is not proof that the corresponding search lane has been exhaustively collected.",
+    "match_type": "unicode_nfkc_casefold_ascii_alnum_token_phrase",
+    "post_surface": "title plus selftext/content",
+    "priority_rule": "zero evidence, comment-only, post-only, then post-and-comment; within class official aliases, Momcozy models, owner alias, competitors, then broad categories",
+    "window_rule": "post_created_at_utc >= 2025-01-01T00:00:00Z; comments linked to in-window posts"
+  },
+  "recommended_probe_order": [
+    {
+      "coverage_class": "zero_existing_lexical_evidence",
+      "evidence_parent_posts": 0,
+      "group": "official_catalog_aliases",
+      "priority_rank": 1,
+      "priority_tier": "P0",
+      "provider_discovery_still_required": true,
+      "term": "\"Momcozy BM03\""
+    },
+    {
+      "coverage_class": "zero_existing_lexical_evidence",
+      "evidence_parent_posts": 0,
+      "group": "official_catalog_aliases",
+      "priority_rank": 2,
+      "priority_tier": "P0",
+      "provider_discovery_still_required": true,
+      "term": "\"Momcozy DeepClean\""
+    },
+    {
+      "coverage_class": "zero_existing_lexical_evidence",
+      "evidence_parent_posts": 0,
+      "group": "official_catalog_aliases",
+      "priority_rank": 3,
+      "priority_tier": "P0",
+      "provider_discovery_still_required": true,
+      "term": "\"Momcozy S12 Pro Quick\""
+    },
+    {
+      "coverage_class": "zero_existing_lexical_evidence",
+      "evidence_parent_posts": 0,
+      "group": "momcozy_model_gap",
+      "priority_rank": 4,
+      "priority_tier": "P0",
+      "provider_discovery_still_required": true,
+      "term": "\"Momcozy BS03\""
+    },
+    {
+      "coverage_class": "zero_existing_lexical_evidence",
+      "evidence_parent_posts": 0,
+      "group": "momcozy_model_gap",
+      "priority_rank": 5,
+      "priority_tier": "P0",
+      "provider_discovery_still_required": true,
+      "term": "\"Momcozy BumpEase\""
+    },
+    {
+      "coverage_class": "zero_existing_lexical_evidence",
+      "evidence_parent_posts": 0,
+      "group": "momcozy_model_gap",
+      "priority_rank": 6,
+      "priority_tier": "P0",
+      "provider_discovery_still_required": true,
+      "term": "\"Momcozy Dreamlign\""
+    },
+    {
+      "coverage_class": "zero_existing_lexical_evidence",
+      "evidence_parent_posts": 0,
+      "group": "momcozy_model_gap",
+      "priority_rank": 7,
+      "priority_tier": "P0",
+      "provider_discovery_still_required": true,
+      "term": "\"Momcozy Ergonest\""
+    },
+    {
+      "coverage_class": "zero_existing_lexical_evidence",
+      "evidence_parent_posts": 0,
+      "group": "momcozy_model_gap",
+      "priority_rank": 8,
+      "priority_tier": "P0",
+      "provider_discovery_still_required": true,
+      "term": "\"Momcozy Ergowrap\""
+    },
+    {
+      "coverage_class": "zero_existing_lexical_evidence",
+      "evidence_parent_posts": 0,
+      "group": "momcozy_model_gap",
+      "priority_rank": 9,
+      "priority_tier": "P0",
+      "provider_discovery_still_required": true,
+      "term": "\"Momcozy Mobile Flow\""
+    },
+    {
+      "coverage_class": "zero_existing_lexical_evidence",
+      "evidence_parent_posts": 0,
+      "group": "owner_alias_gap",
+      "priority_rank": 10,
+      "priority_tier": "P0",
+      "provider_discovery_still_required": true,
+      "term": "\"mcozy\""
+    },
+    {
+      "coverage_class": "zero_existing_lexical_evidence",
+      "evidence_parent_posts": 0,
+      "group": "governed_competitors",
+      "priority_rank": 11,
+      "priority_tier": "P0",
+      "provider_discovery_still_required": true,
+      "term": "\"boppy\""
+    },
+    {
+      "coverage_class": "zero_existing_lexical_evidence",
+      "evidence_parent_posts": 0,
+      "group": "governed_competitors",
+      "priority_rank": 12,
+      "priority_tier": "P0",
+      "provider_discovery_still_required": true,
+      "term": "\"comfelie\""
+    },
+    {
+      "coverage_class": "zero_existing_lexical_evidence",
+      "evidence_parent_posts": 0,
+      "group": "governed_competitors",
+      "priority_rank": 13,
+      "priority_tier": "P0",
+      "provider_discovery_still_required": true,
+      "term": "\"wabi baby\""
+    },
+    {
+      "coverage_class": "zero_existing_lexical_evidence",
+      "evidence_parent_posts": 0,
+      "group": "category_anchors",
+      "priority_rank": 14,
+      "priority_tier": "P0",
+      "provider_discovery_still_required": true,
+      "term": "\"baby feeding set\""
+    },
+    {
+      "coverage_class": "zero_existing_lexical_evidence",
+      "evidence_parent_posts": 0,
+      "group": "category_anchors",
+      "priority_rank": 15,
+      "priority_tier": "P0",
+      "provider_discovery_still_required": true,
+      "term": "\"baby formula maker\""
+    },
+    {
+      "coverage_class": "zero_existing_lexical_evidence",
+      "evidence_parent_posts": 0,
+      "group": "category_anchors",
+      "priority_rank": 16,
+      "priority_tier": "P0",
+      "provider_discovery_still_required": true,
+      "term": "\"baby humidifier\""
+    },
+    {
+      "coverage_class": "zero_existing_lexical_evidence",
+      "evidence_parent_posts": 0,
+      "group": "category_anchors",
+      "priority_rank": 17,
+      "priority_tier": "P0",
+      "provider_discovery_still_required": true,
+      "term": "\"baby thermometer\""
+    },
+    {
+      "coverage_class": "zero_existing_lexical_evidence",
+      "evidence_parent_posts": 0,
+      "group": "category_anchors",
+      "priority_rank": 18,
+      "priority_tier": "P0",
+      "provider_discovery_still_required": true,
+      "term": "\"diaper pail\""
+    },
+    {
+      "coverage_class": "zero_existing_lexical_evidence",
+      "evidence_parent_posts": 0,
+      "group": "category_anchors",
+      "priority_rank": 19,
+      "priority_tier": "P0",
+      "provider_discovery_still_required": true,
+      "term": "\"lactation massager\""
+    },
+    {
+      "coverage_class": "comment_only_existing_lexical_evidence",
+      "evidence_parent_posts": 3,
+      "group": "governed_competitors",
+      "priority_rank": 20,
+      "priority_tier": "P1",
+      "provider_discovery_still_required": true,
+      "term": "\"tommee tippee\""
+    },
+    {
+      "coverage_class": "comment_only_existing_lexical_evidence",
+      "evidence_parent_posts": 1,
+      "group": "category_anchors",
+      "priority_rank": 21,
+      "priority_tier": "P1",
+      "provider_discovery_still_required": true,
+      "term": "\"bottle sterilizer\""
+    },
+    {
+      "coverage_class": "comment_only_existing_lexical_evidence",
+      "evidence_parent_posts": 1,
+      "group": "category_anchors",
+      "priority_rank": 22,
+      "priority_tier": "P1",
+      "provider_discovery_still_required": true,
+      "term": "\"colostrum collector\""
+    },
+    {
+      "coverage_class": "comment_only_existing_lexical_evidence",
+      "evidence_parent_posts": 1,
+      "group": "category_anchors",
+      "priority_rank": 23,
+      "priority_tier": "P1",
+      "provider_discovery_still_required": true,
+      "term": "\"white noise machine\""
+    },
+    {
+      "coverage_class": "post_only_existing_lexical_evidence",
+      "evidence_parent_posts": 2,
+      "group": "official_catalog_aliases",
+      "priority_rank": 24,
+      "priority_tier": "P2",
+      "provider_discovery_still_required": true,
+      "term": "\"Momcozy M5 Smart\""
+    },
+    {
+      "coverage_class": "post_only_existing_lexical_evidence",
+      "evidence_parent_posts": 1,
+      "group": "official_catalog_aliases",
+      "priority_rank": 25,
+      "priority_tier": "P2",
+      "provider_discovery_still_required": true,
+      "term": "\"Momcozy Mobile Style\""
+    },
+    {
+      "coverage_class": "post_only_existing_lexical_evidence",
+      "evidence_parent_posts": 3,
+      "group": "official_catalog_aliases",
+      "priority_rank": 26,
+      "priority_tier": "P2",
+      "provider_discovery_still_required": true,
+      "term": "\"Momcozy Wellness 1\""
+    },
+    {
+      "coverage_class": "post_only_existing_lexical_evidence",
+      "evidence_parent_posts": 2,
+      "group": "momcozy_model_gap",
+      "priority_rank": 27,
+      "priority_tier": "P2",
+      "provider_discovery_still_required": true,
+      "term": "\"Momcozy DinerPal\""
+    },
+    {
+      "coverage_class": "post_only_existing_lexical_evidence",
+      "evidence_parent_posts": 5,
+      "group": "momcozy_model_gap",
+      "priority_rank": 28,
+      "priority_tier": "P2",
+      "provider_discovery_still_required": true,
+      "term": "\"Momcozy KleanPal Pro\""
+    },
+    {
+      "coverage_class": "post_only_existing_lexical_evidence",
+      "evidence_parent_posts": 3,
+      "group": "momcozy_model_gap",
+      "priority_rank": 29,
+      "priority_tier": "P2",
+      "provider_discovery_still_required": true,
+      "term": "\"Momcozy W1\""
+    },
+    {
+      "coverage_class": "post_only_existing_lexical_evidence",
+      "evidence_parent_posts": 2,
+      "group": "momcozy_model_gap",
+      "priority_rank": 30,
+      "priority_tier": "P2",
+      "provider_discovery_still_required": true,
+      "term": "\"Momcozy WeeSnug\""
+    },
+    {
+      "coverage_class": "post_only_existing_lexical_evidence",
+      "evidence_parent_posts": 1,
+      "group": "category_anchors",
+      "priority_rank": 31,
+      "priority_tier": "P2",
+      "provider_discovery_still_required": true,
+      "term": "\"breast milk chiller\""
+    },
+    {
+      "coverage_class": "post_only_existing_lexical_evidence",
+      "evidence_parent_posts": 8,
+      "group": "category_anchors",
+      "priority_rank": 32,
+      "priority_tier": "P2",
+      "provider_discovery_still_required": true,
+      "term": "\"wearable breast pump\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "evidence_parent_posts": 9,
+      "group": "momcozy_model_gap",
+      "priority_rank": 33,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "term": "\"Momcozy Air 1\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "evidence_parent_posts": 3,
+      "group": "momcozy_model_gap",
+      "priority_rank": 34,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "term": "\"Momcozy D8\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "evidence_parent_posts": 24,
+      "group": "momcozy_model_gap",
+      "priority_rank": 35,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "term": "\"Momcozy M6\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "evidence_parent_posts": 14,
+      "group": "momcozy_model_gap",
+      "priority_rank": 36,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "term": "\"Momcozy S12 Pro\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "evidence_parent_posts": 10,
+      "group": "momcozy_model_gap",
+      "priority_rank": 37,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "term": "\"Momcozy S9 Pro\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "evidence_parent_posts": 16,
+      "group": "momcozy_model_gap",
+      "priority_rank": 38,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "term": "\"Momcozy S9\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "evidence_parent_posts": 12,
+      "group": "momcozy_model_gap",
+      "priority_rank": 39,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "term": "\"Momcozy V1 Pro\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "evidence_parent_posts": 15,
+      "group": "momcozy_model_gap",
+      "priority_rank": 40,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "term": "\"Momcozy V1\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "evidence_parent_posts": 2,
+      "group": "momcozy_model_gap",
+      "priority_rank": 41,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "term": "\"Momcozy V2 Pro\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "evidence_parent_posts": 8,
+      "group": "momcozy_model_gap",
+      "priority_rank": 42,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "term": "\"Momcozy V2\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "evidence_parent_posts": 2,
+      "group": "governed_competitors",
+      "priority_rank": 43,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "term": "\"babybjorn\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "evidence_parent_posts": 9,
+      "group": "governed_competitors",
+      "priority_rank": 44,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "term": "\"dr. brown\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "evidence_parent_posts": 62,
+      "group": "governed_competitors",
+      "priority_rank": 45,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "term": "\"elvie\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "evidence_parent_posts": 13,
+      "group": "governed_competitors",
+      "priority_rank": 46,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "term": "\"ergobaby\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "evidence_parent_posts": 7,
+      "group": "governed_competitors",
+      "priority_rank": 47,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "term": "\"haakaa\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "evidence_parent_posts": 6,
+      "group": "governed_competitors",
+      "priority_rank": 48,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "term": "\"kindred bravely\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "evidence_parent_posts": 27,
+      "group": "governed_competitors",
+      "priority_rank": 49,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "term": "\"lansinoh\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "evidence_parent_posts": 93,
+      "group": "governed_competitors",
+      "priority_rank": 50,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "term": "\"medela\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "evidence_parent_posts": 3,
+      "group": "governed_competitors",
+      "priority_rank": 51,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "term": "\"nanit\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "evidence_parent_posts": 3,
+      "group": "governed_competitors",
+      "priority_rank": 52,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "term": "\"owlet\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "evidence_parent_posts": 8,
+      "group": "governed_competitors",
+      "priority_rank": 53,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "term": "\"philips avent\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "evidence_parent_posts": 185,
+      "group": "governed_competitors",
+      "priority_rank": 54,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "term": "\"spectra\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "evidence_parent_posts": 46,
+      "group": "governed_competitors",
+      "priority_rank": 55,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "term": "\"willow\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "evidence_parent_posts": 16,
+      "group": "category_anchors",
+      "priority_rank": 56,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "term": "\"baby carrier\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "evidence_parent_posts": 2,
+      "group": "category_anchors",
+      "priority_rank": 57,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "term": "\"baby food maker\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "evidence_parent_posts": 6,
+      "group": "category_anchors",
+      "priority_rank": 58,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "term": "\"baby monitor\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "evidence_parent_posts": 9,
+      "group": "category_anchors",
+      "priority_rank": 59,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "term": "\"bottle warmer\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "evidence_parent_posts": 5,
+      "group": "category_anchors",
+      "priority_rank": 60,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "term": "\"bottle washer sterilizer\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "evidence_parent_posts": 2,
+      "group": "category_anchors",
+      "priority_rank": 61,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "term": "\"breast milk storage bags\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "evidence_parent_posts": 2,
+      "group": "category_anchors",
+      "priority_rank": 62,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "term": "\"breast pump parts\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "evidence_parent_posts": 2,
+      "group": "category_anchors",
+      "priority_rank": 63,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "term": "\"hands-free breast pump\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "evidence_parent_posts": 8,
+      "group": "category_anchors",
+      "priority_rank": 64,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "term": "\"high chair\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "evidence_parent_posts": 6,
+      "group": "category_anchors",
+      "priority_rank": 65,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "term": "\"nursing bra\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "evidence_parent_posts": 2,
+      "group": "category_anchors",
+      "priority_rank": 66,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "term": "\"nursing pillow\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "evidence_parent_posts": 7,
+      "group": "category_anchors",
+      "priority_rank": 67,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "term": "\"pregnancy pillow\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "evidence_parent_posts": 28,
+      "group": "category_anchors",
+      "priority_rank": 68,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "term": "\"pumping bra\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "evidence_parent_posts": 7,
+      "group": "category_anchors",
+      "priority_rank": 69,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "term": "\"sound machine\""
+    }
+  ],
+  "rows": [
+    {
+      "coverage_class": "zero_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "evidence_parent_posts": 0,
+        "local_remote_comment_overlap": 0,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 0
+      },
+      "group": "official_catalog_aliases",
+      "identities": {
+        "comment_ids": [],
+        "comment_parent_post_ids": [],
+        "post_ids": []
+      },
+      "local": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "normalized_phrase": "momcozy bm03",
+      "priority_rank": 1,
+      "priority_tier": "P0",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "term": "\"Momcozy BM03\""
+    },
+    {
+      "coverage_class": "zero_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "evidence_parent_posts": 0,
+        "local_remote_comment_overlap": 0,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 0
+      },
+      "group": "official_catalog_aliases",
+      "identities": {
+        "comment_ids": [],
+        "comment_parent_post_ids": [],
+        "post_ids": []
+      },
+      "local": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "normalized_phrase": "momcozy deepclean",
+      "priority_rank": 2,
+      "priority_tier": "P0",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "term": "\"Momcozy DeepClean\""
+    },
+    {
+      "coverage_class": "zero_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "evidence_parent_posts": 0,
+        "local_remote_comment_overlap": 0,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 0
+      },
+      "group": "official_catalog_aliases",
+      "identities": {
+        "comment_ids": [],
+        "comment_parent_post_ids": [],
+        "post_ids": []
+      },
+      "local": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "normalized_phrase": "momcozy s12 pro quick",
+      "priority_rank": 3,
+      "priority_tier": "P0",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "term": "\"Momcozy S12 Pro Quick\""
+    },
+    {
+      "coverage_class": "zero_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "evidence_parent_posts": 0,
+        "local_remote_comment_overlap": 0,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 0
+      },
+      "group": "momcozy_model_gap",
+      "identities": {
+        "comment_ids": [],
+        "comment_parent_post_ids": [],
+        "post_ids": []
+      },
+      "local": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "normalized_phrase": "momcozy bs03",
+      "priority_rank": 4,
+      "priority_tier": "P0",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "term": "\"Momcozy BS03\""
+    },
+    {
+      "coverage_class": "zero_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "evidence_parent_posts": 0,
+        "local_remote_comment_overlap": 0,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 0
+      },
+      "group": "momcozy_model_gap",
+      "identities": {
+        "comment_ids": [],
+        "comment_parent_post_ids": [],
+        "post_ids": []
+      },
+      "local": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "normalized_phrase": "momcozy bumpease",
+      "priority_rank": 5,
+      "priority_tier": "P0",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "term": "\"Momcozy BumpEase\""
+    },
+    {
+      "coverage_class": "zero_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "evidence_parent_posts": 0,
+        "local_remote_comment_overlap": 0,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 0
+      },
+      "group": "momcozy_model_gap",
+      "identities": {
+        "comment_ids": [],
+        "comment_parent_post_ids": [],
+        "post_ids": []
+      },
+      "local": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "normalized_phrase": "momcozy dreamlign",
+      "priority_rank": 6,
+      "priority_tier": "P0",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "term": "\"Momcozy Dreamlign\""
+    },
+    {
+      "coverage_class": "zero_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "evidence_parent_posts": 0,
+        "local_remote_comment_overlap": 0,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 0
+      },
+      "group": "momcozy_model_gap",
+      "identities": {
+        "comment_ids": [],
+        "comment_parent_post_ids": [],
+        "post_ids": []
+      },
+      "local": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "normalized_phrase": "momcozy ergonest",
+      "priority_rank": 7,
+      "priority_tier": "P0",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "term": "\"Momcozy Ergonest\""
+    },
+    {
+      "coverage_class": "zero_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "evidence_parent_posts": 0,
+        "local_remote_comment_overlap": 0,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 0
+      },
+      "group": "momcozy_model_gap",
+      "identities": {
+        "comment_ids": [],
+        "comment_parent_post_ids": [],
+        "post_ids": []
+      },
+      "local": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "normalized_phrase": "momcozy ergowrap",
+      "priority_rank": 8,
+      "priority_tier": "P0",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "term": "\"Momcozy Ergowrap\""
+    },
+    {
+      "coverage_class": "zero_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "evidence_parent_posts": 0,
+        "local_remote_comment_overlap": 0,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 0
+      },
+      "group": "momcozy_model_gap",
+      "identities": {
+        "comment_ids": [],
+        "comment_parent_post_ids": [],
+        "post_ids": []
+      },
+      "local": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "normalized_phrase": "momcozy mobile flow",
+      "priority_rank": 9,
+      "priority_tier": "P0",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "term": "\"Momcozy Mobile Flow\""
+    },
+    {
+      "coverage_class": "zero_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "evidence_parent_posts": 0,
+        "local_remote_comment_overlap": 0,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 0
+      },
+      "group": "owner_alias_gap",
+      "identities": {
+        "comment_ids": [],
+        "comment_parent_post_ids": [],
+        "post_ids": []
+      },
+      "local": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "normalized_phrase": "mcozy",
+      "priority_rank": 10,
+      "priority_tier": "P0",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "term": "\"mcozy\""
+    },
+    {
+      "coverage_class": "zero_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "evidence_parent_posts": 0,
+        "local_remote_comment_overlap": 0,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 0
+      },
+      "group": "governed_competitors",
+      "identities": {
+        "comment_ids": [],
+        "comment_parent_post_ids": [],
+        "post_ids": []
+      },
+      "local": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "normalized_phrase": "boppy",
+      "priority_rank": 11,
+      "priority_tier": "P0",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "term": "\"boppy\""
+    },
+    {
+      "coverage_class": "zero_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "evidence_parent_posts": 0,
+        "local_remote_comment_overlap": 0,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 0
+      },
+      "group": "governed_competitors",
+      "identities": {
+        "comment_ids": [],
+        "comment_parent_post_ids": [],
+        "post_ids": []
+      },
+      "local": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "normalized_phrase": "comfelie",
+      "priority_rank": 12,
+      "priority_tier": "P0",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "term": "\"comfelie\""
+    },
+    {
+      "coverage_class": "zero_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "evidence_parent_posts": 0,
+        "local_remote_comment_overlap": 0,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 0
+      },
+      "group": "governed_competitors",
+      "identities": {
+        "comment_ids": [],
+        "comment_parent_post_ids": [],
+        "post_ids": []
+      },
+      "local": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "normalized_phrase": "wabi baby",
+      "priority_rank": 13,
+      "priority_tier": "P0",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "term": "\"wabi baby\""
+    },
+    {
+      "coverage_class": "zero_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "evidence_parent_posts": 0,
+        "local_remote_comment_overlap": 0,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 0
+      },
+      "group": "category_anchors",
+      "identities": {
+        "comment_ids": [],
+        "comment_parent_post_ids": [],
+        "post_ids": []
+      },
+      "local": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "normalized_phrase": "baby feeding set",
+      "priority_rank": 14,
+      "priority_tier": "P0",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "term": "\"baby feeding set\""
+    },
+    {
+      "coverage_class": "zero_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "evidence_parent_posts": 0,
+        "local_remote_comment_overlap": 0,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 0
+      },
+      "group": "category_anchors",
+      "identities": {
+        "comment_ids": [],
+        "comment_parent_post_ids": [],
+        "post_ids": []
+      },
+      "local": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "normalized_phrase": "baby formula maker",
+      "priority_rank": 15,
+      "priority_tier": "P0",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "term": "\"baby formula maker\""
+    },
+    {
+      "coverage_class": "zero_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "evidence_parent_posts": 0,
+        "local_remote_comment_overlap": 0,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 0
+      },
+      "group": "category_anchors",
+      "identities": {
+        "comment_ids": [],
+        "comment_parent_post_ids": [],
+        "post_ids": []
+      },
+      "local": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "normalized_phrase": "baby humidifier",
+      "priority_rank": 16,
+      "priority_tier": "P0",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "term": "\"baby humidifier\""
+    },
+    {
+      "coverage_class": "zero_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "evidence_parent_posts": 0,
+        "local_remote_comment_overlap": 0,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 0
+      },
+      "group": "category_anchors",
+      "identities": {
+        "comment_ids": [],
+        "comment_parent_post_ids": [],
+        "post_ids": []
+      },
+      "local": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "normalized_phrase": "baby thermometer",
+      "priority_rank": 17,
+      "priority_tier": "P0",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "term": "\"baby thermometer\""
+    },
+    {
+      "coverage_class": "zero_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "evidence_parent_posts": 0,
+        "local_remote_comment_overlap": 0,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 0
+      },
+      "group": "category_anchors",
+      "identities": {
+        "comment_ids": [],
+        "comment_parent_post_ids": [],
+        "post_ids": []
+      },
+      "local": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "normalized_phrase": "diaper pail",
+      "priority_rank": 18,
+      "priority_tier": "P0",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "term": "\"diaper pail\""
+    },
+    {
+      "coverage_class": "zero_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "evidence_parent_posts": 0,
+        "local_remote_comment_overlap": 0,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 0
+      },
+      "group": "category_anchors",
+      "identities": {
+        "comment_ids": [],
+        "comment_parent_post_ids": [],
+        "post_ids": []
+      },
+      "local": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "normalized_phrase": "lactation massager",
+      "priority_rank": 19,
+      "priority_tier": "P0",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "term": "\"lactation massager\""
+    },
+    {
+      "coverage_class": "comment_only_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 4,
+        "comment_parent_posts": 3,
+        "evidence_parent_posts": 3,
+        "local_remote_comment_overlap": 2,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 0
+      },
+      "group": "governed_competitors",
+      "identities": {
+        "comment_ids": [
+          "t1_o2yodd5",
+          "t1_owqrbyw",
+          "t1_owrqazy",
+          "t1_ox448oc"
+        ],
+        "comment_parent_post_ids": [
+          "1qsx5ut",
+          "1usur0x",
+          "1uthhj2"
+        ],
+        "post_ids": []
+      },
+      "local": {
+        "comment_matches": 3,
+        "comment_parent_posts": 2,
+        "post_surface_matches": 0
+      },
+      "normalized_phrase": "tommee tippee",
+      "priority_rank": 20,
+      "priority_tier": "P1",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 3,
+        "comment_parent_posts": 2,
+        "post_surface_matches": 0
+      },
+      "term": "\"tommee tippee\""
+    },
+    {
+      "coverage_class": "comment_only_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 1,
+        "comment_parent_posts": 1,
+        "evidence_parent_posts": 1,
+        "local_remote_comment_overlap": 1,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 0
+      },
+      "group": "category_anchors",
+      "identities": {
+        "comment_ids": [
+          "t1_o06rx7z"
+        ],
+        "comment_parent_post_ids": [
+          "1qfloqk"
+        ],
+        "post_ids": []
+      },
+      "local": {
+        "comment_matches": 1,
+        "comment_parent_posts": 1,
+        "post_surface_matches": 0
+      },
+      "normalized_phrase": "bottle sterilizer",
+      "priority_rank": 21,
+      "priority_tier": "P1",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 1,
+        "comment_parent_posts": 1,
+        "post_surface_matches": 0
+      },
+      "term": "\"bottle sterilizer\""
+    },
+    {
+      "coverage_class": "comment_only_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 1,
+        "comment_parent_posts": 1,
+        "evidence_parent_posts": 1,
+        "local_remote_comment_overlap": 0,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 0
+      },
+      "group": "category_anchors",
+      "identities": {
+        "comment_ids": [
+          "t1_ot6mg3h"
+        ],
+        "comment_parent_post_ids": [
+          "1ucticn"
+        ],
+        "post_ids": []
+      },
+      "local": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "normalized_phrase": "colostrum collector",
+      "priority_rank": 22,
+      "priority_tier": "P1",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 1,
+        "comment_parent_posts": 1,
+        "post_surface_matches": 0
+      },
+      "term": "\"colostrum collector\""
+    },
+    {
+      "coverage_class": "comment_only_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 1,
+        "comment_parent_posts": 1,
+        "evidence_parent_posts": 1,
+        "local_remote_comment_overlap": 1,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 0
+      },
+      "group": "category_anchors",
+      "identities": {
+        "comment_ids": [
+          "t1_oao627j"
+        ],
+        "comment_parent_post_ids": [
+          "1ruu6ha"
+        ],
+        "post_ids": []
+      },
+      "local": {
+        "comment_matches": 1,
+        "comment_parent_posts": 1,
+        "post_surface_matches": 0
+      },
+      "normalized_phrase": "white noise machine",
+      "priority_rank": 23,
+      "priority_tier": "P1",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 1,
+        "comment_parent_posts": 1,
+        "post_surface_matches": 0
+      },
+      "term": "\"white noise machine\""
+    },
+    {
+      "coverage_class": "post_only_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "evidence_parent_posts": 2,
+        "local_remote_comment_overlap": 0,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 2
+      },
+      "group": "official_catalog_aliases",
+      "identities": {
+        "comment_ids": [],
+        "comment_parent_post_ids": [],
+        "post_ids": [
+          "1uh63k8",
+          "1upfw1s"
+        ]
+      },
+      "local": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 1
+      },
+      "normalized_phrase": "momcozy m5 smart",
+      "priority_rank": 24,
+      "priority_tier": "P2",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 1
+      },
+      "term": "\"Momcozy M5 Smart\""
+    },
+    {
+      "coverage_class": "post_only_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "evidence_parent_posts": 1,
+        "local_remote_comment_overlap": 0,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 1
+      },
+      "group": "official_catalog_aliases",
+      "identities": {
+        "comment_ids": [],
+        "comment_parent_post_ids": [],
+        "post_ids": [
+          "1um05hi"
+        ]
+      },
+      "local": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "normalized_phrase": "momcozy mobile style",
+      "priority_rank": 25,
+      "priority_tier": "P2",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 1
+      },
+      "term": "\"Momcozy Mobile Style\""
+    },
+    {
+      "coverage_class": "post_only_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "evidence_parent_posts": 3,
+        "local_remote_comment_overlap": 0,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 3
+      },
+      "group": "official_catalog_aliases",
+      "identities": {
+        "comment_ids": [],
+        "comment_parent_post_ids": [],
+        "post_ids": [
+          "1ufrcbz",
+          "1uk261i",
+          "1us87lu"
+        ]
+      },
+      "local": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "normalized_phrase": "momcozy wellness 1",
+      "priority_rank": 26,
+      "priority_tier": "P2",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 3
+      },
+      "term": "\"Momcozy Wellness 1\""
+    },
+    {
+      "coverage_class": "post_only_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "evidence_parent_posts": 2,
+        "local_remote_comment_overlap": 0,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 2
+      },
+      "group": "momcozy_model_gap",
+      "identities": {
+        "comment_ids": [],
+        "comment_parent_post_ids": [],
+        "post_ids": [
+          "1ucyzbm",
+          "1umrymn"
+        ]
+      },
+      "local": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "normalized_phrase": "momcozy dinerpal",
+      "priority_rank": 27,
+      "priority_tier": "P2",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 2
+      },
+      "term": "\"Momcozy DinerPal\""
+    },
+    {
+      "coverage_class": "post_only_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "evidence_parent_posts": 5,
+        "local_remote_comment_overlap": 0,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 5
+      },
+      "group": "momcozy_model_gap",
+      "identities": {
+        "comment_ids": [],
+        "comment_parent_post_ids": [],
+        "post_ids": [
+          "1u2434z",
+          "1u3nqrd",
+          "1udlh3n",
+          "1ufct7q",
+          "1uo8h0l"
+        ]
+      },
+      "local": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "normalized_phrase": "momcozy kleanpal pro",
+      "priority_rank": 28,
+      "priority_tier": "P2",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 5
+      },
+      "term": "\"Momcozy KleanPal Pro\""
+    },
+    {
+      "coverage_class": "post_only_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "evidence_parent_posts": 3,
+        "local_remote_comment_overlap": 0,
+        "local_remote_post_overlap": 1,
+        "post_surface_matches": 3
+      },
+      "group": "momcozy_model_gap",
+      "identities": {
+        "comment_ids": [],
+        "comment_parent_post_ids": [],
+        "post_ids": [
+          "1ucuzk2",
+          "1ukly1d",
+          "1urxgbk"
+        ]
+      },
+      "local": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 1
+      },
+      "normalized_phrase": "momcozy w1",
+      "priority_rank": 29,
+      "priority_tier": "P2",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 3
+      },
+      "term": "\"Momcozy W1\""
+    },
+    {
+      "coverage_class": "post_only_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "evidence_parent_posts": 2,
+        "local_remote_comment_overlap": 0,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 2
+      },
+      "group": "momcozy_model_gap",
+      "identities": {
+        "comment_ids": [],
+        "comment_parent_post_ids": [],
+        "post_ids": [
+          "1u9uxan",
+          "1uemi64"
+        ]
+      },
+      "local": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "normalized_phrase": "momcozy weesnug",
+      "priority_rank": 30,
+      "priority_tier": "P2",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 2
+      },
+      "term": "\"Momcozy WeeSnug\""
+    },
+    {
+      "coverage_class": "post_only_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "evidence_parent_posts": 1,
+        "local_remote_comment_overlap": 0,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 1
+      },
+      "group": "category_anchors",
+      "identities": {
+        "comment_ids": [],
+        "comment_parent_post_ids": [],
+        "post_ids": [
+          "1u9xfrg"
+        ]
+      },
+      "local": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "normalized_phrase": "breast milk chiller",
+      "priority_rank": 31,
+      "priority_tier": "P2",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 1
+      },
+      "term": "\"breast milk chiller\""
+    },
+    {
+      "coverage_class": "post_only_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "evidence_parent_posts": 8,
+        "local_remote_comment_overlap": 0,
+        "local_remote_post_overlap": 1,
+        "post_surface_matches": 8
+      },
+      "group": "category_anchors",
+      "identities": {
+        "comment_ids": [],
+        "comment_parent_post_ids": [],
+        "post_ids": [
+          "1q8woen",
+          "1rnuh91",
+          "1uaf2x9",
+          "1udfuev",
+          "1udmrv2",
+          "1ufrcbz",
+          "1uj41a9",
+          "1upauuw"
+        ]
+      },
+      "local": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 1
+      },
+      "normalized_phrase": "wearable breast pump",
+      "priority_rank": 32,
+      "priority_tier": "P2",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 8
+      },
+      "term": "\"wearable breast pump\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 5,
+        "comment_parent_posts": 4,
+        "evidence_parent_posts": 9,
+        "local_remote_comment_overlap": 2,
+        "local_remote_post_overlap": 1,
+        "post_surface_matches": 5
+      },
+      "group": "momcozy_model_gap",
+      "identities": {
+        "comment_ids": [
+          "t1_o3htcxr",
+          "t1_o6wcke5",
+          "t1_oa31sdf",
+          "t1_oa831sh",
+          "t1_ow7nlyd"
+        ],
+        "comment_parent_post_ids": [
+          "1px7dtp",
+          "1rav2uo",
+          "1rqxo0n",
+          "1upq8vr"
+        ],
+        "post_ids": [
+          "1p6krjh",
+          "1uaf2x9",
+          "1ugmoav",
+          "1um4njp",
+          "1upfw1s"
+        ]
+      },
+      "local": {
+        "comment_matches": 4,
+        "comment_parent_posts": 3,
+        "post_surface_matches": 2
+      },
+      "normalized_phrase": "momcozy air 1",
+      "priority_rank": 33,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 3,
+        "comment_parent_posts": 3,
+        "post_surface_matches": 4
+      },
+      "term": "\"Momcozy Air 1\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 2,
+        "comment_parent_posts": 2,
+        "evidence_parent_posts": 3,
+        "local_remote_comment_overlap": 1,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 1
+      },
+      "group": "momcozy_model_gap",
+      "identities": {
+        "comment_ids": [
+          "t1_ot1p481",
+          "t1_owqerte"
+        ],
+        "comment_parent_post_ids": [
+          "1ubjokj",
+          "1usqihm"
+        ],
+        "post_ids": [
+          "1uclfq4"
+        ]
+      },
+      "local": {
+        "comment_matches": 1,
+        "comment_parent_posts": 1,
+        "post_surface_matches": 0
+      },
+      "normalized_phrase": "momcozy d8",
+      "priority_rank": 34,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 2,
+        "comment_parent_posts": 2,
+        "post_surface_matches": 1
+      },
+      "term": "\"Momcozy D8\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 22,
+        "comment_parent_posts": 14,
+        "evidence_parent_posts": 24,
+        "local_remote_comment_overlap": 14,
+        "local_remote_post_overlap": 4,
+        "post_surface_matches": 14
+      },
+      "group": "momcozy_model_gap",
+      "identities": {
+        "comment_ids": [
+          "t1_n53l1bw",
+          "t1_n91leu4",
+          "t1_n91mpf8",
+          "t1_n91ofm3",
+          "t1_ndcfc8t",
+          "t1_ndd0yfz",
+          "t1_nipkne0",
+          "t1_nixoji7",
+          "t1_nklknly",
+          "t1_nklm05y",
+          "t1_nklxvsf",
+          "t1_nkmy0i4",
+          "t1_nkpa16p",
+          "t1_nkrhgvl",
+          "t1_nqjg19w",
+          "t1_nsvw2aw",
+          "t1_nzcn7e5",
+          "t1_ota5qe8",
+          "t1_otcxqff",
+          "t1_ou4ejka",
+          "t1_ovzx5m0",
+          "t1_ow3711f"
+        ],
+        "comment_parent_post_ids": [
+          "1kku6ue",
+          "1ms0t2e",
+          "1ncte78",
+          "1o1pqox",
+          "1o3dsoy",
+          "1oc8s59",
+          "1p49ylj",
+          "1ph0m5h",
+          "1q8woen",
+          "1ud4w1e",
+          "1udmrv2",
+          "1uh1sdb",
+          "1upfw1s",
+          "1upvm73"
+        ],
+        "post_ids": [
+          "1keu83h",
+          "1oc8s59",
+          "1px7dtp",
+          "1q8woen",
+          "1u9stf4",
+          "1ud4vjf",
+          "1ud4w1e",
+          "1ud98vx",
+          "1uev9y7",
+          "1uh63k8",
+          "1uhghx0",
+          "1unbx6l",
+          "1upfw1s",
+          "1uvdo4h"
+        ]
+      },
+      "local": {
+        "comment_matches": 18,
+        "comment_parent_posts": 10,
+        "post_surface_matches": 6
+      },
+      "normalized_phrase": "momcozy m6",
+      "priority_rank": 35,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 18,
+        "comment_parent_posts": 12,
+        "post_surface_matches": 12
+      },
+      "term": "\"Momcozy M6\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 9,
+        "comment_parent_posts": 9,
+        "evidence_parent_posts": 14,
+        "local_remote_comment_overlap": 3,
+        "local_remote_post_overlap": 1,
+        "post_surface_matches": 6
+      },
+      "group": "momcozy_model_gap",
+      "identities": {
+        "comment_ids": [
+          "t1_mwy7tk1",
+          "t1_nkndkaq",
+          "t1_nqapupu",
+          "t1_nxlqmff",
+          "t1_nza9jo8",
+          "t1_o9w2jiq",
+          "t1_ov5bjul",
+          "t1_ow73fu3",
+          "t1_oxd6hty"
+        ],
+        "comment_parent_post_ids": [
+          "1l7n1x8",
+          "1oc8s59",
+          "1p49ylj",
+          "1q3grht",
+          "1qbe11l",
+          "1rqxo0n",
+          "1ulmhmc",
+          "1uqb9v3",
+          "1uvo9id"
+        ],
+        "post_ids": [
+          "1nzzuhb",
+          "1udgdsv",
+          "1ultsaf",
+          "1uv83i8",
+          "1uv84l0",
+          "1uvo9id"
+        ]
+      },
+      "local": {
+        "comment_matches": 8,
+        "comment_parent_posts": 8,
+        "post_surface_matches": 4
+      },
+      "normalized_phrase": "momcozy s12 pro",
+      "priority_rank": 36,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 4,
+        "comment_parent_posts": 4,
+        "post_surface_matches": 3
+      },
+      "term": "\"Momcozy S12 Pro\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 3,
+        "comment_parent_posts": 3,
+        "evidence_parent_posts": 10,
+        "local_remote_comment_overlap": 1,
+        "local_remote_post_overlap": 1,
+        "post_surface_matches": 7
+      },
+      "group": "momcozy_model_gap",
+      "identities": {
+        "comment_ids": [
+          "t1_n91cw2y",
+          "t1_ndc3zgh",
+          "t1_own7pr8"
+        ],
+        "comment_parent_post_ids": [
+          "1ms0t2e",
+          "1ncte78",
+          "1useatj"
+        ],
+        "post_ids": [
+          "1rn1w63",
+          "1udwigg",
+          "1udxny6",
+          "1uibpbj",
+          "1upauuw",
+          "1uvo9id",
+          "1uvqn2j"
+        ]
+      },
+      "local": {
+        "comment_matches": 3,
+        "comment_parent_posts": 3,
+        "post_surface_matches": 3
+      },
+      "normalized_phrase": "momcozy s9 pro",
+      "priority_rank": 37,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 1,
+        "comment_parent_posts": 1,
+        "post_surface_matches": 5
+      },
+      "term": "\"Momcozy S9 Pro\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 8,
+        "comment_parent_posts": 7,
+        "evidence_parent_posts": 16,
+        "local_remote_comment_overlap": 6,
+        "local_remote_post_overlap": 1,
+        "post_surface_matches": 9
+      },
+      "group": "momcozy_model_gap",
+      "identities": {
+        "comment_ids": [
+          "t1_mjx0l3x",
+          "t1_mklvu13",
+          "t1_n91cw2y",
+          "t1_ndc3zgh",
+          "t1_niiwrsc",
+          "t1_nkmvqmg",
+          "t1_nkn6elp",
+          "t1_own7pr8"
+        ],
+        "comment_parent_post_ids": [
+          "1jkoib4",
+          "1jnqdlk",
+          "1ms0t2e",
+          "1ncte78",
+          "1o1pqox",
+          "1oc8s59",
+          "1useatj"
+        ],
+        "post_ids": [
+          "1rn1w63",
+          "1udwigg",
+          "1udxny6",
+          "1uh63k8",
+          "1uibpbj",
+          "1uk261i",
+          "1upauuw",
+          "1uvo9id",
+          "1uvqn2j"
+        ]
+      },
+      "local": {
+        "comment_matches": 8,
+        "comment_parent_posts": 7,
+        "post_surface_matches": 3
+      },
+      "normalized_phrase": "momcozy s9",
+      "priority_rank": 38,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 6,
+        "comment_parent_posts": 5,
+        "post_surface_matches": 7
+      },
+      "term": "\"Momcozy S9\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 8,
+        "comment_parent_posts": 6,
+        "evidence_parent_posts": 12,
+        "local_remote_comment_overlap": 6,
+        "local_remote_post_overlap": 2,
+        "post_surface_matches": 8
+      },
+      "group": "momcozy_model_gap",
+      "identities": {
+        "comment_ids": [
+          "t1_mm97kp4",
+          "t1_mrx6fo5",
+          "t1_mwy0zdm",
+          "t1_nkmxxey",
+          "t1_nkmy0i4",
+          "t1_nlmj7s8",
+          "t1_nwdnxc0",
+          "t1_o9wd6g8"
+        ],
+        "comment_parent_post_ids": [
+          "1hw9xgi",
+          "1kku6ue",
+          "1l7n1x8",
+          "1oc8s59",
+          "1pxtyok",
+          "1rqxo0n"
+        ],
+        "post_ids": [
+          "1hw9xgi",
+          "1pxtyok",
+          "1ufz4lj",
+          "1uihlru",
+          "1uk4wj5",
+          "1un8l2v",
+          "1unpl39",
+          "1uofjjg"
+        ]
+      },
+      "local": {
+        "comment_matches": 8,
+        "comment_parent_posts": 6,
+        "post_surface_matches": 2
+      },
+      "normalized_phrase": "momcozy v1 pro",
+      "priority_rank": 39,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 6,
+        "comment_parent_posts": 4,
+        "post_surface_matches": 8
+      },
+      "term": "\"Momcozy V1 Pro\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 10,
+        "comment_parent_posts": 7,
+        "evidence_parent_posts": 15,
+        "local_remote_comment_overlap": 8,
+        "local_remote_post_overlap": 4,
+        "post_surface_matches": 10
+      },
+      "group": "momcozy_model_gap",
+      "identities": {
+        "comment_ids": [
+          "t1_mm97kp4",
+          "t1_mrx6fo5",
+          "t1_mwy0zdm",
+          "t1_nkmtxwz",
+          "t1_nkmxxey",
+          "t1_nkmy0i4",
+          "t1_nlmj7s8",
+          "t1_nwdnxc0",
+          "t1_o59w2i4",
+          "t1_o9wd6g8"
+        ],
+        "comment_parent_post_ids": [
+          "1hw9xgi",
+          "1kku6ue",
+          "1l7n1x8",
+          "1oc8s59",
+          "1pxtyok",
+          "1r4878c",
+          "1rqxo0n"
+        ],
+        "post_ids": [
+          "1hw9xgi",
+          "1nisdbs",
+          "1ph0m5h",
+          "1pxtyok",
+          "1ufz4lj",
+          "1uihlru",
+          "1uk4wj5",
+          "1un8l2v",
+          "1unpl39",
+          "1uofjjg"
+        ]
+      },
+      "local": {
+        "comment_matches": 10,
+        "comment_parent_posts": 7,
+        "post_surface_matches": 4
+      },
+      "normalized_phrase": "momcozy v1",
+      "priority_rank": 40,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 8,
+        "comment_parent_posts": 5,
+        "post_surface_matches": 10
+      },
+      "term": "\"Momcozy V1\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 1,
+        "comment_parent_posts": 1,
+        "evidence_parent_posts": 2,
+        "local_remote_comment_overlap": 0,
+        "local_remote_post_overlap": 1,
+        "post_surface_matches": 1
+      },
+      "group": "momcozy_model_gap",
+      "identities": {
+        "comment_ids": [
+          "t1_ob6hdhd"
+        ],
+        "comment_parent_post_ids": [
+          "1rx8egt"
+        ],
+        "post_ids": [
+          "1oy9ibh"
+        ]
+      },
+      "local": {
+        "comment_matches": 1,
+        "comment_parent_posts": 1,
+        "post_surface_matches": 1
+      },
+      "normalized_phrase": "momcozy v2 pro",
+      "priority_rank": 41,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 1
+      },
+      "term": "\"Momcozy V2 Pro\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 4,
+        "comment_parent_posts": 4,
+        "evidence_parent_posts": 8,
+        "local_remote_comment_overlap": 0,
+        "local_remote_post_overlap": 3,
+        "post_surface_matches": 4
+      },
+      "group": "momcozy_model_gap",
+      "identities": {
+        "comment_ids": [
+          "t1_n93ad3v",
+          "t1_nz64v59",
+          "t1_o3niyl9",
+          "t1_ob6hdhd"
+        ],
+        "comment_parent_post_ids": [
+          "1ms0t2e",
+          "1qautbj",
+          "1qub9oi",
+          "1rx8egt"
+        ],
+        "post_ids": [
+          "1oy9ibh",
+          "1uq5pu3",
+          "1usewm4",
+          "1ustlhe"
+        ]
+      },
+      "local": {
+        "comment_matches": 4,
+        "comment_parent_posts": 4,
+        "post_surface_matches": 3
+      },
+      "normalized_phrase": "momcozy v2",
+      "priority_rank": 42,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 4
+      },
+      "term": "\"Momcozy V2\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 2,
+        "comment_parent_posts": 1,
+        "evidence_parent_posts": 2,
+        "local_remote_comment_overlap": 0,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 2
+      },
+      "group": "governed_competitors",
+      "identities": {
+        "comment_ids": [
+          "t1_ot6xqf9",
+          "t1_ot75ij8"
+        ],
+        "comment_parent_post_ids": [
+          "1ucv06p"
+        ],
+        "post_ids": [
+          "1ucv06p",
+          "1up5p2v"
+        ]
+      },
+      "local": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "normalized_phrase": "babybjorn",
+      "priority_rank": 43,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 2,
+        "comment_parent_posts": 1,
+        "post_surface_matches": 2
+      },
+      "term": "\"babybjorn\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 7,
+        "comment_parent_posts": 5,
+        "evidence_parent_posts": 9,
+        "local_remote_comment_overlap": 4,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 4
+      },
+      "group": "governed_competitors",
+      "identities": {
+        "comment_ids": [
+          "t1_mkvuv4q",
+          "t1_mry4s38",
+          "t1_nyqdij3",
+          "t1_nz67p8x",
+          "t1_o42xd47",
+          "t1_o9wp4pk",
+          "t1_ou4l394"
+        ],
+        "comment_parent_post_ids": [
+          "1joq4nw",
+          "1kkvihg",
+          "1q8f5gs",
+          "1rqxo0n",
+          "1uh28cr"
+        ],
+        "post_ids": [
+          "1uecs3d",
+          "1umxvsu",
+          "1uu22vi",
+          "1uv7v4w"
+        ]
+      },
+      "local": {
+        "comment_matches": 6,
+        "comment_parent_posts": 4,
+        "post_surface_matches": 2
+      },
+      "normalized_phrase": "dr brown",
+      "priority_rank": 44,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 5,
+        "comment_parent_posts": 3,
+        "post_surface_matches": 2
+      },
+      "term": "\"dr. brown\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 105,
+        "comment_parent_posts": 47,
+        "evidence_parent_posts": 62,
+        "local_remote_comment_overlap": 22,
+        "local_remote_post_overlap": 1,
+        "post_surface_matches": 31
+      },
+      "group": "governed_competitors",
+      "identities": {
+        "comment_ids": [
+          "t1_mhgh59m",
+          "t1_mkuhxy4",
+          "t1_mkvn8ui",
+          "t1_mkwnf1o",
+          "t1_ml0ym82",
+          "t1_mq579kp",
+          "t1_mrx9et8",
+          "t1_mrxsrnh",
+          "t1_mrxttqo",
+          "t1_mry16rg",
+          "t1_mwd1q79",
+          "t1_mwy33qm",
+          "t1_mwy7tk1",
+          "t1_mziyzi4",
+          "t1_mzs561w",
+          "t1_mzsaj7r",
+          "t1_mzse8yv",
+          "t1_mzsg4zt",
+          "t1_mzstwhq",
+          "t1_mzu0n58",
+          "t1_mzuqikj",
+          "t1_n2ldp54",
+          "t1_n2x73u8",
+          "t1_n30ehnu",
+          "t1_n3wlvx4",
+          "t1_n6a15zq",
+          "t1_n91bsrt",
+          "t1_n91f4nv",
+          "t1_n91nkgs",
+          "t1_n923idk",
+          "t1_n924h2y",
+          "t1_n92bq5h",
+          "t1_n96sl9k",
+          "t1_n96uyr2",
+          "t1_n9cz6cy",
+          "t1_n9d8okz",
+          "t1_ndjihnq",
+          "t1_ndk5816",
+          "t1_ndkrmod",
+          "t1_ndlbsee",
+          "t1_ndlhkon",
+          "t1_ndm6m54",
+          "t1_ndmzodj",
+          "t1_ndpyobx",
+          "t1_ndtn47v",
+          "t1_ndtueqa",
+          "t1_ndtxwus",
+          "t1_ndu0rux",
+          "t1_ndyxpfl",
+          "t1_neamsdm",
+          "t1_nep8w3j",
+          "t1_nepdzsr",
+          "t1_neu6jlh",
+          "t1_nfpo1sq",
+          "t1_nfrda9l",
+          "t1_nh01xn5",
+          "t1_nh2gg20",
+          "t1_nh2gvt6",
+          "t1_niib3pn",
+          "t1_nixoji7",
+          "t1_nj0wgsy",
+          "t1_nkjmunk",
+          "t1_nklh0ub",
+          "t1_nklpl6i",
+          "t1_nkmiyy6",
+          "t1_nkmj9s1",
+          "t1_nknji1f",
+          "t1_nkrtt5a",
+          "t1_nln27js",
+          "t1_no44qhf",
+          "t1_no66ltd",
+          "t1_nqbp5ba",
+          "t1_nvicze9",
+          "t1_nxgltms",
+          "t1_nzaeipp",
+          "t1_nzn3bqt",
+          "t1_nznlr51",
+          "t1_nzo6spe",
+          "t1_nzy6uo7",
+          "t1_o4e6j7w",
+          "t1_o4i8w8p",
+          "t1_o59y1r4",
+          "t1_o6jbs0z",
+          "t1_o8x8t3x",
+          "t1_o9sjria",
+          "t1_o9vjdra",
+          "t1_o9w0w0s",
+          "t1_o9w8f7f",
+          "t1_o9wf2g8",
+          "t1_o9ws732",
+          "t1_osginzp",
+          "t1_osimhom",
+          "t1_ospfjv5",
+          "t1_ot99gf8",
+          "t1_otr7vjg",
+          "t1_otsurip",
+          "t1_oventan",
+          "t1_ovq2ss2",
+          "t1_ovsoava",
+          "t1_ovurpxw",
+          "t1_owhkzzh",
+          "t1_owjuokg",
+          "t1_owk0ug5",
+          "t1_own7pr8",
+          "t1_oxarzhn"
+        ],
+        "comment_parent_post_ids": [
+          "1iie3wv",
+          "1joq4nw",
+          "1kgx2ja",
+          "1kku6ue",
+          "1kkvihg",
+          "1l4zffe",
+          "1l7n1x8",
+          "1lkj0s7",
+          "1lrs9cm",
+          "1lyrhqh",
+          "1m3f0dw",
+          "1ms0t2e",
+          "1mtobo1",
+          "1ncte78",
+          "1ndsx3n",
+          "1nf491j",
+          "1nisdbs",
+          "1nnn2k7",
+          "1nuclab",
+          "1o1pqox",
+          "1o3dsoy",
+          "1oc8s59",
+          "1osqbz0",
+          "1p49ylj",
+          "1ptmffa",
+          "1qbe11l",
+          "1qd48qt",
+          "1qebzqz",
+          "1qymhj5",
+          "1r4878c",
+          "1r5p9tt",
+          "1rm1pjq",
+          "1rojl4m",
+          "1rqxo0n",
+          "1u9hzmm",
+          "1u9ovaq",
+          "1uaf2x9",
+          "1ud4vjf",
+          "1udrhi7",
+          "1udwigg",
+          "1umrtgr",
+          "1uo7xjl",
+          "1uofjjg",
+          "1urnqki",
+          "1urr5a7",
+          "1useatj",
+          "1uvdo4h"
+        ],
+        "post_ids": [
+          "1itifsc",
+          "1joq4nw",
+          "1kgx2ja",
+          "1l7n1x8",
+          "1lkj0s7",
+          "1lrs9cm",
+          "1ltgaw3",
+          "1mtobo1",
+          "1nf491j",
+          "1nuclab",
+          "1osqbz0",
+          "1qautbj",
+          "1qd48qt",
+          "1qglen3",
+          "1qymhj5",
+          "1r5p9tt",
+          "1uc7whr",
+          "1ud4vjf",
+          "1ud4w1e",
+          "1udxny6",
+          "1ugjffb",
+          "1ugmcb2",
+          "1uh63k8",
+          "1uij7cn",
+          "1uk261i",
+          "1umjhir",
+          "1umxfjy",
+          "1uofjjg",
+          "1uqtyku",
+          "1urr5a7",
+          "1uvdo4h"
+        ]
+      },
+      "local": {
+        "comment_matches": 94,
+        "comment_parent_posts": 37,
+        "post_surface_matches": 19
+      },
+      "normalized_phrase": "elvie",
+      "priority_rank": 45,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 33,
+        "comment_parent_posts": 22,
+        "post_surface_matches": 13
+      },
+      "term": "\"elvie\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 21,
+        "comment_parent_posts": 11,
+        "evidence_parent_posts": 13,
+        "local_remote_comment_overlap": 15,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 3
+      },
+      "group": "governed_competitors",
+      "identities": {
+        "comment_ids": [
+          "t1_m5krbyt",
+          "t1_nre5rpd",
+          "t1_nremhdc",
+          "t1_nropvsh",
+          "t1_o864aqg",
+          "t1_o8675vm",
+          "t1_o867gmx",
+          "t1_o86e4uh",
+          "t1_o87l4p8",
+          "t1_o8hvp3h",
+          "t1_ops7tg7",
+          "t1_oqw2lm6",
+          "t1_ot75ij8",
+          "t1_ot75js6",
+          "t1_oud218o",
+          "t1_ovy0iri",
+          "t1_owff6ox",
+          "t1_owfg0m2",
+          "t1_owidt01",
+          "t1_owiwjcy",
+          "t1_owwwsxa"
+        ],
+        "comment_parent_post_ids": [
+          "1huf3fd",
+          "1p9rjy8",
+          "1rihtrg",
+          "1twqhaw",
+          "1u26kf7",
+          "1ucv06p",
+          "1ui57kn",
+          "1up5p2v",
+          "1urbov0",
+          "1ursya6",
+          "1utm5in"
+        ],
+        "post_ids": [
+          "1uemotw",
+          "1up5p2v",
+          "1urtpch"
+        ]
+      },
+      "local": {
+        "comment_matches": 15,
+        "comment_parent_posts": 6,
+        "post_surface_matches": 0
+      },
+      "normalized_phrase": "ergobaby",
+      "priority_rank": 46,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 21,
+        "comment_parent_posts": 11,
+        "post_surface_matches": 3
+      },
+      "term": "\"ergobaby\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 3,
+        "comment_parent_posts": 3,
+        "evidence_parent_posts": 7,
+        "local_remote_comment_overlap": 1,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 4
+      },
+      "group": "governed_competitors",
+      "identities": {
+        "comment_ids": [
+          "t1_na44968",
+          "t1_o98q5m2",
+          "t1_ovm8b9r"
+        ],
+        "comment_parent_post_ids": [
+          "1hw9xgi",
+          "1rnr2i6",
+          "1unpl39"
+        ],
+        "post_ids": [
+          "1ua1x78",
+          "1ut5yfm",
+          "1utnw6e",
+          "1uu22vi"
+        ]
+      },
+      "local": {
+        "comment_matches": 2,
+        "comment_parent_posts": 2,
+        "post_surface_matches": 3
+      },
+      "normalized_phrase": "haakaa",
+      "priority_rank": 47,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 2,
+        "comment_parent_posts": 2,
+        "post_surface_matches": 1
+      },
+      "term": "\"haakaa\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 7,
+        "comment_parent_posts": 5,
+        "evidence_parent_posts": 6,
+        "local_remote_comment_overlap": 0,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 2
+      },
+      "group": "governed_competitors",
+      "identities": {
+        "comment_ids": [
+          "t1_o9xd21e",
+          "t1_oskcf76",
+          "t1_osxmlof",
+          "t1_ot0hcqx",
+          "t1_ot0m5t9",
+          "t1_ot2ehee",
+          "t1_owhkzzh"
+        ],
+        "comment_parent_post_ids": [
+          "1rqxo0n",
+          "1u9stf4",
+          "1ubhlfl",
+          "1uc1hew",
+          "1urnqki"
+        ],
+        "post_ids": [
+          "1ubhlfl",
+          "1urtovs"
+        ]
+      },
+      "local": {
+        "comment_matches": 2,
+        "comment_parent_posts": 2,
+        "post_surface_matches": 0
+      },
+      "normalized_phrase": "kindred bravely",
+      "priority_rank": 48,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 5,
+        "comment_parent_posts": 3,
+        "post_surface_matches": 2
+      },
+      "term": "\"kindred bravely\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 36,
+        "comment_parent_posts": 22,
+        "evidence_parent_posts": 27,
+        "local_remote_comment_overlap": 6,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 10
+      },
+      "group": "governed_competitors",
+      "identities": {
+        "comment_ids": [
+          "t1_m6l49be",
+          "t1_m9pdwoo",
+          "t1_mrztyvx",
+          "t1_ms2wzm6",
+          "t1_msmn31d",
+          "t1_mymounm",
+          "t1_n2hl9cx",
+          "t1_n2sg4y3",
+          "t1_n92h967",
+          "t1_n93337g",
+          "t1_n95bors",
+          "t1_nb6d67u",
+          "t1_nbsbqtw",
+          "t1_nkn0j7p",
+          "t1_nkn6fvp",
+          "t1_nqha9az",
+          "t1_nqi6c42",
+          "t1_nqiagfo",
+          "t1_nz87mub",
+          "t1_nzagc4y",
+          "t1_o0evn2d",
+          "t1_o0fe7r6",
+          "t1_o9cu2tx",
+          "t1_o9sjria",
+          "t1_o9z54ce",
+          "t1_oa4ccnv",
+          "t1_oa6665u",
+          "t1_oa9vsuk",
+          "t1_oabmhu0",
+          "t1_obrrpbl",
+          "t1_obu7a4t",
+          "t1_osgiomg",
+          "t1_ou5kd2q",
+          "t1_ou6tsbq",
+          "t1_ow79elp",
+          "t1_own7pr8"
+        ],
+        "comment_parent_post_ids": [
+          "1hyqlgq",
+          "1ic49s2",
+          "1kkvihg",
+          "1ld0sjg",
+          "1lwvo75",
+          "1ly9zql",
+          "1ms0t2e",
+          "1n2hhgq",
+          "1n5eoqk",
+          "1oc8s59",
+          "1p56tze",
+          "1qautbj",
+          "1qglen3",
+          "1r4878c",
+          "1rojl4m",
+          "1rqxo0n",
+          "1rsjyr7",
+          "1s092up",
+          "1u9hzmm",
+          "1uh344h",
+          "1uqb9v3",
+          "1useatj"
+        ],
+        "post_ids": [
+          "1hyqlgq",
+          "1ly9zql",
+          "1qglen3",
+          "1uh344h",
+          "1upauuw",
+          "1uqb9v3",
+          "1urr5a7",
+          "1urwn1v",
+          "1uu22vi",
+          "1uvdo4h"
+        ]
+      },
+      "local": {
+        "comment_matches": 32,
+        "comment_parent_posts": 19,
+        "post_surface_matches": 8
+      },
+      "normalized_phrase": "lansinoh",
+      "priority_rank": 49,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 10,
+        "comment_parent_posts": 6,
+        "post_surface_matches": 2
+      },
+      "term": "\"lansinoh\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 205,
+        "comment_parent_posts": 73,
+        "evidence_parent_posts": 93,
+        "local_remote_comment_overlap": 32,
+        "local_remote_post_overlap": 5,
+        "post_surface_matches": 43
+      },
+      "group": "governed_competitors",
+      "identities": {
+        "comment_ids": [
+          "t1_m6kydb4",
+          "t1_m6l49be",
+          "t1_m6m0oz1",
+          "t1_m6mnab2",
+          "t1_m8uji4e",
+          "t1_m8umhxo",
+          "t1_m8up37a",
+          "t1_m96r98g",
+          "t1_m9o0w7n",
+          "t1_m9o9ka5",
+          "t1_m9odx8r",
+          "t1_m9to2yh",
+          "t1_mb568aw",
+          "t1_mb577a9",
+          "t1_mb57zd4",
+          "t1_mb58joi",
+          "t1_mb5a7ct",
+          "t1_mb61u5m",
+          "t1_mb7d9ml",
+          "t1_mb8hj7b",
+          "t1_mb8kv2f",
+          "t1_mb9dmus",
+          "t1_mff4rg4",
+          "t1_mhgh59m",
+          "t1_mklvu13",
+          "t1_ms0ipwi",
+          "t1_mwd1q79",
+          "t1_mx10us0",
+          "t1_mx1138b",
+          "t1_mx14s6n",
+          "t1_mx158zc",
+          "t1_mx18jiu",
+          "t1_mx1n1f2",
+          "t1_mx2qi18",
+          "t1_mzk81ip",
+          "t1_n2x73u8",
+          "t1_n30taq7",
+          "t1_n3wlvx4",
+          "t1_n53l1bw",
+          "t1_n91pul7",
+          "t1_n92ww4z",
+          "t1_na44968",
+          "t1_nbps6wv",
+          "t1_ndbsh30",
+          "t1_ndd49zr",
+          "t1_ndddpai",
+          "t1_ndjf4yr",
+          "t1_ndjgl4g",
+          "t1_ndjkkme",
+          "t1_ndjqvw5",
+          "t1_ndjr0ry",
+          "t1_ndjszal",
+          "t1_ndk44vt",
+          "t1_ndk5816",
+          "t1_ndkco9h",
+          "t1_ndkqf93",
+          "t1_ndkz894",
+          "t1_ndl7u3v",
+          "t1_ndl8iuf",
+          "t1_ndl9qts",
+          "t1_ndle6ab",
+          "t1_ndm6m54",
+          "t1_ndmntv8",
+          "t1_ndmrsdh",
+          "t1_ndof1pq",
+          "t1_nf63btg",
+          "t1_nflnacj",
+          "t1_nflwrl2",
+          "t1_nfok6bm",
+          "t1_ngwiofp",
+          "t1_ngx4hfg",
+          "t1_ngxc086",
+          "t1_ngxxonp",
+          "t1_ngzv0i2",
+          "t1_niiik8c",
+          "t1_niim0um",
+          "t1_nij3fx0",
+          "t1_nklcynt",
+          "t1_nklxvsf",
+          "t1_nkn6elp",
+          "t1_nkn8rbq",
+          "t1_nkohwat",
+          "t1_nkpikpz",
+          "t1_nm4jxp2",
+          "t1_np30y4g",
+          "t1_nqaf20h",
+          "t1_nqbp5ba",
+          "t1_nqherld",
+          "t1_nqj73bf",
+          "t1_nql60eh",
+          "t1_nsw50ll",
+          "t1_nsxa8jc",
+          "t1_nvi56na",
+          "t1_nvi5a41",
+          "t1_nvicze9",
+          "t1_nvin58p",
+          "t1_nvinnsr",
+          "t1_nvk8o5g",
+          "t1_nxlqmff",
+          "t1_nyo9s5s",
+          "t1_nypcjn9",
+          "t1_nz53yub",
+          "t1_nz5r7m6",
+          "t1_nz5rz5m",
+          "t1_nz60f9m",
+          "t1_nz68hgx",
+          "t1_nz9vxpi",
+          "t1_nz9xa95",
+          "t1_nza9jo8",
+          "t1_nzaaiis",
+          "t1_nzw8l6j",
+          "t1_nzw9db4",
+          "t1_nzw9ml5",
+          "t1_nzwcwzo",
+          "t1_nzweaap",
+          "t1_nzwhwpe",
+          "t1_nzwjd63",
+          "t1_nzwkl67",
+          "t1_nzwpe89",
+          "t1_nzwsvmt",
+          "t1_nzwyfyy",
+          "t1_nzxligz",
+          "t1_nzz6t8h",
+          "t1_nzzn6vh",
+          "t1_o241zt6",
+          "t1_o30i7sg",
+          "t1_o38wf8b",
+          "t1_o39xp1e",
+          "t1_o3acf90",
+          "t1_o5tv51t",
+          "t1_o6p6tu8",
+          "t1_o6pjubv",
+          "t1_o6q91uk",
+          "t1_o6rr9au",
+          "t1_o6sjblt",
+          "t1_o6zww6u",
+          "t1_o97ql5k",
+          "t1_o98od0h",
+          "t1_o98pa58",
+          "t1_o98pg6p",
+          "t1_o98pjyw",
+          "t1_o9sjria",
+          "t1_o9sy1na",
+          "t1_o9ukgkg",
+          "t1_o9vai6s",
+          "t1_o9vo94s",
+          "t1_o9x36kt",
+          "t1_o9yatwd",
+          "t1_oa31sdf",
+          "t1_oa8gxvf",
+          "t1_oa98t7r",
+          "t1_oaa70ll",
+          "t1_oaac1zg",
+          "t1_oabee6a",
+          "t1_oacu74e",
+          "t1_obro82i",
+          "t1_obropu6",
+          "t1_obrpfqu",
+          "t1_obrpzlw",
+          "t1_obrq67i",
+          "t1_obrsn8q",
+          "t1_obry0ri",
+          "t1_obsp1je",
+          "t1_obvbwka",
+          "t1_oj0fkzi",
+          "t1_okc4y9y",
+          "t1_osgiomg",
+          "t1_oshfmwo",
+          "t1_oskqzqy",
+          "t1_oswaca1",
+          "t1_ot5n1vz",
+          "t1_ot6mg3h",
+          "t1_ot7c5w8",
+          "t1_ot7j6tl",
+          "t1_ot7o9lp",
+          "t1_otde2g0",
+          "t1_otevdka",
+          "t1_otla4ei",
+          "t1_otme30i",
+          "t1_otn3b4v",
+          "t1_otpi0u7",
+          "t1_otppu3c",
+          "t1_otvba8b",
+          "t1_ou9pgn9",
+          "t1_ouovp2d",
+          "t1_ovlh6pz",
+          "t1_ovm8b9r",
+          "t1_ovsoava",
+          "t1_ovtekmy",
+          "t1_ow7l3pr",
+          "t1_ow8kyaa",
+          "t1_owep0xr",
+          "t1_owh42aa",
+          "t1_owhbc7x",
+          "t1_owj6vjt",
+          "t1_owlh5g2",
+          "t1_own7pr8",
+          "t1_owv8jje",
+          "t1_owvchka",
+          "t1_ox257p6",
+          "t1_ox25tsk",
+          "t1_ox285uz",
+          "t1_ox5oabr",
+          "t1_ox5qsz4",
+          "t1_ox65rv4"
+        ],
+        "comment_parent_post_ids": [
+          "1hw9xgi",
+          "1hyqlgq",
+          "1i8ltrx",
+          "1ic49s2",
+          "1iie3wv",
+          "1jnqdlk",
+          "1kku6ue",
+          "1kkvihg",
+          "1l4zffe",
+          "1l80xzl",
+          "1lje5x2",
+          "1lyrhqh",
+          "1m3f0dw",
+          "1ms0t2e",
+          "1ncte78",
+          "1ndsx3n",
+          "1nnn2k7",
+          "1ntuqjs",
+          "1o1pqox",
+          "1oc8s59",
+          "1oy9ibh",
+          "1p49ylj",
+          "1p56tze",
+          "1ph0m5h",
+          "1ptmffa",
+          "1q3grht",
+          "1q8k1fc",
+          "1qautbj",
+          "1qbe11l",
+          "1qebzqz",
+          "1qou11g",
+          "1qsx5ut",
+          "1qub9oi",
+          "1r6zk6z",
+          "1rav2uo",
+          "1rb7lbr",
+          "1rm1pjq",
+          "1rnr2i6",
+          "1rnuh91",
+          "1rojl4m",
+          "1rqb9ax",
+          "1rqxo0n",
+          "1rsjyr7",
+          "1s092up",
+          "1u9hzmm",
+          "1u9l56i",
+          "1ua1x78",
+          "1ubb8ii",
+          "1ucgsrf",
+          "1ucticn",
+          "1ucwtzm",
+          "1udfuev",
+          "1ueczt8",
+          "1uemhla",
+          "1uevtx6",
+          "1uf63dg",
+          "1uh344h",
+          "1uje9sy",
+          "1unbx6l",
+          "1unpl39",
+          "1uofjjg",
+          "1uokdk4",
+          "1upq8vr",
+          "1uq828g",
+          "1ur94f3",
+          "1urnqki",
+          "1urwn1v",
+          "1us592o",
+          "1useatj",
+          "1utfmbd",
+          "1uubl6f",
+          "1uubllm",
+          "1uurv57"
+        ],
+        "post_ids": [
+          "1hyqlgq",
+          "1i8ltrx",
+          "1ic49s2",
+          "1iie3wv",
+          "1jnqdlk",
+          "1l4zffe",
+          "1lwvo75",
+          "1lyrhqh",
+          "1n2hhgq",
+          "1ndsx3n",
+          "1nnn2k7",
+          "1ntuqjs",
+          "1o3dsoy",
+          "1ptmffa",
+          "1q8k1fc",
+          "1qautbj",
+          "1qebzqz",
+          "1qglen3",
+          "1qsx5ut",
+          "1qub9oi",
+          "1ua1x78",
+          "1uah1yb",
+          "1uc7whr",
+          "1ucticn",
+          "1ucuux5",
+          "1ueczt8",
+          "1uevtx6",
+          "1ui6qpe",
+          "1uihlru",
+          "1uij7cn",
+          "1uj4vx5",
+          "1uo7xjl",
+          "1upauuw",
+          "1upvgit",
+          "1uq828g",
+          "1urnqki",
+          "1urr5a7",
+          "1urtovs",
+          "1urwn1v",
+          "1us3vqc",
+          "1us87lu",
+          "1us8krh",
+          "1uso5ey"
+        ]
+      },
+      "local": {
+        "comment_matches": 176,
+        "comment_parent_posts": 51,
+        "post_surface_matches": 27
+      },
+      "normalized_phrase": "medela",
+      "priority_rank": 50,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 61,
+        "comment_parent_posts": 38,
+        "post_surface_matches": 21
+      },
+      "term": "\"medela\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 5,
+        "comment_parent_posts": 2,
+        "evidence_parent_posts": 3,
+        "local_remote_comment_overlap": 0,
+        "local_remote_post_overlap": 1,
+        "post_surface_matches": 1
+      },
+      "group": "governed_competitors",
+      "identities": {
+        "comment_ids": [
+          "t1_ot898dj",
+          "t1_ot8lbcb",
+          "t1_otqm2wp",
+          "t1_oty61vk",
+          "t1_oufv4u4"
+        ],
+        "comment_parent_post_ids": [
+          "1ucyxut",
+          "1uf9p1x"
+        ],
+        "post_ids": [
+          "1usur0x"
+        ]
+      },
+      "local": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 1
+      },
+      "normalized_phrase": "nanit",
+      "priority_rank": 51,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 5,
+        "comment_parent_posts": 2,
+        "post_surface_matches": 1
+      },
+      "term": "\"nanit\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 1,
+        "comment_parent_posts": 1,
+        "evidence_parent_posts": 3,
+        "local_remote_comment_overlap": 0,
+        "local_remote_post_overlap": 1,
+        "post_surface_matches": 3
+      },
+      "group": "governed_competitors",
+      "identities": {
+        "comment_ids": [
+          "t1_otbsmqd"
+        ],
+        "comment_parent_post_ids": [
+          "1ucyxut"
+        ],
+        "post_ids": [
+          "1ucyxut",
+          "1us575l",
+          "1us592o"
+        ]
+      },
+      "local": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 2
+      },
+      "normalized_phrase": "owlet",
+      "priority_rank": 52,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 1,
+        "comment_parent_posts": 1,
+        "post_surface_matches": 2
+      },
+      "term": "\"owlet\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 3,
+        "comment_parent_posts": 2,
+        "evidence_parent_posts": 8,
+        "local_remote_comment_overlap": 0,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 6
+      },
+      "group": "governed_competitors",
+      "identities": {
+        "comment_ids": [
+          "t1_ndmrsdh",
+          "t1_o9vjb7a",
+          "t1_o9vwoyp"
+        ],
+        "comment_parent_post_ids": [
+          "1ndsx3n",
+          "1rqxo0n"
+        ],
+        "post_ids": [
+          "1u9stf4",
+          "1ubb8ii",
+          "1ud98vx",
+          "1udpig4",
+          "1udrhi7",
+          "1uhdohp"
+        ]
+      },
+      "local": {
+        "comment_matches": 3,
+        "comment_parent_posts": 2,
+        "post_surface_matches": 0
+      },
+      "normalized_phrase": "philips avent",
+      "priority_rank": 53,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 6
+      },
+      "term": "\"philips avent\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 670,
+        "comment_parent_posts": 143,
+        "evidence_parent_posts": 185,
+        "local_remote_comment_overlap": 163,
+        "local_remote_post_overlap": 13,
+        "post_surface_matches": 121
+      },
+      "group": "governed_competitors",
+      "identities": {
+        "comment_ids": [
+          "t1_m6mnab2",
+          "t1_m8ulbg3",
+          "t1_m8ushc1",
+          "t1_m9nmkwu",
+          "t1_m9nq9is",
+          "t1_m9nqdnx",
+          "t1_m9nzj5l",
+          "t1_m9o0w7n",
+          "t1_m9o9ka5",
+          "t1_m9odx8r",
+          "t1_m9pdwoo",
+          "t1_m9qw7ub",
+          "t1_m9to2yh",
+          "t1_mb4pl4g",
+          "t1_mb4uzvh",
+          "t1_mb568aw",
+          "t1_mb57zd4",
+          "t1_mb58joi",
+          "t1_mb59p9g",
+          "t1_mb5a7ct",
+          "t1_mb5hzt8",
+          "t1_mb5yyb0",
+          "t1_mb64su5",
+          "t1_mb65hp8",
+          "t1_mb68bsj",
+          "t1_mb6gexi",
+          "t1_mb6guge",
+          "t1_mb7d9ml",
+          "t1_mb7ehxz",
+          "t1_mb86med",
+          "t1_mb8hj7b",
+          "t1_mb8m5g8",
+          "t1_mb8v6mu",
+          "t1_mb9gu1o",
+          "t1_mbba5f9",
+          "t1_mbfe7oe",
+          "t1_mhgh59m",
+          "t1_mjwyled",
+          "t1_mjx0l3x",
+          "t1_mjx3fr9",
+          "t1_mklwgnn",
+          "t1_mkm3dsz",
+          "t1_mkmxha4",
+          "t1_mknr8qu",
+          "t1_mkuhxy4",
+          "t1_mkwkipp",
+          "t1_ml4skx8",
+          "t1_ml60mu3",
+          "t1_mlb8n38",
+          "t1_mm97kp4",
+          "t1_mndvtcd",
+          "t1_mq579kp",
+          "t1_mqls2nb",
+          "t1_mrx648t",
+          "t1_mrx6fo5",
+          "t1_mrxq0lh",
+          "t1_mry01ib",
+          "t1_mry4ngh",
+          "t1_mry86a9",
+          "t1_mryyuld",
+          "t1_mrzwl2q",
+          "t1_ms0zj29",
+          "t1_ms21a4b",
+          "t1_mwy3c8t",
+          "t1_mwypkps",
+          "t1_mwyvppd",
+          "t1_mwyxqs8",
+          "t1_mwz0zxu",
+          "t1_mwz7fc7",
+          "t1_mx006j9",
+          "t1_mx0xmjl",
+          "t1_mx1cg84",
+          "t1_mx1n1f2",
+          "t1_mx24yp9",
+          "t1_mx2h2oh",
+          "t1_mx2skai",
+          "t1_my4owuh",
+          "t1_my4s6ol",
+          "t1_my54ehg",
+          "t1_my84454",
+          "t1_myalrqp",
+          "t1_mymounm",
+          "t1_mzk81ip",
+          "t1_mzsbb5x",
+          "t1_mzsqlpj",
+          "t1_n1akt5t",
+          "t1_n2x6ylk",
+          "t1_n2xt8cj",
+          "t1_n2y3qrj",
+          "t1_n2y4ttw",
+          "t1_n2ymm12",
+          "t1_n2z07wc",
+          "t1_n2zjf0x",
+          "t1_n3039mj",
+          "t1_n30reof",
+          "t1_n30uogd",
+          "t1_n316jeu",
+          "t1_n334r76",
+          "t1_n33gyv3",
+          "t1_n3445bg",
+          "t1_n91bsrt",
+          "t1_n91cw2y",
+          "t1_n91f4nv",
+          "t1_n91fuhs",
+          "t1_n91ggry",
+          "t1_n91izb5",
+          "t1_n91je3e",
+          "t1_n91kb84",
+          "t1_n91kkcz",
+          "t1_n91leu4",
+          "t1_n91lmii",
+          "t1_n91mpf8",
+          "t1_n91nkgs",
+          "t1_n91ny78",
+          "t1_n91p1bj",
+          "t1_n91pul7",
+          "t1_n91vh5h",
+          "t1_n91wmfn",
+          "t1_n91xny1",
+          "t1_n923idk",
+          "t1_n923wo6",
+          "t1_n924h2y",
+          "t1_n92ak0a",
+          "t1_n92chh7",
+          "t1_n92h967",
+          "t1_n92kvmo",
+          "t1_n92wcmw",
+          "t1_n937ge5",
+          "t1_n93ad3v",
+          "t1_n93adne",
+          "t1_n93nqjt",
+          "t1_n93q54r",
+          "t1_n93qy3j",
+          "t1_n94g3uc",
+          "t1_n95kl1a",
+          "t1_n96n7f4",
+          "t1_n96ncn7",
+          "t1_n9fsaut",
+          "t1_na44968",
+          "t1_nb5yn9y",
+          "t1_nbkfgpw",
+          "t1_nbsbqtw",
+          "t1_nbsobso",
+          "t1_nbt1dt5",
+          "t1_nbtvjhb",
+          "t1_nbtzzy9",
+          "t1_nbynebd",
+          "t1_nc1qbw7",
+          "t1_nc1qfxo",
+          "t1_ndbu9yi",
+          "t1_ndbznvd",
+          "t1_ndcpu7p",
+          "t1_ndcrxwd",
+          "t1_ndd5ndp",
+          "t1_ndde3tt",
+          "t1_ndea4b5",
+          "t1_ndeybux",
+          "t1_ndjej8h",
+          "t1_ndjeuw3",
+          "t1_ndjf4yr",
+          "t1_ndjh845",
+          "t1_ndjjmg2",
+          "t1_ndjocvo",
+          "t1_ndjptua",
+          "t1_ndjszal",
+          "t1_ndjt44f",
+          "t1_ndjzzhf",
+          "t1_ndk3kst",
+          "t1_ndk5816",
+          "t1_ndk5c2i",
+          "t1_ndk851c",
+          "t1_ndkfcw8",
+          "t1_ndkh6ef",
+          "t1_ndkhpd1",
+          "t1_ndkqf93",
+          "t1_ndl1kc0",
+          "t1_ndl7u3v",
+          "t1_ndl9fp8",
+          "t1_ndl9qts",
+          "t1_ndlbjik",
+          "t1_ndle6ab",
+          "t1_ndlhkon",
+          "t1_ndm9zlg",
+          "t1_ndmntv8",
+          "t1_ndmrsdh",
+          "t1_ndmwlgn",
+          "t1_ndnpg0u",
+          "t1_ndof1pq",
+          "t1_ndotqtr",
+          "t1_ndpij14",
+          "t1_ndyxpfl",
+          "t1_neamsdm",
+          "t1_nelabbt",
+          "t1_neu6jlh",
+          "t1_neuektb",
+          "t1_nf78706",
+          "t1_nfn4cvn",
+          "t1_nfnuu4n",
+          "t1_nfp5mv3",
+          "t1_nfpf56i",
+          "t1_nfpo1sq",
+          "t1_ngwlh3m",
+          "t1_ngwuwj1",
+          "t1_ngwwni8",
+          "t1_ngwxqm5",
+          "t1_ngx1ps8",
+          "t1_ngx4hfg",
+          "t1_ngx70ay",
+          "t1_ngx76gx",
+          "t1_ngxid8b",
+          "t1_ngxxonp",
+          "t1_ngy3903",
+          "t1_ngyierg",
+          "t1_nh3jecd",
+          "t1_nh4ldn7",
+          "t1_ni5vw0d",
+          "t1_ni61dp6",
+          "t1_niigibl",
+          "t1_niii9cs",
+          "t1_niiikm0",
+          "t1_niizlo2",
+          "t1_nij1vb9",
+          "t1_nij4yru",
+          "t1_nija3d8",
+          "t1_niuoket",
+          "t1_niuw2p7",
+          "t1_niv4d2n",
+          "t1_nj0opjl",
+          "t1_nkkswhk",
+          "t1_nkkvclw",
+          "t1_nkkx18l",
+          "t1_nkkxj9k",
+          "t1_nkkyklf",
+          "t1_nkkzgpu",
+          "t1_nkl1b8i",
+          "t1_nklbd1r",
+          "t1_nklknly",
+          "t1_nklqh0l",
+          "t1_nkmiyy6",
+          "t1_nkmjqs1",
+          "t1_nkmlkt4",
+          "t1_nkmp4pv",
+          "t1_nkmxxey",
+          "t1_nkmy0i4",
+          "t1_nkn6fvp",
+          "t1_nknq48r",
+          "t1_nkns0n8",
+          "t1_nko78jc",
+          "t1_nkozo4w",
+          "t1_nkp1jum",
+          "t1_nkpikpz",
+          "t1_nktrraq",
+          "t1_nkvvkqq",
+          "t1_nkvy643",
+          "t1_nkwezy7",
+          "t1_nlmj2dj",
+          "t1_nlmj7s8",
+          "t1_npwqpbf",
+          "t1_nqaekpt",
+          "t1_nqajnqr",
+          "t1_nqaqjkf",
+          "t1_nqatd75",
+          "t1_nqawnu8",
+          "t1_nqbjcz0",
+          "t1_nqbmwhz",
+          "t1_nqeivwg",
+          "t1_nqherld",
+          "t1_nqhxnqt",
+          "t1_nqi20qi",
+          "t1_nqik0b8",
+          "t1_nqiskb6",
+          "t1_nqspd1u",
+          "t1_nqsq63r",
+          "t1_nqsvckh",
+          "t1_nqt3prs",
+          "t1_nqvfjz5",
+          "t1_nqw2dx1",
+          "t1_nsbt9jj",
+          "t1_nsvefz4",
+          "t1_nsvg87a",
+          "t1_nsvqugk",
+          "t1_nsvs129",
+          "t1_nsvw2aw",
+          "t1_nsw1xru",
+          "t1_nsw50ll",
+          "t1_nsx0v67",
+          "t1_nsxa8jc",
+          "t1_nsy4y5u",
+          "t1_nud4veq",
+          "t1_nugv2ty",
+          "t1_nvi5a41",
+          "t1_nw8vpme",
+          "t1_nw8w8pc",
+          "t1_nw9086w",
+          "t1_nw9cgi1",
+          "t1_nw9nrjq",
+          "t1_nw9wp5x",
+          "t1_nwa2899",
+          "t1_nwa3v33",
+          "t1_nwa9syc",
+          "t1_nwagghr",
+          "t1_nwdnxc0",
+          "t1_nwn5jp9",
+          "t1_nwx0ft8",
+          "t1_nwxngrj",
+          "t1_nwy7kub",
+          "t1_nxkpajf",
+          "t1_nxkqusm",
+          "t1_nxkwo66",
+          "t1_nyo29av",
+          "t1_nyo2qnq",
+          "t1_nyo3gz5",
+          "t1_nyo7g8g",
+          "t1_nyo9s5s",
+          "t1_nyobny4",
+          "t1_nyp7ry2",
+          "t1_nytxzln",
+          "t1_nz5rh91",
+          "t1_nz5rkj4",
+          "t1_nz5ruef",
+          "t1_nz5rz5m",
+          "t1_nz5t66t",
+          "t1_nz60f9m",
+          "t1_nz64v59",
+          "t1_nz68hgx",
+          "t1_nz6e67e",
+          "t1_nz87mub",
+          "t1_nz8q7xw",
+          "t1_nz9vxpi",
+          "t1_nz9xcq4",
+          "t1_nza1969",
+          "t1_nza2r1a",
+          "t1_nza3wp4",
+          "t1_nzaaiis",
+          "t1_nzaeaxw",
+          "t1_nzaeipp",
+          "t1_nzbihvg",
+          "t1_nzbwygj",
+          "t1_nzbyxbq",
+          "t1_nzcbld9",
+          "t1_nzht6a0",
+          "t1_nzw8mk0",
+          "t1_nzw97iu",
+          "t1_nzwpe89",
+          "t1_nzwzkxk",
+          "t1_nzz6t8h",
+          "t1_o0evn2d",
+          "t1_o24uw3e",
+          "t1_o30i7sg",
+          "t1_o38z2mh",
+          "t1_o38zwb9",
+          "t1_o39ajs2",
+          "t1_o3a9t4s",
+          "t1_o3h6mv7",
+          "t1_o3niyl9",
+          "t1_o4reero",
+          "t1_o5kuj2z",
+          "t1_o5mox09",
+          "t1_o5tv51t",
+          "t1_o5u4qzl",
+          "t1_o5w2ac0",
+          "t1_o5wakjk",
+          "t1_o66q0o0",
+          "t1_o6efep2",
+          "t1_o6eidk7",
+          "t1_o6f7act",
+          "t1_o6fkogl",
+          "t1_o6jbs0z",
+          "t1_o6juto1",
+          "t1_o6mhbhr",
+          "t1_o6o7qq6",
+          "t1_o6o86zv",
+          "t1_o6odig0",
+          "t1_o6p0t6k",
+          "t1_o6p3wh1",
+          "t1_o6p4f8g",
+          "t1_o6p6tu8",
+          "t1_o6p914p",
+          "t1_o6pavn2",
+          "t1_o6pehuf",
+          "t1_o6pjubv",
+          "t1_o6pn3yv",
+          "t1_o6q3y75",
+          "t1_o6q6i1c",
+          "t1_o6q91uk",
+          "t1_o6qf5bc",
+          "t1_o6sb1k3",
+          "t1_o6wgmdz",
+          "t1_o73dt77",
+          "t1_o79l3cx",
+          "t1_o79ldh4",
+          "t1_o8a4g9e",
+          "t1_o8a4xiy",
+          "t1_o8wb5bn",
+          "t1_o8wfwo5",
+          "t1_o8wk91o",
+          "t1_o8wm9m8",
+          "t1_o8wvsrm",
+          "t1_o8x8t3x",
+          "t1_o8xdald",
+          "t1_o8xi2ae",
+          "t1_o8ypv0e",
+          "t1_o90nwjd",
+          "t1_o91lzd0",
+          "t1_o92zyak",
+          "t1_o93sqo6",
+          "t1_o97ql5k",
+          "t1_o98nv4n",
+          "t1_o98o3j0",
+          "t1_o98o9y0",
+          "t1_o98od0h",
+          "t1_o98ovtj",
+          "t1_o98pa58",
+          "t1_o98pg6p",
+          "t1_o98pjyw",
+          "t1_o98q5m2",
+          "t1_o98rd1i",
+          "t1_o98rhw9",
+          "t1_o98runo",
+          "t1_o98syqh",
+          "t1_o98tn1d",
+          "t1_o98vuki",
+          "t1_o98vyhn",
+          "t1_o98yzlx",
+          "t1_o98z7gb",
+          "t1_o998ytx",
+          "t1_o99ki6o",
+          "t1_o99qjg2",
+          "t1_o9biztk",
+          "t1_o9ci3j6",
+          "t1_o9cmtl2",
+          "t1_o9eow8t",
+          "t1_o9es3px",
+          "t1_o9fcyvk",
+          "t1_o9fdmxr",
+          "t1_o9fhnp0",
+          "t1_o9fipo3",
+          "t1_o9h7y7t",
+          "t1_o9h869g",
+          "t1_o9htr0e",
+          "t1_o9i4t16",
+          "t1_o9ja9s0",
+          "t1_o9psrrq",
+          "t1_o9qte66",
+          "t1_o9sjria",
+          "t1_o9vhkcg",
+          "t1_o9vmawu",
+          "t1_o9vqe14",
+          "t1_o9vqf7i",
+          "t1_o9vrngo",
+          "t1_o9vv9t3",
+          "t1_o9vwoyp",
+          "t1_o9w0ca2",
+          "t1_o9w0w0s",
+          "t1_o9w1vhg",
+          "t1_o9wckt9",
+          "t1_o9wcqzc",
+          "t1_o9wd6g8",
+          "t1_o9wdeq2",
+          "t1_o9wl7io",
+          "t1_o9wu2z9",
+          "t1_o9x5gjg",
+          "t1_o9xaqz3",
+          "t1_o9xd21e",
+          "t1_o9xe5s9",
+          "t1_o9xp6dx",
+          "t1_o9yatwd",
+          "t1_o9yifwt",
+          "t1_o9z0lmo",
+          "t1_o9zha0i",
+          "t1_oa1cbqp",
+          "t1_oa1qg45",
+          "t1_oa1y1xq",
+          "t1_oa31sdf",
+          "t1_oa3vt96",
+          "t1_oa4ccnv",
+          "t1_oa5zlxs",
+          "t1_oa6665u",
+          "t1_oa7dtm8",
+          "t1_oa7f1y9",
+          "t1_oa7z9qe",
+          "t1_oa807ld",
+          "t1_oa8bjtr",
+          "t1_oa8dgjp",
+          "t1_oa8gxvf",
+          "t1_oa9apvo",
+          "t1_oa9bk6x",
+          "t1_oa9qcm1",
+          "t1_oa9vsuk",
+          "t1_oaa70ll",
+          "t1_oaaaue5",
+          "t1_oaac1zg",
+          "t1_oaauvk8",
+          "t1_oab6qgs",
+          "t1_oabee6a",
+          "t1_oabhqwg",
+          "t1_oabjnfr",
+          "t1_oabmhu0",
+          "t1_oacfslz",
+          "t1_oacqbbb",
+          "t1_oaezeru",
+          "t1_oafdkkh",
+          "t1_oahja83",
+          "t1_obaqjnf",
+          "t1_obsp1je",
+          "t1_obt085z",
+          "t1_obvchpj",
+          "t1_osgekln",
+          "t1_osgi8u1",
+          "t1_osginzp",
+          "t1_osgiomg",
+          "t1_osgir4g",
+          "t1_osh3kby",
+          "t1_oshaulb",
+          "t1_oshcwmv",
+          "t1_oshj2bl",
+          "t1_osjbaz0",
+          "t1_osji0xx",
+          "t1_osklpht",
+          "t1_oskodbt",
+          "t1_oslms5a",
+          "t1_oso3ziq",
+          "t1_ospfjv5",
+          "t1_ossyzaq",
+          "t1_osxbs1s",
+          "t1_osxmlof",
+          "t1_ot1an3v",
+          "t1_ot1awu3",
+          "t1_ot1tdho",
+          "t1_ot3p0my",
+          "t1_ot3pd79",
+          "t1_ot3qx5n",
+          "t1_ot45b3w",
+          "t1_ot4vck0",
+          "t1_ot5n1vz",
+          "t1_ot6mg3h",
+          "t1_ot7be6x",
+          "t1_ot7c5w8",
+          "t1_ot7o9lp",
+          "t1_ot8y5f7",
+          "t1_ota018c",
+          "t1_otbco8p",
+          "t1_otbt9su",
+          "t1_otfjdl0",
+          "t1_otg9vuc",
+          "t1_otgxd4b",
+          "t1_otgyaa8",
+          "t1_otj0cxy",
+          "t1_otmdqzl",
+          "t1_otn3b4v",
+          "t1_otp71jc",
+          "t1_otvvfae",
+          "t1_ou1chj7",
+          "t1_ou1darx",
+          "t1_ou2lbzp",
+          "t1_ou4a7jw",
+          "t1_ou4kl7o",
+          "t1_ou5hyll",
+          "t1_ou5ku8t",
+          "t1_ou5ln30",
+          "t1_ou60k70",
+          "t1_oufw97j",
+          "t1_oumi9a5",
+          "t1_ounph2v",
+          "t1_ounw3l0",
+          "t1_ouqw2bl",
+          "t1_our1u6d",
+          "t1_our4kih",
+          "t1_ourfuyl",
+          "t1_ouszqub",
+          "t1_ouv5xkp",
+          "t1_ouxzrsc",
+          "t1_ouy5a5a",
+          "t1_ouziul7",
+          "t1_ov0ps12",
+          "t1_ov5wxrk",
+          "t1_ov7e7uk",
+          "t1_ov7geop",
+          "t1_ov7koeq",
+          "t1_ov8ep07",
+          "t1_ovbee29",
+          "t1_ovbhddt",
+          "t1_ovbtlhb",
+          "t1_ovc2o5p",
+          "t1_ovek4zh",
+          "t1_ovel0ny",
+          "t1_oventan",
+          "t1_oveocb8",
+          "t1_oveotj9",
+          "t1_ovfavkr",
+          "t1_ovis69c",
+          "t1_ovlh6pz",
+          "t1_ovm1nwr",
+          "t1_ovpa0j7",
+          "t1_ovpacbr",
+          "t1_ovq03r5",
+          "t1_ovq2ss2",
+          "t1_ovq778s",
+          "t1_ovsgv8v",
+          "t1_ovyo4nh",
+          "t1_ovyp9xf",
+          "t1_ovyqt0m",
+          "t1_ovyrbcq",
+          "t1_ovyu2zp",
+          "t1_ow3f0xx",
+          "t1_ow5ftd6",
+          "t1_ow5h7w2",
+          "t1_ow5i1em",
+          "t1_ow68pdz",
+          "t1_ow6cftx",
+          "t1_ow75um7",
+          "t1_ow7nlyd",
+          "t1_ow8kyaa",
+          "t1_ow97jur",
+          "t1_owbko1e",
+          "t1_owcvr5m",
+          "t1_owea44u",
+          "t1_owee4db",
+          "t1_owei3f1",
+          "t1_owep0xr",
+          "t1_owetoa3",
+          "t1_oweyukr",
+          "t1_owf25bp",
+          "t1_owf4nym",
+          "t1_owh2r0r",
+          "t1_owhathb",
+          "t1_owhbc7x",
+          "t1_owhf548",
+          "t1_owhkzzh",
+          "t1_owj6vjt",
+          "t1_owjb7l8",
+          "t1_owjd5vb",
+          "t1_owjejwj",
+          "t1_owjgo8m",
+          "t1_owjkxqh",
+          "t1_owjzt7r",
+          "t1_owl8hwn",
+          "t1_owlh5g2",
+          "t1_owlr59j",
+          "t1_own5tm1",
+          "t1_own7li5",
+          "t1_own7pr8",
+          "t1_ownxgbf",
+          "t1_owo3m0d",
+          "t1_owoj7ia",
+          "t1_owp8452",
+          "t1_owpeqs4",
+          "t1_owpjuac",
+          "t1_owvpp5c",
+          "t1_ox257p6",
+          "t1_ox26do6",
+          "t1_ox285uz",
+          "t1_ox288ir",
+          "t1_ox28cq0",
+          "t1_ox2ejho",
+          "t1_ox37cq7",
+          "t1_ox3bcup",
+          "t1_ox3h8qp",
+          "t1_ox3ys31",
+          "t1_ox4cuhu",
+          "t1_ox4e3h8",
+          "t1_ox5oabr",
+          "t1_ox5s0xr",
+          "t1_ox5v624",
+          "t1_ox65rv4",
+          "t1_oxarzhn",
+          "t1_oxcxb45",
+          "t1_oxd1fpq",
+          "t1_oxd6hty",
+          "t1_oxd8w7c"
+        ],
+        "comment_parent_post_ids": [
+          "1hw9xgi",
+          "1hyqlgq",
+          "1i8ltrx",
+          "1ic49s2",
+          "1iie3wv",
+          "1jkoib4",
+          "1jnqdlk",
+          "1joq4nw",
+          "1jpschr",
+          "1keu83h",
+          "1kgx2ja",
+          "1kku6ue",
+          "1kkvihg",
+          "1l7n1x8",
+          "1l80xzl",
+          "1ld0sjg",
+          "1ld1bcf",
+          "1lje5x2",
+          "1lkj0s7",
+          "1lyrhqh",
+          "1ms0t2e",
+          "1mtobo1",
+          "1n2hhgq",
+          "1n4didl",
+          "1n5eoqk",
+          "1ncte78",
+          "1ndsx3n",
+          "1nf491j",
+          "1nhm3jq",
+          "1nisdbs",
+          "1nnn2k7",
+          "1ntuqjs",
+          "1nzzuhb",
+          "1o1pqox",
+          "1o3dsoy",
+          "1oc8s59",
+          "1p2egvm",
+          "1p49ylj",
+          "1p56tze",
+          "1p6svw1",
+          "1p78z49",
+          "1ph0m5h",
+          "1po6ezg",
+          "1ptmffa",
+          "1px7dtp",
+          "1pxtyok",
+          "1q0dfjq",
+          "1q3grht",
+          "1q8f5gs",
+          "1q8k1fc",
+          "1qautbj",
+          "1qbe11l",
+          "1qebzqz",
+          "1qglen3",
+          "1qou11g",
+          "1qsx5ut",
+          "1qub9oi",
+          "1r5p9tt",
+          "1r6zk6z",
+          "1r9rue2",
+          "1rav2uo",
+          "1rb7lbr",
+          "1rihtrg",
+          "1rlgtts",
+          "1rm1pjq",
+          "1rn1w63",
+          "1rnr2i6",
+          "1roa965",
+          "1rojl4m",
+          "1rq3yif",
+          "1rqxo0n",
+          "1rsjyr7",
+          "1s092up",
+          "1u9hzmm",
+          "1u9l56i",
+          "1u9ovaq",
+          "1u9u8q2",
+          "1ua6026",
+          "1uaf2x9",
+          "1uaxhhz",
+          "1uay703",
+          "1ubhlfl",
+          "1uc5365",
+          "1ucgsrf",
+          "1ucticn",
+          "1ucwtzm",
+          "1ud4vjf",
+          "1ud4w1e",
+          "1udfuev",
+          "1udmrv2",
+          "1udrhi7",
+          "1udwigg",
+          "1udxny6",
+          "1uevtx6",
+          "1uf63dg",
+          "1ufrcbz",
+          "1ufz4lj",
+          "1ugnllc",
+          "1uh1sdb",
+          "1uh63k8",
+          "1uhv59r",
+          "1ui1z3g",
+          "1uihlru",
+          "1uj41a9",
+          "1uje9sy",
+          "1ujwbfp",
+          "1uk261i",
+          "1ukqmz0",
+          "1ukrixm",
+          "1ul26xd",
+          "1ulmhmc",
+          "1ult7kz",
+          "1ultsaf",
+          "1uluztc",
+          "1ulwr3p",
+          "1umrtgr",
+          "1unbx6l",
+          "1uo7xjl",
+          "1upauuw",
+          "1upq8vr",
+          "1uq5pu3",
+          "1uqmbzy",
+          "1uqvvz5",
+          "1ur3j66",
+          "1ur94f3",
+          "1urbexj",
+          "1urnqki",
+          "1urwn1v",
+          "1urx2im",
+          "1us575l",
+          "1us592o",
+          "1use8wi",
+          "1useatj",
+          "1utfmbd",
+          "1uubl6f",
+          "1uubllm",
+          "1uugowh",
+          "1uuixrn",
+          "1uurv57",
+          "1uurzva",
+          "1uvdo4h",
+          "1uvo9id",
+          "1uvoqj4"
+        ],
+        "post_ids": [
+          "1hw9xgi",
+          "1ic49s2",
+          "1iie3wv",
+          "1itifsc",
+          "1jkoib4",
+          "1jnqdlk",
+          "1keu83h",
+          "1kgx2ja",
+          "1kku6ue",
+          "1l4zffe",
+          "1l7n1x8",
+          "1ld0sjg",
+          "1lje5x2",
+          "1lkj0s7",
+          "1ms0t2e",
+          "1mtobo1",
+          "1n2hhgq",
+          "1n5eoqk",
+          "1ndsx3n",
+          "1ntuqjs",
+          "1nuclab",
+          "1o3dsoy",
+          "1osqbz0",
+          "1p49ylj",
+          "1p6svw1",
+          "1p78z49",
+          "1ph0m5h",
+          "1px7dtp",
+          "1pxtyok",
+          "1q7fads",
+          "1q8k1fc",
+          "1qautbj",
+          "1qbe11l",
+          "1qd48qt",
+          "1qglen3",
+          "1qou11g",
+          "1qub9oi",
+          "1r5p9tt",
+          "1r6zk6z",
+          "1r9rue2",
+          "1rb7lbr",
+          "1rm1pjq",
+          "1rmvfwn",
+          "1rnr2i6",
+          "1roa965",
+          "1rq3yif",
+          "1rqxo0n",
+          "1rsjyr7",
+          "1rx8egt",
+          "1u9l56i",
+          "1u9ovaq",
+          "1u9u8q2",
+          "1ua1x78",
+          "1uaf2x9",
+          "1uay703",
+          "1ub1y85",
+          "1uc5365",
+          "1uc7whr",
+          "1ucuzk2",
+          "1ucwtzm",
+          "1ud4vjf",
+          "1ud4w1e",
+          "1udfuev",
+          "1udnurd",
+          "1udpig4",
+          "1udrhi7",
+          "1udxny6",
+          "1uehf9c",
+          "1uev9y7",
+          "1ufz4lj",
+          "1ug0x3o",
+          "1ugjffb",
+          "1ugmcb2",
+          "1ugnllc",
+          "1ugtpmd",
+          "1uh1sdb",
+          "1uh63k8",
+          "1uhghx0",
+          "1ui1z3g",
+          "1ui8sn4",
+          "1uj0pw2",
+          "1uj41a9",
+          "1uj4vx5",
+          "1ujcg7i",
+          "1uk261i",
+          "1uk4wj5",
+          "1ukqmz0",
+          "1ul26xd",
+          "1ulmhmc",
+          "1uluztc",
+          "1umjhir",
+          "1umrtgr",
+          "1unbx6l",
+          "1unwyjp",
+          "1uo7xjl",
+          "1uobuwj",
+          "1uofjjg",
+          "1uokdk4",
+          "1uoyopo",
+          "1up1has",
+          "1upauuw",
+          "1upfw1s",
+          "1upvm73",
+          "1uq5pu3",
+          "1uqmbzy",
+          "1ur2thx",
+          "1ur3j66",
+          "1urbexj",
+          "1urr5a7",
+          "1urtovs",
+          "1urwn1v",
+          "1urx2im",
+          "1us87lu",
+          "1use8wi",
+          "1useatj",
+          "1utlerw",
+          "1uvdo4h",
+          "1uvek3e",
+          "1uvo9id",
+          "1uvoqj4",
+          "1uvqfxq"
+        ]
+      },
+      "local": {
+        "comment_matches": 564,
+        "comment_parent_posts": 94,
+        "post_surface_matches": 64
+      },
+      "normalized_phrase": "spectra",
+      "priority_rank": 54,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 269,
+        "comment_parent_posts": 79,
+        "post_surface_matches": 70
+      },
+      "term": "\"spectra\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 84,
+        "comment_parent_posts": 33,
+        "evidence_parent_posts": 46,
+        "local_remote_comment_overlap": 29,
+        "local_remote_post_overlap": 3,
+        "post_surface_matches": 23
+      },
+      "group": "governed_competitors",
+      "identities": {
+        "comment_ids": [
+          "t1_mb7ertn",
+          "t1_mhf4men",
+          "t1_mkniymm",
+          "t1_ml1o5at",
+          "t1_ml1sb3i",
+          "t1_ml2hkto",
+          "t1_ml40mr0",
+          "t1_ml4ndre",
+          "t1_mpkaubw",
+          "t1_mpliug9",
+          "t1_mrx8iwk",
+          "t1_mrx9et8",
+          "t1_mry01ib",
+          "t1_mry0a0f",
+          "t1_mry16rg",
+          "t1_mry3fwi",
+          "t1_mry3yy7",
+          "t1_mry4ngh",
+          "t1_ms05ng0",
+          "t1_mwy33qm",
+          "t1_mwy33r2",
+          "t1_mx10us0",
+          "t1_mx1138b",
+          "t1_mx158zc",
+          "t1_mx4f73o",
+          "t1_myalrqp",
+          "t1_mziyzi4",
+          "t1_n3wlvx4",
+          "t1_n91bsrt",
+          "t1_n91fuhs",
+          "t1_n923wo6",
+          "t1_n92chh7",
+          "t1_ncnyhbg",
+          "t1_ndbzzzz",
+          "t1_ndc0x20",
+          "t1_ndcxp6o",
+          "t1_ndje6np",
+          "t1_ndjibvb",
+          "t1_ndjl0ek",
+          "t1_ndjqey4",
+          "t1_ndjsmq2",
+          "t1_ndjuxx8",
+          "t1_ndk5816",
+          "t1_ndtnxxr",
+          "t1_ndtueqa",
+          "t1_neunwxo",
+          "t1_nflnh14",
+          "t1_nfn4cvn",
+          "t1_nfok6bm",
+          "t1_nfokdc5",
+          "t1_nfor9xc",
+          "t1_nfoyxl4",
+          "t1_nfp5mv3",
+          "t1_nfpbbc1",
+          "t1_nfpo1sq",
+          "t1_nfrda9l",
+          "t1_nh02yso",
+          "t1_nh03xhl",
+          "t1_nij7pjn",
+          "t1_niv0g4x",
+          "t1_nkrtt5a",
+          "t1_nllbjf1",
+          "t1_nqbp5ba",
+          "t1_ntciuwl",
+          "t1_o4reero",
+          "t1_o6ncczw",
+          "t1_o93zr2e",
+          "t1_o99dpeo",
+          "t1_o99untq",
+          "t1_o9w2jiq",
+          "t1_o9x5gjg",
+          "t1_oa31sdf",
+          "t1_oa831sh",
+          "t1_oafdkkh",
+          "t1_obaqjnf",
+          "t1_osgiomg",
+          "t1_oskayzy",
+          "t1_otsurip",
+          "t1_ottdisk",
+          "t1_ovq778s",
+          "t1_ovurpxw",
+          "t1_oweppu6",
+          "t1_owxy41p",
+          "t1_ox3ys31"
+        ],
+        "comment_parent_post_ids": [
+          "1iie3wv",
+          "1itifsc",
+          "1jpschr",
+          "1kgx2ja",
+          "1kku6ue",
+          "1kkvihg",
+          "1l7n1x8",
+          "1l80xzl",
+          "1ld1bcf",
+          "1m3f0dw",
+          "1ms0t2e",
+          "1n4didl",
+          "1ncte78",
+          "1ndsx3n",
+          "1nf491j",
+          "1nnn2k7",
+          "1nuclab",
+          "1o1pqox",
+          "1o3dsoy",
+          "1oc8s59",
+          "1p49ylj",
+          "1rav2uo",
+          "1rn1w63",
+          "1rnuh91",
+          "1rqxo0n",
+          "1rsjyr7",
+          "1u9hzmm",
+          "1u9zf0q",
+          "1udrhi7",
+          "1uo7xjl",
+          "1urbexj",
+          "1uts2ot",
+          "1uuixrn"
+        ],
+        "post_ids": [
+          "1itifsc",
+          "1kku6ue",
+          "1l80xzl",
+          "1lrs9cm",
+          "1n4didl",
+          "1nnn2k7",
+          "1nuclab",
+          "1o3dsoy",
+          "1p49ylj",
+          "1qymhj5",
+          "1rqxo0n",
+          "1ua1x78",
+          "1uc7whr",
+          "1udfuev",
+          "1udpig4",
+          "1udrhi7",
+          "1ugjffb",
+          "1uh63k8",
+          "1uk261i",
+          "1umxfjy",
+          "1uofjjg",
+          "1us87lu",
+          "1uvdo4h"
+        ]
+      },
+      "local": {
+        "comment_matches": 76,
+        "comment_parent_posts": 28,
+        "post_surface_matches": 12
+      },
+      "normalized_phrase": "willow",
+      "priority_rank": 55,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 37,
+        "comment_parent_posts": 17,
+        "post_surface_matches": 14
+      },
+      "term": "\"willow\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 6,
+        "comment_parent_posts": 3,
+        "evidence_parent_posts": 16,
+        "local_remote_comment_overlap": 6,
+        "local_remote_post_overlap": 3,
+        "post_surface_matches": 13
+      },
+      "group": "category_anchors",
+      "identities": {
+        "comment_ids": [
+          "t1_niiczde",
+          "t1_nilmrcb",
+          "t1_oaoeigl",
+          "t1_oaom0h9",
+          "t1_oba3pwr",
+          "t1_owwwsxa"
+        ],
+        "comment_parent_post_ids": [
+          "1o1pqox",
+          "1ruu6ha",
+          "1utm5in"
+        ],
+        "post_ids": [
+          "1rihtrg",
+          "1tabnbt",
+          "1to3qat",
+          "1uemotw",
+          "1ui4u77",
+          "1ukc75k",
+          "1ukd173",
+          "1umhp4i",
+          "1up5p2v",
+          "1ursya6",
+          "1urwuxd",
+          "1uunyfu",
+          "1uvhtgg"
+        ]
+      },
+      "local": {
+        "comment_matches": 6,
+        "comment_parent_posts": 3,
+        "post_surface_matches": 5
+      },
+      "normalized_phrase": "baby carrier",
+      "priority_rank": 56,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 6,
+        "comment_parent_posts": 3,
+        "post_surface_matches": 11
+      },
+      "term": "\"baby carrier\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 2,
+        "comment_parent_posts": 2,
+        "evidence_parent_posts": 2,
+        "local_remote_comment_overlap": 0,
+        "local_remote_post_overlap": 1,
+        "post_surface_matches": 2
+      },
+      "group": "category_anchors",
+      "identities": {
+        "comment_ids": [
+          "t1_owl5qx7",
+          "t1_owl8nxv"
+        ],
+        "comment_parent_post_ids": [
+          "1us575l",
+          "1us592o"
+        ],
+        "post_ids": [
+          "1us575l",
+          "1us592o"
+        ]
+      },
+      "local": {
+        "comment_matches": 1,
+        "comment_parent_posts": 1,
+        "post_surface_matches": 2
+      },
+      "normalized_phrase": "baby food maker",
+      "priority_rank": 57,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 1,
+        "comment_parent_posts": 1,
+        "post_surface_matches": 1
+      },
+      "term": "\"baby food maker\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 2,
+        "comment_parent_posts": 2,
+        "evidence_parent_posts": 6,
+        "local_remote_comment_overlap": 1,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 5
+      },
+      "group": "category_anchors",
+      "identities": {
+        "comment_ids": [
+          "t1_nd6u10z",
+          "t1_ouis7sv"
+        ],
+        "comment_parent_post_ids": [
+          "1nbf94l",
+          "1uhh9df"
+        ],
+        "post_ids": [
+          "1ucyxut",
+          "1uhh9df",
+          "1uii9fu",
+          "1ulxa39",
+          "1uu22vi"
+        ]
+      },
+      "local": {
+        "comment_matches": 1,
+        "comment_parent_posts": 1,
+        "post_surface_matches": 1
+      },
+      "normalized_phrase": "baby monitor",
+      "priority_rank": 58,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 2,
+        "comment_parent_posts": 2,
+        "post_surface_matches": 4
+      },
+      "term": "\"baby monitor\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 16,
+        "comment_parent_posts": 8,
+        "evidence_parent_posts": 9,
+        "local_remote_comment_overlap": 12,
+        "local_remote_post_overlap": 1,
+        "post_surface_matches": 2
+      },
+      "group": "category_anchors",
+      "identities": {
+        "comment_ids": [
+          "t1_mry7de8",
+          "t1_mry9jmd",
+          "t1_mrz3ris",
+          "t1_mya5l0f",
+          "t1_niz73nh",
+          "t1_nklmpox",
+          "t1_o6po0pk",
+          "t1_o6sgua0",
+          "t1_oanziar",
+          "t1_oao26g5",
+          "t1_oaok0j9",
+          "t1_obk6p0f",
+          "t1_ovfk76c",
+          "t1_owl8hwn",
+          "t1_owlglz8",
+          "t1_owlim2u"
+        ],
+        "comment_parent_post_ids": [
+          "1kkvihg",
+          "1ld1bcf",
+          "1o1pqox",
+          "1oc8s59",
+          "1rav2uo",
+          "1ruu6ha",
+          "1umqmwp",
+          "1us575l"
+        ],
+        "post_ids": [
+          "1us575l",
+          "1us592o"
+        ]
+      },
+      "local": {
+        "comment_matches": 15,
+        "comment_parent_posts": 7,
+        "post_surface_matches": 2
+      },
+      "normalized_phrase": "bottle warmer",
+      "priority_rank": 59,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 13,
+        "comment_parent_posts": 7,
+        "post_surface_matches": 1
+      },
+      "term": "\"bottle warmer\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 1,
+        "comment_parent_posts": 1,
+        "evidence_parent_posts": 5,
+        "local_remote_comment_overlap": 1,
+        "local_remote_post_overlap": 1,
+        "post_surface_matches": 5
+      },
+      "group": "category_anchors",
+      "identities": {
+        "comment_ids": [
+          "t1_nsvu43u"
+        ],
+        "comment_parent_post_ids": [
+          "1pgy054"
+        ],
+        "post_ids": [
+          "1pgy054",
+          "1udlh3n",
+          "1ue4rhm",
+          "1uh28cr",
+          "1ur3379"
+        ]
+      },
+      "local": {
+        "comment_matches": 1,
+        "comment_parent_posts": 1,
+        "post_surface_matches": 2
+      },
+      "normalized_phrase": "bottle washer sterilizer",
+      "priority_rank": 60,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 1,
+        "comment_parent_posts": 1,
+        "post_surface_matches": 4
+      },
+      "term": "\"bottle washer sterilizer\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 1,
+        "comment_parent_posts": 1,
+        "evidence_parent_posts": 2,
+        "local_remote_comment_overlap": 0,
+        "local_remote_post_overlap": 1,
+        "post_surface_matches": 1
+      },
+      "group": "category_anchors",
+      "identities": {
+        "comment_ids": [
+          "t1_ouduc74"
+        ],
+        "comment_parent_post_ids": [
+          "1ui6qpe"
+        ],
+        "post_ids": [
+          "1jpschr"
+        ]
+      },
+      "local": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 1
+      },
+      "normalized_phrase": "breast milk storage bags",
+      "priority_rank": 61,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 1,
+        "comment_parent_posts": 1,
+        "post_surface_matches": 1
+      },
+      "term": "\"breast milk storage bags\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 1,
+        "comment_parent_posts": 1,
+        "evidence_parent_posts": 2,
+        "local_remote_comment_overlap": 1,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 1
+      },
+      "group": "category_anchors",
+      "identities": {
+        "comment_ids": [
+          "t1_nsv9epi"
+        ],
+        "comment_parent_post_ids": [
+          "1pgy054"
+        ],
+        "post_ids": [
+          "1ur2thx"
+        ]
+      },
+      "local": {
+        "comment_matches": 1,
+        "comment_parent_posts": 1,
+        "post_surface_matches": 1
+      },
+      "normalized_phrase": "breast pump parts",
+      "priority_rank": 62,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 1,
+        "comment_parent_posts": 1,
+        "post_surface_matches": 0
+      },
+      "term": "\"breast pump parts\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 1,
+        "comment_parent_posts": 1,
+        "evidence_parent_posts": 2,
+        "local_remote_comment_overlap": 1,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 1
+      },
+      "group": "category_anchors",
+      "identities": {
+        "comment_ids": [
+          "t1_oao0z0n"
+        ],
+        "comment_parent_post_ids": [
+          "1ruu6ha"
+        ],
+        "post_ids": [
+          "1uii9fu"
+        ]
+      },
+      "local": {
+        "comment_matches": 1,
+        "comment_parent_posts": 1,
+        "post_surface_matches": 0
+      },
+      "normalized_phrase": "hands free breast pump",
+      "priority_rank": 63,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 1,
+        "comment_parent_posts": 1,
+        "post_surface_matches": 1
+      },
+      "term": "\"hands-free breast pump\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 70,
+        "comment_parent_posts": 3,
+        "evidence_parent_posts": 8,
+        "local_remote_comment_overlap": 69,
+        "local_remote_post_overlap": 2,
+        "post_surface_matches": 7
+      },
+      "group": "category_anchors",
+      "identities": {
+        "comment_ids": [
+          "t1_o4oy3g9",
+          "t1_o4oz8g2",
+          "t1_o4ozmp0",
+          "t1_o4ozqnt",
+          "t1_o4p0e9a",
+          "t1_o4p0j9c",
+          "t1_o4p0jx9",
+          "t1_o4p1n0r",
+          "t1_o4p1s7g",
+          "t1_o4p2jba",
+          "t1_o4p2k9w",
+          "t1_o4p4218",
+          "t1_o4p6elc",
+          "t1_o4p8k48",
+          "t1_o4p8ssd",
+          "t1_o4p92ce",
+          "t1_o4p9tq1",
+          "t1_o4pb8ht",
+          "t1_o4pkwn2",
+          "t1_o4pm5l7",
+          "t1_o4pp04n",
+          "t1_o4ppibj",
+          "t1_o4pqs9o",
+          "t1_o4ps6lx",
+          "t1_o4pwkkd",
+          "t1_o4pxayk",
+          "t1_o4q2vji",
+          "t1_o4q6h70",
+          "t1_o4q77g9",
+          "t1_o4q9rft",
+          "t1_o4qb7gm",
+          "t1_o4qdhh1",
+          "t1_o4qew3q",
+          "t1_o4qu5tp",
+          "t1_o4qz5kb",
+          "t1_o4r484b",
+          "t1_o4r4sxb",
+          "t1_o4r7zla",
+          "t1_o4rbnoz",
+          "t1_o4sbsvp",
+          "t1_o4sdiyd",
+          "t1_o4se6n8",
+          "t1_o4sjfs4",
+          "t1_o4sodh8",
+          "t1_o4syl9j",
+          "t1_o4tfnfn",
+          "t1_o4tjobf",
+          "t1_o4tmml6",
+          "t1_o4urf44",
+          "t1_o4vc33n",
+          "t1_o4vli6w",
+          "t1_o4vmesz",
+          "t1_o4vmzg2",
+          "t1_o4vo41t",
+          "t1_o4vovrj",
+          "t1_o4zium5",
+          "t1_o534fgd",
+          "t1_o55uezq",
+          "t1_o57ygou",
+          "t1_o5aespf",
+          "t1_o5daew4",
+          "t1_o5ddyoy",
+          "t1_o5dezgr",
+          "t1_o5g57mw",
+          "t1_o5if2ew",
+          "t1_o5kgkzq",
+          "t1_o5pk1iv",
+          "t1_o9zib71",
+          "t1_oao0z0n",
+          "t1_ovfzl0c"
+        ],
+        "comment_parent_post_ids": [
+          "1r1ebpy",
+          "1ruu6ha",
+          "1umatxv"
+        ],
+        "post_ids": [
+          "1r1ebpy",
+          "1ucyzbm",
+          "1uii9fu",
+          "1umatxv",
+          "1umrymn",
+          "1us575l",
+          "1us592o"
+        ]
+      },
+      "local": {
+        "comment_matches": 69,
+        "comment_parent_posts": 2,
+        "post_surface_matches": 3
+      },
+      "normalized_phrase": "high chair",
+      "priority_rank": 64,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 70,
+        "comment_parent_posts": 3,
+        "post_surface_matches": 6
+      },
+      "term": "\"high chair\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 2,
+        "comment_parent_posts": 2,
+        "evidence_parent_posts": 6,
+        "local_remote_comment_overlap": 2,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 4
+      },
+      "group": "category_anchors",
+      "identities": {
+        "comment_ids": [
+          "t1_o8768gn",
+          "t1_owktwm3"
+        ],
+        "comment_parent_post_ids": [
+          "1rihtrg",
+          "1us3vqc"
+        ],
+        "post_ids": [
+          "1u9ovaq",
+          "1uii9fu",
+          "1uijuy0",
+          "1umxfjy"
+        ]
+      },
+      "local": {
+        "comment_matches": 2,
+        "comment_parent_posts": 2,
+        "post_surface_matches": 0
+      },
+      "normalized_phrase": "nursing bra",
+      "priority_rank": 65,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 2,
+        "comment_parent_posts": 2,
+        "post_surface_matches": 4
+      },
+      "term": "\"nursing bra\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 1,
+        "comment_parent_posts": 1,
+        "evidence_parent_posts": 2,
+        "local_remote_comment_overlap": 0,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 2
+      },
+      "group": "category_anchors",
+      "identities": {
+        "comment_ids": [
+          "t1_othl42j"
+        ],
+        "comment_parent_post_ids": [
+          "1ue7dwt"
+        ],
+        "post_ids": [
+          "1ue7dwt",
+          "1uuntw5"
+        ]
+      },
+      "local": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 1
+      },
+      "normalized_phrase": "nursing pillow",
+      "priority_rank": 66,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 1,
+        "comment_parent_posts": 1,
+        "post_surface_matches": 1
+      },
+      "term": "\"nursing pillow\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 4,
+        "comment_parent_posts": 3,
+        "evidence_parent_posts": 7,
+        "local_remote_comment_overlap": 0,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 6
+      },
+      "group": "category_anchors",
+      "identities": {
+        "comment_ids": [
+          "t1_o9vost3",
+          "t1_oua9ho0",
+          "t1_ouat6nk",
+          "t1_ouffv4c"
+        ],
+        "comment_parent_post_ids": [
+          "1rqxo0n",
+          "1uhqvp0",
+          "1uhr05y"
+        ],
+        "post_ids": [
+          "1uhqvp0",
+          "1uhr05y",
+          "1uii9fu",
+          "1uk7ame",
+          "1uu22vi",
+          "1uuntw5"
+        ]
+      },
+      "local": {
+        "comment_matches": 1,
+        "comment_parent_posts": 1,
+        "post_surface_matches": 2
+      },
+      "normalized_phrase": "pregnancy pillow",
+      "priority_rank": 67,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 3,
+        "comment_parent_posts": 2,
+        "post_surface_matches": 4
+      },
+      "term": "\"pregnancy pillow\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 31,
+        "comment_parent_posts": 20,
+        "evidence_parent_posts": 28,
+        "local_remote_comment_overlap": 4,
+        "local_remote_post_overlap": 1,
+        "post_surface_matches": 11
+      },
+      "group": "category_anchors",
+      "identities": {
+        "comment_ids": [
+          "t1_mb8k888",
+          "t1_mhgh59m",
+          "t1_ml2frgy",
+          "t1_ndd49zr",
+          "t1_ndd5ndp",
+          "t1_ndp4n82",
+          "t1_nqaeadx",
+          "t1_nvitzhr",
+          "t1_nzwjd63",
+          "t1_nzwkl67",
+          "t1_o9wcqzc",
+          "t1_o9xd21e",
+          "t1_o9xe5s9",
+          "t1_oafhlxd",
+          "t1_osimhom",
+          "t1_osiup39",
+          "t1_osive47",
+          "t1_osj2h1d",
+          "t1_oskcf76",
+          "t1_osxbs1s",
+          "t1_oueiqqx",
+          "t1_ouet05a",
+          "t1_ouxzrsc",
+          "t1_ouy1ns7",
+          "t1_ovm9z8n",
+          "t1_ow388ah",
+          "t1_ow5ftd6",
+          "t1_ow5h7w2",
+          "t1_owhf548",
+          "t1_owjd5vb",
+          "t1_ox257p6"
+        ],
+        "comment_parent_post_ids": [
+          "1iie3wv",
+          "1jpschr",
+          "1ncte78",
+          "1ndsx3n",
+          "1p49ylj",
+          "1ptmffa",
+          "1qebzqz",
+          "1rqxo0n",
+          "1rsjyr7",
+          "1u9ovaq",
+          "1u9stf4",
+          "1uaxhhz",
+          "1uibpbj",
+          "1ukqmz0",
+          "1unbx6l",
+          "1upvm73",
+          "1uq5pu3",
+          "1urnqki",
+          "1urwn1v",
+          "1uubl6f"
+        ],
+        "post_ids": [
+          "1n5eoqk",
+          "1u9ovaq",
+          "1u9stf4",
+          "1ubhlfl",
+          "1uc1hew",
+          "1uijuy0",
+          "1umxfjy",
+          "1uq5pu3",
+          "1ur3j66",
+          "1urtovs",
+          "1us3vqc"
+        ]
+      },
+      "local": {
+        "comment_matches": 17,
+        "comment_parent_posts": 12,
+        "post_surface_matches": 3
+      },
+      "normalized_phrase": "pumping bra",
+      "priority_rank": 68,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 18,
+        "comment_parent_posts": 11,
+        "post_surface_matches": 9
+      },
+      "term": "\"pumping bra\""
+    },
+    {
+      "coverage_class": "post_and_comment_existing_lexical_evidence",
+      "deduplicated_union": {
+        "comment_matches": 7,
+        "comment_parent_posts": 5,
+        "evidence_parent_posts": 7,
+        "local_remote_comment_overlap": 3,
+        "local_remote_post_overlap": 0,
+        "post_surface_matches": 4
+      },
+      "group": "category_anchors",
+      "identities": {
+        "comment_ids": [
+          "t1_niiaeny",
+          "t1_nkn4h98",
+          "t1_oaoy5yc",
+          "t1_ottkqmp",
+          "t1_ottlevy",
+          "t1_otuqrts",
+          "t1_ox3sgf9"
+        ],
+        "comment_parent_post_ids": [
+          "1o1pqox",
+          "1oc8s59",
+          "1ruu6ha",
+          "1ufa4m8",
+          "1uuizu7"
+        ],
+        "post_ids": [
+          "1uegqsr",
+          "1ufa4m8",
+          "1uu22vi",
+          "1uuizu7"
+        ]
+      },
+      "local": {
+        "comment_matches": 4,
+        "comment_parent_posts": 4,
+        "post_surface_matches": 2
+      },
+      "normalized_phrase": "sound machine",
+      "priority_rank": 69,
+      "priority_tier": "P3",
+      "provider_discovery_still_required": true,
+      "provider_lane_status": "unexecuted_offline_lexical_evidence_only",
+      "task37_remote": {
+        "comment_matches": 6,
+        "comment_parent_posts": 4,
+        "post_surface_matches": 2
+      },
+      "term": "\"sound machine\""
+    }
+  ],
+  "schema_version": "momcozy_v2_delta_offline_coverage_audit_v1",
+  "source_profiles": {
+    "local": {
+      "linked_comments": 3528,
+      "post_max_utc": "2026-07-13T22:37:05.321000+00:00",
+      "post_min_utc": "2025-01-05T19:34:03+00:00",
+      "posts": 187
+    },
+    "potential_deduplicated_union": {
+      "linked_comments": 4730,
+      "posts": 410
+    },
+    "task37_remote": {
+      "comment_columns_required": true,
+      "linked_comments": 3225,
+      "post_columns_required": true,
+      "post_max_utc": "2026-07-11T14:51:22.266000+00:00",
+      "post_min_utc": "2025-01-05T19:34:03+00:00",
+      "posts": 301,
+      "query_only": true,
+      "quick_check": "ok"
+    }
+  },
+  "sources": {
+    "cross_source_overlap_audit": {
+      "path": "docs/analysis/momcozy-historical-collection-audit-20260714/cross-source-overlap-audit.json",
+      "sha256": "994656a761236c633f484c74024bc5e9fb7a55c2eca390a6937f068d1673219f"
+    },
+    "local_comments": {
+      "path": "data/processed/reddit_voc_site_snapshot_20260714/comments.json",
+      "sha256": "351f36bad272b8e7c92fae2563c7936ce94c966b26008b2337122ab24c4b1803"
+    },
+    "local_posts": {
+      "path": "data/processed/reddit_voc_site_snapshot_20260714/posts.json",
+      "sha256": "748fa8a39574df272c0c6ba88400d8fb2a1216bc7f2e83de4ffd8ab1f3b072f6"
+    },
+    "profile": {
+      "path": "config/backfill/momcozy-search-profile-v2-candidate-20260714.json",
+      "sha256": "38706378f42c6648fe43bb50f60947863816363d65714f16a3092f40d91b604d"
+    },
+    "task37_remote_staging": {
+      "content_exported": false,
+      "database_mode": "sqlite_uri_mode_ro_immutable_query_only",
+      "database_path": "/opt/reddit-voc-staging/task37-2560998311fc176c366c70086ba3a58f6b76ee073dba855ea9a0eb1c5f9a94b1/backfill_momcozy_20250101_20260711/reddit_voc_backfill.sqlite3",
+      "database_sha256": "8356981018466164fe1f84953bd1e1e19010114817dd9689a31b996d9cc51497",
+      "remote": "ubuntu@101.34.52.232",
+      "remote_query_sha256": "10e91902a441ae5eb67092b3b6846fd644defa713acffaababc65238a56e248f",
+      "usernames_exported": false
+    }
+  }
+}

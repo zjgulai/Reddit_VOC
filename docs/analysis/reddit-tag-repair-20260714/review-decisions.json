@@ -1,0 +1,153 @@
+{
+  "schema_version": "reddit_voc_tag_repair_review_decisions_v1",
+  "sample_sha256": "99be90bf85932359feedd00cd791d51329f3b43aab99901ec303007602ade5b8",
+  "predicate_policy_sha256": "5a3d7b5e4ebcbb28ff8c5ba8148dda327e8c75910870dd73eb05869c229d69da",
+  "reviewer": {
+    "type": "codex_context_review",
+    "version": "reddit_tag_repair_context_review_20260714_v1",
+    "independent_human_review": false,
+    "review_policy": "Manual item-level review of each sampled entity and its available parent context against the frozen dictionary definition and predicate relation; every sampled audit ID has an explicit override."
+  },
+  "quality_gate": {
+    "sample_plan": "30_fresh_confirmed_or_full_fresh_confirmed_population",
+    "minimum_label_precision": 0.9,
+    "minimum_wilson_lower_bound_95": 0.75,
+    "minimum_taxonomy_fit_rate": 0.9,
+    "maximum_ambiguous_rate": 0.1,
+    "minimum_challenge_cases": 20,
+    "governance_status_required": "fit"
+  },
+  "tag_reviews": {
+    "L2-PUMP-016": {
+      "governance_review": {
+        "status": "fit",
+        "reason_code": "predicate_matches_flange_fit_definition",
+        "note": "The predicate requires an explicit wrong-size/fit statement or an elastic-anatomy statement bound to a negative fit outcome; resolved, positive, questioned, and material-only contexts fail closed."
+      },
+      "default_decision": {
+        "label_verdict": "ambiguous",
+        "taxonomy_fit": "ambiguous",
+        "reason_code": "unreviewed_sample_fail_closed",
+        "note": "Fail-closed default; every sampled audit ID is reviewed through an explicit override."
+      },
+      "overrides": {
+        "L2-PUMP-016:comment:t1_nz6e67e": {
+          "label_verdict": "correct",
+          "taxonomy_fit": "fit",
+          "reason_code": "size_change_bound_to_pain_improvement",
+          "note": "The author identifies 17 mm and 19 mm nipples, states that the previously used 21 mm insert was wrong, and reports a day-and-night pain improvement after switching to 17 mm."
+        },
+        "L2-PUMP-016:comment:t1_li0kst3": {
+          "label_verdict": "correct",
+          "taxonomy_fit": "fit",
+          "reason_code": "explicit_wrong_flange_size",
+          "note": "The author explicitly says they were in the wrong flange size and that the fitting-room recommendation substantially improved comfort."
+        }
+      }
+    },
+    "L0-CHL-003": {
+      "governance_review": {
+        "status": "fit",
+        "reason_code": "predicate_matches_product_value_definition",
+        "note": "The predicate retains direct positive product-value assertions while rejecting questions, conditionals, modal claims, discounts alone, negation, and non-price utility trade-offs."
+      },
+      "default_decision": {
+        "label_verdict": "ambiguous",
+        "taxonomy_fit": "ambiguous",
+        "reason_code": "unreviewed_sample_fail_closed",
+        "note": "Fail-closed default; every sampled audit ID is reviewed through an explicit override."
+      },
+      "overrides": {
+        "L0-CHL-003:comment:t1_o06rx7z": {
+          "label_verdict": "correct",
+          "taxonomy_fit": "fit",
+          "reason_code": "direct_washer_value_assertion",
+          "note": "In a reply about the owned Momcozy bottle washer, the author gives an unqualified 'Definitely worth it' judgment and provides product-specific maintenance guidance."
+        },
+        "L0-CHL-003:comment:t1_o99cgju": {
+          "label_verdict": "correct",
+          "taxonomy_fit": "fit",
+          "reason_code": "paid_price_and_product_value_assertion",
+          "note": "The author states an approximately $50 out-of-pocket price, calls the pump worth it, and describes it as the best pump they own."
+        },
+        "L0-CHL-003:comment:t1_myalrqp": {
+          "label_verdict": "correct",
+          "taxonomy_fit": "fit",
+          "reason_code": "washer_value_recommendation_with_price_context",
+          "note": "The author directly recommends the bottle washer as well worth buying and grounds the recommendation in explicit $250 sale and $300 full-price context."
+        },
+        "L0-CHL-003:comment:t1_o98z7gb": {
+          "label_verdict": "correct",
+          "taxonomy_fit": "fit",
+          "reason_code": "experienced_pump_value_assertion",
+          "note": "The almost-exclusive pumper directly states the Spectra is definitely worth it and supports the judgment with owned-product output and use comparisons."
+        },
+        "L0-CHL-003:comment:t1_niigibl": {
+          "label_verdict": "correct",
+          "taxonomy_fit": "fit",
+          "reason_code": "experienced_product_value_with_sale_context",
+          "note": "The author calls the Eufy S1 Pro totally worth it, recommends waiting for a recurring sale, and reports output equal to their Spectra."
+        },
+        "L0-CHL-003:comment:t1_o98q5m2": {
+          "label_verdict": "correct",
+          "taxonomy_fit": "fit",
+          "reason_code": "paid_upgrade_value_assertion",
+          "note": "The author contrasts the paid rechargeable S1 with a cheaper plug-in option and directly says the rechargeable model is definitely worth it."
+        },
+        "L0-CHL-003:comment:t1_my5lfgh": {
+          "label_verdict": "correct",
+          "taxonomy_fit": "fit",
+          "reason_code": "direct_washer_value_recommendation",
+          "note": "The author directly recommends buying the washer and asserts it will be worth it for the high pump-part washing burden, with the bottle washer as the explicit product subject."
+        },
+        "L0-CHL-003:comment:t1_o98ruec": {
+          "label_verdict": "correct",
+          "taxonomy_fit": "fit",
+          "reason_code": "insurance_purchase_value_assertion",
+          "note": "The author reports obtaining the pump through insurance, calls it so worth it, and explains the concrete late-preterm feeding use that created the value."
+        },
+        "L0-CHL-003:comment:t1_o06fo1t": {
+          "label_verdict": "correct",
+          "taxonomy_fit": "fit",
+          "reason_code": "high_frequency_washer_value_assertion",
+          "note": "The author calls the Momcozy washer absolutely worth it and grounds the judgment in actual use three to six times daily for twins' bottles, pacifiers, and pump parts."
+        }
+      }
+    },
+    "L2-PUMP-030": {
+      "governance_review": {
+        "status": "fit",
+        "reason_code": "predicate_matches_output_comparison_definition",
+        "note": "The predicate requires Momcozy, a competitor or main pump, the output metric, and an equal-or-better direction within the same sentence."
+      },
+      "default_decision": {
+        "label_verdict": "ambiguous",
+        "taxonomy_fit": "ambiguous",
+        "reason_code": "unreviewed_sample_fail_closed",
+        "note": "Fail-closed default; every sampled audit ID is reviewed through an explicit override."
+      },
+      "overrides": {
+        "L2-PUMP-030:comment:t1_mx0xmjl": {
+          "label_verdict": "correct",
+          "taxonomy_fit": "fit",
+          "reason_code": "momcozy_equal_output_to_spectra",
+          "note": "The author states in one sentence that their Momcozy M9s produce pretty much equal output to their Spectra, with the brand, competitor, metric, and direction all explicit."
+        }
+      }
+    },
+    "L2-PUMP-007": {
+      "governance_review": {
+        "status": "fit",
+        "reason_code": "predicate_matches_active_accessory_intent_definition",
+        "note": "The predicate requires a first-person buyer, active purchase intent, and an accessory in the same sentence while excluding past purchase, insurance/free supply, advice to others, and availability-only mentions."
+      },
+      "default_decision": {
+        "label_verdict": "ambiguous",
+        "taxonomy_fit": "ambiguous",
+        "reason_code": "unreviewed_sample_fail_closed",
+        "note": "No fresh confirmed candidates were available; this fail-closed default does not apply to any sampled assignment."
+      },
+      "overrides": {}
+    }
+  }
+}

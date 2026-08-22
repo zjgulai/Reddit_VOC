@@ -1,0 +1,17 @@
+[Unit]
+Description=Watchdog for Reddit VOC data release shadow validation
+
+[Timer]
+OnCalendar=*-*-* 07:10:00 Asia/Shanghai
+OnCalendar=*-*-* 07:25:00 Asia/Shanghai
+OnCalendar=*-*-* 07:40:00 Asia/Shanghai
+OnCalendar=*-*-* 07:55:00 Asia/Shanghai
+OnCalendar=*-*-* 08:10:00 Asia/Shanghai
+OnCalendar=*-*-* 08:25:00 Asia/Shanghai
+Persistent=true
+AccuracySec=1min
+RandomizedDelaySec=0
+Unit=reddit-voc-data-shadow.service
+
+[Install]
+WantedBy=timers.target

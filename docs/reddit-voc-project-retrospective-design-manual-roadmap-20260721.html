@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Momcozy Reddit VOC 洞察站｜项目复盘、设计逻辑、使用手册与迭代路线图</title>
+  <style>
+    :root {
+      --ink:#202325; --muted:#687078; --soft:#8b9298; --line:#e8e4e0;
+      --paper:#fffdfb; --canvas:#f7f5f2; --coral:#f1785c; --coral-deep:#d95a41;
+      --coral-soft:#fff0ea; --green:#2f8f72; --green-soft:#eaf6f1;
+      --amber:#b97a22; --amber-soft:#fff6e5; --red:#b84c47; --red-soft:#fff0ef;
+      --blue:#4f6f91; --blue-soft:#eef4f9; --shadow:0 14px 38px rgba(37,28,22,.08);
+      --radius:18px; --sidebar:282px;
+    }
+    *{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;background:var(--canvas);color:var(--ink);font:15px/1.72 Inter,"PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+    a{color:inherit} button{font:inherit}.shell{display:grid;grid-template-columns:var(--sidebar) minmax(0,1fr);max-width:1680px;margin:auto;min-height:100vh}
+    aside{position:sticky;top:0;height:100vh;overflow:auto;padding:28px 22px;background:#242726;color:#fff;border-right:1px solid #363a38}
+    .brand{display:flex;gap:12px;align-items:center;margin-bottom:26px}.mark{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:var(--coral);font-weight:800}.brand strong{display:block;font-size:15px}.brand small{color:#aeb4b0}
+    .nav-label{margin:20px 10px 8px;color:#858d88;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}.nav a{display:block;padding:9px 11px;margin:2px 0;border-radius:9px;color:#cdd2cf;text-decoration:none;font-size:13px}.nav a:hover,.nav a.active{color:#fff;background:#383c3a}.nav .sub{padding-left:24px;font-size:12px}.aside-note{margin-top:24px;padding:14px;border:1px solid #414643;border-radius:12px;color:#aeb4b0;font-size:11px}.aside-note strong{color:#fff}
+    main{min-width:0;padding:34px 42px 80px}.hero{position:relative;overflow:hidden;padding:46px;border-radius:26px;background:linear-gradient(135deg,#fff 0%,#fff7f3 58%,#edf7f2 100%);box-shadow:var(--shadow);border:1px solid #eee8e3}.hero:after{content:"";position:absolute;right:-80px;top:-115px;width:330px;height:330px;border:54px solid rgba(241,120,92,.09);border-radius:50%}.eyebrow{color:var(--coral-deep);font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}.hero h1{max-width:990px;margin:10px 0 14px;font-size:clamp(32px,4.2vw,60px);line-height:1.08;letter-spacing:-.045em}.hero p{max-width:920px;margin:0;color:var(--muted);font-size:17px}.hero-meta{display:flex;flex-wrap:wrap;gap:9px;margin-top:26px}.pill,.status{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:5px 10px;font-size:11px;font-weight:700}.pill{background:#fff;border:1px solid var(--line);color:var(--muted)}.status.live{background:var(--green-soft);color:var(--green)}.status.partial{background:var(--amber-soft);color:var(--amber)}.status.debt{background:var(--red-soft);color:var(--red)}.status.plan{background:var(--blue-soft);color:var(--blue)}
+    section{scroll-margin-top:20px;margin-top:32px}.section-head{display:flex;justify-content:space-between;gap:20px;align-items:end;margin-bottom:16px}.section-head h2{margin:0;font-size:28px;letter-spacing:-.02em}.section-head p{max-width:700px;margin:0;color:var(--muted)}
+    .card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 6px 22px rgba(37,28,22,.04);padding:24px}.grid{display:grid;gap:16px}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}.metric strong{display:block;margin:5px 0 3px;font-size:29px;line-height:1.15}.metric span{color:var(--muted);font-size:12px}.metric em{font-style:normal;color:var(--coral-deep);font-weight:700;font-size:11px}
+    .callout{padding:18px 20px;border-left:4px solid var(--coral);background:var(--coral-soft);border-radius:0 13px 13px 0}.callout strong{display:block;margin-bottom:4px}.callout p{margin:0;color:#6d544c}.callout.green{border-color:var(--green);background:var(--green-soft)}.callout.amber{border-color:var(--amber);background:var(--amber-soft)}
+    .toc-grid a{padding:14px 16px;border:1px solid var(--line);border-radius:13px;background:#fff;text-decoration:none}.toc-grid a:hover{border-color:#efab9a;transform:translateY(-1px)}.toc-grid strong{display:block;color:var(--coral-deep)}.toc-grid span{color:var(--muted);font-size:12px}
+    table{width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border:1px solid var(--line);border-radius:14px;background:#fff;font-size:13px}th,td{padding:12px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}th{background:#f5f2ef;color:#4e555a;font-weight:750}tr:last-child td{border-bottom:0}td p{margin:0}.table-wrap{overflow:auto}
+    .flow{display:grid;grid-template-columns:repeat(7,minmax(112px,1fr));align-items:stretch;gap:9px}.flow .node{position:relative;padding:14px;border:1px solid var(--line);border-radius:13px;background:#fff}.flow .node:not(:last-child):after{content:"→";position:absolute;right:-12px;top:42%;z-index:2;color:var(--coral);font-weight:800}.node b{display:block;margin-bottom:4px;font-size:12px}.node span{display:block;color:var(--muted);font-size:11px;line-height:1.5}
+    .timeline{position:relative;padding-left:26px}.timeline:before{content:"";position:absolute;left:7px;top:7px;bottom:7px;width:2px;background:#eadbd5}.event{position:relative;margin:0 0 22px}.event:before{content:"";position:absolute;left:-24px;top:7px;width:10px;height:10px;border-radius:50%;background:var(--coral);box-shadow:0 0 0 5px var(--coral-soft)}.event time{font-size:11px;color:var(--coral-deep);font-weight:800}.event h3{margin:1px 0 3px;font-size:16px}.event p{margin:0;color:var(--muted)}
+    .principle{border-top:3px solid var(--coral)}.principle h3,.module h3{margin:0 0 7px}.principle p,.module p{margin:0;color:var(--muted)}
+    .module{padding:0;overflow:hidden}.module-head{padding:22px 24px;background:linear-gradient(110deg,#fff,#fff8f5);border-bottom:1px solid var(--line)}.module-body{padding:22px 24px}.module-grid{display:grid;grid-template-columns:1.05fr 1.35fr 1fr;gap:18px}.module h4{margin:0 0 6px;font-size:12px;color:var(--coral-deep);text-transform:uppercase;letter-spacing:.08em}.module ul,.compact{margin:0;padding-left:18px;color:var(--muted)}.module li,.compact li{margin:5px 0}.steps{counter-reset:step;display:grid;gap:10px}.step{position:relative;padding:13px 14px 13px 48px;border:1px solid var(--line);border-radius:12px;background:#fff}.step:before{counter-increment:step;content:counter(step);position:absolute;left:13px;top:12px;display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--coral-soft);color:var(--coral-deep);font-weight:800;font-size:12px}.step b{display:block}.step span{color:var(--muted);font-size:12px}
+    .roadmap{display:grid;grid-template-columns:120px repeat(3,minmax(0,1fr));border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff}.roadmap>*{padding:13px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}.roadmap>*:nth-child(4n){border-right:0}.roadmap .head{background:#f5f2ef;font-weight:800}.roadmap .phase{font-weight:800;color:var(--coral-deep)}
+    details{border:1px solid var(--line);border-radius:13px;background:#fff;margin:9px 0}summary{cursor:pointer;padding:14px 16px;font-weight:750}details>div{padding:0 16px 16px;color:var(--muted)}code{padding:2px 6px;border-radius:5px;background:#f1eeeb;font:12px ui-monospace,SFMono-Regular,Menlo,monospace;overflow-wrap:anywhere}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;overflow-wrap:anywhere}.footer{margin-top:46px;padding:24px;border-top:1px solid var(--line);color:var(--muted);font-size:12px}.only-print{display:none}
+    @media(max-width:1180px){.shell{grid-template-columns:1fr}aside{display:none}main{padding:24px}.flow{grid-template-columns:repeat(2,1fr)}.flow .node:after{display:none}.module-grid{grid-template-columns:1fr}.g4{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:720px){main{padding:14px}.hero{padding:26px 22px}.g2,.g3,.g4{grid-template-columns:1fr}.section-head{display:block}.roadmap{grid-template-columns:1fr}.roadmap>*{border-right:0}.roadmap .head{display:none}.flow{grid-template-columns:1fr}.hero h1{font-size:34px}}
+    @media print{body{background:#fff;font-size:11px}.shell{display:block}.only-print{display:block}aside{display:none}main{padding:0}.hero,.card{box-shadow:none;break-inside:avoid}section{break-before:auto}.module{break-inside:avoid}.no-print{display:none}.hero h1{font-size:34px}}
+  </style>
+</head>
+<body>
+<div class="shell">
+  <aside aria-label="文档目录">
+    <div class="brand"><div class="mark">M</div><div><strong>Reddit VOC</strong><small>产品全生命周期手册</small></div></div>
+    <nav class="nav" id="side-nav">
+      <div class="nav-label">项目与设计</div>
+      <a href="#summary">01 执行摘要</a><a href="#directory">02 文档目录</a><a href="#retrospective">03 项目复盘</a><a href="#logic">04 设计逻辑</a><a href="#architecture">05 产品与数据架构</a><a href="#metrics">06 指标体系</a>
+      <div class="nav-label">产品手册</div>
+      <a href="#manual">07 使用总则</a><a class="sub" href="#m-overview">概览</a><a class="sub" href="#m-reports">报告</a><a class="sub" href="#m-search">搜索</a><a class="sub" href="#m-analysis">分析</a><a class="sub" href="#m-insights">洞察</a><a class="sub" href="#m-cases">案例广场</a><a class="sub" href="#m-content">高价值内容</a><a class="sub" href="#m-signals">舆情信号</a><a class="sub" href="#m-definitions">指标口径</a><a class="sub" href="#m-collector">采集后台</a><a class="sub" href="#m-help">首页与帮助</a><a class="sub" href="#m-export">导出</a>
+      <div class="nav-label">迭代与运营</div>
+      <a href="#playbooks">08 业务作业手册</a><a href="#operations">09 工程运维手册</a><a href="#roadmap">10 模块迭代路线</a><a href="#acceptance">11 验收体系</a><a href="#glossary">12 术语与附录</a>
+    </nav>
+    <div class="aside-note"><strong>事实基准</strong><br>代码与制品：2026-07-19<br>文档编制：2026-07-21<br>本文不执行生产变更。</div>
+  </aside>
+
+  <main>
+    <header class="hero" id="top">
+      <div class="eyebrow">Project retrospective · product logic · operating manual · roadmap</div>
+      <h1>Momcozy Reddit VOC 洞察站<br>完整项目手册</h1>
+      <p>一份可离线阅读、可打印、可交接的单一事实文档：解释项目为什么存在、数据如何成为可信洞察、每个页面如何使用，以及下一阶段如何从“可看”进化到“可持续运营”。</p>
+      <div class="hero-meta"><span class="status live">● 生产已上线</span><span class="pill">release e8bea154…a3b</span><span class="pill">中心数据 3,535 帖 / 27,316 评论</span><span class="pill">无需登录</span><span class="pill">Asia/Shanghai</span></div>
+    </header>
+
+    <section id="summary">
+      <div class="section-head"><div><div class="eyebrow">01 · Executive summary</div><h2>执行摘要</h2></div><p>结论先于过程：产品已经从静态 UI 走到真实数据驱动的管理层洞察站，但自动化数据闭环、标签覆盖和父帖关系仍是下一阶段价值上限。</p></div>
+      <div class="grid g4">
+        <div class="card metric"><em>当前中心</em><strong>3,535</strong><span>去重帖子，全部进入中心分析基础</span></div>
+        <div class="card metric"><em>评论守恒</em><strong>27,316</strong><span>20,363 已关联 + 6,953 待父帖关联</span></div>
+        <div class="card metric"><em>最近季度</em><strong>9,086</strong><span>828 帖子 VOC + 8,258 评论上下文 VOC</span></div>
+        <div class="card metric"><em>品牌判断</em><strong>72.54</strong><span>品牌健康度指数；因分类覆盖不足标记为暂定</span></div>
+      </div>
+      <div class="grid g2" style="margin-top:16px">
+        <div class="callout green"><strong>产品已解决的核心问题</strong><p>以 Momcozy 为主干，把帖子、评论、品牌、品类/SPU、竞品、情感、风险、画像和案例证据组织成概览—报告—洞察—证据下钻的完整决策链。</p></div>
+        <div class="callout amber"><strong>仍需诚实面对的边界</strong><p>6,953 条评论尚未建立可信父帖关系；最近季度 Momcozy 仍有 230 条 VOC 未完成情感分类；画像是内容证据分组，不是自然人数量或人口占比。</p></div>
+      </div>
+      <div class="card" style="margin-top:16px"><strong>一句话产品定位：</strong>这不是 Reddit 采集后台，也不是市场份额工具；它是以可追溯 Reddit 内容证据支撑品牌、产品、舆情和 GEO 决策的只读经营洞察工作台。</div>
+    </section>
+
+    <section id="directory">
+      <div class="section-head"><div><div class="eyebrow">02 · Information architecture</div><h2>完整目录与阅读路径</h2></div><p>老板先读 01、03、10；业务团队重点读 04、06、07、08；产品与研发重点读 05、09、11。</p></div>
+      <div class="grid g3 toc-grid">
+        <a href="#retrospective"><strong>03 项目复盘</strong><span>目标演进、关键成果、返工根因、经验沉淀</span></a>
+        <a href="#logic"><strong>04 设计逻辑</strong><span>第一性原则、叙事路径、界面与交互原则</span></a>
+        <a href="#architecture"><strong>05 产品与数据架构</strong><span>角色、导航、数据链、发布链与治理边界</span></a>
+        <a href="#metrics"><strong>06 数据与指标体系</strong><span>VOC 粒度、标签—指标—洞察、计算口径</span></a>
+        <a href="#manual"><strong>07 产品模块使用手册</strong><span>每个页面的目的、操作、解读、边界</span></a>
+        <a href="#playbooks"><strong>08 业务作业手册</strong><span>日报、周报、月报、风险、产品、GEO 工作流</span></a>
+        <a href="#operations"><strong>09 工程与运维手册</strong><span>开发、构建、候选、生产、回滚和排障</span></a>
+        <a href="#roadmap"><strong>10 模块迭代路线图</strong><span>P0/P1/P2、30/60/90 天与版本目标</span></a>
+        <a href="#acceptance"><strong>11 验收与治理</strong><span>数据、产品、工程、安全、运行验收</span></a>
+      </div>
+    </section>
+
+    <section id="retrospective">
+      <div class="section-head"><div><div class="eyebrow">03 · Retrospective</div><h2>项目完整复盘</h2></div><p>复盘的重点不是“做了多少页面”，而是如何把多个来源、多个版本、多个口径压缩成一个可验证的产品事实。</p></div>
+      <div class="grid g2">
+        <div class="card timeline">
+          <div class="event"><time>阶段 1 · UI 原型</time><h3>先形成管理层可理解的页面骨架</h3><p>建立概览、报告、分析、洞察、搜索、案例等主要页面及统一视觉语言，但早期大量内容为演示数据。</p></div>
+          <div class="event"><time>阶段 2 · 多源数据盘点</time><h3>从“少量帖子”修正为完整候选集合</h3><p>纳入本项目、ai_nlp_voc、add_data 与腾讯云采集快照，按 Reddit ID 交叉去重，避免把局部数据库水位误认作总量。</p></div>
+          <div class="event"><time>阶段 3 · 真实数据激活</time><h3>建立帖子与评论的双 VOC 粒度</h3><p>帖子独立分析；每条已关联评论形成评论上下文 VOC。标签、画像、报告与洞察均转向不可变公开投影。</p></div>
+          <div class="event"><time>阶段 4 · V2 中心与治理</time><h3>统一证据批次、中心实体和发布血缘</h3><p>引入 SourceBatch、Occurrence、Canonical Entity、Facts、Metrics、Release 等层次，并保持确定性重放。</p></div>
+          <div class="event"><time>阶段 5 · 受控生产上线</time><h3>只切换洞察站，保护采集任务和其他环境</h3><p>生产站、数据采集平台各自隔离；公网路由、公开制品、敏感路径、导出与回滚均形成验收证据。</p></div>
+        </div>
+        <div class="grid">
+          <div class="card"><h3>做对了什么</h3><ul class="compact"><li>坚持 Momcozy 主品牌、品类/SPU 为主干，竞品只作对比语境。</li><li>把日报、周报、月报放在产品核心，而非仅做指标看板。</li><li>保留原始证据下钻和数据边界说明，避免“黑盒洞察”。</li><li>案例广场保留存量价值，仅对批准增量做受控接入。</li><li>生产提升严格限定到洞察站容器，没有触碰采集器、cron、共享 Nginx、TLS、DNS 或其他 Docker。</li></ul></div>
+          <div class="card"><h3>为何出现反复与返工</h3><ul class="compact"><li><b>总量定义漂移：</b>不同数据源、快照和局部水位被混用，导致“净新增”持续被低估。</li><li><b>门禁压过业务可用性：</b>把“可解释的低覆盖”误处理为“页面无数据”，造成真实数据存在但用户看不到。</li><li><b>UI 与数据异步演进：</b>真实化过程中组件被简化为指标堆叠，原有洞察叙事和设计层次丢失。</li><li><b>术语面向工程而非业务：</b>如 cohort、闭合归档期等称谓增加领导理解成本。</li><li><b>证据粒度混淆：</b>帖子、评论、父帖关系、用户与内容分组曾被错误等同。</li></ul></div>
+          <div class="card"><h3>项目级经验</h3><ul class="compact"><li>总量必须先建立身份守恒，再讨论增量、趋势与上线。</li><li>数据门禁应控制结论强度，不应无条件清空业务页面。</li><li>每一个指标必须同时拥有值、公式、分母、时间窗、证据入口和不可计算规则。</li><li>页面设计必须服务“判断—原因—行动—证据”，不能服务组件数量。</li><li>生产事实、当前本地候选和未来规划必须分层描述。</li></ul></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="logic">
+      <div class="section-head"><div><div class="eyebrow">04 · Product design logic</div><h2>完整设计逻辑</h2></div><p>所有功能都服从一个闭环：先回答发生了什么，再解释为什么，最后给出行动与原始证据。</p></div>
+      <div class="grid g4">
+        <div class="card principle"><h3>1. Momcozy 主干</h3><p>品牌、品类和 SPU 是分析主轴；竞品用于相同窗口、相同治理口径的参照，不冒充市场份额。</p></div>
+        <div class="card principle"><h3>2. 证据先于观点</h3><p>任何风险、痛点、机会和画像都必须能回到帖子或已关联评论证据。</p></div>
+        <div class="card principle"><h3>3. 时间决定决策</h3><p>概览用 7/30/183 天，洞察统一最近季度，报告按日/周/月组织不同管理问题。</p></div>
+        <div class="card principle"><h3>4. 解释替代隐藏</h3><p>能计算就展示并解释；确实不可计算则不展示。低覆盖降低结论强度，不让页面失语。</p></div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <div class="flow" aria-label="洞察决策链">
+          <div class="node"><b>真实原始证据</b><span>帖子、评论、时间、互动、URL</span></div>
+          <div class="node"><b>身份与去重</b><span>Reddit ID、父子关系、版本与来源</span></div>
+          <div class="node"><b>治理事实</b><span>品牌、SPU、标签、情感、严重度</span></div>
+          <div class="node"><b>指标</b><span>数量、占比、趋势、比较、健康度</span></div>
+          <div class="node"><b>洞察叙事</b><span>画像、痛点、风险、新品、GEO</span></div>
+          <div class="node"><b>业务行动</b><span>优先级、责任域、内容与产品建议</span></div>
+          <div class="node"><b>证据复核</b><span>搜索下钻、原帖、导出、版本血缘</span></div>
+        </div>
+      </div>
+      <div class="grid g3" style="margin-top:16px">
+        <div class="card"><h3>信息层级</h3><p>概览是管理摘要；报告是周期经营例会；洞察是季度策略；搜索和高价值内容是证据工作台；案例是方法库；指标口径是解释层。</p></div>
+        <div class="card"><h3>视觉层级</h3><p>暖白底、珊瑚主色、克制的绿色/红色语义；雷达图用于综合评分，双轴图用于数量与质量共变，排名图用于优先级，不堆叠同质 KPI 卡。</p></div>
+        <div class="card"><h3>交互层级</h3><p>时间 Tab 改变决策窗口；模块 Tab 改变洞察问题；“？”解释公式；证据链接进入站内搜索或 Reddit 原帖；导出服务复盘和分发。</p></div>
+      </div>
+    </section>
+
+    <section id="architecture">
+      <div class="section-head"><div><div class="eyebrow">05 · Architecture</div><h2>产品、数据与发布架构</h2></div><p>站点是只读消费层；采集平台、中心数据集、公开投影与生产发布彼此解耦。</p></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>层</th><th>职责</th><th>核心对象</th><th>不应承担</th></tr></thead>
+        <tbody>
+          <tr><td>采集与回溯</td><td>发现过去 24 小时新帖，并刷新活跃历史帖在过去 24 小时新增评论；历史任务补齐覆盖。</td><td>Raw artifact、SourceBatch、run/cursor/checkpoint</td><td>直接改洞察站静态数据；绕过中心去重</td></tr>
+          <tr><td>中心总数据集</td><td>追加证据、规范化身份、保留版本、建立父子关系并做确定性融合。</td><td>Occurrence、Canonical Post/Comment、Content Version、Engagement Snapshot</td><td>把无法证明关系的评论强行挂到帖子</td></tr>
+          <tr><td>分析事实</td><td>依据标签字典和治理规则生成品牌、品类/SPU、情感、风险、画像等事实。</td><td>Analysis Fact、Tag Fact、Entity-Brand/Product Fact</td><td>用页面启发式词命中替代受治理事实</td></tr>
+          <tr><td>业务投影</td><td>生成概览、报告、洞察、画像、案例和导出所需的最小公开数据。</td><td>Metric Fact、Report、Quarter Insights、Persona Projection</td><td>暴露作者身份、私有路径或原始敏感字段</td></tr>
+          <tr><td>洞察站</td><td>只读展示、筛选、解释、证据下钻、导出。</td><td>React/Vite 静态站 + current-release 指针</td><td>承担采集任务或在线改写中心数据</td></tr>
+          <tr><td>受控发布</td><td>不可变候选、独立验证、精确授权、单站切换、公网验收和回滚。</td><td>release、candidate、packet、permit、receipt</td><td>顺带修改采集器、共享 Nginx 或其他 Docker</td></tr>
+        </tbody>
+      </table></div>
+      <div class="grid g2" style="margin-top:16px">
+        <div class="card"><h3>用户与核心任务</h3><ul class="compact"><li><b>管理层：</b>品牌健康、重大风险、品类机会、行动优先级。</li><li><b>品牌/公关：</b>负面与高严重度信号、内容合规、介入策略。</li><li><b>产品/研发：</b>按品类/SPU 追踪体验痛点、未满足需求和竞品取舍。</li><li><b>内容/GEO：</b>发现购买问题、比较问题和高价值证据，形成内容选题。</li><li><b>分析/运营：</b>日报周报月报、搜索核证、导出、口径说明。</li><li><b>数据/研发：</b>采集覆盖、父帖债务、标签覆盖、发布和回滚。</li></ul></div>
+        <div class="card"><h3>当前生产边界</h3><ul class="compact"><li>洞察站：<a href="https://reddit.lute-tlz-dddd.top/">reddit.lute-tlz-dddd.top</a>，不启用登录。</li><li>采集平台：<a href="https://reddit.brand.lute-tlz-dddd.top/">reddit.brand.lute-tlz-dddd.top</a>，由站内按钮跳转。</li><li>当前洞察站 release：<code>e8bea1546862…a3b</code>。</li><li>数据 release：<code>reddit_voc_release_20260719_v3_center_refresh_003</code>。</li><li>2026-07-21 只读复核：洞察站 <code>/healthz=ok</code>，采集后台 <code>/api/health status=ok</code>，后台报告 16 个 SQLite、666 个 artifacts。</li><li>最近一次受控提升只切换 <code>reddit_voc_insights_web</code>；采集器、cron、共享 Nginx、TLS、DNS 及其他 Docker 未变。</li></ul></div>
+      </div>
+    </section>
+
+    <section id="metrics">
+      <div class="section-head"><div><div class="eyebrow">06 · Data &amp; metrics</div><h2>数据、标签与指标体系</h2></div><p>指标的可信度来自粒度、分母、时间和血缘，而不是小数位数。</p></div>
+      <div class="callout"><strong>VOC 粒度是本项目最重要的口径</strong><p>1 个帖子 = 1 条帖子 VOC，帖子单独分析；1 条已关联评论 = 1 条评论上下文 VOC。帖子与评论按各自事件日进入时间窗。待父帖关联评论保留在账本中，但在关系确认前不进入评论上下文 VOC，避免伪造语境。</p></div>
+      <div class="card" style="margin-top:16px">
+        <div class="flow">
+          <div class="node"><b>标签字典</b><span>正文与评论规则、画像映射、品类/SPU</span></div><div class="node"><b>原子标签</b><span>品牌、产品、场景、痛点、意图、情感</span></div><div class="node"><b>原子指标</b><span>帖子数、评论数、VOC 数、负面数、互动量</span></div><div class="node"><b>衍生指标</b><span>占比、趋势、环比/同比、健康度、风险优先级</span></div><div class="node"><b>指标体系</b><span>品牌、产品、舆情、用户、内容/GEO</span></div><div class="node"><b>洞察故事</b><span>判断、驱动因素、机会、行动、证据</span></div><div class="node"><b>持续反馈</b><span>人工复核、案例应用、标签与阈值演进</span></div>
+        </div>
+      </div>
+      <div class="table-wrap" style="margin-top:16px"><table>
+        <thead><tr><th>指标</th><th>定义与公式</th><th>正确解读</th><th>不可误用</th></tr></thead>
+        <tbody>
+          <tr><td>帖子数量</td><td>窗口内经治理品牌事实确认的去重帖子 VOC 数。</td><td>品牌在样本中的发帖讨论规模。</td><td>不是 Reddit 全站声量或销量。</td></tr>
+          <tr><td>VOC 观察量</td><td>帖子 VOC + 已关联评论上下文 VOC。</td><td>把“主题出现”和“讨论延展”同时纳入。</td><td>不得把待关联评论强行计入上下文。</td></tr>
+          <tr><td>负面 VOC 占比</td><td>negative / (positive + neutral + negative) × 100%。未分类不进分母。</td><td>已分类样本中的负面结构。</td><td>不是全部 VOC 的直接负面率。</td></tr>
+          <tr><td>环比</td><td>(本期 − 上一相邻等长周期) / 上期 × 100%。上期为 0 时不计算。</td><td>短期动量与变化方向。</td><td>不把覆盖扩张当业务增长。</td></tr>
+          <tr><td>同比</td><td>(本期 − 上年同周期) / 上年同周期 × 100%。基期不存在或为 0 时不计算。</td><td>消除季节性的长期变化。</td><td>没有完整同周期就不展示。</td></tr>
+          <tr><td>品牌健康度</td><td>口碑健康、产品体验、推荐信任、风险韧性四维的受治理综合指数。</td><td>用于同口径下追踪总体状态与维度短板。</td><td>暂定状态不等于无效；也不是商业估值。</td></tr>
+          <tr><td>竞对语境</td><td>相同窗口受治理非 Momcozy 品牌事实的 VOC 数及排名；品牌可重叠。</td><td>看用户比较和替代选择。</td><td>不是互斥份额、SOV 或市场占有率。</td></tr>
+          <tr><td>画像占比</td><td>页面按最近季度画像赋值或唯一证据实体表达，并明确分母。</td><td>内容证据中出现的需求/决策角色结构。</td><td>不是自然人数量、人口统计或用户渗透率。</td></tr>
+        </tbody>
+      </table></div>
+      <div class="grid g3" style="margin-top:16px">
+        <div class="card metric"><em>最近季度范围</em><strong>2026-04-20—07-18</strong><span>90 天，Asia/Shanghai，内容实体事件日</span></div>
+        <div class="card metric"><em>Momcozy 季度 VOC</em><strong>1,752</strong><span>180 帖子 + 1,572 评论上下文；88 负面</span></div>
+        <div class="card metric"><em>主要痛点</em><strong>操作与可靠性</strong><span>315 次命中；多标签可重叠，不是互斥份额</span></div>
+      </div>
+      <div class="grid g2" style="margin-top:16px">
+        <div class="card"><h3>指标可用状态</h3><ul class="compact"><li><b>available：</b>按正式公式计算并可直接展示。</li><li><b>provisional：</b>值可计算，但覆盖、样本或证据等级需要解释；应展示，不应清空。</li><li><b>unavailable：</b>缺少分母、基期或必需事实；页面不展示，明细层可用“—”解释。</li><li><b>真实 0：</b>只有事实证明结果为零时才显示 0，不能用 0 代替缺失。</li></ul></div>
+        <div class="card"><h3>指标注册表</h3><p>当前注册表共 26 项：19 项核心经营指标 + 7 项内容完整性指标，分为数据健康、品牌、品类/SPU、洞察、内容完整性五族。日报页面按当前可计算状态展示 6 项，周报和月报各展示 11 项；这包含可解释的暂定值。</p></div>
+      </div>
+      <details><summary>品牌健康度四维当前值</summary><div>总体 72.54（暂定）；口碑健康 57.06（暂定）、产品体验 99.94、推荐信任 50.41、风险韧性 82.76（暂定）。暂定原因是相关情感分类覆盖未达到治理阈值，而不是指标为空。</div></details>
+      <details><summary>品牌健康度计算逻辑</summary><div>帖子 VOC 与评论上下文 VOC 分开计算后各占 50%；四个维度再等权合成。口碑健康 = 50 + 50 ×（正向 − 负向）/ 已分类数；产品体验 = 100 ×（1 − 产品问题率）；推荐信任 = 50 + 50 ×（推荐 − 反对）/ 已分类数；风险韧性 = 100 − 100 × Σ严重度权重 / 已分类数。该指数只在相同治理口径下比较。</div></details>
+      <details><summary>画像数据与正确称谓</summary><div>全量快照有 8 个内容证据画像、9,843 次赋值、6,841 个唯一内容实体；最近季度主画像为 377 次赋值、231 个唯一证据实体。季度画像可重叠：场景适配 142、产品评估 115、选购决策 64、竞品比较 39、推荐表达 9、服务支持 4、故障求助 3、适配产出 1。头像均为合成 SVG，不代表真实 Reddit 用户。</div></details>
+      <details><summary>最近季度品类/SPU 观察</summary><div>产品家族中 M5 Smart、M6 Mobile Style、S9 Pro、S12 Pro Quick、V2 Pro 居前；精确 SPU 中 M6 吸奶器、V2 Pro 吸奶器、BS03 全自动清洗消毒器、M9 吸奶器、Air 1 吸奶器居前。产品家族与精确 SPU 分层展示，不能把家族证据冒充精确 SPU。</div></details>
+      <details><summary>自动化/机器人内容的审计边界</summary><div>最近季度投影观察到自动化评论内容，但“自动化评论”只表示内容类型，不等于 Momcozy 机器人归因。当前正式边界为 <code>brand_bot_attribution_confirmed=false</code>；版主管理相关主张只按允许证据计数。任何品牌不规范推广结论都必须逐帖人工核证并保留证据链。</div></details>
+    </section>
+
+    <section id="manual">
+      <div class="section-head"><div><div class="eyebrow">07 · User manual</div><h2>产品模块使用手册</h2></div><p>推荐默认路径：概览判断 → 报告确认周期变化 → 洞察解释原因 → 搜索/内容下钻证据 → 案例借鉴方法 → 导出形成行动。</p></div>
+      <div class="card"><div class="steps"><div class="step"><b>先确认范围</b><span>查看数据集版本、时间窗、Momcozy 主干及完整性/暂定提示。</span></div><div class="step"><b>再看变化</b><span>数量、负面占比、趋势和比较必须在同一窗口解释。</span></div><div class="step"><b>寻找驱动</b><span>进入品类、痛点、风险、画像、新品和 GEO 模块。</span></div><div class="step"><b>复核证据</b><span>用站内帖子抽屉、评论上下文或 Reddit 原帖确认。</span></div><div class="step"><b>形成行动</b><span>明确问题、对象、时限、责任域和复盘指标；必要时导出。</span></div></div></div>
+
+      <article class="card module" id="m-overview" style="margin-top:18px"><div class="module-head"><span class="status live">已上线</span><h3>概览｜领导的一页经营摘要</h3><p>回答“品牌现在怎么样、变化在哪里、最该做什么”。</p></div><div class="module-body module-grid"><div><h4>核心内容</h4><ul><li>近 1 周 / 1 月 / 半年时间 Tab</li><li>帖子、VOC、负面占比、主要竞对</li><li>圆形品牌健康雷达与总分</li><li>帖子/评论 + 负面率双轴趋势</li><li>痛点、风险、品类、竞品与行动</li><li>全站经营精华和证据下钻</li></ul></div><div><h4>使用方法与边界</h4><ol><li>先选管理窗口，确认锚定日期。</li><li>读品牌健康总分与最低维度，点击“？”查看公式。<b>当前健康度是全历史投影，不随顶部时间 Tab 改变。</b></li><li>观察柱线是否同向：数量上升同时负面率上升，优先进入风险；数量上升而负面率下降，检查推荐与内容机会。</li><li>从痛点/品类/竞品排名进入报告或洞察，再下钻原帖。</li></ol></div><div><h4>迭代重点</h4><ul><li><b>P0：</b>并列展示窗口健康度与全历史健康度，消除范围误解。</li><li><b>P0：</b>自动刷新版本标签与数据日期。</li><li><b>P1：</b>加入可解释的健康度贡献拆解。</li><li><b>P2：</b>支持领导摘要导出和自定义视图。</li></ul></div></div></article>
+
+      <article class="card module" id="m-reports" style="margin-top:18px"><div class="module-head"><span class="status live">核心模块</span><h3>报告｜日报、周报、月报</h3><p>同一数据体系下的三种管理节奏，不是同一页面换标题。</p></div><div class="module-body module-grid"><div><h4>周期职责</h4><ul><li><b>日报：</b>即时止损、今日行动；仅展示可计算指标。</li><li><b>周报：</b>趋势诊断、问题归因、下周计划。</li><li><b>月报：</b>品牌与品类复盘、同比/环比、战略建议。</li><li>三者均含 Momcozy、品类/SPU、竞品、情感与证据。</li></ul></div><div><h4>使用方法与边界</h4><ol><li>从周期 Tab 进入当前业务周期。<b>当前只提供最新完整周期，尚无历史归档选择器。</b></li><li>查看摘要判断，再看指标变化和趋势线。</li><li>不可计算指标不显示；“？”解释基期、公式和分母。</li><li>本期无新帖时，驱动证据可来自截止期末的背景窗口，但不计入本期指标。</li><li>打开风险主题、产品分析和证据列表做复核；用 CSV/PDF/PPTX/DOCX 分发。</li></ol></div><div><h4>迭代重点</h4><ul><li><b>P0：</b>历史报告归档和日期选择。</li><li><b>P0：</b>让版本名称、窗口结束日和“最新”语义完全一致。</li><li><b>P0：</b>拆分新帖与活跃历史帖新增评论。</li><li><b>P1：</b>加入同比贡献分解、异常解释和上期行动复盘。</li></ul></div></div></article>
+
+      <article class="card module" id="m-search" style="margin-top:18px"><div class="module-head"><span class="status live">已上线</span><h3>搜索｜原始证据核查工作台</h3><p>用真实帖子和已关联评论回答“这个结论由哪些内容支撑”。</p></div><div class="module-body module-grid"><div><h4>核心能力</h4><ul><li>按关键词、Reddit ID、品牌、品类/SPU、情感、严重度、主题、社区和互动筛选</li><li>URL 状态可恢复、可分享</li><li>帖子详情抽屉与高分评论上下文</li><li>结果导出与 Reddit 原帖链接</li></ul></div><div><h4>使用方法与边界</h4><ol><li>优先从洞察/报告的证据入口进入，避免无目的搜索。</li><li>确认 release 和 snapshot 参数。</li><li>核对标题、正文、评论、时间、互动与标签。</li><li>当前主搜索对象仍是帖子；评论级全量搜索属于下一阶段。</li></ol></div><div><h4>迭代重点</h4><ul><li><b>P0：</b>评论级搜索和跨模块带条件深链。</li><li><b>P0：</b>字段选择与批量证据包导出。</li><li><b>P1：</b>分享链接、证据篮、标签依据与批注。</li><li><b>P2：</b>服务端索引、相似讨论和线程时间线。</li></ul></div></div></article>
+
+      <article class="card module" id="m-analysis" style="margin-top:18px"><div class="module-head"><span class="status live">已上线</span><h3>分析｜多维探索与交叉验证</h3><p>用于品牌、品类、竞品、情感、主题、社区和互动的结构性分析。</p></div><div class="module-body module-grid"><div><h4>适用问题</h4><ul><li>哪个品类/产品家族驱动声量或负面？</li><li>Momcozy 与竞品在哪些语境共现？</li><li>哪些 subreddit、主题和互动层级放大问题？</li><li>帖子与评论的结构是否不同？</li></ul></div><div><h4>使用方法与边界</h4><ol><li>先固定时间、品牌与粒度。</li><li>用排名图找集中项，用双轴图看量与质量，用流向图看标签关系。</li><li>“最近 12 个有数据月份”不把缺失月份补成真实 0；品牌提及不是市场份额。</li><li>当前部分图表仍由浏览器基于 Base 计算，应把结果视为探索层，并对异常点下钻证据。</li></ol></div><div><h4>迭代重点</h4><ul><li><b>P0：</b>加入日期、品牌、品类/SPU 全局过滤器与统一分母。</li><li><b>P0：</b>任何图形可带状态下钻搜索。</li><li><b>P1：</b>浏览器计算迁移为版本化治理指标产物。</li><li><b>P2：</b>跨季度主题迁移和生命周期。</li></ul></div></div></article>
+
+      <article class="card module" id="m-insights" style="margin-top:18px"><div class="module-head"><span class="status live">季度统一口径</span><h3>洞察｜从用户画像到战略机会</h3><p>最近一个季度统一数据集；画像置顶，之后以 Tab 组织痛点、舆情、新品和 GEO。</p></div><div class="module-body module-grid"><div><h4>故事线</h4><ul><li><b>用户画像：</b>分组占比、定义、头像插画与证据</li><li><b>用户痛点：</b>品牌/品类/场景中的关键阻力</li><li><b>舆情洞察：</b>风险、危机、内容合规和干预审计</li><li><b>新品机会：</b>未满足需求、产品家族与精确 SPU</li><li><b>GEO 机会：</b>比较/购买问题和可回答内容</li></ul></div><div><h4>使用方法</h4><ol><li>先看画像分布，理解是谁在什么任务中表达需求。</li><li>在痛点 Tab 找高频且高影响的问题，按品类/SPU 定位。</li><li>在舆情 Tab 区分负面、严重度、自动化内容与已证实归因。</li><li>把痛点与新品机会配对，再用 GEO 问题库转化为内容主题。</li><li>每个判断至少复核一组原帖/评论证据。</li></ol></div><div><h4>迭代重点</h4><ul><li><b>P0：</b>画像占比的分母在图表旁常驻。</li><li><b>P0：</b>四模块统一“判断—证据—行动”卡片协议。</li><li><b>P1：</b>机会评分加入规模、痛感、增长、竞品空白。</li><li><b>P2：</b>跟踪洞察采纳、行动和结果。</li></ul></div></div></article>
+
+      <article class="card module" id="m-cases" style="margin-top:18px"><div class="module-head"><span class="status live">存量保留</span><h3>案例广场｜行业方法与运营闭环</h3><p>案例是“怎么应用数据”的方法库，不与当前 Reddit 指标混为一谈。</p></div><div class="module-body module-grid"><div><h4>三个视图</h4><ul><li><b>人工精选：</b>默认展示 URL 可导航的高质量存量和已验证增量</li><li><b>运营闭环：</b>展示 Reddit 证据如何进入业务行动</li><li><b>待复核：</b>未达到正式发布条件的候选</li><li>当前批准增量为 0，运营闭环当前只有一个事件档案</li></ul></div><div><h4>使用方法</h4><ol><li>先选择业务问题，再用页面主体的关键词/分类检索。</li><li>打开案例档案，区分数据事实、方法和可复用模板。</li><li>把方法带回当前洞察证据，不直接复制案例结论。</li><li>新增案例需验证链接、来源类型和审批状态。</li></ol></div><div><h4>迭代重点</h4><ul><li><b>P0：</b>接通批准增量并持续做链接可达性检查。</li><li><b>P0：</b>接通或删除页头当前无效的搜索输入框。</li><li><b>P1：</b>支持“洞察→案例→行动→效果”关联。</li><li><b>P2：</b>案例模板化和团队共创。</li></ul></div></div></article>
+
+      <article class="card module" id="m-content" style="margin-top:18px"><div class="module-head"><span class="status live">已上线</span><h3>高价值内容｜内容与 GEO 机会池</h3><p>从真实帖子中识别高互动、比较、决策和可复用证据。“高价值”是分析优先级，不代表商业复用授权。</p></div><div class="module-body module-grid"><div><h4>当前规则</h4><ul><li>Momcozy 相关且正文非空</li><li>Score ≥ 5 或关联评论 ≥ 5</li><li>优先精选：非低严重度，且 Score ≥ 10 或评论 ≥ 10</li><li>结合品类/SPU、情感、主题与证据入口</li></ul></div><div><h4>使用方法</h4><ol><li>选择内容目标：回复、选题、FAQ、对比页或产品教育。</li><li>核对原帖时效、社区规则、作者语境和已有回答。</li><li>输出内容建议时避免机器人式复制、批量推广和伪装用户。</li></ol></div><div><h4>迭代重点</h4><ul><li><b>P0：</b>互动、证据完整、可复用、品牌安全四维评分。</li><li><b>P0：</b>引用授权/待确认状态与合规清单。</li><li><b>P1：</b>关联 GEO、新品和案例。</li><li><b>P2：</b>内容效果回流。</li></ul></div></div></article>
+
+      <article class="card module" id="m-signals" style="margin-top:18px"><div class="module-head"><span class="status live">只读信号</span><h3>舆情信号｜负面与高严重度行动排序</h3><p>展示真实负面、高严重度帖子和评论上下文，不虚构工单、处理状态或责任人。</p></div><div class="module-body module-grid"><div><h4>信号构成</h4><ul><li>负面 VOC、高严重度 VOC</li><li>互动放大和线程语境</li><li>品牌/品类/SPU 归属</li><li>确定性的行动排序</li></ul></div><div><h4>使用方法</h4><ol><li>按严重度、时间和互动确定核查顺序。</li><li>阅读全文与评论，判断是否真实产品问题、误用、客服或内容合规。</li><li>站外处理必须由业务系统承接；本页只提供证据与建议。</li></ol></div><div><h4>迭代重点</h4><ul><li><b>P0：</b>定义风险分级与升级 SLA。</li><li><b>P1：</b>接入人工确认状态而非前端本地假状态。</li><li><b>P2：</b>跨系统工单闭环和效果复盘。</li></ul></div></div></article>
+
+      <article class="card module" id="m-definitions" style="margin-top:18px"><div class="module-head"><span class="status live">单一解释层</span><h3>指标口径｜数据边界与公式词典</h3><p>把工程术语翻译为业务定义，并明确帖子、评论、趋势、比较和品牌的粒度。</p></div><div class="module-body module-grid"><div><h4>页面内容</h4><ul><li>发布版本与真实数据范围</li><li>历史采集完整性说明</li><li>帖子/评论/上下文关系</li><li>指标公式、分母和不可计算规则</li><li>标签字典版本</li></ul></div><div><h4>使用方法</h4><ol><li>对数字有争议时先确认时间、粒度和分母。</li><li>报告引用需带上 release/dataset。</li><li>若页面说明与制品不一致，以当前 release 绑定制品为准并提交缺陷。</li></ol></div><div><h4>迭代重点</h4><ul><li><b>P0：</b>从同一指标注册表生成页面“？”和词典。</li><li><b>P1：</b>加入示例和反例。</li><li><b>P2：</b>指标变更影响分析与版本 diff。</li></ul></div></div></article>
+
+      <article class="card module" id="m-collector" style="margin-top:18px"><div class="module-head"><span class="status partial">独立系统入口</span><h3>采集后台｜数据生产运维入口</h3><p>侧栏按钮直达独立采集平台；洞察站不在页面内嵌采集逻辑。</p></div><div class="module-body module-grid"><div><h4>职责边界</h4><ul><li>过去 24 小时新帖</li><li>活跃历史帖过去 24 小时新增评论</li><li>历史回溯、游标、预算、状态与证据</li><li>与洞察站 Docker 环境隔离</li></ul></div><div><h4>操作原则</h4><ol><li>采集完成不等于洞察站已更新。</li><li>新数据必须先形成 SourceBatch，进入中心融合、事实/指标投影和不可变候选。</li><li>验证通过后再走洞察站独立受控发布。</li></ol></div><div><h4>迭代重点</h4><ul><li><b>P0：</b>中心数据集自动接入与失败可观测性。</li><li><b>P0：</b>活跃线程刷新和 reply cursor 合同闭环。</li><li><b>P1：</b>采集覆盖与洞察新鲜度统一状态页。</li></ul></div></div></article>
+
+      <article class="card module" id="m-help" style="margin-top:18px"><div class="module-head"><span class="status partial">已上线但有漂移</span><h3>首页、功能介绍、使用流程与 FAQ｜产品教育层</h3><p>帮助新用户理解产品范围和正确路径，但当前文案落后于 V3 实际能力。</p></div><div class="module-body module-grid"><div><h4>当前作用</h4><ul><li>说明版本化静态快照和无登录边界</li><li>介绍产品能力、使用流程和常见问题</li><li>从首页进入真实数据工作台</li></ul></div><div><h4>已知问题</h4><ul><li>使用流程未把日报/周报/月报作为核心模块。</li><li>部分旧文案仍声称不做趋势，未覆盖当前比较、健康度、画像与四大洞察。</li><li>营销页与产品手册形成双重事实源。</li></ul></div><div><h4>迭代重点</h4><ul><li><b>P0：</b>用现役路由和指标合同重写。</li><li><b>P1：</b>与本 HTML 共用模块元数据。</li><li><b>P2：</b>构建时检查营销声明与生产能力漂移。</li></ul></div></div></article>
+
+      <article class="card module" id="m-export" style="margin-top:18px"><div class="module-head"><span class="status live">多格式可用</span><h3>导出｜从站内判断到可分发材料</h3><p>报告、搜索、高价值内容和舆情信号已具备导出；候选版本已验证 CSV/PDF/PPTX/DOCX。</p></div><div class="module-body module-grid"><div><h4>使用方法</h4><ul><li>导出前确认时间窗和筛选条件。</li><li>文件应保留 release、dataset 和证据链接。</li><li>正式引用前抽查记录数量与中文排版。</li></ul></div><div><h4>边界</h4><ul><li>导出不是新的数据版本。</li><li>洞察、画像和概览尚需统一的领导版导出。</li><li>不得生成空文件来掩盖失败。</li></ul></div><div><h4>迭代重点</h4><ul><li><b>P0：</b>统一版本、时间窗、公式和证据元数据。</li><li><b>P1：</b>统一跨格式字段并增加数据字典附录。</li><li><b>P2：</b>附可验证 SHA。</li></ul></div></div></article>
+    </section>
+
+    <section id="playbooks">
+      <div class="section-head"><div><div class="eyebrow">08 · Business playbooks</div><h2>业务作业手册</h2></div><p>把网站从“看数据”变成固定经营动作。</p></div>
+      <div class="table-wrap"><table><thead><tr><th>场景</th><th>入口与步骤</th><th>产出</th><th>完成标准</th></tr></thead><tbody>
+        <tr><td>每日舆情巡检</td><td>日报 → 舆情信号 → 原帖/评论证据 → 判断是否升级</td><td>今日风险、今日行动、无需行动项</td><td>高严重度信号均已核证；行动有负责人和时限</td></tr>
+        <tr><td>周度经营复盘</td><td>周报 → 趋势/环比 → 品类/SPU → 竞品 → 行动复盘</td><td>本周驱动、下周优先级</td><td>变化与驱动相互印证；不是只报涨跌</td></tr>
+        <tr><td>月度管理汇报</td><td>月报 → 健康度 → 同比/环比 → 品类与风险 → 战略建议</td><td>管理层摘要、PPTX/DOCX</td><td>每个建议有数据、证据、责任域、下月验证指标</td></tr>
+        <tr><td>产品机会研究</td><td>洞察/新品 → 痛点 → 产品家族/精确 SPU → 搜索核证 → 案例方法</td><td>机会问题陈述、需求证据包</td><td>区分高频问题与高痛感问题；至少跨多个证据实体</td></tr>
+        <tr><td>品牌危机核查</td><td>舆情信号 → 线程全貌 → 内容合规/归因 → 人工决策</td><td>事实简报、风险等级、响应建议</td><td>不把自动化内容直接归因品牌；保存原帖与版本证据</td></tr>
+        <tr><td>GEO 内容策划</td><td>洞察/GEO → 高价值内容 → 比较/购买问题 → 案例 → 选题</td><td>问题库、回答框架、内容清单</td><td>回答真实问题、符合 subreddit 规范、避免机器人式推广</td></tr>
+      </tbody></table></div>
+    </section>
+
+    <section id="operations">
+      <div class="section-head"><div><div class="eyebrow">09 · Engineering operations</div><h2>工程、发布与运维手册</h2></div><p>开发、数据构建、候选验证与生产切换是不同证据层，不能互相替代。</p></div>
+      <div class="grid g3">
+        <div class="card"><h3>本地开发</h3><ul class="compact"><li>Python 项目：<code>src/reddit_voc</code>，Python ≥ 3.11。</li><li>前端：<code>ref/UI/momcozy-reddit-workbench</code>，React + TypeScript + Vite。</li><li>前端常规检查：<code>npm test</code>、<code>npm run lint</code>、<code>npm run build</code>。</li><li>全仓测试：使用项目锁定环境运行 <code>pytest</code>。</li></ul></div>
+        <div class="card"><h3>数据候选闭环</h3><ol class="compact"><li>冻结源批次并校验原始证据。</li><li>单写者融合到中心数据集。</li><li>重建标签/事实/指标/报告/洞察/画像。</li><li>生成前端 source candidate 与 immutable release。</li><li>运行独立 validator、same-dist E2E、容器 smoke、导出和安全检查。</li></ol></div>
+        <div class="card"><h3>受控生产提升</h3><ol class="compact"><li>SSH 只读基线确认容器、端口与边界。</li><li>生成绑定精确制品 SHA 的 promotion packet。</li><li>取得同时点名 packet/release 的明确授权。</li><li>一次性 permit 切换洞察站。</li><li>公网验收，核对 release、TLS、路由、制品与敏感 404。</li><li>异常按固定上一 release 回滚。</li></ol></div>
+      </div>
+      <div class="callout amber" style="margin-top:16px"><strong>禁止事项</strong><p>不得直接覆盖线上静态文件；不得把采集成功当作洞察发布成功；不得复用过期 packet/permit；不得在洞察站提升中修改采集器、cron、共享 Nginx、TLS、DNS、数据库或其他 Docker；不得打印或提交密钥。</p></div>
+      <div class="callout" style="margin-top:16px"><strong>P0 工程治理风险：源码尚无正常 Git 基线</strong><p>截至本文编制时，当前分支显示 <code>No commits yet</code>，工程文件均为 untracked。制品 SHA 和发布回执治理较强，但不能替代源码提交历史、review diff、tag 与可恢复基线。下一次大规模迭代前应先在不覆盖现有工作区的前提下建立正式版本库基线。</p></div>
+      <details><summary>生产验收基线（当前已验证事实）</summary><div>最近生产提升通过 13/13 路由、8/8 公开制品和 20/20 敏感路径 404；洞察站容器 healthy，精确 release 与数据指针匹配。采集器和翻译容器身份、健康及重启次数未变。该事实基于 2026-07-19 验收，不自动证明未来状态。</div></details>
+      <details><summary>排障顺序</summary><div>先判断是采集、中心融合、分析投影、current-release、静态制品、前端渲染还是生产代理层；在对应层取新鲜证据。页面无数据时先检查 current-release 与 manifest 路径，再检查指标是否确实为空，最后才考虑 UI。不要用 Mock 兜底掩盖真实制品缺失。</div></details>
+      <details><summary>回滚原则</summary><div>回滚目标必须是校验和有效的上一 immutable release；只回滚洞察站，不重启采集器或其他服务。切换后重复公网验收，并记录回滚 receipt。当前回滚能力已实现并有测试，最新回滚目标已校验，但本生产 release 尚未执行真实回滚演练；三者不可混称。</div></details>
+    </section>
+
+    <section id="roadmap">
+      <div class="section-head"><div><div class="eyebrow">10 · Roadmap</div><h2>每个模块的后续迭代方向</h2></div><p>优先级依据：先保证数据自动到站和口径一致，再提高分析效率，最后建设组织闭环。</p></div>
+      <div class="roadmap">
+        <div class="head">模块</div><div class="head">P0｜可靠可用</div><div class="head">P1｜分析增效</div><div class="head">P2｜经营闭环</div>
+        <div class="phase">数据中心</div><div>每日新帖 + 活跃历史帖新增评论自动入中心；父帖关系债务治理；标签覆盖看板。</div><div>增量重算、影响分析、质量漂移检测。</div><div>多源覆盖策略自适应与成本优化。</div>
+        <div class="phase">概览</div><div>版本/日期同步；健康度解释一致；关键模块均可下钻。</div><div>贡献拆解、异常解释、管理摘要导出。</div><div>领导自定义视图与目标阈值。</div>
+        <div class="phase">报告</div><div>日报/周报/月报自动刷新；版本命名与窗口一致；行动清单。</div><div>同比/环比贡献分解、异常解释、团队分册。</div><div>订阅、批注、行动复盘和自动回顾。</div>
+        <div class="phase">分析</div><div>统一粒度/分母；所有图表真实数据与证据深链。</div><div>保存视图、交叉筛选、稳定度和显著性。</div><div>自然语言分析与可复用研究模板。</div>
+        <div class="phase">洞察</div><div>季度统一口径；画像分母常驻；四模块卡片协议。</div><div>机会评分、变化驱动、品类/SPU 深层对比。</div><div>洞察采纳、实验和业务结果回流。</div>
+        <div class="phase">搜索/内容</div><div>跨页深链、合规清单、证据可追溯。</div><div>保存查询、证据篮、批注、相似讨论。</div><div>内容任务、发布与 GEO 效果闭环。</div>
+        <div class="phase">案例广场</div><div>高质量链接默认可用；增量验证和来源治理。</div><div>关联洞察、行动和效果。</div><div>团队案例共创与模板市场。</div>
+        <div class="phase">舆情信号</div><div>风险分级、人工确认、升级 SLA。</div><div>趋势异常和主题聚类。</div><div>跨系统工单闭环。</div>
+        <div class="phase">指标口径</div><div>统一指标注册表生成公式与帮助。</div><div>口径示例、反例、版本 diff。</div><div>指标血缘图与变更审批。</div>
+        <div class="phase">工程发布</div><div>采集→中心→投影→候选自动编排；失败可观测。</div><div>双周期 shadow、质量预算、发布差异报告。</div><div>受控自动提升与一键回滚演练。</div>
+      </div>
+      <div class="grid g3" style="margin-top:16px">
+        <div class="card"><span class="status debt">0—30 天</span><h3>先关闭可靠性缺口</h3><ul class="compact"><li>建立源码 Git 提交、review 与 tag 基线</li><li>完成每日增量到中心数据集的自动接入</li><li>修复数据 release 与报告/洞察命名一致性</li><li>建立 6,953 条父帖关系债务分层处置</li><li>统一指标注册表、页面“？”与全页深链回归</li></ul></div>
+        <div class="card"><span class="status plan">31—60 天</span><h3>提高分析与行动效率</h3><ul class="compact"><li>标签覆盖与漂移审计</li><li>机会评分、异常解释、贡献分解</li><li>证据篮、批注、保存分析</li><li>风险人工确认与 SLA</li><li>管理摘要和团队分册</li></ul></div>
+        <div class="card"><span class="status live">61—90 天</span><h3>建立经营闭环</h3><ul class="compact"><li>洞察—行动—结果回流</li><li>内容/GEO 效果归因</li><li>案例应用效果度量</li><li>受控自动候选与回滚演练</li><li>季度产品复盘机制</li></ul></div>
+      </div>
+    </section>
+
+    <section id="acceptance">
+      <div class="section-head"><div><div class="eyebrow">11 · Acceptance & governance</div><h2>验收标准与产品健康指标</h2></div><p>下一版本只有同时满足数据、业务、界面、工程和运行验收，才算真正完成。</p></div>
+      <div class="table-wrap"><table><thead><tr><th>维度</th><th>最低完成标准</th><th>建议长期指标</th></tr></thead><tbody>
+        <tr><td>数据完整性</td><td>源批次有 manifest/receipt；帖子和评论守恒；重复重放 no-change；父帖债务显式。</td><td>日批次成功率、数据新鲜度、身份冲突率、父帖待关联净变化</td></tr>
+        <tr><td>标签质量</td><td>标签字典版本可追溯；品牌/品类/SPU/情感/严重度均有覆盖说明和抽样复核。</td><td>覆盖率、人工精确率、漂移率、needs-review 周转时间</td></tr>
+        <tr><td>指标正确性</td><td>值、公式、分母、窗口、比较基期和证据可核；不可计算不展示。</td><td>指标争议数、口径缺陷逃逸数、版本差异解释率</td></tr>
+        <tr><td>产品完整性</td><td>所有生产页面有真实数据或明确空态；核心故事可从判断下钻到证据；移动端可用。</td><td>报告使用率、证据下钻率、导出率、任务完成时间</td></tr>
+        <tr><td>洞察质量</td><td>洞察包含判断、规模、变化、原因、行动和证据；不越过归因边界。</td><td>洞察采纳率、行动完成率、业务反馈准确率</td></tr>
+        <tr><td>工程质量</td><td>测试、lint、typecheck、build、same-dist E2E、容器 smoke、导出和安全探针通过。</td><td>发布失败率、回滚时间、测试逃逸、制品可重现率</td></tr>
+        <tr><td>生产安全</td><td>精确授权、一次性 permit、边界不变、公网验收和可验证回滚。</td><td>未授权变更 0、跨环境污染 0、敏感路径暴露 0</td></tr>
+      </tbody></table></div>
+      <div class="callout green" style="margin-top:16px"><strong>当前验证事实</strong><p>全仓测试在 2026-07-19 达到 1,596 tests + 840 subtests；当前生产提升通过 13 条路由、8 个公开制品和 20 个敏感路径检查。以上是对应版本的新鲜证据，不代表未来变更可免除再次验证。</p></div>
+    </section>
+
+    <section id="glossary">
+      <div class="section-head"><div><div class="eyebrow">12 · Glossary & appendix</div><h2>术语、已知债务与资料索引</h2></div><p>交接时先看本节，再进入具体工程文档。</p></div>
+      <div class="grid g2">
+        <div class="card"><h3>关键术语</h3><dl><dt><b>SourceBatch</b></dt><dd>一次不可变、可校验的数据来源批次。</dd><dt><b>Canonical Entity</b></dt><dd>跨来源去重后的帖子或评论身份。</dd><dt><b>帖子 VOC</b></dt><dd>帖子本身作为独立分析事实。</dd><dt><b>评论上下文 VOC</b></dt><dd>已与父帖建立可信关系的评论分析事实。</dd><dt><b>治理事实</b></dt><dd>通过规则与版本控制产生的品牌、品类、情感等可用事实。</dd><dt><b>画像</b></dt><dd>内容证据中的需求/决策角色分组，不是现实用户身份。</dd><dt><b>Release</b></dt><dd>绑定精确数据和静态制品的不可变版本。</dd></dl></div>
+        <div class="card"><h3>当前已知债务</h3><ul class="compact"><li><span class="status debt">结构债务</span> 6,953 条评论待可信父帖关联。</li><li><span class="status partial">覆盖债务</span> 最近季度 Momcozy 230 条 VOC 未完成情感分类。</li><li><span class="status partial">命名债务</span> 部分报告/洞察 dataset label 保留 20260716，而业务窗口结束于 2026-07-18。</li><li><span class="status plan">自动化债务</span> 最新采集到中心、指标、候选和站点的全链自动接入仍需产品化。</li><li><span class="status plan">采集合约</span> reply cursor 的完整响应合同与当前采集代码的新 release attestation 仍需维护。</li></ul></div>
+      </div>
+      <div class="card" style="margin-top:16px"><h3>项目资料索引</h3><div class="table-wrap"><table><tbody>
+        <tr><td>当前事实包</td><td><code>.codex/context-pack.md</code></td></tr>
+        <tr><td>执行 TODO</td><td><code>tasks/reddit-voc-execution-todo-20260707.md</code></td></tr>
+        <tr><td>V2.0 产品规格</td><td><code>docs/reddit-voc-product-v2.0-spec.md</code></td></tr>
+        <tr><td>统一采集与融合</td><td><code>docs/workflows/reddit-voc-unified-collection-fusion-v1.md</code></td></tr>
+        <tr><td>历史覆盖方案</td><td><code>docs/workflows/momcozy-reddit-history-coverage-v2.md</code></td></tr>
+        <tr><td>数据合同</td><td><code>docs/reddit-voc-data-contract-20260707.md</code></td></tr>
+        <tr><td>上线运行手册</td><td><code>docs/reddit-voc-online-actions-runbook-20260707.md</code></td></tr>
+        <tr><td>只读检查与排障</td><td><code>docs/reddit-voc-readonly-smoke-runbook-20260707.md</code> / <code>docs/reddit-voc-troubleshooting-20260707.md</code></td></tr>
+        <tr><td>前端应用</td><td><code>ref/UI/momcozy-reddit-workbench</code></td></tr>
+        <tr><td>标签字典</td><td><code>dim_tag_v6.3_final.csv</code></td></tr>
+      </tbody></table></div></div>
+    </section>
+
+    <footer class="footer"><p><b>文档性质：</b>产品复盘、设计规格、使用手册与迭代规划的合并交付件。事实优先取当前 release 绑定制品与 2026-07-19 验收记录；历史文档中的旧数量和旧 release 仅作演进记录。</p><p><b>生成日期：</b>2026-07-21 · <b>时区：</b>Asia/Shanghai · <b>生产变更：</b>无。</p></footer>
+  </main>
+</div>
+<script>
+  const links=[...document.querySelectorAll('#side-nav a')];
+  const sections=links.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  const observer=new IntersectionObserver(entries=>{const hit=entries.filter(e=>e.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];if(!hit)return;links.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+hit.target.id));},{rootMargin:'-15% 0px -72% 0px',threshold:[0,.1,.5]});
+  sections.forEach(s=>observer.observe(s));
+</script>
+</body>
+</html>

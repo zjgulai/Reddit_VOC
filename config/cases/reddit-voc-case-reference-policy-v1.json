@@ -1,0 +1,25 @@
+{
+  "boundaries": {
+    "database_write": false,
+    "deploy": false,
+    "live_send": false,
+    "production_unchanged": true,
+    "provider_call": false,
+    "remote_write": false
+  },
+  "default_eligible_source_kinds": [
+    "approved_delta",
+    "curated_seed"
+  ],
+  "max_redirects": 5,
+  "policy_version": "reddit-voc-case-reference-2026-07-16.v1",
+  "required_scheme": "https",
+  "schema_version": "reddit_voc_case_reference_policy_v1",
+  "verification_statuses": [
+    "pending",
+    "rejected",
+    "stale",
+    "verified"
+  ],
+  "verification_ttl_days": 30
+}

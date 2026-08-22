@@ -1,0 +1,7 @@
+*
+!dist/
+!dist/**
+!deploy/
+!deploy/insights/
+!deploy/insights/Dockerfile
+!deploy/insights/nginx.conf

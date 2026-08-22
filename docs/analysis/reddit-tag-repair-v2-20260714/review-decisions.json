@@ -1,0 +1,78 @@
+{
+  "schema_version": "reddit_voc_tag_repair_review_decisions_v1",
+  "sample_sha256": "593fab67751d91ce598652150f7eb210c3bad5c6eb340d6dc27b6f3092e6768f",
+  "predicate_policy_sha256": "27bbef9e662a4e524f8c944c83bad7030c2273c66cf8aa180932feb740a5c6f9",
+  "reviewer": {
+    "type": "codex_context_review",
+    "version": "reddit_tag_repair_context_review_20260714_v2",
+    "independent_human_review": false,
+    "review_policy": "The v2 policy was frozen before evaluation. Legacy samples, v1 review samples, v1 challenge cases, and all 92 inspected v1 needs_review assignments were excluded. No unseen predicate-confirmed candidates remained, so no item-level validation decision could be made."
+  },
+  "quality_gate": {
+    "sample_plan": "30_fresh_confirmed_or_full_fresh_confirmed_population",
+    "minimum_label_precision": 0.9,
+    "minimum_wilson_lower_bound_95": 0.75,
+    "minimum_taxonomy_fit_rate": 0.9,
+    "maximum_ambiguous_rate": 0.1,
+    "minimum_challenge_cases": 20,
+    "governance_status_required": "fit"
+  },
+  "tag_reviews": {
+    "L2-PUMP-016": {
+      "governance_review": {
+        "status": "fit",
+        "reason_code": "v2_negation_fix_matches_flange_fit_definition",
+        "note": "The v2 predicate corrects negated positive fit language while retaining the explicit anatomy and negative-outcome relation and all v1 fail-closed exclusions."
+      },
+      "default_decision": {
+        "label_verdict": "ambiguous",
+        "taxonomy_fit": "ambiguous",
+        "reason_code": "no_unseen_confirmed_population",
+        "note": "No unseen confirmed candidate remained after development-evidence exclusion; the default applies to no sampled assignment."
+      },
+      "overrides": {}
+    },
+    "L0-CHL-003": {
+      "governance_review": {
+        "status": "fit",
+        "reason_code": "v2_context_binding_matches_product_value_definition",
+        "note": "The v2 predicate permits bounded product-subject grounding from adjacent or parent context only when the comment itself contains an unconditional value assertion, while rejecting hearsay and existing fail-closed cases."
+      },
+      "default_decision": {
+        "label_verdict": "ambiguous",
+        "taxonomy_fit": "ambiguous",
+        "reason_code": "no_unseen_confirmed_population",
+        "note": "No unseen confirmed candidate remained after development-evidence exclusion; the default applies to no sampled assignment."
+      },
+      "overrides": {}
+    },
+    "L2-PUMP-030": {
+      "governance_review": {
+        "status": "fit",
+        "reason_code": "v2_adjacent_binding_matches_output_comparison_definition",
+        "note": "The v2 predicate permits one-sentence backward subject continuity only for explicit equal-or-better output templates with a named competitor; arbitrary cross-sentence co-occurrence remains unconfirmed."
+      },
+      "default_decision": {
+        "label_verdict": "ambiguous",
+        "taxonomy_fit": "ambiguous",
+        "reason_code": "no_unseen_confirmed_population",
+        "note": "No unseen confirmed candidate remained after development-evidence exclusion; the default applies to no sampled assignment."
+      },
+      "overrides": {}
+    },
+    "L2-PUMP-007": {
+      "governance_review": {
+        "status": "fit",
+        "reason_code": "v2_first_person_binding_matches_accessory_intent_definition",
+        "note": "The v2 predicate recognizes first-person discourse earlier in the same sentence while still requiring active purchase intent and an accessory term and preserving third-party, past, free, advice, and availability exclusions."
+      },
+      "default_decision": {
+        "label_verdict": "ambiguous",
+        "taxonomy_fit": "ambiguous",
+        "reason_code": "no_unseen_confirmed_population",
+        "note": "No unseen confirmed candidate remained after development-evidence exclusion; the default applies to no sampled assignment."
+      },
+      "overrides": {}
+    }
+  }
+}

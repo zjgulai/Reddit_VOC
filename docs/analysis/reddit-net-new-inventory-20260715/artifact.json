@@ -1,0 +1,1148 @@
+{
+  "surface": "report",
+  "manifest": {
+    "version": 1,
+    "surface": "report",
+    "title": "Reddit 净新增帖子全源盘点",
+    "description": "A bounded, identity-level reconciliation of the current website baseline, local historical archives, Tencent Cloud materialized SQLite data, exact semantic Reddit discovery payloads, and comments as of 2026-07-15.",
+    "generatedAt": "2026-07-15T03:31:32Z",
+    "blocks": [
+      {
+        "id": "title",
+        "type": "markdown",
+        "layout": "full",
+        "body": "# Reddit 净新增帖子全源盘点"
+      },
+      {
+        "id": "executive_summary",
+        "type": "markdown",
+        "layout": "full",
+        "sourceId": "inventory_summary",
+        "body": "## Executive Summary\n\n- **净新增不是 13，而是 887。** 当前网站只有 221 个唯一帖子；全源去重后的已知并集为 1,108 个，因此相对网站净新增 887 个。\n- **887 必须按数据就绪度拆开。** 236 个已经物化到服务器 SQLite，可进入内容、隐私、标签和 SPU 质检；651 个只有精确语义发现身份，尚无可用于网站的结构化正文。\n- **13 只是 daily 在 Task 37 之后新增的窄切片。** Task 37 已贡献 223 个物化净新增，二者合计 236；把 13 当成总增量会同时遗漏 223 个物化帖子和 651 个 discovery-only 帖子。\n- **评论相对网站存储层净新增 1,236 条。** 网站 stored 为 4,567，远端有效评论为 3,544，交集 2,308，去重后全局 stored 并集为 5,803。"
+      },
+      {
+        "id": "headline_metrics",
+        "type": "metric-strip",
+        "layout": "full",
+        "cardIds": [
+          "current_site_posts",
+          "global_known_posts",
+          "net_new_posts",
+          "materialized_net_new",
+          "discovery_only_net_new",
+          "net_new_comments"
+        ]
+      },
+      {
+        "id": "definitions_section",
+        "type": "markdown",
+        "layout": "full",
+        "sourceId": "inventory_summary",
+        "body": "## 先固定同一套计数口径\n\n本报告按规范化 Reddit ID 去重：帖子是一条规范化 `post_id`，评论是一条规范化 `comment_id`。**物化**表示服务器 SQLite 已有结构化实体，但仍需通过隐私、标签、SPU 和发布门；**discovery-only** 表示在精确 `SubredditPost` 语义路径中发现有效身份，但没有出现在物化帖子并集中。各来源行存在交集，除下方明确标记的互斥组成外不能直接相加。"
+      },
+      {
+        "id": "composition_section",
+        "type": "markdown",
+        "layout": "full",
+        "sourceId": "inventory_summary",
+        "body": "## 13 只是最后一小段，651 才是主要缺口\n\n全局 1,108 个帖子身份可拆成四个互斥部分：网站 221、Task 37 物化净新增 223、daily 后续物化净新增 13、仅发现待物化 651。**所以真正可进入本地内容质检的新增是 236，而不是 887；最大的工作量是补齐 651 个帖子实体。**"
+      },
+      {
+        "id": "composition_chart_block",
+        "type": "chart",
+        "layout": "full",
+        "chartId": "post_universe_composition"
+      },
+      {
+        "id": "source_section",
+        "type": "markdown",
+        "layout": "full",
+        "sourceId": "inventory_summary",
+        "body": "## 全源集合交叉后，净新增稳定在 887\n\nTask 37 与网站重合 78 个，产生 223 个净新增；远端全部物化帖子与网站重合 133 个，产生 236 个物化净新增。目标窗语义发现有 924 个帖子，其中 273 个已物化，剩余 651 个才是 discovery-only。**924 与 369 有重叠，绝不能直接相加。**"
+      },
+      {
+        "id": "source_table_block",
+        "type": "table",
+        "layout": "full",
+        "tableId": "source_reconciliation"
+      },
+      {
+        "id": "comment_section",
+        "type": "markdown",
+        "layout": "full",
+        "sourceId": "inventory_summary",
+        "body": "## 评论净新增 1,236，且没有新增 orphan 身份\n\n远端 3,544 个有效评论中，3,534 个已关联到物化帖子，10 个仍为 orphan；这 10 个 ID 全部已存在于网站 quarantine。评论合并仍要保留 quarantine 边界，不能因为远端找到父帖就自动解除隔离。"
+      },
+      {
+        "id": "comment_table_block",
+        "type": "table",
+        "layout": "full",
+        "tableId": "comment_reconciliation"
+      },
+      {
+        "id": "quality_section",
+        "type": "markdown",
+        "layout": "full",
+        "sourceId": "inventory_summary",
+        "body": "## 身份封账已通过，内容完整性仍有三个硬门\n\n帖子与评论的集合计数、交集、差集和哈希均独立复现；但 651 个帖子尚未物化，2 个记录存在 URL ID 与行内 ID 不一致，另有 2 个重合帖正文差异。采集批次已经稳定停止，也不能表述为 Reddit 已穷尽：5 个 lane 在 depth 16 仍有下一页。"
+      },
+      {
+        "id": "quality_table_block",
+        "type": "table",
+        "layout": "full",
+        "tableId": "quality_gates"
+      },
+      {
+        "id": "recommendations_section",
+        "type": "markdown",
+        "layout": "full",
+        "sourceId": "inventory_summary",
+        "body": "## 下一步只先补数据闭环\n\n1. 冻结 236 个物化净新增的安全内容快照，执行 ID、时间、父子、脱敏、正文冲突和 URL-ID 门禁。\n2. 对 651 个 discovery-only 全量 hydration；完成前不得把它们计入网站可展示语料。\n3. 延伸仍有下一页的 5 个 lane，直到自然结束或形成明确、可审计的业务预算上限。\n4. 完整语料固定后再运行标签字典、画像、品牌、品类与 SPU 提取，并重新计算日报、周报、月报的同比、环比和趋势。\n5. 数据门通过后再重做洞察故事线与页面交叉检查，避免用不完整样本驱动 UI。"
+      },
+      {
+        "id": "questions_section",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## 待确认决策\n\n1. 是否按推荐方案对 651 个 discovery-only **全量 hydration**，而不是只做优先批次？\n2. 5 个仍有下一页的 lane，是继续到自然结束，还是设置明确的每-lane 预算并长期标注有界覆盖？\n3. 2 个 URL-ID 异常记录在原始证据核验前是否继续 quarantine？推荐保持 quarantine。"
+      },
+      {
+        "id": "caveats_section",
+        "type": "markdown",
+        "layout": "full",
+        "sourceId": "inventory_summary",
+        "body": "## Caveats and Assumptions\n\n- 1,108 是当前 governed sources 的已知唯一帖子并集，不是 Reddit 全网总量。\n- 651 是有效帖子身份证据，不是已采集并可展示的正文。\n- 评论安全清单能验证 linked/orphan 集合分区与哈希，但未保留逐条 `comment_id → post_id` 映射供独立逐行复算。\n- 报告不包含帖子/评论正文、Reddit 用户名、原始 ID 列表、凭证或私钥。\n- 本轮严格只读：`production unchanged`、`provider_call=false`、`provider_attempt_made=false`、`database_write=false`、`live_send=false`、`deploy=false`、`collector_restart=false`、`schedule_change=false`。"
+      }
+    ],
+    "cards": [
+      {
+        "id": "current_site_posts",
+        "dataset": "headline",
+        "metrics": [
+          {
+            "label": "当前网站帖子",
+            "field": "current_site_posts",
+            "format": "number"
+          }
+        ],
+        "description": "本次净新增计算的唯一帖子 ID 基线。",
+        "sourceId": "dataset_headline"
+      },
+      {
+        "id": "global_known_posts",
+        "dataset": "headline",
+        "metrics": [
+          {
+            "label": "全局已知帖子",
+            "field": "global_known_unique_posts",
+            "format": "number"
+          }
+        ],
+        "description": "网站基线与远端有界帖子并集。",
+        "sourceId": "dataset_headline"
+      },
+      {
+        "id": "net_new_posts",
+        "dataset": "headline",
+        "metrics": [
+          {
+            "label": "净新增帖子",
+            "field": "net_new_vs_site",
+            "format": "number"
+          }
+        ],
+        "description": "全局已知唯一帖子减去当前网站基线。",
+        "sourceId": "dataset_headline"
+      },
+      {
+        "id": "materialized_net_new",
+        "dataset": "headline",
+        "metrics": [
+          {
+            "label": "已物化净新增",
+            "field": "materialized_net_new_posts",
+            "format": "number"
+          },
+          {
+            "label": "Task 37",
+            "field": "task37_net_new_posts",
+            "format": "number"
+          },
+          {
+            "label": "daily 后续",
+            "field": "daily_net_new_after_task37",
+            "format": "number"
+          }
+        ],
+        "description": "236 = Task 37 的 223 + daily 后续的 13。",
+        "sourceId": "dataset_headline"
+      },
+      {
+        "id": "discovery_only_net_new",
+        "dataset": "headline",
+        "metrics": [
+          {
+            "label": "仅发现待物化",
+            "field": "discovery_only_net_new_posts",
+            "format": "number"
+          },
+          {
+            "label": "占净新增",
+            "field": "discovery_share_of_net_new",
+            "format": "percent"
+          }
+        ],
+        "description": "有效语义身份，但没有物化帖子正文实体。",
+        "sourceId": "dataset_headline"
+      },
+      {
+        "id": "net_new_comments",
+        "dataset": "headline",
+        "metrics": [
+          {
+            "label": "净新增评论",
+            "field": "net_new_comments_vs_site_stored",
+            "format": "number"
+          },
+          {
+            "label": "全局并集",
+            "field": "global_known_stored_comments",
+            "format": "number"
+          }
+        ],
+        "description": "相对网站 linked 加 quarantine 存储基线。",
+        "sourceId": "dataset_headline"
+      }
+    ],
+    "charts": [
+      {
+        "id": "post_universe_composition",
+        "title": "已知帖子身份的互斥构成",
+        "description": "截至 2026 年 7 月 15 日；221 + 223 + 13 + 651 = 1,108 个唯一帖子 ID。",
+        "type": "bar",
+        "dataset": "post_universe_composition",
+        "encodings": {
+          "x": {
+            "field": "component",
+            "type": "nominal",
+            "label": "互斥组成"
+          },
+          "y": {
+            "field": "unique_posts",
+            "type": "quantitative",
+            "label": "唯一帖子"
+          },
+          "color": {
+            "field": "readiness",
+            "type": "nominal",
+            "label": "数据就绪度"
+          }
+        },
+        "sourceId": "dataset_post_universe_composition"
+      }
+    ],
+    "tables": [
+      {
+        "id": "source_reconciliation",
+        "title": "帖子来源与集合边界",
+        "description": "每行是独立集合视角；语义发现与物化数据存在重叠，不能跨行直接相加。",
+        "dataset": "source_reconciliation",
+        "columns": [
+          {
+            "field": "layer_order",
+            "label": "序"
+          },
+          {
+            "field": "layer",
+            "label": "集合"
+          },
+          {
+            "field": "observed_posts",
+            "label": "唯一帖子"
+          },
+          {
+            "field": "overlap_with_site",
+            "label": "与网站重合"
+          },
+          {
+            "field": "net_new_vs_site",
+            "label": "相对网站新增"
+          },
+          {
+            "field": "materialization",
+            "label": "数据状态"
+          },
+          {
+            "field": "boundary",
+            "label": "集合边界"
+          }
+        ],
+        "defaultSort": {
+          "field": "layer_order",
+          "direction": "asc"
+        },
+        "sourceId": "dataset_source_reconciliation"
+      },
+      {
+        "id": "comment_reconciliation",
+        "title": "评论存储层去重",
+        "description": "以网站 linked 加 quarantine 的 4,567 个 stored 评论为比较基线。",
+        "dataset": "comment_reconciliation",
+        "columns": [
+          {
+            "field": "layer_order",
+            "label": "序"
+          },
+          {
+            "field": "layer",
+            "label": "集合"
+          },
+          {
+            "field": "observed_comments",
+            "label": "唯一评论"
+          },
+          {
+            "field": "overlap_with_site_stored",
+            "label": "与网站 stored 重合"
+          },
+          {
+            "field": "net_new_vs_site_stored",
+            "label": "净新增"
+          },
+          {
+            "field": "boundary",
+            "label": "边界"
+          }
+        ],
+        "defaultSort": {
+          "field": "layer_order",
+          "direction": "asc"
+        },
+        "sourceId": "dataset_comment_reconciliation"
+      },
+      {
+        "id": "quality_gates",
+        "title": "数据质量与完整性门",
+        "description": "身份盘点可封账，不等于所有正文、分页和发布门已经完成。",
+        "dataset": "quality_gates",
+        "columns": [
+          {
+            "field": "priority",
+            "label": "优先级"
+          },
+          {
+            "field": "gate",
+            "label": "质量门"
+          },
+          {
+            "field": "status",
+            "label": "状态"
+          },
+          {
+            "field": "severity",
+            "label": "严重度"
+          },
+          {
+            "field": "evidence",
+            "label": "证据"
+          },
+          {
+            "field": "impact",
+            "label": "影响"
+          }
+        ],
+        "defaultSort": {
+          "field": "priority",
+          "direction": "asc"
+        },
+        "sourceId": "dataset_quality_gates"
+      }
+    ],
+    "sources": [
+      {
+        "id": "dataset_headline",
+        "label": "Headline reconciliation metrics",
+        "path": "docs/analysis/reddit-net-new-inventory-20260715/inventory-summary.json",
+        "query": {
+          "engine": "sqlite3/bounded-values",
+          "sql": "WITH source(\"_row_order\", \"current_site_posts\", \"global_known_unique_posts\", \"net_new_vs_site\", \"materialized_net_new_posts\", \"task37_net_new_posts\", \"daily_net_new_after_task37\", \"discovery_only_net_new_posts\", \"discovery_share_of_net_new\", \"current_site_stored_comments\", \"global_known_stored_comments\", \"net_new_comments_vs_site_stored\", \"evidence_snapshot_at\") AS (VALUES (0, 221, 1108, 887, 236, 223, 13, 651, 0.733935, 4567, 5803, 1236, '2026-07-15T03:24:04.317502Z')) SELECT \"current_site_posts\", \"global_known_unique_posts\", \"net_new_vs_site\", \"materialized_net_new_posts\", \"task37_net_new_posts\", \"daily_net_new_after_task37\", \"discovery_only_net_new_posts\", \"discovery_share_of_net_new\", \"current_site_stored_comments\", \"global_known_stored_comments\", \"net_new_comments_vs_site_stored\", \"evidence_snapshot_at\" FROM source ORDER BY \"_row_order\";",
+          "description": "Exact SQL used to re-materialize the validated bounded headline row.",
+          "tables_used": [
+            "docs/analysis/reddit-net-new-inventory-20260715/inventory-summary.json"
+          ],
+          "filters": [
+            "Aggregate values only",
+            "Website snapshot as comparison baseline"
+          ],
+          "metric_definitions": [
+            "Net-new posts equal the global known post-ID union minus the current website baseline.",
+            "Net-new comments use website linked union quarantine as the stored baseline."
+          ],
+          "executed_at": "2026-07-15T03:31:32Z"
+        }
+      },
+      {
+        "id": "dataset_post_universe_composition",
+        "label": "Disjoint post-universe composition",
+        "path": "docs/analysis/reddit-net-new-inventory-20260715/inventory-summary.json",
+        "query": {
+          "engine": "sqlite3/bounded-values",
+          "sql": "WITH source(\"_row_order\", \"component\", \"unique_posts\", \"source_layer\", \"readiness\", \"share_of_global\", \"cumulative_unique_posts\", \"is_net_new\") AS (VALUES (0, '网站基线', 221, 'site snapshot', '已激活', 0.199458, 221, 0), (1, 'Task 37 新增', 223, 'Task 37 SQLite', '已物化待质检', 0.201264, 444, 1), (2, 'daily 后续新增', 13, 'daily SQLite', '已物化待质检', 0.011733, 457, 1), (3, '仅发现待物化', 651, 'exact semantic payload', '身份证据待补采', 0.587545, 1108, 1)) SELECT \"component\", \"unique_posts\", \"source_layer\", \"readiness\", \"share_of_global\", \"cumulative_unique_posts\", \"is_net_new\" FROM source ORDER BY \"_row_order\";",
+          "description": "Exact SQL used to re-materialize the four mutually exclusive post-universe components.",
+          "tables_used": [
+            "docs/analysis/reddit-net-new-inventory-20260715/inventory-summary.json"
+          ],
+          "filters": [
+            "Mutually exclusive components only",
+            "Global known union equals 1,108 unique post IDs"
+          ],
+          "metric_definitions": [
+            "Task 37 net-new excludes the 78 Task 37 posts already in the website baseline.",
+            "Daily follow-up net-new excludes both the website baseline and Task 37.",
+            "Discovery-only excludes all materialized post IDs."
+          ],
+          "executed_at": "2026-07-15T03:31:32Z"
+        }
+      },
+      {
+        "id": "dataset_source_reconciliation",
+        "label": "Post source reconciliation table",
+        "path": "docs/analysis/reddit-net-new-inventory-20260715/inventory-summary.json",
+        "query": {
+          "engine": "sqlite3/bounded-values",
+          "sql": "WITH source(\"layer_order\", \"layer\", \"observed_posts\", \"overlap_with_site\", \"net_new_vs_site\", \"materialization\", \"boundary\") AS (VALUES (1, '当前网站', 221, 221, 0, '已激活', '净新增比较基线'), (2, 'ai_nlp_voc 导入归档', 136, 136, 0, '已物化', '网站基线子集，不可相加'), (3, 'Task 37', 301, 78, 223, '已物化', '来源层，与网站重叠'), (4, '本地确认并集', 444, 221, 223, '已物化', '网站 ∪ Task 37'), (5, '远端物化并集', 369, 133, 236, '已物化', '21 个运营 SQLite 去重并集'), (6, '目标窗语义发现', 924, 52, 872, '混合', '与物化并集重合 273，不可相加'), (7, '仅发现待物化', 651, 0, 651, '只有身份', '语义发现 - 物化并集'), (8, '远端有界并集', 1020, 133, 887, '混合', '物化 ∪ 目标窗语义发现'), (9, '全局已知并集', 1108, 221, 887, '混合', '网站 ∪ 远端有界并集')) SELECT \"layer_order\", \"layer\", \"observed_posts\", \"overlap_with_site\", \"net_new_vs_site\", \"materialization\", \"boundary\" FROM source ORDER BY \"layer_order\";",
+          "description": "Exact SQL used to re-materialize the reviewed post source and set-boundary rows.",
+          "tables_used": [
+            "docs/analysis/reddit-net-new-inventory-20260715/inventory-summary.json"
+          ],
+          "filters": [
+            "Identity-level unique counts",
+            "Rows are set views and are not additive unless explicitly marked"
+          ],
+          "metric_definitions": [
+            "Overlap with site is the exact normalized post-ID intersection with the 221-post website baseline.",
+            "Net-new versus site is the exact set difference from the website baseline."
+          ],
+          "executed_at": "2026-07-15T03:31:32Z"
+        }
+      },
+      {
+        "id": "dataset_comment_reconciliation",
+        "label": "Comment storage reconciliation table",
+        "path": "docs/analysis/reddit-net-new-inventory-20260715/inventory-summary.json",
+        "query": {
+          "engine": "sqlite3/bounded-values",
+          "sql": "WITH source(\"layer_order\", \"layer\", \"observed_comments\", \"overlap_with_site_stored\", \"net_new_vs_site_stored\", \"boundary\") AS (VALUES (1, '网站 linked', 4549, 4549, 0, '可关联评论基线'), (2, '网站 quarantine', 18, 18, 0, '存储但不进入 linked 指标'), (3, '网站 stored', 4567, 4567, 0, 'linked ∪ quarantine'), (4, 'Task 37', 3225, 2029, 1196, '物化评论来源'), (5, 'daily SQLite', 454, 414, 40, '与 Task 37 重叠'), (6, '远端全部有效', 3544, 2308, 1236, '远端运营 SQLite 去重并集'), (7, '全局 stored 并集', 5803, 4567, 1236, '网站 stored ∪ 远端全部有效')) SELECT \"layer_order\", \"layer\", \"observed_comments\", \"overlap_with_site_stored\", \"net_new_vs_site_stored\", \"boundary\" FROM source ORDER BY \"layer_order\";",
+          "description": "Exact SQL used to re-materialize the reviewed comment storage reconciliation rows.",
+          "tables_used": [
+            "docs/analysis/reddit-net-new-inventory-20260715/inventory-summary.json"
+          ],
+          "filters": [
+            "Normalized comment IDs only",
+            "Website stored baseline equals linked union quarantine"
+          ],
+          "metric_definitions": [
+            "Remote net-new comments are remote valid IDs absent from website stored IDs.",
+            "The global stored union is website stored union remote valid."
+          ],
+          "executed_at": "2026-07-15T03:31:32Z"
+        }
+      },
+      {
+        "id": "dataset_quality_gates",
+        "label": "Data-quality and completeness gates",
+        "path": "docs/analysis/reddit-net-new-inventory-20260715/inventory-summary.json",
+        "query": {
+          "engine": "sqlite3/bounded-values",
+          "sql": "WITH source(\"priority\", \"gate\", \"status\", \"severity\", \"evidence\", \"impact\") AS (VALUES (1, '全源帖子身份冻结', '通过', 'Critical', '887 净新增、1,108 全局并集独立复算一致', '可作为当前有界身份基线'), (2, '651 个帖子内容物化', '阻塞', 'Critical', '只有有效语义身份，没有物化帖子实体', '不能进入正文、标签、SPU、情绪或网站激活'), (3, 'Reddit 自然分页穷尽', '未完成', 'High', '5 个 lane 在 depth 16 仍有下一页', '1,108 只能表述为有界下限'), (4, 'URL ID 与行内 ID 一致', '隔离', 'High', '2 个记录不一致', '原始证据核验前不可合并'), (5, '重合帖子正文一致', '待复核', 'Medium', '2 个正文跨源差异', '需按私有原文重新脱敏'), (6, '评论 linked/orphan 分区', '有限制通过', 'Medium', '3,534 linked + 10 orphan = 3,544；10 个 orphan 均在既有 quarantine', '无新增 orphan，但缺少安全逐条父子映射供独立复算'), (7, '非结构化候选排除', '通过', 'Low', '6 个候选未形成结构化帖子实体', '继续不计入 collected posts')) SELECT \"priority\", \"gate\", \"status\", \"severity\", \"evidence\", \"impact\" FROM source ORDER BY \"priority\";",
+          "description": "Exact SQL used to re-materialize the reviewed quality-gate rows.",
+          "tables_used": [
+            "docs/analysis/reddit-net-new-inventory-20260715/inventory-summary.json"
+          ],
+          "filters": [
+            "Only decision-relevant quality gates",
+            "Collection terminal state kept separate from natural pagination exhaustion"
+          ],
+          "metric_definitions": [
+            "Passed means the stated bounded evidence reproduced without mismatch.",
+            "Blocked or incomplete means the evidence cannot support website activation or an exhaustion claim."
+          ],
+          "executed_at": "2026-07-15T03:31:32Z"
+        }
+      },
+      {
+        "id": "inventory_summary",
+        "label": "Bounded net-new reconciliation summary",
+        "path": "docs/analysis/reddit-net-new-inventory-20260715/inventory-summary.json",
+        "query": {
+          "engine": "python3/set-reconciliation-readonly",
+          "language": "python",
+          "description": "Reconciles normalized Reddit post and comment IDs across the current website, Task 37, all remote operational SQLite identities, and exact semantic discovery identities. Outputs aggregates and hashes only.",
+          "tables_used": [
+            "data/processed/reddit_voc_site_snapshot_20260714/posts.json",
+            "data/processed/reddit_voc_site_snapshot_20260714/comments.json",
+            "data/processed/reddit_voc_site_snapshot_20260714/quarantine.json",
+            "data/imports/tencent_production_20260715/task37-identity-snapshot.json",
+            "tmp/reddit-full-inventory-20260715/remote-reddit-identity-inventory-final.json",
+            "tmp/reddit-full-inventory-20260715/remote-v2-semantic-classification-final.json",
+            "tmp/reddit-full-inventory-20260715/remote-reddit-comment-identity-inventory-final.json"
+          ],
+          "filters": [
+            "Aggregate counts and hashes only",
+            "No post text, comment text, authors, credentials, or raw ID lists",
+            "Semantic identities restricted to the exact primary SubredditPost path and target time window"
+          ],
+          "metric_definitions": {
+            "Net new posts versus site": "Global known unique post IDs minus current website post IDs.",
+            "Materialized net-new posts": "Remote operational SQLite post IDs absent from the website baseline.",
+            "Discovery-only posts": "Valid target-window semantic post IDs absent from the remote materialized post union.",
+            "Net new comments versus site stored": "Remote valid comment IDs absent from the union of website linked and quarantine comment IDs."
+          },
+          "executed_at": "2026-07-15T03:31:32Z"
+        }
+      },
+      {
+        "id": "site_baseline",
+        "label": "Current Reddit VOC website snapshot",
+        "path": "data/processed/reddit_voc_site_snapshot_20260714/manifest.json",
+        "query": {
+          "engine": "json/read-only",
+          "description": "Defines the current website post, linked-comment, and quarantine-comment identity baseline.",
+          "tables_used": [
+            "data/processed/reddit_voc_site_snapshot_20260714/posts.json",
+            "data/processed/reddit_voc_site_snapshot_20260714/comments.json",
+            "data/processed/reddit_voc_site_snapshot_20260714/quarantine.json"
+          ],
+          "filters": [
+            "Identity fields only for reconciliation"
+          ],
+          "executed_at": "2026-07-15T03:31:32Z"
+        }
+      },
+      {
+        "id": "ai_nlp_archive",
+        "label": "Imported ai_nlp_voc Reddit archive manifest",
+        "path": "data/imports/ai_nlp_voc_reddit_20260714/import-manifest.json",
+        "query": {
+          "engine": "json/read-only",
+          "description": "Verifies the imported archive count, source integrity, and inclusion in the website baseline.",
+          "tables_used": [
+            "data/imports/ai_nlp_voc_reddit_20260714/import-manifest.json"
+          ],
+          "filters": [
+            "Manifest and normalized identities only"
+          ],
+          "executed_at": "2026-07-15T03:31:32Z"
+        }
+      },
+      {
+        "id": "task37_identity",
+        "label": "Task 37 identity snapshot",
+        "path": "data/imports/tencent_production_20260715/task37-identity-snapshot.json",
+        "query": {
+          "engine": "json/read-only",
+          "description": "Provides the frozen Task 37 post and comment identity sets without exposing content in this report.",
+          "tables_used": [
+            "data/imports/tencent_production_20260715/task37-identity-snapshot.json"
+          ],
+          "filters": [
+            "Post and comment identities only"
+          ],
+          "executed_at": "2026-07-15T03:31:32Z"
+        }
+      },
+      {
+        "id": "remote_post_identity",
+        "label": "Final remote post identity inventory",
+        "path": "tmp/reddit-full-inventory-20260715/remote-reddit-identity-inventory-final.json",
+        "query": {
+          "engine": "remote-sqlite-and-json/read-only",
+          "description": "Freezes all materialized remote post identities, exact semantic target-window identities, set relations, storage coverage, and bounded terminal state.",
+          "tables_used": [
+            "tmp/reddit-full-inventory-20260715/remote-reddit-identity-inventory-final.json"
+          ],
+          "filters": [
+            "Safe identity manifest only",
+            "No remote writes, restarts, or secret reads"
+          ],
+          "executed_at": "2026-07-15T03:19:42.228339Z"
+        }
+      },
+      {
+        "id": "remote_semantic_identity",
+        "label": "Final exact semantic classification",
+        "path": "tmp/reddit-full-inventory-20260715/remote-v2-semantic-classification-final.json",
+        "query": {
+          "engine": "json-semantic-path/read-only",
+          "description": "Classifies exact primary SubredditPost identities and separates invalid, ambiguous, crosspost-reference, target-window, and outside-window evidence.",
+          "tables_used": [
+            "tmp/reddit-full-inventory-20260715/remote-v2-semantic-classification-final.json"
+          ],
+          "filters": [
+            "Exact $.data.search.dynamic.components.main.edges[].node.children[].post path",
+            "__typename equals SubredditPost",
+            "Permalink and createdAt must be coherent"
+          ],
+          "executed_at": "2026-07-15T03:19:42.228339Z"
+        }
+      },
+      {
+        "id": "remote_comment_identity",
+        "label": "Final remote comment identity inventory",
+        "path": "tmp/reddit-full-inventory-20260715/remote-reddit-comment-identity-inventory-final.json",
+        "query": {
+          "engine": "remote-sqlite/read-only",
+          "description": "Freezes remote valid, linked, and orphan comment identity sets and materialized post coverage without content or authors.",
+          "tables_used": [
+            "tmp/reddit-full-inventory-20260715/remote-reddit-comment-identity-inventory-final.json"
+          ],
+          "filters": [
+            "Safe comment identity manifest only",
+            "No comment text, author, or per-comment parent pair in the report"
+          ],
+          "executed_at": "2026-07-15T03:24:04.317502Z"
+        }
+      },
+      {
+        "id": "cross_source_quality",
+        "label": "Cross-source read-only merge quality plan",
+        "path": "docs/analysis/momcozy-historical-collection-audit-20260714/cross-source-readonly-merge-plan.json",
+        "query": {
+          "engine": "json/read-only",
+          "description": "Provides existing cross-source content-difference, ID-coherence, quarantine, and excluded-candidate evidence.",
+          "tables_used": [
+            "docs/analysis/momcozy-historical-collection-audit-20260714/cross-source-readonly-merge-plan.json"
+          ],
+          "filters": [
+            "Read-only quality and identity findings"
+          ],
+          "executed_at": "2026-07-15T03:31:32Z"
+        }
+      }
+    ]
+  },
+  "snapshot": {
+    "version": 1,
+    "status": "ready",
+    "generatedAt": "2026-07-15T03:31:32Z",
+    "datasets": {
+      "headline": [
+        {
+          "current_site_posts": 221,
+          "global_known_unique_posts": 1108,
+          "net_new_vs_site": 887,
+          "materialized_net_new_posts": 236,
+          "task37_net_new_posts": 223,
+          "daily_net_new_after_task37": 13,
+          "discovery_only_net_new_posts": 651,
+          "discovery_share_of_net_new": 0.733935,
+          "current_site_stored_comments": 4567,
+          "global_known_stored_comments": 5803,
+          "net_new_comments_vs_site_stored": 1236,
+          "evidence_snapshot_at": "2026-07-15T03:24:04.317502Z"
+        }
+      ],
+      "post_universe_composition": [
+        {
+          "component": "网站基线",
+          "unique_posts": 221,
+          "source_layer": "site snapshot",
+          "readiness": "已激活",
+          "share_of_global": 0.199458,
+          "cumulative_unique_posts": 221,
+          "is_net_new": false
+        },
+        {
+          "component": "Task 37 新增",
+          "unique_posts": 223,
+          "source_layer": "Task 37 SQLite",
+          "readiness": "已物化待质检",
+          "share_of_global": 0.201264,
+          "cumulative_unique_posts": 444,
+          "is_net_new": true
+        },
+        {
+          "component": "daily 后续新增",
+          "unique_posts": 13,
+          "source_layer": "daily SQLite",
+          "readiness": "已物化待质检",
+          "share_of_global": 0.011733,
+          "cumulative_unique_posts": 457,
+          "is_net_new": true
+        },
+        {
+          "component": "仅发现待物化",
+          "unique_posts": 651,
+          "source_layer": "exact semantic payload",
+          "readiness": "身份证据待补采",
+          "share_of_global": 0.587545,
+          "cumulative_unique_posts": 1108,
+          "is_net_new": true
+        }
+      ],
+      "source_reconciliation": [
+        {
+          "layer_order": 1,
+          "layer": "当前网站",
+          "observed_posts": 221,
+          "overlap_with_site": 221,
+          "net_new_vs_site": 0,
+          "materialization": "已激活",
+          "boundary": "净新增比较基线"
+        },
+        {
+          "layer_order": 2,
+          "layer": "ai_nlp_voc 导入归档",
+          "observed_posts": 136,
+          "overlap_with_site": 136,
+          "net_new_vs_site": 0,
+          "materialization": "已物化",
+          "boundary": "网站基线子集，不可相加"
+        },
+        {
+          "layer_order": 3,
+          "layer": "Task 37",
+          "observed_posts": 301,
+          "overlap_with_site": 78,
+          "net_new_vs_site": 223,
+          "materialization": "已物化",
+          "boundary": "来源层，与网站重叠"
+        },
+        {
+          "layer_order": 4,
+          "layer": "本地确认并集",
+          "observed_posts": 444,
+          "overlap_with_site": 221,
+          "net_new_vs_site": 223,
+          "materialization": "已物化",
+          "boundary": "网站 ∪ Task 37"
+        },
+        {
+          "layer_order": 5,
+          "layer": "远端物化并集",
+          "observed_posts": 369,
+          "overlap_with_site": 133,
+          "net_new_vs_site": 236,
+          "materialization": "已物化",
+          "boundary": "21 个运营 SQLite 去重并集"
+        },
+        {
+          "layer_order": 6,
+          "layer": "目标窗语义发现",
+          "observed_posts": 924,
+          "overlap_with_site": 52,
+          "net_new_vs_site": 872,
+          "materialization": "混合",
+          "boundary": "与物化并集重合 273，不可相加"
+        },
+        {
+          "layer_order": 7,
+          "layer": "仅发现待物化",
+          "observed_posts": 651,
+          "overlap_with_site": 0,
+          "net_new_vs_site": 651,
+          "materialization": "只有身份",
+          "boundary": "语义发现 - 物化并集"
+        },
+        {
+          "layer_order": 8,
+          "layer": "远端有界并集",
+          "observed_posts": 1020,
+          "overlap_with_site": 133,
+          "net_new_vs_site": 887,
+          "materialization": "混合",
+          "boundary": "物化 ∪ 目标窗语义发现"
+        },
+        {
+          "layer_order": 9,
+          "layer": "全局已知并集",
+          "observed_posts": 1108,
+          "overlap_with_site": 221,
+          "net_new_vs_site": 887,
+          "materialization": "混合",
+          "boundary": "网站 ∪ 远端有界并集"
+        }
+      ],
+      "comment_reconciliation": [
+        {
+          "layer_order": 1,
+          "layer": "网站 linked",
+          "observed_comments": 4549,
+          "overlap_with_site_stored": 4549,
+          "net_new_vs_site_stored": 0,
+          "boundary": "可关联评论基线"
+        },
+        {
+          "layer_order": 2,
+          "layer": "网站 quarantine",
+          "observed_comments": 18,
+          "overlap_with_site_stored": 18,
+          "net_new_vs_site_stored": 0,
+          "boundary": "存储但不进入 linked 指标"
+        },
+        {
+          "layer_order": 3,
+          "layer": "网站 stored",
+          "observed_comments": 4567,
+          "overlap_with_site_stored": 4567,
+          "net_new_vs_site_stored": 0,
+          "boundary": "linked ∪ quarantine"
+        },
+        {
+          "layer_order": 4,
+          "layer": "Task 37",
+          "observed_comments": 3225,
+          "overlap_with_site_stored": 2029,
+          "net_new_vs_site_stored": 1196,
+          "boundary": "物化评论来源"
+        },
+        {
+          "layer_order": 5,
+          "layer": "daily SQLite",
+          "observed_comments": 454,
+          "overlap_with_site_stored": 414,
+          "net_new_vs_site_stored": 40,
+          "boundary": "与 Task 37 重叠"
+        },
+        {
+          "layer_order": 6,
+          "layer": "远端全部有效",
+          "observed_comments": 3544,
+          "overlap_with_site_stored": 2308,
+          "net_new_vs_site_stored": 1236,
+          "boundary": "远端运营 SQLite 去重并集"
+        },
+        {
+          "layer_order": 7,
+          "layer": "全局 stored 并集",
+          "observed_comments": 5803,
+          "overlap_with_site_stored": 4567,
+          "net_new_vs_site_stored": 1236,
+          "boundary": "网站 stored ∪ 远端全部有效"
+        }
+      ],
+      "quality_gates": [
+        {
+          "priority": 1,
+          "gate": "全源帖子身份冻结",
+          "status": "通过",
+          "severity": "Critical",
+          "evidence": "887 净新增、1,108 全局并集独立复算一致",
+          "impact": "可作为当前有界身份基线"
+        },
+        {
+          "priority": 2,
+          "gate": "651 个帖子内容物化",
+          "status": "阻塞",
+          "severity": "Critical",
+          "evidence": "只有有效语义身份，没有物化帖子实体",
+          "impact": "不能进入正文、标签、SPU、情绪或网站激活"
+        },
+        {
+          "priority": 3,
+          "gate": "Reddit 自然分页穷尽",
+          "status": "未完成",
+          "severity": "High",
+          "evidence": "5 个 lane 在 depth 16 仍有下一页",
+          "impact": "1,108 只能表述为有界下限"
+        },
+        {
+          "priority": 4,
+          "gate": "URL ID 与行内 ID 一致",
+          "status": "隔离",
+          "severity": "High",
+          "evidence": "2 个记录不一致",
+          "impact": "原始证据核验前不可合并"
+        },
+        {
+          "priority": 5,
+          "gate": "重合帖子正文一致",
+          "status": "待复核",
+          "severity": "Medium",
+          "evidence": "2 个正文跨源差异",
+          "impact": "需按私有原文重新脱敏"
+        },
+        {
+          "priority": 6,
+          "gate": "评论 linked/orphan 分区",
+          "status": "有限制通过",
+          "severity": "Medium",
+          "evidence": "3,534 linked + 10 orphan = 3,544；10 个 orphan 均在既有 quarantine",
+          "impact": "无新增 orphan，但缺少安全逐条父子映射供独立复算"
+        },
+        {
+          "priority": 7,
+          "gate": "非结构化候选排除",
+          "status": "通过",
+          "severity": "Low",
+          "evidence": "6 个候选未形成结构化帖子实体",
+          "impact": "继续不计入 collected posts"
+        }
+      ]
+    }
+  },
+  "sources": [
+    {
+      "id": "dataset_headline",
+      "label": "Headline reconciliation metrics",
+      "path": "docs/analysis/reddit-net-new-inventory-20260715/inventory-summary.json",
+      "query": {
+        "engine": "sqlite3/bounded-values",
+        "sql": "WITH source(\"_row_order\", \"current_site_posts\", \"global_known_unique_posts\", \"net_new_vs_site\", \"materialized_net_new_posts\", \"task37_net_new_posts\", \"daily_net_new_after_task37\", \"discovery_only_net_new_posts\", \"discovery_share_of_net_new\", \"current_site_stored_comments\", \"global_known_stored_comments\", \"net_new_comments_vs_site_stored\", \"evidence_snapshot_at\") AS (VALUES (0, 221, 1108, 887, 236, 223, 13, 651, 0.733935, 4567, 5803, 1236, '2026-07-15T03:24:04.317502Z')) SELECT \"current_site_posts\", \"global_known_unique_posts\", \"net_new_vs_site\", \"materialized_net_new_posts\", \"task37_net_new_posts\", \"daily_net_new_after_task37\", \"discovery_only_net_new_posts\", \"discovery_share_of_net_new\", \"current_site_stored_comments\", \"global_known_stored_comments\", \"net_new_comments_vs_site_stored\", \"evidence_snapshot_at\" FROM source ORDER BY \"_row_order\";",
+        "description": "Exact SQL used to re-materialize the validated bounded headline row.",
+        "tables_used": [
+          "docs/analysis/reddit-net-new-inventory-20260715/inventory-summary.json"
+        ],
+        "filters": [
+          "Aggregate values only",
+          "Website snapshot as comparison baseline"
+        ],
+        "metric_definitions": [
+          "Net-new posts equal the global known post-ID union minus the current website baseline.",
+          "Net-new comments use website linked union quarantine as the stored baseline."
+        ],
+        "executed_at": "2026-07-15T03:31:32Z"
+      }
+    },
+    {
+      "id": "dataset_post_universe_composition",
+      "label": "Disjoint post-universe composition",
+      "path": "docs/analysis/reddit-net-new-inventory-20260715/inventory-summary.json",
+      "query": {
+        "engine": "sqlite3/bounded-values",
+        "sql": "WITH source(\"_row_order\", \"component\", \"unique_posts\", \"source_layer\", \"readiness\", \"share_of_global\", \"cumulative_unique_posts\", \"is_net_new\") AS (VALUES (0, '网站基线', 221, 'site snapshot', '已激活', 0.199458, 221, 0), (1, 'Task 37 新增', 223, 'Task 37 SQLite', '已物化待质检', 0.201264, 444, 1), (2, 'daily 后续新增', 13, 'daily SQLite', '已物化待质检', 0.011733, 457, 1), (3, '仅发现待物化', 651, 'exact semantic payload', '身份证据待补采', 0.587545, 1108, 1)) SELECT \"component\", \"unique_posts\", \"source_layer\", \"readiness\", \"share_of_global\", \"cumulative_unique_posts\", \"is_net_new\" FROM source ORDER BY \"_row_order\";",
+        "description": "Exact SQL used to re-materialize the four mutually exclusive post-universe components.",
+        "tables_used": [
+          "docs/analysis/reddit-net-new-inventory-20260715/inventory-summary.json"
+        ],
+        "filters": [
+          "Mutually exclusive components only",
+          "Global known union equals 1,108 unique post IDs"
+        ],
+        "metric_definitions": [
+          "Task 37 net-new excludes the 78 Task 37 posts already in the website baseline.",
+          "Daily follow-up net-new excludes both the website baseline and Task 37.",
+          "Discovery-only excludes all materialized post IDs."
+        ],
+        "executed_at": "2026-07-15T03:31:32Z"
+      }
+    },
+    {
+      "id": "dataset_source_reconciliation",
+      "label": "Post source reconciliation table",
+      "path": "docs/analysis/reddit-net-new-inventory-20260715/inventory-summary.json",
+      "query": {
+        "engine": "sqlite3/bounded-values",
+        "sql": "WITH source(\"layer_order\", \"layer\", \"observed_posts\", \"overlap_with_site\", \"net_new_vs_site\", \"materialization\", \"boundary\") AS (VALUES (1, '当前网站', 221, 221, 0, '已激活', '净新增比较基线'), (2, 'ai_nlp_voc 导入归档', 136, 136, 0, '已物化', '网站基线子集，不可相加'), (3, 'Task 37', 301, 78, 223, '已物化', '来源层，与网站重叠'), (4, '本地确认并集', 444, 221, 223, '已物化', '网站 ∪ Task 37'), (5, '远端物化并集', 369, 133, 236, '已物化', '21 个运营 SQLite 去重并集'), (6, '目标窗语义发现', 924, 52, 872, '混合', '与物化并集重合 273，不可相加'), (7, '仅发现待物化', 651, 0, 651, '只有身份', '语义发现 - 物化并集'), (8, '远端有界并集', 1020, 133, 887, '混合', '物化 ∪ 目标窗语义发现'), (9, '全局已知并集', 1108, 221, 887, '混合', '网站 ∪ 远端有界并集')) SELECT \"layer_order\", \"layer\", \"observed_posts\", \"overlap_with_site\", \"net_new_vs_site\", \"materialization\", \"boundary\" FROM source ORDER BY \"layer_order\";",
+        "description": "Exact SQL used to re-materialize the reviewed post source and set-boundary rows.",
+        "tables_used": [
+          "docs/analysis/reddit-net-new-inventory-20260715/inventory-summary.json"
+        ],
+        "filters": [
+          "Identity-level unique counts",
+          "Rows are set views and are not additive unless explicitly marked"
+        ],
+        "metric_definitions": [
+          "Overlap with site is the exact normalized post-ID intersection with the 221-post website baseline.",
+          "Net-new versus site is the exact set difference from the website baseline."
+        ],
+        "executed_at": "2026-07-15T03:31:32Z"
+      }
+    },
+    {
+      "id": "dataset_comment_reconciliation",
+      "label": "Comment storage reconciliation table",
+      "path": "docs/analysis/reddit-net-new-inventory-20260715/inventory-summary.json",
+      "query": {
+        "engine": "sqlite3/bounded-values",
+        "sql": "WITH source(\"layer_order\", \"layer\", \"observed_comments\", \"overlap_with_site_stored\", \"net_new_vs_site_stored\", \"boundary\") AS (VALUES (1, '网站 linked', 4549, 4549, 0, '可关联评论基线'), (2, '网站 quarantine', 18, 18, 0, '存储但不进入 linked 指标'), (3, '网站 stored', 4567, 4567, 0, 'linked ∪ quarantine'), (4, 'Task 37', 3225, 2029, 1196, '物化评论来源'), (5, 'daily SQLite', 454, 414, 40, '与 Task 37 重叠'), (6, '远端全部有效', 3544, 2308, 1236, '远端运营 SQLite 去重并集'), (7, '全局 stored 并集', 5803, 4567, 1236, '网站 stored ∪ 远端全部有效')) SELECT \"layer_order\", \"layer\", \"observed_comments\", \"overlap_with_site_stored\", \"net_new_vs_site_stored\", \"boundary\" FROM source ORDER BY \"layer_order\";",
+        "description": "Exact SQL used to re-materialize the reviewed comment storage reconciliation rows.",
+        "tables_used": [
+          "docs/analysis/reddit-net-new-inventory-20260715/inventory-summary.json"
+        ],
+        "filters": [
+          "Normalized comment IDs only",
+          "Website stored baseline equals linked union quarantine"
+        ],
+        "metric_definitions": [
+          "Remote net-new comments are remote valid IDs absent from website stored IDs.",
+          "The global stored union is website stored union remote valid."
+        ],
+        "executed_at": "2026-07-15T03:31:32Z"
+      }
+    },
+    {
+      "id": "dataset_quality_gates",
+      "label": "Data-quality and completeness gates",
+      "path": "docs/analysis/reddit-net-new-inventory-20260715/inventory-summary.json",
+      "query": {
+        "engine": "sqlite3/bounded-values",
+        "sql": "WITH source(\"priority\", \"gate\", \"status\", \"severity\", \"evidence\", \"impact\") AS (VALUES (1, '全源帖子身份冻结', '通过', 'Critical', '887 净新增、1,108 全局并集独立复算一致', '可作为当前有界身份基线'), (2, '651 个帖子内容物化', '阻塞', 'Critical', '只有有效语义身份，没有物化帖子实体', '不能进入正文、标签、SPU、情绪或网站激活'), (3, 'Reddit 自然分页穷尽', '未完成', 'High', '5 个 lane 在 depth 16 仍有下一页', '1,108 只能表述为有界下限'), (4, 'URL ID 与行内 ID 一致', '隔离', 'High', '2 个记录不一致', '原始证据核验前不可合并'), (5, '重合帖子正文一致', '待复核', 'Medium', '2 个正文跨源差异', '需按私有原文重新脱敏'), (6, '评论 linked/orphan 分区', '有限制通过', 'Medium', '3,534 linked + 10 orphan = 3,544；10 个 orphan 均在既有 quarantine', '无新增 orphan，但缺少安全逐条父子映射供独立复算'), (7, '非结构化候选排除', '通过', 'Low', '6 个候选未形成结构化帖子实体', '继续不计入 collected posts')) SELECT \"priority\", \"gate\", \"status\", \"severity\", \"evidence\", \"impact\" FROM source ORDER BY \"priority\";",
+        "description": "Exact SQL used to re-materialize the reviewed quality-gate rows.",
+        "tables_used": [
+          "docs/analysis/reddit-net-new-inventory-20260715/inventory-summary.json"
+        ],
+        "filters": [
+          "Only decision-relevant quality gates",
+          "Collection terminal state kept separate from natural pagination exhaustion"
+        ],
+        "metric_definitions": [
+          "Passed means the stated bounded evidence reproduced without mismatch.",
+          "Blocked or incomplete means the evidence cannot support website activation or an exhaustion claim."
+        ],
+        "executed_at": "2026-07-15T03:31:32Z"
+      }
+    },
+    {
+      "id": "inventory_summary",
+      "label": "Bounded net-new reconciliation summary",
+      "path": "docs/analysis/reddit-net-new-inventory-20260715/inventory-summary.json",
+      "query": {
+        "engine": "python3/set-reconciliation-readonly",
+        "language": "python",
+        "description": "Reconciles normalized Reddit post and comment IDs across the current website, Task 37, all remote operational SQLite identities, and exact semantic discovery identities. Outputs aggregates and hashes only.",
+        "tables_used": [
+          "data/processed/reddit_voc_site_snapshot_20260714/posts.json",
+          "data/processed/reddit_voc_site_snapshot_20260714/comments.json",
+          "data/processed/reddit_voc_site_snapshot_20260714/quarantine.json",
+          "data/imports/tencent_production_20260715/task37-identity-snapshot.json",
+          "tmp/reddit-full-inventory-20260715/remote-reddit-identity-inventory-final.json",
+          "tmp/reddit-full-inventory-20260715/remote-v2-semantic-classification-final.json",
+          "tmp/reddit-full-inventory-20260715/remote-reddit-comment-identity-inventory-final.json"
+        ],
+        "filters": [
+          "Aggregate counts and hashes only",
+          "No post text, comment text, authors, credentials, or raw ID lists",
+          "Semantic identities restricted to the exact primary SubredditPost path and target time window"
+        ],
+        "metric_definitions": {
+          "Net new posts versus site": "Global known unique post IDs minus current website post IDs.",
+          "Materialized net-new posts": "Remote operational SQLite post IDs absent from the website baseline.",
+          "Discovery-only posts": "Valid target-window semantic post IDs absent from the remote materialized post union.",
+          "Net new comments versus site stored": "Remote valid comment IDs absent from the union of website linked and quarantine comment IDs."
+        },
+        "executed_at": "2026-07-15T03:31:32Z"
+      }
+    },
+    {
+      "id": "site_baseline",
+      "label": "Current Reddit VOC website snapshot",
+      "path": "data/processed/reddit_voc_site_snapshot_20260714/manifest.json",
+      "query": {
+        "engine": "json/read-only",
+        "description": "Defines the current website post, linked-comment, and quarantine-comment identity baseline.",
+        "tables_used": [
+          "data/processed/reddit_voc_site_snapshot_20260714/posts.json",
+          "data/processed/reddit_voc_site_snapshot_20260714/comments.json",
+          "data/processed/reddit_voc_site_snapshot_20260714/quarantine.json"
+        ],
+        "filters": [
+          "Identity fields only for reconciliation"
+        ],
+        "executed_at": "2026-07-15T03:31:32Z"
+      }
+    },
+    {
+      "id": "ai_nlp_archive",
+      "label": "Imported ai_nlp_voc Reddit archive manifest",
+      "path": "data/imports/ai_nlp_voc_reddit_20260714/import-manifest.json",
+      "query": {
+        "engine": "json/read-only",
+        "description": "Verifies the imported archive count, source integrity, and inclusion in the website baseline.",
+        "tables_used": [
+          "data/imports/ai_nlp_voc_reddit_20260714/import-manifest.json"
+        ],
+        "filters": [
+          "Manifest and normalized identities only"
+        ],
+        "executed_at": "2026-07-15T03:31:32Z"
+      }
+    },
+    {
+      "id": "task37_identity",
+      "label": "Task 37 identity snapshot",
+      "path": "data/imports/tencent_production_20260715/task37-identity-snapshot.json",
+      "query": {
+        "engine": "json/read-only",
+        "description": "Provides the frozen Task 37 post and comment identity sets without exposing content in this report.",
+        "tables_used": [
+          "data/imports/tencent_production_20260715/task37-identity-snapshot.json"
+        ],
+        "filters": [
+          "Post and comment identities only"
+        ],
+        "executed_at": "2026-07-15T03:31:32Z"
+      }
+    },
+    {
+      "id": "remote_post_identity",
+      "label": "Final remote post identity inventory",
+      "path": "tmp/reddit-full-inventory-20260715/remote-reddit-identity-inventory-final.json",
+      "query": {
+        "engine": "remote-sqlite-and-json/read-only",
+        "description": "Freezes all materialized remote post identities, exact semantic target-window identities, set relations, storage coverage, and bounded terminal state.",
+        "tables_used": [
+          "tmp/reddit-full-inventory-20260715/remote-reddit-identity-inventory-final.json"
+        ],
+        "filters": [
+          "Safe identity manifest only",
+          "No remote writes, restarts, or secret reads"
+        ],
+        "executed_at": "2026-07-15T03:19:42.228339Z"
+      }
+    },
+    {
+      "id": "remote_semantic_identity",
+      "label": "Final exact semantic classification",
+      "path": "tmp/reddit-full-inventory-20260715/remote-v2-semantic-classification-final.json",
+      "query": {
+        "engine": "json-semantic-path/read-only",
+        "description": "Classifies exact primary SubredditPost identities and separates invalid, ambiguous, crosspost-reference, target-window, and outside-window evidence.",
+        "tables_used": [
+          "tmp/reddit-full-inventory-20260715/remote-v2-semantic-classification-final.json"
+        ],
+        "filters": [
+          "Exact $.data.search.dynamic.components.main.edges[].node.children[].post path",
+          "__typename equals SubredditPost",
+          "Permalink and createdAt must be coherent"
+        ],
+        "executed_at": "2026-07-15T03:19:42.228339Z"
+      }
+    },
+    {
+      "id": "remote_comment_identity",
+      "label": "Final remote comment identity inventory",
+      "path": "tmp/reddit-full-inventory-20260715/remote-reddit-comment-identity-inventory-final.json",
+      "query": {
+        "engine": "remote-sqlite/read-only",
+        "description": "Freezes remote valid, linked, and orphan comment identity sets and materialized post coverage without content or authors.",
+        "tables_used": [
+          "tmp/reddit-full-inventory-20260715/remote-reddit-comment-identity-inventory-final.json"
+        ],
+        "filters": [
+          "Safe comment identity manifest only",
+          "No comment text, author, or per-comment parent pair in the report"
+        ],
+        "executed_at": "2026-07-15T03:24:04.317502Z"
+      }
+    },
+    {
+      "id": "cross_source_quality",
+      "label": "Cross-source read-only merge quality plan",
+      "path": "docs/analysis/momcozy-historical-collection-audit-20260714/cross-source-readonly-merge-plan.json",
+      "query": {
+        "engine": "json/read-only",
+        "description": "Provides existing cross-source content-difference, ID-coherence, quarantine, and excluded-candidate evidence.",
+        "tables_used": [
+          "docs/analysis/momcozy-historical-collection-audit-20260714/cross-source-readonly-merge-plan.json"
+        ],
+        "filters": [
+          "Read-only quality and identity findings"
+        ],
+        "executed_at": "2026-07-15T03:31:32Z"
+      }
+    }
+  ],
+  "package_info": {
+    "report_id": "reddit-net-new-inventory-20260715"
+  }
+}

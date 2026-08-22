@@ -1,0 +1,125 @@
+services:
+  reddit_voc_web:
+    image: reddit-voc-insights:${RELEASE_SHA:?RELEASE_SHA must be set}
+    pull_policy: never
+    container_name: reddit_voc_insights_web
+    restart: unless-stopped
+    user: "101:101"
+    read_only: true
+    init: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,size=32m,uid=101,gid=101,mode=1777
+    volumes:
+      - "${REDDIT_VOC_DATA_ROOT:?REDDIT_VOC_DATA_ROOT must be set}:/srv/reddit-voc-data:ro"
+    ports:
+      - "${INSIGHTS_BIND_ADDRESS:-172.20.0.1}:${INSIGHTS_PORT:-18338}:8080"
+    networks:
+      - unified
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 100
+    mem_limit: 256m
+    cpus: 0.50
+    environment:
+      NGINX_ENTRYPOINT_QUIET_LOGS: "1"
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          wget -q -O /dev/null http://127.0.0.1:8080/healthz &&
+          wget -q -O /dev/null http://127.0.0.1:8080/data/reddit-voc/current-release.json
+      interval: 10s
+      timeout: 3s
+      retries: 6
+      start_period: 5s
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+    labels:
+      com.reddit-voc.component: insights-site
+      com.reddit-voc.release: ${RELEASE_SHA}
+    depends_on:
+      reddit_voc_api:
+        condition: service_healthy
+
+  reddit_voc_api:
+    image: reddit-voc-site:20260707
+    container_name: reddit_voc_api
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:18339:8080"
+    volumes:
+      - /opt/reddit-voc-site/config:/app/config:ro
+      - /opt/reddit-voc-site/data:/app/data
+      - /opt/reddit-voc-site/outputs:/app/outputs
+      - /opt/reddit-voc-site/logs:/app/logs
+      - /opt/reddit-voc-site/src:/app/src:ro
+      - /opt/reddit-voc-site/scripts:/app/scripts:ro
+      - /opt/reddit-voc-site/docs:/app/docs:ro
+    environment:
+      REDDIT_VOC_WEB_HOST: "0.0.0.0"
+      REDDIT_VOC_WEB_PORT: "8080"
+      REDDIT_VOC_SITE_ROOT: "/app"
+      REDDIT_VOC_DATA_DIR: "/app/data"
+      REDDIT_VOC_OUTPUT_DIR: "/app/outputs"
+      REDDIT_VOC_CONFIG_DIR: "/app/config"
+      REDDIT_VOC_DOCS_DIR: "/app/docs"
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          python3 -c 'import json,urllib.request;
+          d=json.load(urllib.request.urlopen("http://127.0.0.1:8080/api/health",timeout=5));
+          raise SystemExit(0 if d.get("status")=="ok" else 1)'
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    networks:
+      - unified
+      - lighthouse_ai_video_net
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+    labels:
+      com.reddit-voc.component: api-backend
+
+  reddit_voc_translate:
+    image: libretranslate/libretranslate:v1.9.6
+    container_name: reddit_voc_libretranslate
+    restart: unless-stopped
+    environment:
+      LT_LOAD_ONLY: "en,zh"
+      LT_UPDATE_MODELS: "true"
+    volumes:
+      - reddit_voc_libretranslate_models:/home/libretranslate/.local
+    networks:
+      - unified
+    pids_limit: 200
+    mem_limit: 2g
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+    labels:
+      com.reddit-voc.component: translate
+
+networks:
+  unified:
+    name: reddit_voc_unified_net
+    driver: bridge
+    internal: false
+  lighthouse_ai_video_net:
+    external: true
+
+volumes:
+  reddit_voc_libretranslate_models:
+    external: true
+    name: reddit_voc_translation_reddit_voc_libretranslate_models

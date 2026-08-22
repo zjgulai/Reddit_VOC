@@ -1,0 +1,95 @@
+{
+  "schema_version": "spu_master_source_audit_v2",
+  "audited_on": "2026-07-14",
+  "result": "internal_spu_name_join_complete_active_status_not_proven",
+  "source": {
+    "authority_grade": "project_documented_internal_product_master_snapshot",
+    "version": "Phase 3 v3.5",
+    "workbook": {
+      "path": "/Users/pray/project/ai_nlp_voc/research/03-数据资产/产品主数据/产品主数据_VOC维度关联_v3.5.xlsx",
+      "sha256": "d1b992b638f7731c4ecada2f0387f225e21bbf7e6e645cbf6406da6d08826769"
+    },
+    "project_readme": {
+      "path": "/Users/pray/project/ai_nlp_voc/research/03-数据资产/README.md",
+      "sha256": "69bd3a6b4e102fb9353a7edbd4effe378ccf538fd1e5f1f3a953f41d4dcb0959"
+    },
+    "phase_audit": {
+      "path": "/Users/pray/project/ai_nlp_voc/research/04-输出结果/04-审计数据/phase3_p1_audit.json",
+      "sha256": "61ea07b48ab7487b3c2b79821ff2f7af28ef9dcabb87d0908e5744850d49272d",
+      "product_master_output": "03-data-assets/产品主数据/产品主数据_VOC维度关联_v3.5.xlsx"
+    },
+    "spoken_keywords": {
+      "path": "/Users/pray/project/ai_nlp_voc/research/03-数据资产/产品主数据/product_spoken_keywords.json",
+      "sha256": "42db0b47b77b5ba6fe2ce9d1cbf9c4ad2c71c2f8e25fe16154710de73517e727"
+    },
+    "dictionary": {
+      "path": "/Users/pray/project/Reddit_VOC/dim_tag_v6.3_final.csv",
+      "sha256": "22664c9c446ddfa17446852079f507ab75b5af3d4dde6e4e3f3e44c195582e14"
+    },
+    "search_profile": {
+      "path": "/Users/pray/project/Reddit_VOC/config/backfill/momcozy-search-profile-v2-candidate-20260714.json",
+      "sha256": "38706378f42c6648fe43bb50f60947863816363d65714f16a3092f40d91b604d"
+    }
+  },
+  "join": {
+    "dictionary_spu_ids": 254,
+    "exact_spu_id_matches": 254,
+    "missing_spu_ids": [],
+    "named_matches": 254,
+    "english_named_matches": 254,
+    "model_field_present": 162,
+    "dictionary_tag_rows": 1225,
+    "matched_product_type_distribution": {
+      "产品": 254
+    },
+    "matched_master_product_line_distribution": {
+      "Comfelie 产品部": 115,
+      "吸奶器": 40,
+      "智能母婴电器": 29,
+      "母婴电器创新": 22,
+      "喂养电器": 22,
+      "BBM PDT": 18,
+      "全自动调奶器 PDT": 5,
+      "清洗机 PDT": 2,
+      "护肤大健康": 1
+    }
+  },
+  "search_alias_assessment": {
+    "profile_candidate_terms": 75,
+    "profile_delta_terms": 69,
+    "spoken_keyword_records_in_join": 162,
+    "spoken_keyword_variants_in_join": 772,
+    "auto_promoted_terms": 0,
+    "decision": "Keep the reviewed 75-term profile unchanged. The internal spoken-keyword file is heuristic and contains low-signal SKU/accessory aliases; it is evidence for review, not an activated Reddit query list."
+  },
+  "limitations": [
+    "The internal snapshot has no active_status or effective_date columns.",
+    "The internal snapshot predates the 2026-07-14 official storefront snapshot and cannot prove current sale status.",
+    "Spoken keyword variants are heuristic and are not automatically safe Reddit search terms."
+  ],
+  "boundaries": {
+    "identity_join_only": true,
+    "search_terms_changed": false,
+    "provider_call": false,
+    "production_unchanged": true,
+    "remote_write": false,
+    "local_product_tests_run": false
+  },
+  "checks": {
+    "phase_audit_points_to_v35": true,
+    "master_rows_431": true,
+    "master_ids_unique_431": true,
+    "dictionary_spu_ids_254": true,
+    "exact_join_254": true,
+    "missing_join_ids_zero": true,
+    "named_join_254": true,
+    "english_named_join_254": true,
+    "joined_tag_rows_1225": true,
+    "bs03_maps_to_spu000714": true,
+    "bm03_maps_to_spu000176": true,
+    "bs03_and_bm03_distinct": true,
+    "verified_bindings_in_dictionary": true,
+    "profile_terms_unchanged_75_69": true,
+    "spoken_aliases_not_activated": true
+  }
+}

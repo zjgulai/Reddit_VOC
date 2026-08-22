@@ -1,0 +1,41 @@
+{
+  "schema_version": "translation-terms-v1",
+  "preserve_exact": [
+    "Elvie",
+    "Momcozy",
+    "Reddit",
+    "Willow",
+    "r/",
+    "u/"
+  ],
+  "case_sensitive_terms": [
+    "M5",
+    "M6",
+    "M9",
+    "S12 Pro",
+    "S9 Pro"
+  ],
+  "case_insensitive_terms": [],
+  "model_patterns": [
+    "\\b(?:M5|M6|M9|S9(?: Pro)?|S12 Pro)\\b"
+  ],
+  "unit_patterns": [
+    "(?:\\$|€|£)\\s?\\d+(?:[.,]\\d+)?"
+  ],
+  "allow_source_equal_patterns": [
+    "^(?:https?://\\S+|r/\\w+|u/\\w+)$",
+    "^[\\W\\d_]+$",
+    "^\\s*(?i:Momcozy|Elvie|Willow|Spectra|Medela|Lansinoh|Bellababy)(?:\\s+[A-Za-z]?\\d+(?:\\s+(?i:Pro))?)?\\s*$"
+  ],
+  "source_signal_rules": {
+    "negation": [
+      "\\b(?:can't|cannot|couldn't|didn't|doesn't|don't|isn't|never|no|not|wasn't|weren't|without|won't|wouldn't)\\b"
+    ],
+    "comparison": [
+      "\\b(?:better|less|lower|more|quieter|than|versus|vs\\.?|worse)\\b"
+    ],
+    "sentiment": [
+      "\\b(?:amazing|broken|disappointed|excellent|hate|helpful|love|painful|slow|terrible|worth)\\b"
+    ]
+  }
+}

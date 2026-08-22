@@ -1,0 +1,70 @@
+priority_rank,priority_tier,group,term,normalized_phrase,coverage_class,post_surface_matches,comment_matches,comment_parent_posts,evidence_parent_posts,provider_lane_status,provider_discovery_still_required
+1,P0,official_catalog_aliases,"""Momcozy BM03""",momcozy bm03,zero_existing_lexical_evidence,0,0,0,0,unexecuted_offline_lexical_evidence_only,True
+2,P0,official_catalog_aliases,"""Momcozy DeepClean""",momcozy deepclean,zero_existing_lexical_evidence,0,0,0,0,unexecuted_offline_lexical_evidence_only,True
+3,P0,official_catalog_aliases,"""Momcozy S12 Pro Quick""",momcozy s12 pro quick,zero_existing_lexical_evidence,0,0,0,0,unexecuted_offline_lexical_evidence_only,True
+4,P0,momcozy_model_gap,"""Momcozy BS03""",momcozy bs03,zero_existing_lexical_evidence,0,0,0,0,unexecuted_offline_lexical_evidence_only,True
+5,P0,momcozy_model_gap,"""Momcozy BumpEase""",momcozy bumpease,zero_existing_lexical_evidence,0,0,0,0,unexecuted_offline_lexical_evidence_only,True
+6,P0,momcozy_model_gap,"""Momcozy Dreamlign""",momcozy dreamlign,zero_existing_lexical_evidence,0,0,0,0,unexecuted_offline_lexical_evidence_only,True
+7,P0,momcozy_model_gap,"""Momcozy Ergonest""",momcozy ergonest,zero_existing_lexical_evidence,0,0,0,0,unexecuted_offline_lexical_evidence_only,True
+8,P0,momcozy_model_gap,"""Momcozy Ergowrap""",momcozy ergowrap,zero_existing_lexical_evidence,0,0,0,0,unexecuted_offline_lexical_evidence_only,True
+9,P0,momcozy_model_gap,"""Momcozy Mobile Flow""",momcozy mobile flow,zero_existing_lexical_evidence,0,0,0,0,unexecuted_offline_lexical_evidence_only,True
+10,P0,owner_alias_gap,"""mcozy""",mcozy,zero_existing_lexical_evidence,0,0,0,0,unexecuted_offline_lexical_evidence_only,True
+11,P0,governed_competitors,"""boppy""",boppy,zero_existing_lexical_evidence,0,0,0,0,unexecuted_offline_lexical_evidence_only,True
+12,P0,governed_competitors,"""comfelie""",comfelie,zero_existing_lexical_evidence,0,0,0,0,unexecuted_offline_lexical_evidence_only,True
+13,P0,governed_competitors,"""wabi baby""",wabi baby,zero_existing_lexical_evidence,0,0,0,0,unexecuted_offline_lexical_evidence_only,True
+14,P0,category_anchors,"""baby feeding set""",baby feeding set,zero_existing_lexical_evidence,0,0,0,0,unexecuted_offline_lexical_evidence_only,True
+15,P0,category_anchors,"""baby formula maker""",baby formula maker,zero_existing_lexical_evidence,0,0,0,0,unexecuted_offline_lexical_evidence_only,True
+16,P0,category_anchors,"""baby humidifier""",baby humidifier,zero_existing_lexical_evidence,0,0,0,0,unexecuted_offline_lexical_evidence_only,True
+17,P0,category_anchors,"""baby thermometer""",baby thermometer,zero_existing_lexical_evidence,0,0,0,0,unexecuted_offline_lexical_evidence_only,True
+18,P0,category_anchors,"""diaper pail""",diaper pail,zero_existing_lexical_evidence,0,0,0,0,unexecuted_offline_lexical_evidence_only,True
+19,P0,category_anchors,"""lactation massager""",lactation massager,zero_existing_lexical_evidence,0,0,0,0,unexecuted_offline_lexical_evidence_only,True
+20,P1,governed_competitors,"""tommee tippee""",tommee tippee,comment_only_existing_lexical_evidence,0,4,3,3,unexecuted_offline_lexical_evidence_only,True
+21,P1,category_anchors,"""bottle sterilizer""",bottle sterilizer,comment_only_existing_lexical_evidence,0,1,1,1,unexecuted_offline_lexical_evidence_only,True
+22,P1,category_anchors,"""colostrum collector""",colostrum collector,comment_only_existing_lexical_evidence,0,1,1,1,unexecuted_offline_lexical_evidence_only,True
+23,P1,category_anchors,"""white noise machine""",white noise machine,comment_only_existing_lexical_evidence,0,1,1,1,unexecuted_offline_lexical_evidence_only,True
+24,P2,official_catalog_aliases,"""Momcozy M5 Smart""",momcozy m5 smart,post_only_existing_lexical_evidence,2,0,0,2,unexecuted_offline_lexical_evidence_only,True
+25,P2,official_catalog_aliases,"""Momcozy Mobile Style""",momcozy mobile style,post_only_existing_lexical_evidence,1,0,0,1,unexecuted_offline_lexical_evidence_only,True
+26,P2,official_catalog_aliases,"""Momcozy Wellness 1""",momcozy wellness 1,post_only_existing_lexical_evidence,3,0,0,3,unexecuted_offline_lexical_evidence_only,True
+27,P2,momcozy_model_gap,"""Momcozy DinerPal""",momcozy dinerpal,post_only_existing_lexical_evidence,2,0,0,2,unexecuted_offline_lexical_evidence_only,True
+28,P2,momcozy_model_gap,"""Momcozy KleanPal Pro""",momcozy kleanpal pro,post_only_existing_lexical_evidence,5,0,0,5,unexecuted_offline_lexical_evidence_only,True
+29,P2,momcozy_model_gap,"""Momcozy W1""",momcozy w1,post_only_existing_lexical_evidence,3,0,0,3,unexecuted_offline_lexical_evidence_only,True
+30,P2,momcozy_model_gap,"""Momcozy WeeSnug""",momcozy weesnug,post_only_existing_lexical_evidence,2,0,0,2,unexecuted_offline_lexical_evidence_only,True
+31,P2,category_anchors,"""breast milk chiller""",breast milk chiller,post_only_existing_lexical_evidence,1,0,0,1,unexecuted_offline_lexical_evidence_only,True
+32,P2,category_anchors,"""wearable breast pump""",wearable breast pump,post_only_existing_lexical_evidence,8,0,0,8,unexecuted_offline_lexical_evidence_only,True
+33,P3,momcozy_model_gap,"""Momcozy Air 1""",momcozy air 1,post_and_comment_existing_lexical_evidence,5,5,4,9,unexecuted_offline_lexical_evidence_only,True
+34,P3,momcozy_model_gap,"""Momcozy D8""",momcozy d8,post_and_comment_existing_lexical_evidence,1,2,2,3,unexecuted_offline_lexical_evidence_only,True
+35,P3,momcozy_model_gap,"""Momcozy M6""",momcozy m6,post_and_comment_existing_lexical_evidence,14,22,14,24,unexecuted_offline_lexical_evidence_only,True
+36,P3,momcozy_model_gap,"""Momcozy S12 Pro""",momcozy s12 pro,post_and_comment_existing_lexical_evidence,6,9,9,14,unexecuted_offline_lexical_evidence_only,True
+37,P3,momcozy_model_gap,"""Momcozy S9 Pro""",momcozy s9 pro,post_and_comment_existing_lexical_evidence,7,3,3,10,unexecuted_offline_lexical_evidence_only,True
+38,P3,momcozy_model_gap,"""Momcozy S9""",momcozy s9,post_and_comment_existing_lexical_evidence,9,8,7,16,unexecuted_offline_lexical_evidence_only,True
+39,P3,momcozy_model_gap,"""Momcozy V1 Pro""",momcozy v1 pro,post_and_comment_existing_lexical_evidence,8,8,6,12,unexecuted_offline_lexical_evidence_only,True
+40,P3,momcozy_model_gap,"""Momcozy V1""",momcozy v1,post_and_comment_existing_lexical_evidence,10,10,7,15,unexecuted_offline_lexical_evidence_only,True
+41,P3,momcozy_model_gap,"""Momcozy V2 Pro""",momcozy v2 pro,post_and_comment_existing_lexical_evidence,1,1,1,2,unexecuted_offline_lexical_evidence_only,True
+42,P3,momcozy_model_gap,"""Momcozy V2""",momcozy v2,post_and_comment_existing_lexical_evidence,4,4,4,8,unexecuted_offline_lexical_evidence_only,True
+43,P3,governed_competitors,"""babybjorn""",babybjorn,post_and_comment_existing_lexical_evidence,2,2,1,2,unexecuted_offline_lexical_evidence_only,True
+44,P3,governed_competitors,"""dr. brown""",dr brown,post_and_comment_existing_lexical_evidence,4,7,5,9,unexecuted_offline_lexical_evidence_only,True
+45,P3,governed_competitors,"""elvie""",elvie,post_and_comment_existing_lexical_evidence,31,105,47,62,unexecuted_offline_lexical_evidence_only,True
+46,P3,governed_competitors,"""ergobaby""",ergobaby,post_and_comment_existing_lexical_evidence,3,21,11,13,unexecuted_offline_lexical_evidence_only,True
+47,P3,governed_competitors,"""haakaa""",haakaa,post_and_comment_existing_lexical_evidence,4,3,3,7,unexecuted_offline_lexical_evidence_only,True
+48,P3,governed_competitors,"""kindred bravely""",kindred bravely,post_and_comment_existing_lexical_evidence,2,7,5,6,unexecuted_offline_lexical_evidence_only,True
+49,P3,governed_competitors,"""lansinoh""",lansinoh,post_and_comment_existing_lexical_evidence,10,36,22,27,unexecuted_offline_lexical_evidence_only,True
+50,P3,governed_competitors,"""medela""",medela,post_and_comment_existing_lexical_evidence,43,205,73,93,unexecuted_offline_lexical_evidence_only,True
+51,P3,governed_competitors,"""nanit""",nanit,post_and_comment_existing_lexical_evidence,1,5,2,3,unexecuted_offline_lexical_evidence_only,True
+52,P3,governed_competitors,"""owlet""",owlet,post_and_comment_existing_lexical_evidence,3,1,1,3,unexecuted_offline_lexical_evidence_only,True
+53,P3,governed_competitors,"""philips avent""",philips avent,post_and_comment_existing_lexical_evidence,6,3,2,8,unexecuted_offline_lexical_evidence_only,True
+54,P3,governed_competitors,"""spectra""",spectra,post_and_comment_existing_lexical_evidence,121,670,143,185,unexecuted_offline_lexical_evidence_only,True
+55,P3,governed_competitors,"""willow""",willow,post_and_comment_existing_lexical_evidence,23,84,33,46,unexecuted_offline_lexical_evidence_only,True
+56,P3,category_anchors,"""baby carrier""",baby carrier,post_and_comment_existing_lexical_evidence,13,6,3,16,unexecuted_offline_lexical_evidence_only,True
+57,P3,category_anchors,"""baby food maker""",baby food maker,post_and_comment_existing_lexical_evidence,2,2,2,2,unexecuted_offline_lexical_evidence_only,True
+58,P3,category_anchors,"""baby monitor""",baby monitor,post_and_comment_existing_lexical_evidence,5,2,2,6,unexecuted_offline_lexical_evidence_only,True
+59,P3,category_anchors,"""bottle warmer""",bottle warmer,post_and_comment_existing_lexical_evidence,2,16,8,9,unexecuted_offline_lexical_evidence_only,True
+60,P3,category_anchors,"""bottle washer sterilizer""",bottle washer sterilizer,post_and_comment_existing_lexical_evidence,5,1,1,5,unexecuted_offline_lexical_evidence_only,True
+61,P3,category_anchors,"""breast milk storage bags""",breast milk storage bags,post_and_comment_existing_lexical_evidence,1,1,1,2,unexecuted_offline_lexical_evidence_only,True
+62,P3,category_anchors,"""breast pump parts""",breast pump parts,post_and_comment_existing_lexical_evidence,1,1,1,2,unexecuted_offline_lexical_evidence_only,True
+63,P3,category_anchors,"""hands-free breast pump""",hands free breast pump,post_and_comment_existing_lexical_evidence,1,1,1,2,unexecuted_offline_lexical_evidence_only,True
+64,P3,category_anchors,"""high chair""",high chair,post_and_comment_existing_lexical_evidence,7,70,3,8,unexecuted_offline_lexical_evidence_only,True
+65,P3,category_anchors,"""nursing bra""",nursing bra,post_and_comment_existing_lexical_evidence,4,2,2,6,unexecuted_offline_lexical_evidence_only,True
+66,P3,category_anchors,"""nursing pillow""",nursing pillow,post_and_comment_existing_lexical_evidence,2,1,1,2,unexecuted_offline_lexical_evidence_only,True
+67,P3,category_anchors,"""pregnancy pillow""",pregnancy pillow,post_and_comment_existing_lexical_evidence,6,4,3,7,unexecuted_offline_lexical_evidence_only,True
+68,P3,category_anchors,"""pumping bra""",pumping bra,post_and_comment_existing_lexical_evidence,11,31,20,28,unexecuted_offline_lexical_evidence_only,True
+69,P3,category_anchors,"""sound machine""",sound machine,post_and_comment_existing_lexical_evidence,4,7,5,7,unexecuted_offline_lexical_evidence_only,True

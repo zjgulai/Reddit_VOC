@@ -1,0 +1,450 @@
+{
+  "boundaries": {
+    "database_write": "local-analysis-output-only",
+    "identity_only": true,
+    "live_send": false,
+    "production_unchanged": true,
+    "provider_attempt_made": false,
+    "provider_call": false,
+    "raw_content_exported": false,
+    "remote_write": false,
+    "usernames_exported": false
+  },
+  "checks": {
+    "archive_counts_136_4153": true,
+    "historical_comments_subset_archive": true,
+    "historical_counts_48_1894": true,
+    "historical_integrity_ok": true,
+    "historical_posts_subset_archive": true,
+    "local_canonical_counts_221_4549": true,
+    "local_requested_counts_187_3528": true,
+    "local_union_linked_comments_exact": true,
+    "local_union_posts_exact": true,
+    "production_counts_85_414": true,
+    "production_missing_parent_post_ids_4": true,
+    "production_orphan_comments_18": true,
+    "task37_contains_six_production_orphan_comment_ids": true,
+    "task37_counts_301_3225": true,
+    "task37_identity_snapshot_checks_passed": true,
+    "task37_orphan_comment_links_are_consistent": true,
+    "task37_parent_structurally_recovers_eight_orphans": true,
+    "task37_recovers_one_missing_parent_post": true,
+    "task37_window_start_respected": true,
+    "ten_orphans_still_lack_parent_evidence": true,
+    "two_recoverable_orphans_are_production_only": true
+  },
+  "generated_at_utc": "2026-07-14T13:02:34.166711+00:00",
+  "grain": {
+    "comments": "unique Reddit comment_id linked to an in-window source post_id; comment timestamp is not used as the window filter",
+    "posts": "unique Reddit post_id with post created_at_utc >= 2025-01-01T00:00:00Z",
+    "production_orphans": "18 production comments without a captured parent post are excluded from requested-window linked-comment counts"
+  },
+  "pairwise_requested_window_overlap": [
+    {
+      "entity": "posts",
+      "jaccard": 0.470588,
+      "left_count": 48,
+      "left_only_count": 0,
+      "left_overlap_rate": 1.0,
+      "left_source": "historical_canonical",
+      "overlap_count": 48,
+      "right_count": 102,
+      "right_only_count": 54,
+      "right_overlap_rate": 0.470588,
+      "right_source": "imported_archive",
+      "union_count": 102
+    },
+    {
+      "entity": "linked_comments",
+      "jaccard": 0.604725,
+      "left_count": 1894,
+      "left_only_count": 0,
+      "left_overlap_rate": 1.0,
+      "left_source": "historical_canonical",
+      "overlap_count": 1894,
+      "right_count": 3132,
+      "right_only_count": 1238,
+      "right_overlap_rate": 0.604725,
+      "right_source": "imported_archive",
+      "union_count": 3132
+    },
+    {
+      "entity": "posts",
+      "jaccard": 0.0,
+      "left_count": 48,
+      "left_only_count": 48,
+      "left_overlap_rate": 0.0,
+      "left_source": "historical_canonical",
+      "overlap_count": 0,
+      "right_count": 85,
+      "right_only_count": 85,
+      "right_overlap_rate": 0.0,
+      "right_source": "tencent_production_primary",
+      "union_count": 133
+    },
+    {
+      "entity": "linked_comments",
+      "jaccard": 0.0,
+      "left_count": 1894,
+      "left_only_count": 1894,
+      "left_overlap_rate": 0.0,
+      "left_source": "historical_canonical",
+      "overlap_count": 0,
+      "right_count": 396,
+      "right_only_count": 396,
+      "right_overlap_rate": 0.0,
+      "right_source": "tencent_production_primary",
+      "union_count": 2290
+    },
+    {
+      "entity": "posts",
+      "jaccard": 0.256684,
+      "left_count": 48,
+      "left_only_count": 0,
+      "left_overlap_rate": 1.0,
+      "left_source": "historical_canonical",
+      "overlap_count": 48,
+      "right_count": 187,
+      "right_only_count": 139,
+      "right_overlap_rate": 0.256684,
+      "right_source": "local_canonical_union",
+      "union_count": 187
+    },
+    {
+      "entity": "linked_comments",
+      "jaccard": 0.536848,
+      "left_count": 1894,
+      "left_only_count": 0,
+      "left_overlap_rate": 1.0,
+      "left_source": "historical_canonical",
+      "overlap_count": 1894,
+      "right_count": 3528,
+      "right_only_count": 1634,
+      "right_overlap_rate": 0.536848,
+      "right_source": "local_canonical_union",
+      "union_count": 3528
+    },
+    {
+      "entity": "posts",
+      "jaccard": 0.159468,
+      "left_count": 48,
+      "left_only_count": 0,
+      "left_overlap_rate": 1.0,
+      "left_source": "historical_canonical",
+      "overlap_count": 48,
+      "right_count": 301,
+      "right_only_count": 253,
+      "right_overlap_rate": 0.159468,
+      "right_source": "task37_remote_staging",
+      "union_count": 301
+    },
+    {
+      "entity": "linked_comments",
+      "jaccard": 0.587287,
+      "left_count": 1894,
+      "left_only_count": 0,
+      "left_overlap_rate": 1.0,
+      "left_source": "historical_canonical",
+      "overlap_count": 1894,
+      "right_count": 3225,
+      "right_only_count": 1331,
+      "right_overlap_rate": 0.587287,
+      "right_source": "task37_remote_staging",
+      "union_count": 3225
+    },
+    {
+      "entity": "posts",
+      "jaccard": 0.0,
+      "left_count": 102,
+      "left_only_count": 102,
+      "left_overlap_rate": 0.0,
+      "left_source": "imported_archive",
+      "overlap_count": 0,
+      "right_count": 85,
+      "right_only_count": 85,
+      "right_overlap_rate": 0.0,
+      "right_source": "tencent_production_primary",
+      "union_count": 187
+    },
+    {
+      "entity": "linked_comments",
+      "jaccard": 0.0,
+      "left_count": 3132,
+      "left_only_count": 3132,
+      "left_overlap_rate": 0.0,
+      "left_source": "imported_archive",
+      "overlap_count": 0,
+      "right_count": 396,
+      "right_only_count": 396,
+      "right_overlap_rate": 0.0,
+      "right_source": "tencent_production_primary",
+      "union_count": 3528
+    },
+    {
+      "entity": "posts",
+      "jaccard": 0.545455,
+      "left_count": 102,
+      "left_only_count": 0,
+      "left_overlap_rate": 1.0,
+      "left_source": "imported_archive",
+      "overlap_count": 102,
+      "right_count": 187,
+      "right_only_count": 85,
+      "right_overlap_rate": 0.545455,
+      "right_source": "local_canonical_union",
+      "union_count": 187
+    },
+    {
+      "entity": "linked_comments",
+      "jaccard": 0.887755,
+      "left_count": 3132,
+      "left_only_count": 0,
+      "left_overlap_rate": 1.0,
+      "left_source": "imported_archive",
+      "overlap_count": 3132,
+      "right_count": 3528,
+      "right_only_count": 396,
+      "right_overlap_rate": 0.887755,
+      "right_source": "local_canonical_union",
+      "union_count": 3528
+    },
+    {
+      "entity": "posts",
+      "jaccard": 0.135211,
+      "left_count": 102,
+      "left_only_count": 54,
+      "left_overlap_rate": 0.470588,
+      "left_source": "imported_archive",
+      "overlap_count": 48,
+      "right_count": 301,
+      "right_only_count": 253,
+      "right_overlap_rate": 0.159468,
+      "right_source": "task37_remote_staging",
+      "union_count": 355
+    },
+    {
+      "entity": "linked_comments",
+      "jaccard": 0.424378,
+      "left_count": 3132,
+      "left_only_count": 1238,
+      "left_overlap_rate": 0.604725,
+      "left_source": "imported_archive",
+      "overlap_count": 1894,
+      "right_count": 3225,
+      "right_only_count": 1331,
+      "right_overlap_rate": 0.587287,
+      "right_source": "task37_remote_staging",
+      "union_count": 4463
+    },
+    {
+      "entity": "posts",
+      "jaccard": 0.454545,
+      "left_count": 85,
+      "left_only_count": 0,
+      "left_overlap_rate": 1.0,
+      "left_source": "tencent_production_primary",
+      "overlap_count": 85,
+      "right_count": 187,
+      "right_only_count": 102,
+      "right_overlap_rate": 0.454545,
+      "right_source": "local_canonical_union",
+      "union_count": 187
+    },
+    {
+      "entity": "linked_comments",
+      "jaccard": 0.112245,
+      "left_count": 396,
+      "left_only_count": 0,
+      "left_overlap_rate": 1.0,
+      "left_source": "tencent_production_primary",
+      "overlap_count": 396,
+      "right_count": 3528,
+      "right_only_count": 3132,
+      "right_overlap_rate": 0.112245,
+      "right_source": "local_canonical_union",
+      "union_count": 3528
+    },
+    {
+      "entity": "posts",
+      "jaccard": 0.08427,
+      "left_count": 85,
+      "left_only_count": 55,
+      "left_overlap_rate": 0.352941,
+      "left_source": "tencent_production_primary",
+      "overlap_count": 30,
+      "right_count": 301,
+      "right_only_count": 271,
+      "right_overlap_rate": 0.099668,
+      "right_source": "task37_remote_staging",
+      "union_count": 356
+    },
+    {
+      "entity": "linked_comments",
+      "jaccard": 0.036942,
+      "left_count": 396,
+      "left_only_count": 267,
+      "left_overlap_rate": 0.325758,
+      "left_source": "tencent_production_primary",
+      "overlap_count": 129,
+      "right_count": 3225,
+      "right_only_count": 3096,
+      "right_overlap_rate": 0.04,
+      "right_source": "task37_remote_staging",
+      "union_count": 3492
+    },
+    {
+      "entity": "posts",
+      "jaccard": 0.190244,
+      "left_count": 187,
+      "left_only_count": 109,
+      "left_overlap_rate": 0.417112,
+      "left_source": "local_canonical_union",
+      "overlap_count": 78,
+      "right_count": 301,
+      "right_only_count": 223,
+      "right_overlap_rate": 0.259136,
+      "right_source": "task37_remote_staging",
+      "union_count": 410
+    },
+    {
+      "entity": "linked_comments",
+      "jaccard": 0.427696,
+      "left_count": 3528,
+      "left_only_count": 1505,
+      "left_overlap_rate": 0.573413,
+      "left_source": "local_canonical_union",
+      "overlap_count": 2023,
+      "right_count": 3225,
+      "right_only_count": 1202,
+      "right_overlap_rate": 0.627287,
+      "right_source": "task37_remote_staging",
+      "union_count": 4730
+    }
+  ],
+  "production_orphan_recovery_from_task37": {
+    "distinct_missing_parent_post_ids": 4,
+    "interpretation": "Task 37 contains six exact orphan comment IDs and the missing parent post for eight production orphan comments in total. The two additional production-only comments become structurally linkable after that parent is inserted; this is recovery evidence, not merge authorization.",
+    "missing_parent_post_ids_present_in_task37": 1,
+    "orphan_comment_ids_present_in_task37": 6,
+    "production_only_orphan_comment_ids_with_parent_present_in_task37": 2,
+    "production_orphan_comments": 18,
+    "remaining_unlinked_production_comment_ids": 10,
+    "structurally_recoverable_after_task37_parent_insert": 8
+  },
+  "schema_version": "momcozy_cross_source_identity_overlap_audit_v2",
+  "source_counts": {
+    "historical_canonical": {
+      "all_time": {
+        "comment_max_utc": "2026-03-23T13:31:44+00:00",
+        "comment_min_utc": "2025-01-05T20:06:13+00:00",
+        "linked_comments": 1894,
+        "orphan_comments": 0,
+        "post_max_utc": "2026-03-18T06:34:37+00:00",
+        "post_min_utc": "2025-01-05T19:34:03+00:00",
+        "posts": 48,
+        "stored_comments": 1894
+      },
+      "requested_window": {
+        "linked_comments": 1894,
+        "posts": 48
+      }
+    },
+    "imported_archive": {
+      "all_time": {
+        "comment_max_utc": "2026-03-28T00:06:33+00:00",
+        "comment_min_utc": "2013-04-28T16:23:11+00:00",
+        "linked_comments": 4153,
+        "orphan_comments": 0,
+        "post_max_utc": "2026-03-22T01:45:29+00:00",
+        "post_min_utc": "2013-04-28T07:23:57+00:00",
+        "posts": 136,
+        "stored_comments": 4153
+      },
+      "requested_window": {
+        "linked_comments": 3132,
+        "posts": 102
+      }
+    },
+    "local_canonical_union": {
+      "all_time": {
+        "comment_max_utc": "2026-07-13T22:59:14.878000+00:00",
+        "comment_min_utc": "2013-04-28T16:23:11+00:00",
+        "linked_comments": 4549,
+        "orphan_comments": 0,
+        "post_max_utc": "2026-07-13T22:37:05.321000+00:00",
+        "post_min_utc": "2013-04-28T07:23:57+00:00",
+        "posts": 221,
+        "stored_comments": 4549
+      },
+      "requested_window": {
+        "linked_comments": 3528,
+        "posts": 187
+      }
+    },
+    "task37_remote_staging": {
+      "all_time": {
+        "comment_max_utc": "2026-07-14T07:38:09.059000+00:00",
+        "comment_min_utc": "2025-01-05T20:06:13+00:00",
+        "linked_comments": 3225,
+        "orphan_comments": 0,
+        "post_max_utc": "2026-07-11T14:51:22.266000+00:00",
+        "post_min_utc": "2025-01-05T19:34:03+00:00",
+        "posts": 301,
+        "stored_comments": 3225
+      },
+      "requested_window": {
+        "linked_comments": 3225,
+        "posts": 301
+      }
+    },
+    "tencent_production_primary": {
+      "all_time": {
+        "comment_max_utc": "2026-07-13T22:59:14.878000+00:00",
+        "comment_min_utc": "2026-07-06T19:06:55.872000+00:00",
+        "linked_comments": 396,
+        "orphan_comments": 18,
+        "post_max_utc": "2026-07-13T22:37:05.321000+00:00",
+        "post_min_utc": "2026-07-07T00:50:56.094000+00:00",
+        "posts": 85,
+        "stored_comments": 414
+      },
+      "requested_window": {
+        "linked_comments": 396,
+        "posts": 85
+      }
+    }
+  },
+  "source_sha256": {
+    "historical_database": "f8cfa0727be667ae2f9c6d8b89372251cb50db08b53bd370cf22b380ce082c43",
+    "production_identity_snapshot": "b8c7b62556a3bedf931b1dee1c28af6fbdb1d6be280b34dcf518f3773503ed35",
+    "public_comments_snapshot": "351f36bad272b8e7c92fae2563c7936ce94c966b26008b2337122ab24c4b1803",
+    "public_posts_snapshot": "748fa8a39574df272c0c6ba88400d8fb2a1216bc7f2e83de4ffd8ab1f3b072f6",
+    "task37_identity_snapshot": "d78046580f663a5c77e299ac29b09e75543e2f848d843135f3eeb75dd0028f84"
+  },
+  "task37_increment_vs_local_canonical_union": {
+    "local_canonical_union": {
+      "linked_comments": 3528,
+      "posts": 187
+    },
+    "local_only": {
+      "linked_comments": 1505,
+      "posts": 109
+    },
+    "overlap": {
+      "linked_comments": 2023,
+      "posts": 78
+    },
+    "potential_deduplicated_union": {
+      "linked_comments": 4730,
+      "posts": 410
+    },
+    "task37_only": {
+      "linked_comments": 1202,
+      "posts": 223
+    },
+    "task37_remote_staging": {
+      "linked_comments": 3225,
+      "posts": 301
+    }
+  }
+}

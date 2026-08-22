@@ -1,0 +1,54 @@
+{
+  "schema_version": "reddit_voc_periodic_report_poster_golden_v1",
+  "baseline": {
+    "release_id": "reddit_voc_release_20260724_dashboard_fix_v1",
+    "dataset_version": "reddit_voc_reports_20260723_v3_47c49395e785_history2",
+    "data_as_of": "2026-07-24",
+    "validator_script_sha256": "036a1e324c9930fc96b1bb99e22dd59885408a0d3e66bd80476ad6c386faaa4e",
+    "captures": {
+      "daily": {
+        "period_id": "daily:2026-07-23:2026-07-24",
+        "sha256": "dd6f2438407676d520f36f64c91c4e9b0d2e4f70a8cdb0e6635eb63226cd1d5a"
+      },
+      "weekly": {
+        "period_id": "weekly:2026-07-13:2026-07-20",
+        "sha256": "8e05e106760e3239ab6a2868865d08aaa5b8062b042211b141817e82a118c13d"
+      },
+      "monthly": {
+        "period_id": "monthly:2026-06-01:2026-07-01",
+        "sha256": "f59773f8c57b23db6c8602f69121b8a130e6b32c6971d269e9fb7d439505de8c"
+      }
+    }
+  },
+  "review": {
+    "reviewed_at": "2026-08-01",
+    "review_method": "full_image_visual_review_after_structural_capture",
+    "reviewed_periods": ["daily", "weekly", "monthly"],
+    "finding": "passed_no_clipping_no_overflow_no_loading_no_footer_overlap_current_production_release",
+    "production_write": false,
+    "live_send": false
+  },
+  "invariants": {
+    "dimensions": {
+      "daily": [1440, 1800],
+      "weekly": [1440, 2000],
+      "monthly": [1440, 2200]
+    },
+    "minimum_png_bytes": 100000,
+    "minimum_text_length": 500,
+    "minimum_card_count": 10,
+    "weekly_monthly_minimum_chart_count": 1,
+    "coverage_percent": 100,
+    "fonts_loaded": true,
+    "no_loading_tooltip_overflow_or_footer_overlap": true,
+    "node_capture_only": true,
+    "fallback_image": false
+  },
+  "difference_policy": {
+    "same_release_dataset_periods_and_validator": "image_sha256_must_match_exactly",
+    "changed_release_dataset_period_or_validator": "structural_checks_must_pass_and_manual_visual_review_is_required",
+    "dimension_change": "forbidden_without_versioned_golden_contract_change",
+    "missing_or_previous_period_image": "forbidden",
+    "partial_or_failed_capture": "forbidden_to_send"
+  }
+}

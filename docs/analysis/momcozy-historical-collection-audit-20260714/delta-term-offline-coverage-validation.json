@@ -1,0 +1,189 @@
+{
+  "boundaries": {
+    "database_write": "local-analysis-output-only",
+    "live_send": false,
+    "local_product_tests_run": false,
+    "production_unchanged": true,
+    "provider_attempt_made": false,
+    "provider_call": false,
+    "remote_content_exported": false,
+    "remote_usernames_exported": false,
+    "remote_write": false
+  },
+  "checks": {
+    "all_provider_lanes_still_required": true,
+    "audit_checks_passed": true,
+    "audit_contains_no_content_or_identity_keys": true,
+    "boundary_provider_call_false": true,
+    "boundary_remote_content_exported_false": true,
+    "boundary_remote_write_false": true,
+    "coverage_class_counts_recomputed": true,
+    "distinct_comment_ids_recomputed": true,
+    "distinct_evidence_parent_ids_recomputed": true,
+    "distinct_post_ids_recomputed": true,
+    "five_literal_spot_checks_cover_token_phrase_results": true,
+    "four_unambiguous_literal_spot_checks_exact": true,
+    "priority_ranks_complete": true,
+    "remote_database_sha256_matches": true,
+    "remote_query_only": true,
+    "remote_quick_check_ok": true,
+    "remote_validation_output_identity_and_counts_only": true,
+    "rows_69": true,
+    "spectra_token_boundary_excludes_literal_substrings": true,
+    "top_probe_is_momcozy_bm03": true
+  },
+  "recomputed": {
+    "coverage_classes": {
+      "comment_only_existing_lexical_evidence": 4,
+      "post_and_comment_existing_lexical_evidence": 37,
+      "post_only_existing_lexical_evidence": 9,
+      "zero_existing_lexical_evidence": 19
+    },
+    "distinct_evidence_parent_post_ids": 299,
+    "distinct_matching_comment_ids": 1141,
+    "distinct_matching_post_ids": 242
+  },
+  "schema_version": "momcozy_v2_delta_offline_coverage_validation_v1",
+  "source": {
+    "audit_path": "docs/analysis/momcozy-historical-collection-audit-20260714/delta-term-offline-coverage-audit.json",
+    "audit_sha256": "7f34685f50b4c2c6a1ea3c0a7cf2c37ca48fbb0314ff81eac41dad0345212d64",
+    "method": "independent casefold literal substring spot-check plus identity recomputation",
+    "remote_database_path": "/opt/reddit-voc-staging/task37-2560998311fc176c366c70086ba3a58f6b76ee073dba855ea9a0eb1c5f9a94b1/backfill_momcozy_20250101_20260711/reddit_voc_backfill.sqlite3",
+    "remote_database_sha256": "8356981018466164fe1f84953bd1e1e19010114817dd9689a31b996d9cc51497",
+    "remote_query_sha256": "ce23ff38a9c11539f8e6970d0d93ab9b64f707fc8a563662712c1174631b1977"
+  },
+  "spot_checks": {
+    "\"Momcozy BM03\"": {
+      "local_audit": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "local_literal": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "local_literal_superset": true,
+      "local_match": true,
+      "task37_remote_audit": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "task37_remote_literal": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "task37_remote_literal_superset": true,
+      "task37_remote_match": true
+    },
+    "\"Momcozy DeepClean\"": {
+      "local_audit": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "local_literal": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "local_literal_superset": true,
+      "local_match": true,
+      "task37_remote_audit": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "task37_remote_literal": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 0
+      },
+      "task37_remote_literal_superset": true,
+      "task37_remote_match": true
+    },
+    "\"Momcozy M5 Smart\"": {
+      "local_audit": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 1
+      },
+      "local_literal": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 1
+      },
+      "local_literal_superset": true,
+      "local_match": true,
+      "task37_remote_audit": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 1
+      },
+      "task37_remote_literal": {
+        "comment_matches": 0,
+        "comment_parent_posts": 0,
+        "post_surface_matches": 1
+      },
+      "task37_remote_literal_superset": true,
+      "task37_remote_match": true
+    },
+    "\"spectra\"": {
+      "local_audit": {
+        "comment_matches": 564,
+        "comment_parent_posts": 94,
+        "post_surface_matches": 64
+      },
+      "local_literal": {
+        "comment_matches": 569,
+        "comment_parent_posts": 95,
+        "post_surface_matches": 64
+      },
+      "local_literal_superset": true,
+      "local_match": false,
+      "task37_remote_audit": {
+        "comment_matches": 269,
+        "comment_parent_posts": 79,
+        "post_surface_matches": 70
+      },
+      "task37_remote_literal": {
+        "comment_matches": 274,
+        "comment_parent_posts": 80,
+        "post_surface_matches": 70
+      },
+      "task37_remote_literal_superset": true,
+      "task37_remote_match": false
+    },
+    "\"tommee tippee\"": {
+      "local_audit": {
+        "comment_matches": 3,
+        "comment_parent_posts": 2,
+        "post_surface_matches": 0
+      },
+      "local_literal": {
+        "comment_matches": 3,
+        "comment_parent_posts": 2,
+        "post_surface_matches": 0
+      },
+      "local_literal_superset": true,
+      "local_match": true,
+      "task37_remote_audit": {
+        "comment_matches": 3,
+        "comment_parent_posts": 2,
+        "post_surface_matches": 0
+      },
+      "task37_remote_literal": {
+        "comment_matches": 3,
+        "comment_parent_posts": 2,
+        "post_surface_matches": 0
+      },
+      "task37_remote_literal_superset": true,
+      "task37_remote_match": true
+    }
+  },
+  "status": "passed",
+  "validated_at_utc": "2026-07-14T12:49:56.908474+00:00"
+}

@@ -1,0 +1,126 @@
+{
+  "boundaries": {
+    "copied_by_exact_bytes": true,
+    "legacy_metrics_are_reference_only": true,
+    "legacy_storyline_thresholds_inherited": false,
+    "production_unchanged": true,
+    "provider_call": false,
+    "runtime_absolute_paths": false,
+    "runtime_symlinks": false
+  },
+  "files": [
+    {
+      "bytes": 100234,
+      "header": [
+        "name",
+        "description",
+        "created",
+        "updated",
+        "status",
+        "depends"
+      ],
+      "logical_name": "legacy_six_part_storyline_reference",
+      "media_type": "text/markdown",
+      "original_path_label": "ai_nlp_voc/system_data/main_dim/governance/13_voc_insight_storylines.md",
+      "path": "13_voc_insight_storylines.md",
+      "row_count": 1958,
+      "row_count_semantics": "physical_lines",
+      "sha256": "0c7702a4987529eb65ab75e6811d7aad4bdbbbe85a3f5a8dfd5d296ca1962fd2"
+    },
+    {
+      "bytes": 35755,
+      "header": [
+        "persona_id",
+        "persona_name",
+        "dimension",
+        "sub_dimension",
+        "definition",
+        "keywords",
+        "semantic_pattern",
+        "confidence_rules",
+        "aip_likelihood",
+        "lifecycle_stage",
+        "hit_rate_tier"
+      ],
+      "logical_name": "persona_atomic_dictionary",
+      "media_type": "text/csv",
+      "original_path_label": "ai_nlp_voc/system_data/main_dim/output/dictionaries/dim_persona_v1.csv",
+      "path": "dim_persona_v1.csv",
+      "row_count": 82,
+      "row_count_semantics": "csv_data_rows",
+      "sha256": "279b313509141eb0f7432040818e261178fd9f75ec67a947a0cb9e6211799b1e"
+    },
+    {
+      "bytes": 4320,
+      "header": [
+        "indicator_code",
+        "indicator_name",
+        "threshold_op",
+        "threshold_value",
+        "storyline_trigger",
+        "trigger_priority",
+        "auto_notify_dept",
+        "trigger_description",
+        "sla_hours",
+        "escalation_storyline"
+      ],
+      "logical_name": "legacy_indicator_storyline_matrix",
+      "media_type": "text/csv",
+      "original_path_label": "ai_nlp_voc/system_data/main_dim/governance/indicator_storyline_matrix.csv",
+      "path": "indicator_storyline_matrix.csv",
+      "row_count": 43,
+      "row_count_semantics": "csv_data_rows",
+      "sha256": "c017e7f3e4c7ace7c10cb65890078a32e02b944fe5417167a5f1cef23d33eac5"
+    },
+    {
+      "bytes": 1065524,
+      "header": [
+        "indicator_code",
+        "indicator_name",
+        "tag_id",
+        "tag_name_cn",
+        "tag_scope",
+        "aipl_node",
+        "theme",
+        "sentiment",
+        "priority",
+        "risk_level",
+        "dept_owner",
+        "proxy_nps_role"
+      ],
+      "logical_name": "legacy_indicator_tag_mapping",
+      "media_type": "text/csv",
+      "original_path_label": "ai_nlp_voc/system_data/main_dim/output/reports/indicator_tag_mapping.csv",
+      "path": "indicator_tag_mapping.csv",
+      "row_count": 8854,
+      "row_count_semantics": "csv_data_rows",
+      "sha256": "ebb6ee922e7fc190484d23808566c8a68241d493631ec7e16cb5d7d3f09a9270"
+    },
+    {
+      "bytes": 4657,
+      "header": [
+        "canonical_indicator_id",
+        "indicator_name",
+        "aliases",
+        "registry_role",
+        "tag_mapping_code",
+        "storyline_code",
+        "production_code",
+        "superset_dataset",
+        "requires_external_data",
+        "status",
+        "notes"
+      ],
+      "logical_name": "legacy_indicator_registry",
+      "media_type": "text/csv",
+      "original_path_label": "ai_nlp_voc/configs/auto-labeling/voc-indicator-registry-stable.csv",
+      "path": "voc-indicator-registry-stable.csv",
+      "row_count": 43,
+      "row_count_semantics": "csv_data_rows",
+      "sha256": "7a8b0fef91f9668ab9457b1ee22e4b1289d84772aabd214feb4243bb12734bac"
+    }
+  ],
+  "manifest_version": "reddit_voc_v3_20260716_v1",
+  "schema_version": "reddit_voc_v3_reference_manifest_v1",
+  "source_project_label": "ai_nlp_voc"
+}

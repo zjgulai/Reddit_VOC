@@ -1,0 +1,33 @@
+{
+  "ok": true,
+  "html": "docs/analysis/reddit-source-fusion-20260714/report.html",
+  "stages": {
+    "validation": "passed",
+    "package": "passed",
+    "verification": "passed"
+  },
+  "counts": {
+    "blocks": 27,
+    "charts": 3,
+    "html": 0,
+    "metrics": 5,
+    "tables": 8
+  },
+  "sourceDialog": "passed",
+  "sourceInteraction": "keyboard_menu_semantic_click",
+  "viewports": [
+    1440,
+    390
+  ],
+  "timings": {
+    "validateAndPackageMs": 1885.1,
+    "staticChartExtractionMs": 1784.9,
+    "browserRunMs": 1039.7,
+    "readerReadyMs": 108.7,
+    "contentChecksMs": 32,
+    "sourceDialogMs": 32.1,
+    "responsiveChecksMs": 32,
+    "verificationMs": 1052.1,
+    "totalMs": 2942.8
+  }
+}

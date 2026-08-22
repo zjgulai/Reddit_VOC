@@ -1,0 +1,142 @@
+// 旧版“网络检索”快照。这里不再模拟搜索、随机排序或网络延迟；
+// 条目仅作为待核验存量，在版本化案例索引校验通过时才会展示。
+
+import { type CaseItem } from '../data/casesMock';
+
+type LegacyUnverifiedInput = Omit<
+  CaseItem,
+  'sourceKind' | 'verificationStatus' | 'canonicalUrl' | 'updatedAt' | 'provenance' | 'sourceType'
+>;
+
+/** 12 条历史模拟发现结果，尚未完成外部链接核验。 */
+const legacyUnverifiedData: LegacyUnverifiedInput[] = [
+  {
+    id: 'web-geo-1',
+    title: 'Reddit GEO 实战：AI 搜索时代的内容占位策略',
+    description: '从 GEO 视角深度解析 Reddit 在 AI 搜索中的权重变化，提供社区内容优化、品牌提及植入与长尾关键词覆盖的实操方法。',
+    source: 'Search Engine Journal',
+    url: 'https://www.searchenginejournal.com/reddit-geo-strategies/',
+    category: 'geo',
+    tags: ['GEO', 'Reddit', 'AI搜索', '占位策略'],
+    date: '2026-06-20',
+  },
+  {
+    id: 'web-geo-2',
+    title: 'How to Optimize for Generative AI Search Using Reddit',
+    description: '详解如何利用 Reddit 社区讨论优化品牌在 ChatGPT、Perplexity 等 AI 搜索中的可见度，包含真实品牌的 GEO 落地案例。',
+    source: 'Moz Blog',
+    url: 'https://moz.com/blog/reddit-generative-ai-search',
+    category: 'geo',
+    tags: ['GEO', 'AI搜索', 'Reddit', '品牌优化'],
+    date: '2026-05-15',
+  },
+  {
+    id: 'web-np-1',
+    title: 'Using Reddit to Validate New Product Ideas Before Launch',
+    description: '产品团队通过 Reddit 社区在上线前验证新品概念的真实案例：从子版块选择、话题发布到用户反馈收集的完整流程。',
+    source: 'Product Hunt Blog',
+    url: 'https://blog.producthunt.com/reddit-product-validation',
+    category: 'newproduct',
+    tags: ['新品验证', 'Reddit', '用户反馈', '产品发布'],
+    date: '2026-04-10',
+  },
+  {
+    id: 'web-np-2',
+    title: 'Reddit 用户讨论揭示的 2026 年消费趋势',
+    description: '基于 Reddit 大规模社区讨论数据挖掘出的消费趋势报告：户外装备、智能家居、健康科技三大品类的机会洞察。',
+    source: 'TrendWatching',
+    url: 'https://trendwatching.com/reddit-consumer-trends-2026',
+    category: 'newproduct',
+    tags: ['消费趋势', 'Reddit', '数据洞察', '品类机会'],
+    date: '2026-03-22',
+  },
+  {
+    id: 'web-in-1',
+    title: 'Reddit Brand Sentiment Analysis: Tools and Case Studies',
+    description: '品牌舆情监测实战：通过 Reddit API 与 NLP 工具进行实时情感分析，及时发现负面口碑并制定应对策略。',
+    source: 'Sprout Social Insights',
+    url: 'https://sproutsocial.com/insights/reddit-brand-sentiment',
+    category: 'insight',
+    tags: ['舆情分析', 'Reddit', '情感分析', '品牌监测'],
+    date: '2026-05-30',
+  },
+  {
+    id: 'web-in-2',
+    title: '危机预警：Reddit 上的品牌负面讨论如何演变为公关危机',
+    description: '分析多个品牌因忽视 Reddit 社区讨论而导致公关危机升级的案例，提出三级预警机制与快速响应 SOP。',
+    source: 'PR Week',
+    url: 'https://www.prweek.com/reddit-crisis-warning',
+    category: 'insight',
+    tags: ['危机预警', 'Reddit', '公关危机', '品牌管理'],
+    date: '2026-02-18',
+  },
+  {
+    id: 'web-bu-1',
+    title: 'B2B Lead Generation on Reddit: A Complete Playbook',
+    description: '完整 Reddit B2B 获客指南：从社区选择、内容策略到私信转化，覆盖 SaaS、企业服务和制造业的实战案例。',
+    source: 'HubSpot Blog',
+    url: 'https://blog.hubspot.com/sales/reddit-b2b-lead-generation',
+    category: 'business',
+    tags: ['B2B获客', 'Reddit', '线索生成', '销售漏斗'],
+    date: '2026-06-05',
+  },
+  {
+    id: 'web-bu-2',
+    title: 'Reddit Ads vs. Organic: Which Drives Better B2B Conversions?',
+    description: 'Reddit 付费广告与有机营销在 B2B 场景下的转化效果对比分析，基于 50+ 企业的 A/B 测试数据。',
+    source: 'Gartner Digital Markets',
+    url: 'https://www.gartner.com/reddit-ads-organic-b2b-conversions',
+    category: 'business',
+    tags: ['Reddit广告', 'B2B', '转化优化', 'A/B测试'],
+    date: '2026-04-28',
+  },
+  {
+    id: 'web-geo-3',
+    title: 'GEO 2026：Reddit 与 Quora 在 AI 搜索语料中的核心地位',
+    description: '研究 Reddit 和 Quora 如何成为 AI 大模型的主要训练语料来源，以及品牌应如何在这两个平台布局 GEO 内容。',
+    source: 'Content Marketing Institute',
+    url: 'https://contentmarketinginstitute.com/reddit-quora-geo-2026',
+    category: 'geo',
+    tags: ['GEO', 'Reddit', 'Quora', 'AI语料'],
+    date: '2026-01-12',
+  },
+  {
+    id: 'web-in-3',
+    title: 'Social Listening on Reddit: How Top Brands Monitor Community Discussions',
+    description: '领先品牌如何利用 Reddit 社交聆听捕捉用户痛点、发现产品创新灵感、监测竞品动态的真实方法论。',
+    source: 'Mention Blog',
+    url: 'https://mention.com/blog/reddit-social-listening',
+    category: 'insight',
+    tags: ['社交聆听', 'Reddit', '竞品监测', '用户痛点'],
+    date: '2026-03-08',
+  },
+  {
+    id: 'web-np-3',
+    title: 'From Reddit Comment to Product Feature: How Startups Use Community Feedback',
+    description: '初创企业如何将 Reddit 用户评论转化为产品功能需求的完整流程，包含多个成功产品的迭代案例。',
+    source: 'TechCrunch',
+    url: 'https://techcrunch.com/reddit-comment-to-product-feature',
+    category: 'newproduct',
+    tags: ['社区反馈', 'Reddit', '产品迭代', '初创企业'],
+    date: '2026-05-18',
+  },
+  {
+    id: 'web-bu-3',
+    title: 'Reddit Marketing ROI: Measuring Community-Driven Revenue',
+    description: '社区驱动收入的可衡量方法论：如何追踪 Reddit 营销投入对实际营收的影响，包含归因模型与 KPI 体系。',
+    source: 'Neil Patel Blog',
+    url: 'https://neilpatel.com/blog/reddit-marketing-roi',
+    category: 'business',
+    tags: ['Reddit营销', 'ROI', '收入归因', '社区驱动'],
+    date: '2026-02-05',
+  },
+];
+
+export const legacyUnverifiedCases: CaseItem[] = legacyUnverifiedData.map((item) => ({
+  ...item,
+  sourceKind: 'legacy_unverified',
+  verificationStatus: 'pending',
+  canonicalUrl: item.url,
+  updatedAt: '2026-07-15T00:00:00.000Z',
+  provenance: 'legacy_simulated_web_snapshot',
+}));

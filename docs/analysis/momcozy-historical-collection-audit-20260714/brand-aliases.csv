@@ -1,0 +1,19 @@
+tag_id,brand,role,aliases,alias_count,present_in_runtime_competitors
+L0-BRD-001,Baby Bjorn,competitor,babybjorn | baby bjorn | babybjorn carrier | babybjorn bouncer | bjorn | baby carrier,6,True
+L0-BRD-002,Boppy,competitor,boppy | boppy pillow | boppy lounger | boppy nursing | boppy newborn lounger | boppy feeding pillow,6,True
+L0-BRD-003,Comfelie,competitor,comfelie | comfelie bra | comfelie nursing | comfelie sleep | comfelie underwear | comfelie pj,6,False
+L0-BRD-004,Dr. Brown's,competitor,dr. brown | dr browns | dr brown's bottle | dr browns bottles | dr brown's sterilizer | dr brown warmer,6,True
+L0-BRD-005,Elvie,competitor,elvie | elvie pump | elvie stride | elvie curve | elvie wearable | elvie breast pump,6,True
+L0-BRD-006,Ergobaby,competitor,ergobaby | ergo baby | ergobaby carrier | ergo 360 | ergobaby omni | ergo baby carrier,6,True
+L0-BRD-007,Haakaa,competitor,haakaa | haakaa pump | haakaa collector | haakaa silicone | haakaa manual | haakaa pump suction too strong,6,True
+L0-BRD-008,Kindred Bravely,competitor,kindred bravely | kindred bravely bra | kindredbravely | kindred bravely nursing | kindred bravely pajamas | kindred bravely discount,6,True
+L0-BRD-009,Lansinoh,competitor,lansinoh | lansinoh pump | lansinoh breast pump | lansinoh nursing | lansinoh breastfeeding | lansinoh signature pro,6,True
+L0-BRD-010,Medela,competitor,medela | medela pump | medela freestyle | medela symphony | medela swing | medela pump in style,6,True
+L0-BRD-011,Momcozy,owner,momcozy | mom cozy | momcozy.com | mcozy | momcozy brand | love momcozy,6,False
+L0-BRD-012,Nanit,competitor,nanit | nanit monitor | nanit camera | nanit plus | nanit pro | nanit stopped working,6,False
+L0-BRD-013,Owlet,competitor,owlet | owlet sock | owlet monitor | owlet dream | owlet camera | owlet dream sock,6,False
+L0-BRD-014,Philips Avent,competitor,philips avent | avent | avent pump | avent sterilizer | avent bottles | philips avent breast pump,6,True
+L0-BRD-015,Spectra,competitor,spectra | spectra s1 | spectra s2 | spectra pump | spectra s1 plus | spectra s2 plus,6,True
+L0-BRD-016,Tommee Tippee,competitor,tommee tippee | tommee tippee bottle | tommee tippee sterilizer | tommee tippee warmer | tomme tippee | tommee tippee bottle leaks,6,True
+L0-BRD-017,Wabi Baby,competitor,wabi baby | wabi sterilizer | wabibaby | wabi | wabi brand | wabi dryer,6,False
+L0-BRD-018,Willow,competitor,willow | willow pump | willow go | willow 3.0 | willow hands-free | willow wearable,6,True

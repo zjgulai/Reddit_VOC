@@ -1,0 +1,259 @@
+version: 1
+updated: "2026-07-07"
+brand:
+  momcozy:
+    exact:
+      - momcozy
+      - mom cozy
+    variants:
+      - momcozi
+      - momcozie
+      - momcozy pump
+      - momcozy pumps
+      - momcozy wearable
+      - momcozy bottle washer
+      - momcozy carrier
+products:
+  momcozy:
+    - M5
+    - M6
+    - M9
+    - S9
+    - S9 Pro
+    - S12
+    - S12 Pro
+    - V1
+    - V1 Pro
+    - V2
+    - V2 Pro
+    - Air 1
+    - Mobile Flow
+    - W1
+    - KleanPal
+    - KleanPal Pro
+    - Klean Pal
+    - Klean Pal Pro
+    - D8
+    - DinerPal
+    - PureHug
+    - Pure Hug
+    - WeeSnug
+    - Wee Snug
+    - BumpEase
+    - Ergonest
+    - Dreamlign
+    - Ergowrap
+category:
+  - breast pump
+  - wearable breast pump
+  - wearable pump
+  - wearables
+  - hands-free pump
+  - hands free pump
+  - hands-free breast pump
+  - in-bra pump
+  - cordless pump
+  - portable pump
+  - collection cups
+  - pumping bra
+  - pump parts
+  - flange inserts
+  - flange insert
+  - primary pump
+  - wall pump
+  - hospital grade pump
+  - hospital grade
+  - manual pump
+  - electric pump
+  - milk collector
+  - breast milk cooler
+  - milk storage
+  - baby bottle washer
+  - bottle washer
+  - countertop bottle washer
+  - bottle washer sterilizer
+  - bottle sterilizer
+  - sterilizer dryer
+  - sterilizer and dryer
+  - bottle dryer
+  - bottle warmer
+  - pump parts washer
+  - descaling tablets
+  - detergent pods
+contextual_category:
+  match_policy: require_brand_product_or_competitor
+  terms:
+    - baby carrier
+    - structured carrier
+    - wrap carrier
+    - stretchy wrap
+    - baby wrap
+    - newborn carrier
+    - hip seat
+    - babywearing
+    - carrier fit check
+    - high chair
+    - feeding chair
+    - learning tower
+    - pregnancy pillow
+    - nursing pillow
+    - belly band
+    - maternity belly band
+    - postpartum wrap
+    - postpartum belly band
+    - sound machine
+    - white noise machine
+    - baby monitor
+    - diaper bag
+competitors:
+  - Elvie
+  - Willow
+  - eufy
+  - eufy S1
+  - eufy S1 Pro
+  - eufy E10
+  - eufy E20
+  - Medela
+  - Medela Freestyle
+  - Medela InBra
+  - Spectra
+  - Lansinoh
+  - Lansinoh DiscreetDuo
+  - Motif
+  - Motif Aura
+  - Zomee
+  - Freemie
+  - Pumpables
+  - Baby Buddha
+  - Imani
+  - Legendairy Milk
+  - Fraupow
+  - Tommee Tippee
+  - YOUHA
+  - MomMed
+  - TSRETE
+  - Bellababy
+  - Philips Avent
+  - Ardo
+  - FetalPlus
+  - Fetal Plus
+  - Baby Brezza
+  - Baby Brezza Washer Pro
+  - Papablic
+  - Dr. Brown
+  - Dr. Brown's
+  - Grownsy
+  - Maymom
+  - Nenesupply
+  - BeauGen
+  - Haakaa
+  - Ceres Chill
+  - Kindred Bravely
+  - Boppy
+  - My Brest Friend
+  - Ergobaby
+  - Ergo Embrace
+  - BabyBjorn
+  - Baby Bjorn
+  - Tushbaby
+  - WildBird
+  - Solly Baby
+  - Boba
+  - Tula
+  - Lillebaby
+  - LennyLamb
+  - Didymos
+  - Hatch
+  - Dreamegg
+  - Yogasleep
+  - Stokke
+  - Abiie
+  - Graco
+  - Skip Hop
+  - Lalo
+pain_points:
+  output_supply:
+    - output
+    - supply
+    - not emptying
+    - emptying
+    - supply drop
+    - low supply
+  leakage:
+    - leak
+    - leaking
+    - spill
+    - spilled
+  fit_comfort:
+    - flange
+    - insert
+    - elastic nipples
+    - nipple
+    - pain
+    - suction
+    - hurts
+    - fit
+    - sizing
+  operations:
+    - cleaning
+    - parts
+    - battery
+    - charge
+    - charging
+    - motor
+    - app
+    - Bluetooth
+    - noise
+    - loud
+    - dishwasher
+    - sanitize
+    - sterilize
+    - drying
+    - mold
+    - rust
+  support:
+    - warranty
+    - customer service
+    - replacement
+    - return
+    - refund
+  health:
+    - mastitis
+    - clogged duct
+    - clog
+  scenarios:
+    - return to work
+    - pumping at work
+    - commute
+    - travel
+    - insurance
+    - daycare
+    - twins
+    - multiples
+    - NICU
+    - postpartum
+    - registry
+    - first time mom
+    - FTM
+exclude_phrases:
+  - BMW M5
+  - BMW M6
+  - BMW M9
+  - Samsung S9
+  - Galaxy S9
+model_context_required:
+  - pump
+  - breast
+  - wearable
+  - nursing
+  - milk
+  - momcozy
+  - bottle
+  - washer
+  - sterilizer
+  - carrier
+  - babywearing
+  - high chair
+  - belly band
+  - pregnancy pillow
+  - nursing pillow

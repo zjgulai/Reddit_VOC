@@ -1,0 +1,142 @@
+{
+  "schema_version": "task38_runtime_implementation_audit_v1",
+  "generated_at_utc": "2026-07-14T13:18:18Z",
+  "scope": "read_only_source_audit_no_runtime_execution",
+  "purpose": "Map the exact implementation seams that remain after the 96-candidate comment-debt audit, without changing runtime code, running local product tests, or calling TikHub.",
+  "sources": [
+    {
+      "path": "src/reddit_voc/backfill_provider.py",
+      "sha256": "d426004fc5acaa5d0ef33465689c3bea85ab24ca172e68113f02d4ee506b2d94",
+      "role": "hydration_state_machine_and_comment_request_contract"
+    },
+    {
+      "path": "src/reddit_voc/backfill_storage.py",
+      "sha256": "786978598e557f7d8e7a80b8c2dfc9f9e0539e1089dea45a41c5ce7584604099",
+      "role": "candidate_terminality_and_checkpoint_persistence"
+    },
+    {
+      "path": "src/reddit_voc/backfill_cli.py",
+      "sha256": "77bf41257a19bcbe5e8ad1a879927ae2b8c3e54cbcf9bac68275cbc1f6aeb341",
+      "role": "legacy_profile_contract_and_provider_collection_entrypoint"
+    },
+    {
+      "path": "src/reddit_voc/backfill_merge.py",
+      "sha256": "b30ae30c5227c0f0b627d0f22e8cd61c79442d254e0ae12ff80324511143b6ca",
+      "role": "insert_only_merge_plan_and_production_write_boundary"
+    },
+    {
+      "path": "src/reddit_voc/search_config.py",
+      "sha256": "9b863435689de2905c51ec440d55285449747e3b329ddfbc3c194c043ad32b86",
+      "role": "immutable_legacy_default_search_terms"
+    },
+    {
+      "path": "config/backfill/momcozy-comment-cursor-contract-20260711.json",
+      "sha256": "a76c979ddca756ba4bd15f6efa52fda966c8778660a4272568f88c9f2acd5824",
+      "role": "current_comment_cursor_contract"
+    },
+    {
+      "path": "config/backfill/momcozy-search-profile-v2-candidate-20260714.json",
+      "sha256": "38706378f42c6648fe43bb50f60947863816363d65714f16a3092f40d91b604d",
+      "role": "reviewed_v2_candidate_profile_not_activated"
+    },
+    {
+      "path": "docs/analysis/momcozy-historical-collection-audit-20260714/comment-coverage-debt-audit.json",
+      "sha256": "ad1c30366d8b40ef6c4803b2345adb30f775d11605e843a4040c4e1fd4591bff",
+      "role": "96_candidate_comment_debt_evidence"
+    },
+    {
+      "path": "docs/analysis/momcozy-historical-collection-audit-20260714/comment-coverage-debt-validation.json",
+      "sha256": "6ca8f557830b9dc285b73b46bf2eba0b9445b3bc9b6bdce68810bf4bbd17ac04",
+      "role": "independent_comment_debt_validation"
+    }
+  ],
+  "observed_runtime_contracts": {
+    "candidate_terminality": {
+      "evidence": [
+        "backfill_storage.py:1160-1265",
+        "backfill_provider.py:2254-2265"
+      ],
+      "finding": "A hydrated candidate is terminal. Re-finalizing it with a different status_reason conflicts, while normal hydration finalizes only from pending."
+    },
+    "comment_reopen_block": {
+      "evidence": [
+        "backfill_provider.py:1494-1587",
+        "backfill_provider.py:2312-2358"
+      ],
+      "finding": "hydrate() processes pending candidates. Candidates marked hydrated/unresolved_more or hydrated/post_only_coverage remain visible as unresolved in the result but are not re-requested by the existing loop."
+    },
+    "current_comment_request_shape": {
+      "evidence": [
+        "backfill_provider.py:1588-1597",
+        "backfill_provider.py:2013-2046"
+      ],
+      "finding": "The current comment request contains post_id and after cursor only. When a reviewed incomplete page has More nodes but no cursor, the parser records next_cursor=null."
+    },
+    "more_child_boundary": {
+      "evidence": [
+        "backfill_provider.py:1980-2007",
+        "backfill_provider.py:2205-2219"
+      ],
+      "finding": "unresolved_more and post_only_coverage are intentional partial terminal checkpoint states with cursor=null. The audited code does not establish a More-child endpoint, request parameters, response schema, or pagination contract."
+    },
+    "legacy_profile_immutability": {
+      "evidence": [
+        "search_config.py:20-46",
+        "backfill_cli.py:1110-1146",
+        "backfill_cli.py:2531-2540",
+        "backfill_cli.py:2737-2746"
+      ],
+      "finding": "The legacy backfill validates its manifest and required-lane hash against DEFAULT_TIKHUB_SEARCH_TERMS. The 69 V2 delta terms cannot be inserted into that default without invalidating the legacy contract."
+    },
+    "merge_boundary": {
+      "evidence": [
+        "backfill_merge.py:1-220",
+        "backfill_cli.py:2510-2516"
+      ],
+      "finding": "An insert-only merge implementation exists, but any future use must target a newly created local isolated database and a separately reviewed acceptance contract; it must not be pointed at production."
+    }
+  },
+  "implementation_sequence_after_no_test_lift": [
+    {
+      "order": 1,
+      "workstream": "isolated_cross_source_merge",
+      "required_change": "Create a local-only merge loader that admits only the frozen Task 37/local ID plan, preserves local-only IDs, carries the 21 candidate local-only comment increments, and records 8 structurally recoverable orphan rows separately from the 10 still-unlinked rows.",
+      "must_not_do": "Do not invoke merge-production or modify the production database."
+    },
+    {
+      "order": 2,
+      "workstream": "v2_profile_loader",
+      "required_change": "Introduce an explicit new-run profile loader that reads the reviewed V2 JSON, validates profile hash, exact term uniqueness, group bindings, unknown fields, and frozen lane snapshot without changing DEFAULT_TIKHUB_SEARCH_TERMS or the legacy release manifest.",
+      "must_not_do": "Do not reuse the legacy run_id, its remaining budget, or its one-shot guard."
+    },
+    {
+      "order": 3,
+      "workstream": "comment_reopen_and_more_child_contract",
+      "required_change": "Add an explicit, auditable reopen transition for the 95 unresolved_more and one post_only_coverage candidates in isolated staging. Keep comments and V2 discovery on separate request ledgers and guards.",
+      "must_not_do": "Do not treat a repeated first page as a More-child solution, and do not infer an unverified TikHub endpoint or schema."
+    },
+    {
+      "order": 4,
+      "workstream": "provider_admission",
+      "required_change": "After local RED/GREEN and replay validation, query the Provider contract read-only to identify any supported More-child capability, then freeze separate exact packets for comment repair and V2 discovery.",
+      "must_not_do": "Do not consume the remaining Task 37 request before that contract and budget are established."
+    }
+  ],
+  "required_future_validation": [
+    "state-transition RED/GREEN from hydrated partial to isolated comment-repair pending only under a new repair authorization",
+    "exact comment-ID preservation and parent-child integrity for the 21 local-only increments and 8 structurally recoverable orphan rows",
+    "V2 profile hash, group, deduplication, unknown-field, and legacy-isolation checks",
+    "replay checks that no old raw artifact, provider attempt, or legacy manifest is mutated",
+    "separate budget and one-shot guard checks for comment repair and V2 discovery"
+  ],
+  "boundaries": {
+    "provider_call": false,
+    "provider_attempt_made": false,
+    "local_product_tests_run": false,
+    "runtime_code_modified": false,
+    "production_unchanged": true,
+    "production_merge_authorized": false,
+    "git_push": false,
+    "live_send": false
+  }
+}

@@ -1,0 +1,86 @@
+# OS and editor noise
+.DS_Store
+*.swp
+*.swo
+
+# Local Python/runtime caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+coverage/
+
+# Package-manager and build output
+node_modules/
+dist/
+dist-ssr/
+.vite/
+
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+id_rsa*
+id_ed25519*
+
+# Runtime data and generated artifacts
+data/*
+!data/reference/
+data/reference/*
+!data/reference/reddit-voc-v3/
+!data/reference/reddit-voc-v3/**
+outputs/
+output/
+export/
+logs/
+tmp/
+add_data/
+
+# The public dashboard data is deployed as a separately versioned data release.
+# Keep application source in Git; never commit generated production snapshots.
+ref/UI/momcozy-reddit-workbench/public/data/
+ref/UI/momcozy-reddit-workbench/output/
+ref/UI/momcozy-reddit-workbench/webbridge_*.json
+ref/UI/momcozy-reddit-workbench/DATA_REALITY_AUDIT.md#
+ref/UI/ENDOFJSON
+ref/UI/{cr.severity, text-status-error
+
+# Third-party product studies are reference checkouts, not Reddit_VOC source.
+ref/product/RedditVideoMakerBot-master/
+ref/product/reddit-project-main/
+
+# Local browser/profile state
+chrome-profile/
+browser-profile/
+.playwright-cli/
+.playwright-mcp/
+
+# Local agent/session state. The project context pack remains tracked.
+.codex/config.toml
+.codex/session-thread.md
+.omo/
+
+# Local CodeGraph databases
+.codegraph/*.db
+.codegraph/*.db-wal
+.codegraph/*.db-shm
+.codegraph/cache/
+.codegraph/*.log
+.codegraph/.dirty
+
+# Deployment packages and archives
+*.tar
+*.tar.gz
+*.tgz
+*.zip
+
+# Local upload-client state can contain machine-specific metadata.
+*.baiduyun.uploading.cfg

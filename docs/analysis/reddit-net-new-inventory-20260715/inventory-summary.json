@@ -1,0 +1,343 @@
+{
+  "schema_version": "reddit_net_new_inventory_summary.v1",
+  "report_id": "reddit-net-new-inventory-20260715",
+  "generated_at": "2026-07-15T03:31:32Z",
+  "evidence_snapshot_at": "2026-07-15T03:24:04.317502Z",
+  "scope": {
+    "baseline": "Current website snapshot reddit_voc_site_snapshot_20260714",
+    "post_grain": "One normalized Reddit post ID",
+    "comment_grain": "One normalized Reddit comment ID",
+    "target_window_utc": {
+      "start": "2024-12-31T16:00:00Z",
+      "end": "2026-07-15T16:00:00Z"
+    },
+    "identity_normalization": "trim, lowercase, remove t3_ for posts and t1_ for comments, require [a-z0-9]+",
+    "hash_convention": "Sort normalized IDs lexicographically, encode one ID per UTF-8 line, retain the final LF for non-empty sets, and hash with SHA-256.",
+    "content_exposure": "Aggregate counts, rates, statuses, and hashes only; no post text, comment text, authors, credentials, or raw ID lists."
+  },
+  "conclusion": {
+    "current_site_posts": 221,
+    "global_known_unique_posts": 1108,
+    "net_new_posts_vs_site": 887,
+    "materialized_net_new_posts": 236,
+    "discovery_only_net_new_posts": 651,
+    "task37_net_new_posts": 223,
+    "daily_net_new_after_task37": 13,
+    "materialized_share_of_net_new": 0.266065,
+    "discovery_only_share_of_net_new": 0.733935,
+    "current_site_stored_comments": 4567,
+    "global_known_stored_comments": 5803,
+    "net_new_comments_vs_site_stored": 1236
+  },
+  "post_identity": {
+    "sets": [
+      {
+        "set": "Current website",
+        "unique_posts": 221,
+        "overlap_with_site": 221,
+        "net_new_vs_site": 0,
+        "materialization": "activated baseline",
+        "additivity_boundary": "Baseline"
+      },
+      {
+        "set": "ai_nlp_voc imported archive",
+        "unique_posts": 136,
+        "overlap_with_site": 136,
+        "net_new_vs_site": 0,
+        "materialization": "materialized",
+        "additivity_boundary": "Strict subset of current website; do not add"
+      },
+      {
+        "set": "Task 37",
+        "unique_posts": 301,
+        "overlap_with_site": 78,
+        "net_new_vs_site": 223,
+        "materialization": "materialized",
+        "additivity_boundary": "Source layer; overlaps current website"
+      },
+      {
+        "set": "Local confirmed union",
+        "unique_posts": 444,
+        "overlap_with_site": 221,
+        "net_new_vs_site": 223,
+        "materialization": "materialized",
+        "additivity_boundary": "Current website union Task 37"
+      },
+      {
+        "set": "Remote materialized union",
+        "unique_posts": 369,
+        "overlap_with_site": 133,
+        "net_new_vs_site": 236,
+        "materialization": "materialized",
+        "additivity_boundary": "Union across 21 operational SQLite files"
+      },
+      {
+        "set": "Semantic target-window discovery",
+        "unique_posts": 924,
+        "overlap_with_site": 52,
+        "net_new_vs_site": 872,
+        "materialization": "mixed",
+        "additivity_boundary": "Overlaps remote materialized by 273; do not add"
+      },
+      {
+        "set": "Discovery-only target-window",
+        "unique_posts": 651,
+        "overlap_with_site": 0,
+        "net_new_vs_site": 651,
+        "materialization": "identity only",
+        "additivity_boundary": "Semantic target-window minus remote materialized"
+      },
+      {
+        "set": "Remote bounded union",
+        "unique_posts": 1020,
+        "overlap_with_site": 133,
+        "net_new_vs_site": 887,
+        "materialization": "mixed",
+        "additivity_boundary": "Remote materialized union semantic target-window"
+      },
+      {
+        "set": "Global known union",
+        "unique_posts": 1108,
+        "overlap_with_site": 221,
+        "net_new_vs_site": 887,
+        "materialization": "mixed",
+        "additivity_boundary": "Current website union remote bounded union"
+      }
+    ],
+    "disjoint_global_composition": [
+      {
+        "component": "Current website baseline",
+        "unique_posts": 221,
+        "source_layer": "site snapshot",
+        "readiness": "activated",
+        "share_of_global": 0.199458,
+        "cumulative_unique_posts": 221
+      },
+      {
+        "component": "Task 37 materialized net-new",
+        "unique_posts": 223,
+        "source_layer": "Task 37 SQLite",
+        "readiness": "materialized; pending activation gates",
+        "share_of_global": 0.201264,
+        "cumulative_unique_posts": 444
+      },
+      {
+        "component": "Daily materialized net-new after Task 37",
+        "unique_posts": 13,
+        "source_layer": "daily SQLite",
+        "readiness": "materialized; pending activation gates",
+        "share_of_global": 0.011733,
+        "cumulative_unique_posts": 457
+      },
+      {
+        "component": "Discovery-only net-new",
+        "unique_posts": 651,
+        "source_layer": "exact semantic search payload",
+        "readiness": "identity only; hydration required",
+        "share_of_global": 0.587545,
+        "cumulative_unique_posts": 1108
+      }
+    ],
+    "key_relations": {
+      "task37_intersection_site": 78,
+      "task37_only_vs_site": 223,
+      "remote_materialized_intersection_site": 133,
+      "remote_materialized_only_vs_site": 236,
+      "semantic_intersection_materialized": 273,
+      "semantic_minus_materialized": 651,
+      "materialized_minus_semantic": 96,
+      "remote_union_intersection_site": 133,
+      "remote_beyond_local_confirmed_union": 664,
+      "local_confirmed_union_not_in_remote_union": 88
+    },
+    "coverage": {
+      "materialized_time_min_utc": "2025-01-05T19:34:03Z",
+      "materialized_time_max_utc": "2026-07-14T20:58:04.600000Z",
+      "parseable_created_at_posts": 369,
+      "timestamp_conflicts": 0,
+      "best_observed_coverage_grade": {
+        "full": 253,
+        "partial": 115,
+        "post_only": 1
+      },
+      "posts_with_cross_source_grade_conflict": 2
+    },
+    "hashes": {
+      "current_site_lf_sha256": "c2696a02c3eb7ae12f9adf0da6ea2eb84465fee13967c2d1a0f5ba2109cda118",
+      "remote_materialized_lf_sha256": "b99b47e38a097649133dc73c2697349b48a17606b4cbd5bbb21ac8113eaf0310",
+      "semantic_target_window_lf_sha256": "6de91b426afaa2672ce3f54ebce1fa2b2b9c782f46df54076791eb6e5599b45b",
+      "discovery_only_lf_sha256": "76993c25c2bc72cd156aedadf50a16c0c4005a8509bea99cf963cb284f2795b5",
+      "remote_union_lf_sha256": "5df27d67d4a8f4dd3621371792073b272bd7da1ef44d094e147c1894de860296",
+      "global_union_lf_sha256": "6ce613655b25d668b0f23c6a009cfad66867a95e7ab5c4e710e353a1921cdcb5"
+    }
+  },
+  "comment_identity": {
+    "sets": [
+      {
+        "set": "Current website linked",
+        "unique_comments": 4549,
+        "overlap_with_site_stored": 4549,
+        "net_new_vs_site_stored": 0,
+        "boundary": "Linked comments currently visible to the site dataset"
+      },
+      {
+        "set": "Current website quarantine",
+        "unique_comments": 18,
+        "overlap_with_site_stored": 18,
+        "net_new_vs_site_stored": 0,
+        "boundary": "Stored but excluded from linked metrics"
+      },
+      {
+        "set": "Current website stored",
+        "unique_comments": 4567,
+        "overlap_with_site_stored": 4567,
+        "net_new_vs_site_stored": 0,
+        "boundary": "Linked union quarantine baseline"
+      },
+      {
+        "set": "Task 37",
+        "unique_comments": 3225,
+        "overlap_with_site_stored": 2029,
+        "net_new_vs_site_stored": 1196,
+        "boundary": "Materialized comment source"
+      },
+      {
+        "set": "Daily SQLite",
+        "unique_comments": 454,
+        "overlap_with_site_stored": 414,
+        "net_new_vs_site_stored": 40,
+        "boundary": "Materialized comment source; overlaps Task 37"
+      },
+      {
+        "set": "Remote all valid",
+        "unique_comments": 3544,
+        "overlap_with_site_stored": 2308,
+        "net_new_vs_site_stored": 1236,
+        "boundary": "Union across remote operational SQLite files"
+      },
+      {
+        "set": "Global stored union",
+        "unique_comments": 5803,
+        "overlap_with_site_stored": 4567,
+        "net_new_vs_site_stored": 1236,
+        "boundary": "Current website stored union remote all valid"
+      }
+    ],
+    "parent_link_summary": {
+      "remote_valid_comments": 3544,
+      "remote_linked_comments": 3534,
+      "remote_orphan_comments": 10,
+      "remote_link_rate": 0.99717833,
+      "materialized_posts_with_linked_comments": 345,
+      "materialized_posts_without_linked_comments": 24,
+      "remote_orphans_already_in_site_quarantine": 10,
+      "new_orphans_vs_site_stored": 0,
+      "site_quarantine_now_linked_in_remote_materialized_union": 8
+    },
+    "hashes": {
+      "current_site_stored_lf_sha256": "8d3b630cf04208d352e2093d0ae1ff07a92b028b844bfd8c198c654aeef66b45",
+      "remote_valid_lf_sha256": "033d9855394cc2b91da9d6a79eefcfb81f0ffba2598751cee8c6d57b3adab2ea",
+      "global_union_lf_sha256": "ac90dace85734de03c9c4948fda211a7f5bd63d94659bbda6eda4f51be3f73ed"
+    }
+  },
+  "collection_completeness": {
+    "bounded_collection_terminal": true,
+    "terminal_interpretation": "No active continuation process, plan/report parity, zero payload parse errors, and stable writes at the final scan.",
+    "reddit_natural_pagination_exhausted": false,
+    "depth_limited_lanes_with_has_next": 5,
+    "depth_limit": 16,
+    "search_payload_files": 12531,
+    "search_payload_parse_errors": 0,
+    "included_operational_sqlite_files": 21,
+    "sqlite_read_errors": 0,
+    "warning": "Terminal means the bounded run stopped cleanly; it does not prove all Reddit result pages were exhausted."
+  },
+  "quality_findings": [
+    {
+      "gate": "Cross-source post identity freeze",
+      "status": "passed",
+      "severity": "critical",
+      "evidence": "887 net-new and 1,108 global known posts reproduced independently with exact set relations and hashes.",
+      "impact": "Safe to use as the current bounded identity baseline."
+    },
+    {
+      "gate": "Discovery-only content materialization",
+      "status": "blocked",
+      "severity": "critical",
+      "evidence": "651 valid target-window post IDs have no materialized post record in the audited SQLite union.",
+      "impact": "They cannot activate website text, tags, SPU analysis, sentiment, or comments until hydrated and validated."
+    },
+    {
+      "gate": "Natural pagination exhaustion",
+      "status": "incomplete",
+      "severity": "high",
+      "evidence": "Five lanes still reported has_next at depth 16 when the bounded job stopped.",
+      "impact": "1,108 is a verified lower bound for the governed run, not a claim of all Reddit posts."
+    },
+    {
+      "gate": "Existing body reconciliation",
+      "status": "review",
+      "severity": "medium",
+      "evidence": "Two overlapping posts have body-content differences across materialized sources.",
+      "impact": "Re-run private-source redaction before publishing either version."
+    },
+    {
+      "gate": "Post URL and row-ID coherence",
+      "status": "quarantine",
+      "severity": "high",
+      "evidence": "Two records have a URL-path post ID that differs from the row post_id.",
+      "impact": "Do not merge or count them in content activation until raw evidence resolves the identity."
+    },
+    {
+      "gate": "Excluded non-post candidates",
+      "status": "passed",
+      "severity": "low",
+      "evidence": "Six candidates without structured post entities remain excluded.",
+      "impact": "Prevents candidate references from inflating collected-post counts."
+    },
+    {
+      "gate": "Remote comment parent partition",
+      "status": "passed_with_evidence_limit",
+      "severity": "medium",
+      "evidence": "3,534 linked and 10 orphan IDs form an exact disjoint partition of 3,544 remote comments; all 10 orphan IDs already exist in site quarantine.",
+      "impact": "No new orphan IDs are introduced, but the safe manifest does not expose per-comment parent pairs for an independent row-level recheck."
+    }
+  ],
+  "verification": {
+    "independent_recalculation": "passed",
+    "remote_post_sets_count_and_lf_hash": "9/9 passed",
+    "v2_semantic_classification_sets_count_and_lf_hash": "8/8 passed",
+    "remote_comment_sets_count_and_lf_hash": "8/8 passed",
+    "task37_compact_json_identity_hash": "3/3 passed",
+    "base_manifest_file_size_and_sha256": "5/5 passed",
+    "target_json_parse": "12/12 passed",
+    "numeric_or_hash_mismatches": 0,
+    "remote_manifest_file_sha256": {
+      "posts": "de11d1c8e92b75724e0b93405b432cd73ba2e65a2e5494688f95356906ae47ce",
+      "v2_semantic": "2ae47c9dad15054af1b8bf48fee97b3315ec22ac45310f5b9ea920824182fcb5",
+      "comments": "9f854b0715185d24cd5917c3a8665b3aecd0107d34290e6e5c3f1c74dc7103bd"
+    }
+  },
+  "boundaries": {
+    "production_unchanged": true,
+    "provider_call": false,
+    "provider_attempt_made": false,
+    "database_write": false,
+    "live_send": false,
+    "deploy": false,
+    "collector_restart": false,
+    "schedule_change": false
+  },
+  "sources": [
+    "data/processed/reddit_voc_site_snapshot_20260714/posts.json",
+    "data/processed/reddit_voc_site_snapshot_20260714/comments.json",
+    "data/processed/reddit_voc_site_snapshot_20260714/quarantine.json",
+    "data/imports/ai_nlp_voc_reddit_20260714/import-manifest.json",
+    "data/imports/tencent_production_20260715/task37-identity-snapshot.json",
+    "tmp/reddit-full-inventory-20260715/remote-reddit-identity-inventory-final.json",
+    "tmp/reddit-full-inventory-20260715/remote-v2-semantic-classification-final.json",
+    "tmp/reddit-full-inventory-20260715/remote-reddit-comment-identity-inventory-final.json",
+    "docs/analysis/momcozy-historical-collection-audit-20260714/cross-source-readonly-merge-plan.json",
+    "docs/analysis/reddit-net-new-inventory-20260715/reconcile_inventory.py"
+  ]
+}

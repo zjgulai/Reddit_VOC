@@ -1,0 +1,384 @@
+{
+  "schema_version": "reddit_voc_tag_semantic_decisions_v1",
+  "sample_sha256": "59190bf019a69f4f89ba9c5d6af67b34f003e9e6b47f679185ba9feb4b972117",
+  "reviewer": {
+    "type": "codex_context_review",
+    "version": "v1",
+    "independent_human_review": false,
+    "review_policy": "Judge the assignment against tag name and definition in full public context; separately judge taxonomy/source applicability. Courtesy, questions, negation, past purchase, wrong brand and missing subject do not count as positive evidence."
+  },
+  "quality_gate": {
+    "required_samples_per_tag": 10,
+    "minimum_label_precision": 0.9,
+    "minimum_wilson_lower_bound_95": 0.59,
+    "minimum_taxonomy_fit_rate": 0.9,
+    "maximum_ambiguous_rate": 0.1,
+    "governance_status_required": "fit",
+    "promotion_scope": "descriptive_sample_insights_only"
+  },
+  "tag_reviews": {
+    "L0-SVC-019": {
+      "governance_review": {
+        "status": "mismatch",
+        "reason_code": "theme_scope_mismatch",
+        "note": "Generic gratitude and product praise are assigned to the customer-service theme; most sampled thank-you matches are conversational courtesy, not product or service satisfaction."
+      },
+      "default_decision": {
+        "label_verdict": "incorrect",
+        "taxonomy_fit": "mismatch",
+        "reason_code": "courtesy_gratitude_not_product_feedback",
+        "note": "A thank-you closing or advice acknowledgement is not a product/service satisfaction signal."
+      },
+      "overrides": {
+        "L0-SVC-019:comment:t1_oa31sdf": {
+          "label_verdict": "correct",
+          "taxonomy_fit": "mismatch",
+          "reason_code": "product_positive_experience_but_theme_mismatch",
+          "note": "The author explicitly says they love the product, but this is not a customer-service interaction."
+        }
+      }
+    },
+    "L0-CHL-003": {
+      "governance_review": {
+        "status": "fit",
+        "reason_code": "definition_business_fit",
+        "note": "The value-for-money concept is applicable, but the current worth-it phrase rule confuses questions, negation and non-price effort."
+      },
+      "default_decision": {
+        "label_verdict": "incorrect",
+        "taxonomy_fit": "fit",
+        "reason_code": "not_value_assertion",
+        "note": "The context does not assert that product value exceeds price."
+      },
+      "overrides": {
+        "L0-CHL-003:post:1lkj0s7": {
+          "label_verdict": "correct",
+          "taxonomy_fit": "fit",
+          "reason_code": "explicit_bargain_value",
+          "note": "The product is described as a steal in a purchase decision."
+        },
+        "L0-CHL-003:comment:t1_my6rn5n": {
+          "label_verdict": "correct",
+          "taxonomy_fit": "fit",
+          "reason_code": "explicit_worth_it_assertion",
+          "note": "The comment gives an unambiguous strong value endorsement."
+        },
+        "L0-CHL-003:comment:t1_owp8452": {
+          "label_verdict": "correct",
+          "taxonomy_fit": "fit",
+          "reason_code": "feature_value_assertion",
+          "note": "The paid upgrade is explicitly described as worth it for portability."
+        },
+        "L0-CHL-003:comment:t1_owepsrl": {
+          "label_verdict": "correct",
+          "taxonomy_fit": "fit",
+          "reason_code": "explicit_product_value_assertion",
+          "note": "The used product is explicitly described as totally worth it."
+        },
+        "L0-CHL-003:post:1utibay": {
+          "label_verdict": "incorrect",
+          "taxonomy_fit": "fit",
+          "reason_code": "question_not_assertion",
+          "note": "The post asks whether the product is worth it and provides no value verdict."
+        },
+        "L0-CHL-003:post:1qfloqk": {
+          "label_verdict": "incorrect",
+          "taxonomy_fit": "fit",
+          "reason_code": "question_not_assertion",
+          "note": "The post title asks for others' value assessment."
+        },
+        "L0-CHL-003:comment:t1_lhuilbj": {
+          "label_verdict": "incorrect",
+          "taxonomy_fit": "fit",
+          "reason_code": "effort_not_price_value",
+          "note": "Worth it refers to continuing configuration attempts, not price-value perception."
+        },
+        "L0-CHL-003:comment:t1_msad6hk": {
+          "label_verdict": "incorrect",
+          "taxonomy_fit": "fit",
+          "reason_code": "discount_only_excluded_by_definition",
+          "note": "A used-item deal is stated without evidence that quality or function exceeds price."
+        },
+        "L0-CHL-003:comment:t1_m5w2adz": {
+          "label_verdict": "incorrect",
+          "taxonomy_fit": "fit",
+          "reason_code": "negated_phrase_false_positive",
+          "note": "The author explicitly says the extra pumping time was not worth it."
+        }
+      }
+    },
+    "L0-SVC-010": {
+      "governance_review": {
+        "status": "mismatch",
+        "reason_code": "zendesk_source_definition_mismatch",
+        "note": "The label is semantically accurate in the sample, but the governed definition is restricted to Zendesk tickets and therefore is not source-compatible with Reddit."
+      },
+      "default_decision": {
+        "label_verdict": "correct",
+        "taxonomy_fit": "mismatch",
+        "reason_code": "reddit_service_signal_zendesk_definition",
+        "note": "The text describes customer-service interaction, but the current definition is Zendesk-specific."
+      },
+      "overrides": {}
+    },
+    "L0-GEN-020": {
+      "governance_review": {
+        "status": "mismatch",
+        "reason_code": "telephony_definition_product_mismatch",
+        "note": "The definition concerns wireless call/audio use, while the sample concerns wearable breast pumps or a baby carrier."
+      },
+      "default_decision": {
+        "label_verdict": "correct",
+        "taxonomy_fit": "mismatch",
+        "reason_code": "pump_hands_free_audio_definition_mismatch",
+        "note": "The text supports hands-free pumping, but not the governed call/audio definition."
+      },
+      "overrides": {
+        "L0-GEN-020:comment:t1_mgfgwr4": {
+          "label_verdict": "incorrect",
+          "taxonomy_fit": "mismatch",
+          "reason_code": "baby_carrier_and_audio_definition_mismatch",
+          "note": "The phrase describes supported baby carrying, not a wireless product function."
+        }
+      }
+    },
+    "L0-GEN-164": {
+      "governance_review": {
+        "status": "fit",
+        "reason_code": "definition_business_fit",
+        "note": "Feature-driven purchase is relevant, but looking for and the only one are too broad without feature and purchase-subject checks."
+      },
+      "default_decision": {
+        "label_verdict": "incorrect",
+        "taxonomy_fit": "fit",
+        "reason_code": "generic_search_not_feature_purchase",
+        "note": "The matched phrase does not prove a specific feature drove a purchase decision."
+      },
+      "overrides": {
+        "L0-GEN-164:post:1qymhj5": {
+          "label_verdict": "correct",
+          "taxonomy_fit": "fit",
+          "reason_code": "specific_wearable_feature_need",
+          "note": "The author seeks a hospital-grade wearable with explicit functional constraints."
+        },
+        "L0-GEN-164:comment:t1_owicmpu": {
+          "label_verdict": "correct",
+          "taxonomy_fit": "fit",
+          "reason_code": "specific_support_feature_selection",
+          "note": "Padding and support requirements are used to select a carrier type."
+        },
+        "L0-GEN-164:comment:t1_mhyh7qi": {
+          "label_verdict": "correct",
+          "taxonomy_fit": "fit",
+          "reason_code": "portable_feature_selection",
+          "note": "Portability and ability to move while pumping are explicit purchase requirements."
+        },
+        "L0-GEN-164:comment:t1_o865qxh": {
+          "label_verdict": "ambiguous",
+          "taxonomy_fit": "fit",
+          "reason_code": "feature_questions_without_observed_purchase_subject",
+          "note": "The responder lists selection attributes, but the sampled comment does not establish the purchaser's final motive."
+        },
+        "L0-GEN-164:comment:t1_nfp5mv3": {
+          "label_verdict": "incorrect",
+          "taxonomy_fit": "fit",
+          "reason_code": "post_use_performance_not_purchase_motive",
+          "note": "The only-one phrase reports comparative output after use, not the reason for purchase."
+        },
+        "L0-GEN-164:comment:t1_o6mdj8a": {
+          "label_verdict": "incorrect",
+          "taxonomy_fit": "fit",
+          "reason_code": "availability_not_feature_motive",
+          "note": "The item was purchased because it was the only one in stock."
+        },
+        "L0-GEN-164:post:1q8f5gs": {
+          "label_verdict": "incorrect",
+          "taxonomy_fit": "fit",
+          "reason_code": "post_purchase_tips_not_purchase_motive",
+          "note": "The product is already owned and the author is looking for usage tips."
+        },
+        "L0-GEN-164:post:1uvqfxq": {
+          "label_verdict": "incorrect",
+          "taxonomy_fit": "fit",
+          "reason_code": "looking_for_experiences_not_product_feature",
+          "note": "The author seeks low-supply experiences, not a product feature."
+        }
+      }
+    },
+    "L0-GEN-075": {
+      "governance_review": {
+        "status": "fit",
+        "reason_code": "definition_business_fit",
+        "note": "The work-context definition and sampled Reddit use cases align."
+      },
+      "default_decision": {
+        "label_verdict": "correct",
+        "taxonomy_fit": "fit",
+        "reason_code": "explicit_work_context",
+        "note": "The post or comment explicitly places product use, pumping or storage in a work setting."
+      },
+      "overrides": {}
+    },
+    "L2-PUMP-030": {
+      "governance_review": {
+        "status": "fit",
+        "reason_code": "definition_business_fit",
+        "note": "Momcozy-to-primary-pump output comparison is relevant, but the current rule lacks brand subject and polarity binding."
+      },
+      "default_decision": {
+        "label_verdict": "incorrect",
+        "taxonomy_fit": "fit",
+        "reason_code": "wrong_brand_or_comparison_direction",
+        "note": "The context does not establish Momcozy output as equal to or better than a primary/competitor pump."
+      },
+      "overrides": {
+        "L2-PUMP-030:post:1ph0m5h": {
+          "label_verdict": "correct",
+          "taxonomy_fit": "fit",
+          "reason_code": "momcozy_v1_better_than_spectra",
+          "note": "The author reports better output and emptying with Momcozy V1 than Spectra."
+        },
+        "L2-PUMP-030:comment:t1_n2x73u8": {
+          "label_verdict": "correct",
+          "taxonomy_fit": "fit",
+          "reason_code": "momcozy_m5_equal_medela",
+          "note": "The author explicitly reports equal output from Momcozy M5 and Medela."
+        },
+        "L2-PUMP-030:comment:t1_n30taq7": {
+          "label_verdict": "correct",
+          "taxonomy_fit": "fit",
+          "reason_code": "momcozy_m5_better_than_medela",
+          "note": "The author reports better output from Momcozy M5 than Medela Symphony."
+        },
+        "L2-PUMP-030:comment:t1_nxldegx": {
+          "label_verdict": "ambiguous",
+          "taxonomy_fit": "fit",
+          "reason_code": "missing_brand_antecedent",
+          "note": "Better output is stated, but the sampled comment lacks the product antecedent needed to bind the comparison to Momcozy."
+        },
+        "L2-PUMP-030:post:1uvdo4h": {
+          "label_verdict": "incorrect",
+          "taxonomy_fit": "fit",
+          "reason_code": "negated_competitor_emptying",
+          "note": "The text says Willow did not empty the author; it is not a positive Momcozy comparison."
+        },
+        "L2-PUMP-030:post:1qbe11l": {
+          "label_verdict": "incorrect",
+          "taxonomy_fit": "fit",
+          "reason_code": "eufy_vs_spectra_wrong_brand",
+          "note": "The favorable output comparison is Eufy versus Spectra."
+        },
+        "L2-PUMP-030:comment:t1_lycdlvr": {
+          "label_verdict": "incorrect",
+          "taxonomy_fit": "fit",
+          "reason_code": "eufy_worse_than_spectra",
+          "note": "The wearable is explicitly slower and worse at emptying than Spectra."
+        },
+        "L2-PUMP-030:comment:t1_owhathb": {
+          "label_verdict": "incorrect",
+          "taxonomy_fit": "fit",
+          "reason_code": "generic_wearable_failure",
+          "note": "The author reports wearable failure and exclusive Spectra use, with no Momcozy-positive comparison."
+        },
+        "L2-PUMP-030:comment:t1_m9qw7ub": {
+          "label_verdict": "incorrect",
+          "taxonomy_fit": "fit",
+          "reason_code": "medela_vs_spectra_wrong_brand",
+          "note": "The comparison concerns Medela Pump in Style and Spectra."
+        }
+      }
+    },
+    "L2-PUMP-007": {
+      "governance_review": {
+        "status": "fit",
+        "reason_code": "definition_business_fit",
+        "note": "Accessory purchase consideration is relevant, but the rule must distinguish active intent from availability, advice, insurance supply and past purchase."
+      },
+      "default_decision": {
+        "label_verdict": "incorrect",
+        "taxonomy_fit": "fit",
+        "reason_code": "no_active_accessory_purchase_intent",
+        "note": "Replacement parts are mentioned without active consideration of a new accessory purchase."
+      },
+      "overrides": {
+        "L2-PUMP-007:post:1nuclab": {
+          "label_verdict": "correct",
+          "taxonomy_fit": "fit",
+          "reason_code": "active_accessory_availability_consideration",
+          "note": "Replacement-part availability is an explicit concern in an active pump comparison."
+        },
+        "L2-PUMP-007:comment:t1_ox3ys31": {
+          "label_verdict": "correct",
+          "taxonomy_fit": "fit",
+          "reason_code": "explicit_need_for_replacement_parts",
+          "note": "The author explicitly says they need to get replacement parts."
+        },
+        "L2-PUMP-007:post:1hw9xgi": {
+          "label_verdict": "incorrect",
+          "taxonomy_fit": "fit",
+          "reason_code": "past_purchase_excluded",
+          "note": "The author already bought aftermarket replacement parts."
+        },
+        "L2-PUMP-007:comment:t1_o9ws732": {
+          "label_verdict": "incorrect",
+          "taxonomy_fit": "fit",
+          "reason_code": "past_purchase_excluded",
+          "note": "The comment describes completed second-hand purchases."
+        }
+      }
+    },
+    "L0-GEN-103": {
+      "governance_review": {
+        "status": "fit",
+        "reason_code": "definition_business_fit",
+        "note": "Explicit recommend phrases align with the recommendation-intent definition across the sampled sources."
+      },
+      "default_decision": {
+        "label_verdict": "correct",
+        "taxonomy_fit": "fit",
+        "reason_code": "explicit_recommendation",
+        "note": "The author explicitly recommends a named product or action."
+      },
+      "overrides": {}
+    },
+    "L2-PUMP-016": {
+      "governance_review": {
+        "status": "fit",
+        "reason_code": "definition_business_fit",
+        "note": "Flange/elastic-nipple fit is relevant, but elastic-nipple mentions alone do not always establish a negative size mismatch."
+      },
+      "default_decision": {
+        "label_verdict": "correct",
+        "taxonomy_fit": "fit",
+        "reason_code": "explicit_flange_or_elastic_fit_problem",
+        "note": "The text connects flange or elastic-nipple fit to pain, poor output or incompatibility."
+      },
+      "overrides": {
+        "L2-PUMP-016:post:1utlerw": {
+          "label_verdict": "ambiguous",
+          "taxonomy_fit": "fit",
+          "reason_code": "suspected_not_confirmed_fit_issue",
+          "note": "The author suspects elastic nipples and asks about sizing, but the mismatch is not established."
+        },
+        "L2-PUMP-016:comment:t1_ox3ys31": {
+          "label_verdict": "incorrect",
+          "taxonomy_fit": "fit",
+          "reason_code": "elastic_anatomy_without_negative_mismatch",
+          "note": "The author reports that the current pump and inserts work well with stretchier anatomy."
+        },
+        "L2-PUMP-016:comment:t1_nknzks4": {
+          "label_verdict": "ambiguous",
+          "taxonomy_fit": "fit",
+          "reason_code": "material_preference_not_size_mismatch",
+          "note": "Silicone flanges do not suit the author, but a size/fit problem is not clearly established."
+        }
+      }
+    }
+  },
+  "boundaries": {
+    "production_unchanged": true,
+    "provider_call": false,
+    "database_write": false,
+    "live_send": false
+  }
+}

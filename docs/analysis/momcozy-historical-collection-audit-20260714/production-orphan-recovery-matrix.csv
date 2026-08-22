@@ -1,0 +1,5 @@
+missing_parent_post_id,orphan_comments,parent_in_local_canonical,parent_in_task37,exact_comment_ids_in_task37,production_only_comments_with_task37_parent,structurally_recoverable_comments,still_unlinked_comments,private_content_rows_available,comment_min_utc,comment_max_utc
+1up2wpz,2,False,False,0,0,0,2,2,2026-07-07T07:52:16.350000+00:00,2026-07-07T13:56:41.513000+00:00
+1up6n0v,1,False,False,0,0,0,1,1,2026-07-06T19:06:55.872000+00:00,2026-07-06T19:06:55.872000+00:00
+1up84ht,7,False,False,0,0,0,7,7,2026-07-06T21:14:08.897000+00:00,2026-07-06T23:54:16.597000+00:00
+1upauuw,8,False,True,6,2,8,0,8,2026-07-06T21:29:54.419000+00:00,2026-07-06T23:26:25.948000+00:00

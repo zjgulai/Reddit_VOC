@@ -1,0 +1,76 @@
+group,term,normalized_term,legacy_exact_semantic_coverage
+owner_alias_gap,"""mcozy""",mcozy,False
+momcozy_model_gap,"""Momcozy M5""",momcozy m5,True
+momcozy_model_gap,"""Momcozy M6""",momcozy m6,False
+momcozy_model_gap,"""Momcozy M9""",momcozy m9,True
+momcozy_model_gap,"""Momcozy S9""",momcozy s9,False
+momcozy_model_gap,"""Momcozy S9 Pro""",momcozy s9 pro,False
+momcozy_model_gap,"""Momcozy S12""",momcozy s12,True
+momcozy_model_gap,"""Momcozy S12 Pro""",momcozy s12 pro,False
+momcozy_model_gap,"""Momcozy V1""",momcozy v1,False
+momcozy_model_gap,"""Momcozy V1 Pro""",momcozy v1 pro,False
+momcozy_model_gap,"""Momcozy V2""",momcozy v2,False
+momcozy_model_gap,"""Momcozy V2 Pro""",momcozy v2 pro,False
+momcozy_model_gap,"""Momcozy Air 1""",momcozy air 1,False
+momcozy_model_gap,"""Momcozy Mobile Flow""",momcozy mobile flow,False
+momcozy_model_gap,"""Momcozy W1""",momcozy w1,False
+momcozy_model_gap,"""Momcozy KleanPal""",momcozy kleanpal,True
+momcozy_model_gap,"""Momcozy KleanPal Pro""",momcozy kleanpal pro,False
+momcozy_model_gap,"""Momcozy D8""",momcozy d8,False
+momcozy_model_gap,"""Momcozy DinerPal""",momcozy dinerpal,False
+momcozy_model_gap,"""Momcozy PureHug""",momcozy purehug,True
+momcozy_model_gap,"""Momcozy WeeSnug""",momcozy weesnug,False
+momcozy_model_gap,"""Momcozy BumpEase""",momcozy bumpease,False
+momcozy_model_gap,"""Momcozy Ergonest""",momcozy ergonest,False
+momcozy_model_gap,"""Momcozy Dreamlign""",momcozy dreamlign,False
+momcozy_model_gap,"""Momcozy Ergowrap""",momcozy ergowrap,False
+momcozy_model_gap,"""Momcozy BS03""",momcozy bs03,False
+official_catalog_aliases,"""Momcozy M5 Smart""",momcozy m5 smart,False
+official_catalog_aliases,"""Momcozy Mobile Style""",momcozy mobile style,False
+official_catalog_aliases,"""Momcozy S12 Pro Quick""",momcozy s12 pro quick,False
+official_catalog_aliases,"""Momcozy Wellness 1""",momcozy wellness 1,False
+official_catalog_aliases,"""Momcozy DeepClean""",momcozy deepclean,False
+official_catalog_aliases,"""Momcozy BM03""",momcozy bm03,False
+governed_competitors,"""babybjorn""",babybjorn,False
+governed_competitors,"""boppy""",boppy,False
+governed_competitors,"""comfelie""",comfelie,False
+governed_competitors,"""dr. brown""",dr. brown,False
+governed_competitors,"""elvie""",elvie,False
+governed_competitors,"""ergobaby""",ergobaby,False
+governed_competitors,"""haakaa""",haakaa,False
+governed_competitors,"""kindred bravely""",kindred bravely,False
+governed_competitors,"""lansinoh""",lansinoh,False
+governed_competitors,"""medela""",medela,False
+governed_competitors,"""nanit""",nanit,False
+governed_competitors,"""owlet""",owlet,False
+governed_competitors,"""philips avent""",philips avent,False
+governed_competitors,"""spectra""",spectra,False
+governed_competitors,"""tommee tippee""",tommee tippee,False
+governed_competitors,"""wabi baby""",wabi baby,False
+governed_competitors,"""willow""",willow,False
+category_anchors,"""breast pump""",breast pump,True
+category_anchors,"""wearable breast pump""",wearable breast pump,False
+category_anchors,"""hands-free breast pump""",hands-free breast pump,False
+category_anchors,"""bottle washer sterilizer""",bottle washer sterilizer,False
+category_anchors,"""bottle sterilizer""",bottle sterilizer,False
+category_anchors,"""bottle warmer""",bottle warmer,False
+category_anchors,"""baby food maker""",baby food maker,False
+category_anchors,"""baby formula maker""",baby formula maker,False
+category_anchors,"""baby feeding set""",baby feeding set,False
+category_anchors,"""breast milk storage bags""",breast milk storage bags,False
+category_anchors,"""breast milk chiller""",breast milk chiller,False
+category_anchors,"""breast pump parts""",breast pump parts,False
+category_anchors,"""colostrum collector""",colostrum collector,False
+category_anchors,"""lactation massager""",lactation massager,False
+category_anchors,"""baby thermometer""",baby thermometer,False
+category_anchors,"""baby humidifier""",baby humidifier,False
+category_anchors,"""diaper pail""",diaper pail,False
+category_anchors,"""nursing bra""",nursing bra,False
+category_anchors,"""pumping bra""",pumping bra,False
+category_anchors,"""baby carrier""",baby carrier,False
+category_anchors,"""high chair""",high chair,False
+category_anchors,"""pregnancy pillow""",pregnancy pillow,False
+category_anchors,"""nursing pillow""",nursing pillow,False
+category_anchors,"""baby monitor""",baby monitor,False
+category_anchors,"""sound machine""",sound machine,False
+category_anchors,"""white noise machine""",white noise machine,False

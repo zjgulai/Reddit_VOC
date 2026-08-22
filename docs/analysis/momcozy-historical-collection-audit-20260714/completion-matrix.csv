@@ -1,0 +1,13 @@
+workstream,status,evidence,next_gate
+Governed dictionary quality,complete,"2,346 rows; unique tag IDs; no blanks; candidate and final semantically equal",none
+Momcozy and competitor extraction,complete,1 owner brand and 17 governed competitor brands,none
+SPU name extraction,complete_name_join,Phase 3 v3.5 product master joins all 254 dictionary SPU IDs to Chinese and English names; BS03=SPU000714 and BM03=SPU000176,active_status/effective_date remain absent; current-sale status stays with official storefront
+Legacy historical search configuration,partial,"15 frozen terms, only 12 semantic terms; no competitor-only lanes",keep immutable; do not retrofit
+v2 search profile,candidate_ready,"69 delta terms across owner alias, models, six official aliases, 17 competitors and categories",review exact JSON SHA and implement new-run loader
+Existing archive ingestion,complete_local,"136/136 JSON parsed; 4,153 comments; 88 posts and 2,259 comments net-new",do not equate with Provider completeness
+Task 37 remote historical staging,partial_debt_profiled,"301 threads; 3,225 comments; 96 terminal partial candidates contain 752 comments and 148 More nodes; local union adds only 21 comments, leaving a 2,082 reported-count gap",one remaining request is below the 96-request first-page floor; implement a reviewed reopen/more-child contract before a new authorization
+Cross-source identity reconciliation,complete_identity_only,"local/Task37 overlap 78 posts and 2,023 linked comments; deduplicated union 410 posts and 4,730 linked comments; one recovered parent makes 8 production orphans structurally linkable",preserve 10 orphans that still lack parent evidence; merge remains unauthorized
+V2 delta offline lexical coverage,complete_evidence_only,"69 terms profiled over the 410-post/4,730-comment potential union: 19 zero-evidence, 4 comment-only, 9 post-only, 37 post-and-comment",all 69 Provider discovery lanes remain unexecuted; use frozen priority order
+2025-01-01 to 2026-07-11 competitor/SPU lanes,offline_profile_complete_provider_not_started,"46/69 terms have post-surface evidence and 41/69 have comment evidence, but no dedicated Provider lane has been executed","new run, isolated loader, query-only admission, exact bounded probe authorization"
+2026-07-12 to current snapshot,partial_daily,fresh read-only identity capture still has 85 posts/414 comments and zero increment; latest post is 2026-07-14 06:37 Beijing,next 07:00 daily snapshot or separately authorized bounded catch-up
+Production merge / live delivery,not_authorized,production unchanged; live_send=false; git_push=false,separate owner authorization after validation

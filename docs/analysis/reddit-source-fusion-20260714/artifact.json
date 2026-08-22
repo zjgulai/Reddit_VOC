@@ -1,0 +1,1375 @@
+{
+  "surface": "report",
+  "manifest": {
+    "version": 1,
+    "surface": "report",
+    "title": "Reddit VOC 三源数据融合与网站激活审计",
+    "description": "Imported archive, local canonical history and Tencent production primary corpus.",
+    "generatedAt": "2026-07-14T11:28:52.792057+00:00",
+    "blocks": [
+      {
+        "id": "title",
+        "type": "markdown",
+        "layout": "full",
+        "body": "# Reddit VOC 三源数据融合与网站激活审计"
+      },
+      {
+        "id": "executive_summary",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## Executive Summary\n\n新增目录不是 136 条独立于现有系统之外的帖子：本地历史库 48 帖、1,894 评论全部是其规范化子集；腾讯云主库的 85 帖与两者不重叠。统一 ID 后，真实可激活范围为 **221 个帖子、4,549 条可关联评论**，另有 **18 条生产孤儿评论**必须隔离。新增目录带来的净增是 88 帖和 2,259 评论，其中 81 帖来自竞品/对比采集桶。已产出并独立验证版本化静态 snapshot。`dim_tag_v6.3_final` 已完成范围编译和规则提取，但标签仍是待语义复核的词典规则命中。下一步可激活 Search、Dashboard、Analytics 与数据质量页；暂不展示 ROI、响应时效、团队状态或市场份额。",
+        "sourceId": "fusion_audit"
+      },
+      {
+        "id": "headline_metrics",
+        "type": "metric-strip",
+        "layout": "full",
+        "cardIds": [
+          "canonical_posts",
+          "linked_comments",
+          "net_new_posts",
+          "quarantined_comments",
+          "capture_ratio"
+        ]
+      },
+      {
+        "id": "source_section",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## Source Reconciliation\n\n本地历史库应视为 imported archive 的已规范化子集，不能再次累加；生产主库提供最近日常采集，且必须显式锁定 primary DB，不能使用会扫入 fixture/smoke 数据库的 `scope=all`。",
+        "sourceId": "fusion_audit"
+      },
+      {
+        "id": "source_chart",
+        "type": "chart",
+        "layout": "full",
+        "chartId": "source_counts"
+      },
+      {
+        "id": "source_table",
+        "type": "table",
+        "layout": "full",
+        "tableId": "source_table"
+      },
+      {
+        "id": "increment_section",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## Imported Archive Net Increment\n\n88 个净新增帖子不是平均采样：7 个是新增 Momcozy 历史帖，81 个来自竞品或对比采集桶。`collection_bucket` 只记录采集分组；品牌归属必须来自 `mentioned_brands[]`，尤其禁止把 `other` 强制映射为 Momcozy。",
+        "sourceId": "fusion_audit"
+      },
+      {
+        "id": "increment_chart",
+        "type": "chart",
+        "layout": "full",
+        "chartId": "increment_posts"
+      },
+      {
+        "id": "increment_table",
+        "type": "table",
+        "layout": "full",
+        "tableId": "increment_table"
+      },
+      {
+        "id": "history_section",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## Actual Time Coverage\n\n源治理文档声称从 2023-02 开始，但实测有 6 帖早于 2023，最早为 2013-04-28。网站必须从数据计算时间边界，不得硬编码文档范围。",
+        "sourceId": "source_profile"
+      },
+      {
+        "id": "year_chart",
+        "type": "chart",
+        "layout": "full",
+        "chartId": "year_distribution"
+      },
+      {
+        "id": "quality_section",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## Data Quality and Privacy Gates\n\n136 个 JSON 全部可解析且 ID 无重复，但 `full` 只代表当前 payload 未出现 MoreComments，并不等于评论绝对完整。原始区含 Reddit 用户名、HTML、flair 和少量联系方式模式；网站 snapshot 只能使用纯文本、作者哈希、联系方式脱敏结果，并从情感/主题统计中排除 bot。",
+        "sourceId": "source_profile"
+      },
+      {
+        "id": "quality_table",
+        "type": "table",
+        "layout": "full",
+        "tableId": "quality_table"
+      },
+      {
+        "id": "tag_section",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## Tag Dictionary Integration\n\n`dim_tag_v6.3_final` 含 2,346 条完整标签，但 Reddit 吸奶器语料不能直接执行全量规则。当前先启用 L0 通用、吸奶器品线和吸奶器品类规则；只在文本明确出现 M5/M9 时启用已有可验证 SPU 映射。共享词、否定词与低特异性单词全部留在待复核队列；当前标签不是人工真值，不应直接用于管理层 KPI 或自动行动。",
+        "sourceId": "site_snapshot_validation"
+      },
+      {
+        "id": "tag_quality_table",
+        "type": "table",
+        "layout": "full",
+        "tableId": "tag_quality_table"
+      },
+      {
+        "id": "top_tag_table",
+        "type": "table",
+        "layout": "full",
+        "tableId": "top_tag_table"
+      },
+      {
+        "id": "contract_section",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## Fusion Contract\n\n融合必须分成 occurrence、canonical entity、sanitized UI snapshot 三层。现有全局主键 upsert 会覆盖 `run_id/raw_capture_id`，不适合作为多来源 lineage 模型；应保留 `source_occurrences[]` 并按完整度、采集时间和非空字段确定 canonical survivor。"
+      },
+      {
+        "id": "layer_table",
+        "type": "table",
+        "layout": "full",
+        "tableId": "layer_table"
+      },
+      {
+        "id": "activation_section",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## UI Activation Plan\n\n最快可交付路径是版本化静态 JSON snapshot，不先建设 Express/PostgreSQL。P0 只激活有真实证据的 Search、Dashboard、Analytics 和数据质量说明；snapshot 缺失或 schema 错误必须 fail closed，不能静默回落 Mock。"
+      },
+      {
+        "id": "activation_table",
+        "type": "table",
+        "layout": "full",
+        "tableId": "activation_table"
+      },
+      {
+        "id": "decision_section",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## Decisions Required\n\n下列六项会直接决定 snapshot 字段和 UI 文案。报告给出推荐默认值；在修改当前 dirty UI 工作区前，应由项目负责人确认。"
+      },
+      {
+        "id": "decision_table",
+        "type": "table",
+        "layout": "full",
+        "tableId": "decision_table"
+      },
+      {
+        "id": "boundary_section",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## Execution Boundary\n\n本次已完成源目录不可变复制、逐文件 inventory、全量解析、三源只读集合审计、脱敏站点 snapshot、标签词典规则提取和独立数据验证。生产环境保持不变：`production unchanged`、`provider_call=false`、`live_send=false`。当前未修改 dirty React UI，也未宣称网站已通过真实数据验收。"
+      }
+    ],
+    "cards": [
+      {
+        "id": "canonical_posts",
+        "dataset": "headline",
+        "metrics": [
+          {
+            "label": "Canonical posts",
+            "field": "canonical_posts",
+            "format": "number"
+          }
+        ],
+        "description": "Unique posts after three-source identity normalization.",
+        "sourceId": "fusion_audit"
+      },
+      {
+        "id": "linked_comments",
+        "dataset": "headline",
+        "metrics": [
+          {
+            "label": "Linked comments",
+            "field": "linked_comments",
+            "format": "number"
+          }
+        ],
+        "description": "Unique comments with a known canonical parent post.",
+        "sourceId": "fusion_audit"
+      },
+      {
+        "id": "net_new_posts",
+        "dataset": "headline",
+        "metrics": [
+          {
+            "label": "Archive net-new posts",
+            "field": "archive_net_new_posts",
+            "format": "number"
+          },
+          {
+            "label": "Net-new comments",
+            "field": "archive_net_new_comments",
+            "format": "number"
+          }
+        ],
+        "description": "Imported archive entities not already present in history or production.",
+        "sourceId": "fusion_audit"
+      },
+      {
+        "id": "quarantined_comments",
+        "dataset": "headline",
+        "metrics": [
+          {
+            "label": "Quarantined comments",
+            "field": "quarantined_comments",
+            "format": "number"
+          }
+        ],
+        "description": "Production comments whose parent post is absent from all three sources.",
+        "sourceId": "fusion_audit"
+      },
+      {
+        "id": "capture_ratio",
+        "dataset": "headline",
+        "metrics": [
+          {
+            "label": "Raw comment capture signal",
+            "field": "raw_comment_capture_ratio",
+            "format": "percent"
+          }
+        ],
+        "description": "Parsed t1 nodes divided by reported num_comments; not an absolute completeness guarantee.",
+        "sourceId": "source_profile"
+      }
+    ],
+    "charts": [
+      {
+        "id": "source_counts",
+        "title": "Observed entities by source",
+        "description": "Raw rows per source; local history overlaps the imported archive.",
+        "type": "bar",
+        "dataset": "source_entities",
+        "encodings": {
+          "x": {
+            "field": "source",
+            "type": "nominal",
+            "label": "Source"
+          },
+          "y": {
+            "field": "count",
+            "type": "quantitative",
+            "label": "Observed rows"
+          },
+          "color": {
+            "field": "entity_type",
+            "type": "nominal",
+            "label": "Entity"
+          },
+          "tooltip": [
+            {
+              "field": "role",
+              "type": "nominal",
+              "label": "Role"
+            },
+            {
+              "field": "net_new_posts",
+              "type": "quantitative",
+              "label": "Net-new posts"
+            },
+            {
+              "field": "net_new_comments",
+              "type": "quantitative",
+              "label": "Net-new comments"
+            }
+          ]
+        },
+        "sourceId": "fusion_audit"
+      },
+      {
+        "id": "increment_posts",
+        "title": "Net-new posts from the imported archive",
+        "description": "Collection buckets are acquisition metadata, not brand ownership.",
+        "type": "bar",
+        "dataset": "increment",
+        "encodings": {
+          "x": {
+            "field": "collection_bucket",
+            "type": "nominal",
+            "label": "Collection bucket"
+          },
+          "y": {
+            "field": "posts",
+            "type": "quantitative",
+            "label": "Net-new posts"
+          },
+          "tooltip": [
+            {
+              "field": "comments",
+              "type": "quantitative",
+              "label": "Net-new comments"
+            },
+            {
+              "field": "semantic_role",
+              "type": "nominal",
+              "label": "Semantic role"
+            }
+          ]
+        },
+        "sourceId": "fusion_audit"
+      },
+      {
+        "id": "year_distribution",
+        "title": "Imported archive posts by year",
+        "description": "Actual coverage starts in 2013, not 2023.",
+        "type": "bar",
+        "dataset": "years",
+        "encodings": {
+          "x": {
+            "field": "year_label",
+            "type": "ordinal",
+            "label": "Year"
+          },
+          "y": {
+            "field": "posts",
+            "type": "quantitative",
+            "label": "Posts"
+          },
+          "tooltip": [
+            {
+              "field": "year",
+              "type": "quantitative",
+              "label": "Calendar year"
+            },
+            {
+              "field": "source",
+              "type": "nominal",
+              "label": "Source"
+            }
+          ]
+        },
+        "sourceId": "source_profile"
+      }
+    ],
+    "tables": [
+      {
+        "id": "source_table",
+        "title": "Source roles and additive contribution",
+        "dataset": "source_counts",
+        "columns": [
+          {
+            "field": "source",
+            "label": "Source"
+          },
+          {
+            "field": "posts",
+            "label": "Observed posts",
+            "format": "number"
+          },
+          {
+            "field": "comments",
+            "label": "Observed comments",
+            "format": "number"
+          },
+          {
+            "field": "net_new_posts",
+            "label": "Net-new posts",
+            "format": "number"
+          },
+          {
+            "field": "net_new_comments",
+            "label": "Net-new comments",
+            "format": "number"
+          },
+          {
+            "field": "role",
+            "label": "Role"
+          }
+        ],
+        "sourceId": "fusion_audit"
+      },
+      {
+        "id": "increment_table",
+        "title": "Net increment by collection bucket",
+        "dataset": "increment",
+        "columns": [
+          {
+            "field": "collection_bucket",
+            "label": "Bucket"
+          },
+          {
+            "field": "posts",
+            "label": "Posts",
+            "format": "number"
+          },
+          {
+            "field": "comments",
+            "label": "Comments",
+            "format": "number"
+          },
+          {
+            "field": "semantic_role",
+            "label": "Interpretation"
+          }
+        ],
+        "defaultSort": {
+          "field": "posts",
+          "direction": "desc"
+        },
+        "sourceId": "fusion_audit"
+      },
+      {
+        "id": "quality_table",
+        "title": "Quality gates and interpretation",
+        "dataset": "quality",
+        "columns": [
+          {
+            "field": "check",
+            "label": "Gate"
+          },
+          {
+            "field": "value",
+            "label": "Observed"
+          },
+          {
+            "field": "status",
+            "label": "Status"
+          },
+          {
+            "field": "interpretation",
+            "label": "Interpretation"
+          }
+        ],
+        "sourceId": "source_profile"
+      },
+      {
+        "id": "tag_quality_table",
+        "title": "Tag dictionary gates and current execution boundary",
+        "dataset": "tag_quality",
+        "columns": [
+          {
+            "field": "gate",
+            "label": "Gate"
+          },
+          {
+            "field": "observed",
+            "label": "Observed"
+          },
+          {
+            "field": "status",
+            "label": "Status"
+          },
+          {
+            "field": "interpretation",
+            "label": "Interpretation"
+          }
+        ],
+        "sourceId": "site_snapshot_validation"
+      },
+      {
+        "id": "top_tag_table",
+        "title": "Top provisional aspect-tag rule matches",
+        "dataset": "top_aspect_tags",
+        "columns": [
+          {
+            "field": "tag_id",
+            "label": "Tag ID"
+          },
+          {
+            "field": "name_cn",
+            "label": "Tag"
+          },
+          {
+            "field": "theme",
+            "label": "Theme"
+          },
+          {
+            "field": "tag_sentiment",
+            "label": "Dictionary sentiment"
+          },
+          {
+            "field": "post_entities",
+            "label": "Posts",
+            "format": "number"
+          },
+          {
+            "field": "comment_entities",
+            "label": "Comments",
+            "format": "number"
+          },
+          {
+            "field": "total_entities",
+            "label": "Total",
+            "format": "number"
+          },
+          {
+            "field": "validation",
+            "label": "Validation boundary"
+          }
+        ],
+        "defaultSort": {
+          "field": "total_entities",
+          "direction": "desc"
+        },
+        "sourceId": "site_snapshot_validation"
+      },
+      {
+        "id": "layer_table",
+        "title": "Three-layer data contract",
+        "dataset": "layers",
+        "columns": [
+          {
+            "field": "layer",
+            "label": "Layer"
+          },
+          {
+            "field": "grain",
+            "label": "Grain"
+          },
+          {
+            "field": "key",
+            "label": "Key"
+          },
+          {
+            "field": "rule",
+            "label": "Rule"
+          }
+        ],
+        "sourceId": "fusion_audit"
+      },
+      {
+        "id": "activation_table",
+        "title": "UI activation sequence",
+        "dataset": "activation",
+        "columns": [
+          {
+            "field": "priority",
+            "label": "Priority"
+          },
+          {
+            "field": "surface",
+            "label": "Surface"
+          },
+          {
+            "field": "real_data",
+            "label": "Real data"
+          },
+          {
+            "field": "must_remove",
+            "label": "Remove/rename"
+          },
+          {
+            "field": "acceptance",
+            "label": "Acceptance"
+          }
+        ],
+        "sourceId": "fusion_audit"
+      },
+      {
+        "id": "decision_table",
+        "title": "Decision register",
+        "dataset": "decisions",
+        "columns": [
+          {
+            "field": "decision",
+            "label": "Decision"
+          },
+          {
+            "field": "recommendation",
+            "label": "Recommended default"
+          },
+          {
+            "field": "reason",
+            "label": "Why"
+          },
+          {
+            "field": "blocking",
+            "label": "Affects"
+          }
+        ],
+        "sourceId": "fusion_audit"
+      }
+    ],
+    "sources": [
+      {
+        "id": "fusion_audit",
+        "title": "Three-source identity and quality audit",
+        "type": "file",
+        "path": "data/imports/ai_nlp_voc_reddit_20260714/fusion-audit.json",
+        "query": {
+          "engine": "python3/sqlite-readonly",
+          "description": "Recomputes source sets, overlaps, net increments, orphan boundaries and analysis coverage.",
+          "sql": "SELECT * FROM reddit_threads; SELECT * FROM reddit_comments; SELECT source_type, COUNT(*) FROM analysis_results GROUP BY source_type;",
+          "tables_used": [
+            "raw/*.json",
+            "reddit_threads",
+            "reddit_comments",
+            "analysis_results"
+          ],
+          "filters": [
+            "Tencent source restricted to the primary production database",
+            "Comment IDs normalized by removing an optional t1_ prefix",
+            "Raw usernames and text are excluded from this report snapshot"
+          ],
+          "metric_definitions": {
+            "Canonical posts": "COUNT(DISTINCT reddit + post_id) across all three sources after ID normalization.",
+            "Linked comments": "COUNT(DISTINCT reddit + comment_id) whose post_id exists in the canonical post set.",
+            "Archive net new": "Archive IDs MINUS local historical IDs MINUS production IDs.",
+            "Raw capture ratio": "Parsed t1 comment nodes divided by Reddit-reported num_comments; descriptive only."
+          },
+          "executed_at": "2026-07-14T11:28:52.792057+00:00"
+        }
+      },
+      {
+        "id": "source_profile",
+        "title": "Imported archive quality profile",
+        "type": "file",
+        "path": "data/imports/ai_nlp_voc_reddit_20260714/source-profile.json",
+        "query": {
+          "engine": "python3/sqlite-readonly",
+          "description": "Profiles schema, fields, dates, coverage, community concentration and privacy risk without publishing raw text.",
+          "sql": "WITH profile(parsed_comment_count, reported_comment_count) AS (VALUES (4153, 4294)) SELECT parsed_comment_count * 1.0 / reported_comment_count AS raw_comment_capture_ratio FROM profile;",
+          "tables_used": [
+            "136 Reddit thread JSON files"
+          ],
+          "filters": [
+            "Tencent source restricted to the primary production database",
+            "Comment IDs normalized by removing an optional t1_ prefix",
+            "Raw usernames and text are excluded from this report snapshot"
+          ],
+          "metric_definitions": {
+            "Structural full": "No visible kind=more node in the captured comment tree.",
+            "Comment count gap": "SUM(num_comments reported) - COUNT(parsed t1 nodes)."
+          },
+          "executed_at": "2026-07-14T11:28:52.792057+00:00"
+        }
+      },
+      {
+        "id": "import_manifest",
+        "title": "Immutable copy manifest",
+        "type": "file",
+        "path": "data/imports/ai_nlp_voc_reddit_20260714/import-manifest.json",
+        "query": {
+          "engine": "python3/sqlite-readonly",
+          "description": "Lists copied file counts, total bytes and the SHA-256 inventory digest.",
+          "sql": "SELECT 'd1fb7242302392f93a20e6c46f1ee7481667d05809b004e79b36733b7c5e9825' AS inventory_sha256, 145 AS file_count, 18450589 AS total_bytes;",
+          "tables_used": [
+            "file-inventory.jsonl"
+          ],
+          "filters": [
+            "Tencent source restricted to the primary production database",
+            "Comment IDs normalized by removing an optional t1_ prefix",
+            "Raw usernames and text are excluded from this report snapshot"
+          ],
+          "metric_definitions": {
+            "Inventory hash": "SHA-256 of sorted canonical JSONL inventory rows."
+          },
+          "executed_at": "2026-07-14T11:24:04.582267+00:00"
+        }
+      },
+      {
+        "id": "production_identity",
+        "title": "Tencent production identity snapshot",
+        "type": "file",
+        "path": "data/imports/tencent_production_20260714/production-identity-snapshot.json",
+        "query": {
+          "engine": "python3/sqlite-readonly",
+          "description": "Read-only primary-database snapshot containing only IDs, parent post IDs, timestamps and counts.",
+          "sql": "SELECT post_id, created_at_utc FROM reddit_threads ORDER BY post_id; SELECT comment_id, post_id, created_at_utc FROM reddit_comments ORDER BY comment_id; SELECT source_type, COUNT(*) FROM analysis_results GROUP BY source_type;",
+          "tables_used": [
+            "reddit_threads",
+            "reddit_comments",
+            "analysis_results"
+          ],
+          "filters": [
+            "Tencent source restricted to the primary production database",
+            "Comment IDs normalized by removing an optional t1_ prefix",
+            "Raw usernames and text are excluded from this report snapshot"
+          ],
+          "metric_definitions": {
+            "Production primary posts": "COUNT(*) from the primary production reddit_threads table."
+          },
+          "executed_at": "2026-07-14T10:48:16.422089+00:00"
+        }
+      },
+      {
+        "id": "site_snapshot_validation",
+        "title": "Sanitized site snapshot and tag validation",
+        "type": "file",
+        "path": "data/processed/reddit_voc_site_snapshot_20260714/validation-receipt.json",
+        "query": {
+          "engine": "python3/sqlite-readonly",
+          "description": "Independently verifies public-file hashes, identity links, analysis version, tag governance, aggregate denominators and privacy patterns.",
+          "sql": "SELECT 'passed' AS snapshot_validation_status, 221 AS posts, 4549 AS linked_comments, 18 AS quarantined_comments, 2346 AS dictionary_rows;",
+          "tables_used": [
+            "posts.json",
+            "comments.json",
+            "aggregates.json",
+            "tag-dictionary.json"
+          ],
+          "filters": [
+            "Tencent source restricted to the primary production database",
+            "Comment IDs normalized by removing an optional t1_ prefix",
+            "Raw usernames and text are excluded from this report snapshot"
+          ],
+          "metric_definitions": {
+            "Rule-tag coverage": "Entities with at least one unambiguous lexical dictionary match after scope, collision, negation and specificity gates.",
+            "Aspect-tag coverage": "Rule-tag coverage excluding brand-mention tags."
+          },
+          "executed_at": "2026-07-14T11:23:42.158060+00:00"
+        }
+      }
+    ]
+  },
+  "snapshot": {
+    "version": 1,
+    "status": "ready",
+    "generatedAt": "2026-07-14T11:28:52.792057+00:00",
+    "datasets": {
+      "headline": [
+        {
+          "canonical_posts": 221,
+          "linked_comments": 4549,
+          "quarantined_comments": 18,
+          "archive_net_new_posts": 88,
+          "archive_net_new_comments": 2259,
+          "raw_comment_capture_ratio": 0.967163
+        }
+      ],
+      "source_counts": [
+        {
+          "source": "Imported 7-bucket archive",
+          "posts": 136,
+          "comments": 4153,
+          "net_new_posts": 88,
+          "net_new_comments": 2259,
+          "role": "Historical and competitor raw corpus"
+        },
+        {
+          "source": "Local canonical history",
+          "posts": 48,
+          "comments": 1894,
+          "net_new_posts": 0,
+          "net_new_comments": 0,
+          "role": "Validated normalized subset with analysis"
+        },
+        {
+          "source": "Tencent production primary",
+          "posts": 85,
+          "comments": 414,
+          "net_new_posts": 85,
+          "net_new_comments": 414,
+          "role": "Recent daily production corpus"
+        }
+      ],
+      "source_entities": [
+        {
+          "source": "Imported 7-bucket archive",
+          "entity_type": "posts",
+          "count": 136,
+          "role": "Historical and competitor raw corpus",
+          "net_new_posts": 88,
+          "net_new_comments": 2259
+        },
+        {
+          "source": "Imported 7-bucket archive",
+          "entity_type": "comments",
+          "count": 4153,
+          "role": "Historical and competitor raw corpus",
+          "net_new_posts": 88,
+          "net_new_comments": 2259
+        },
+        {
+          "source": "Local canonical history",
+          "entity_type": "posts",
+          "count": 48,
+          "role": "Validated normalized subset with analysis",
+          "net_new_posts": 0,
+          "net_new_comments": 0
+        },
+        {
+          "source": "Local canonical history",
+          "entity_type": "comments",
+          "count": 1894,
+          "role": "Validated normalized subset with analysis",
+          "net_new_posts": 0,
+          "net_new_comments": 0
+        },
+        {
+          "source": "Tencent production primary",
+          "entity_type": "posts",
+          "count": 85,
+          "role": "Recent daily production corpus",
+          "net_new_posts": 85,
+          "net_new_comments": 414
+        },
+        {
+          "source": "Tencent production primary",
+          "entity_type": "comments",
+          "count": 414,
+          "role": "Recent daily production corpus",
+          "net_new_posts": 85,
+          "net_new_comments": 414
+        }
+      ],
+      "increment": [
+        {
+          "collection_bucket": "Elvie",
+          "posts": 15,
+          "comments": 211,
+          "semantic_role": "collection segment, not brand ownership"
+        },
+        {
+          "collection_bucket": "Lansinoh",
+          "posts": 6,
+          "comments": 62,
+          "semantic_role": "collection segment, not brand ownership"
+        },
+        {
+          "collection_bucket": "Medela",
+          "posts": 14,
+          "comments": 286,
+          "semantic_role": "collection segment, not brand ownership"
+        },
+        {
+          "collection_bucket": "Momcozy",
+          "posts": 7,
+          "comments": 321,
+          "semantic_role": "collection segment, not brand ownership"
+        },
+        {
+          "collection_bucket": "Spectra",
+          "posts": 24,
+          "comments": 544,
+          "semantic_role": "collection segment, not brand ownership"
+        },
+        {
+          "collection_bucket": "Willow",
+          "posts": 9,
+          "comments": 234,
+          "semantic_role": "collection segment, not brand ownership"
+        },
+        {
+          "collection_bucket": "other",
+          "posts": 13,
+          "comments": 601,
+          "semantic_role": "collection segment, not brand ownership"
+        }
+      ],
+      "years": [
+        {
+          "year_label": "Y2013",
+          "year": 2013,
+          "posts": 1,
+          "source": "Imported archive"
+        },
+        {
+          "year_label": "Y2021",
+          "year": 2021,
+          "posts": 1,
+          "source": "Imported archive"
+        },
+        {
+          "year_label": "Y2022",
+          "year": 2022,
+          "posts": 4,
+          "source": "Imported archive"
+        },
+        {
+          "year_label": "Y2023",
+          "year": 2023,
+          "posts": 5,
+          "source": "Imported archive"
+        },
+        {
+          "year_label": "Y2024",
+          "year": 2024,
+          "posts": 23,
+          "source": "Imported archive"
+        },
+        {
+          "year_label": "Y2025",
+          "year": 2025,
+          "posts": 66,
+          "source": "Imported archive"
+        },
+        {
+          "year_label": "Y2026",
+          "year": 2026,
+          "posts": 36,
+          "source": "Imported archive"
+        }
+      ],
+      "quality": [
+        {
+          "check": "JSON parsing",
+          "value": "136/136",
+          "status": "pass",
+          "interpretation": "All imported thread payloads use the expected two-Listing shape."
+        },
+        {
+          "check": "Raw comment coverage signal",
+          "value": "4153/4294 (96.7%)",
+          "status": "caution",
+          "interpretation": "Reported-versus-parsed difference is a risk signal, not proof that exactly 141 comments are missing."
+        },
+        {
+          "check": "Structural coverage",
+          "value": "132 full / 4 partial",
+          "status": "caution",
+          "interpretation": "Full means no visible MoreComments node; 26 full-grade files still have a reported-count gap."
+        },
+        {
+          "check": "Historical equivalence",
+          "value": "48 posts + 1,894 comments, 0 field mismatches",
+          "status": "pass",
+          "interpretation": "The local historical database is a normalized subset, not an additive content source."
+        },
+        {
+          "check": "Production orphan comments",
+          "value": "18 comments / 4 missing post IDs",
+          "status": "quarantine",
+          "interpretation": "Exclude from UI denominators and analysis until their parent posts are recovered."
+        },
+        {
+          "check": "Sampling concentration",
+          "value": "95/136 posts from r/ExclusivelyPumping",
+          "status": "caution",
+          "interpretation": "Valid for directed VOC research; invalid as all-Reddit market share."
+        },
+        {
+          "check": "Privacy gate",
+          "value": "1 email + 4 phone-pattern candidates; 113 bot rows",
+          "status": "review",
+          "interpretation": "Hash authors, redact contact patterns, and exclude bots from VOC metrics."
+        },
+        {
+          "check": "Legacy source ETL",
+          "value": "136 posts / 0 comments",
+          "status": "fail",
+          "interpretation": "Do not run the source ETL; it scopes comment extraction to the post Listing and also uses eval()."
+        }
+      ],
+      "tag_quality": [
+        {
+          "gate": "Dictionary structure",
+          "observed": "2,346 rows / 28 fields",
+          "status": "pass",
+          "interpretation": "tag_id is unique, every governed field is populated, and every keywords_en value is a valid non-empty JSON list."
+        },
+        {
+          "gate": "Pump-context executable scope",
+          "observed": "470 base rules + 26 M5/M9 SPU rules",
+          "status": "pass",
+          "interpretation": "Base scope is L0 universal + pump product line + pump category. SPU rules require an explicit model alias."
+        },
+        {
+          "gate": "Blocked SPU rules",
+          "observed": "1,199/1,225",
+          "status": "blocked",
+          "interpretation": "No reliable model-to-SPU alias exists in the dictionary metadata for these rules; they are not guessed into metrics."
+        },
+        {
+          "gate": "Shared keyword collisions",
+          "observed": "194 shared / 40 cross-sentiment",
+          "status": "review",
+          "interpretation": "Shared phrases remain candidates and never force a silent tag choice."
+        },
+        {
+          "gate": "Lexical rule coverage",
+          "observed": "205/221 posts; 2138/4435 comments",
+          "status": "provisional",
+          "interpretation": "This is phrase-rule coverage, not semantic accuracy or model precision."
+        },
+        {
+          "gate": "Aspect-tag coverage",
+          "observed": "119/221 posts; 1070/4435 comments",
+          "status": "provisional",
+          "interpretation": "Brand mentions are separated so their dictionary sentiment cannot distort aspect sentiment metrics."
+        },
+        {
+          "gate": "Review queues",
+          "observed": "3,120 low-specificity / 1,028 shared / 446 negated",
+          "status": "review",
+          "interpretation": "These are preserved for QA and excluded from aspect-tag metrics."
+        },
+        {
+          "gate": "Semantic validation",
+          "observed": "not run",
+          "status": "pending",
+          "interpretation": "Expose tags as provisional rule matches until a stratified human or approved offline-model review is complete."
+        }
+      ],
+      "top_aspect_tags": [
+        {
+          "tag_id": "L0-SVC-019",
+          "name_cn": "正面反馈",
+          "theme": "客服售后",
+          "tag_sentiment": "正向",
+          "post_entities": 27,
+          "comment_entities": 298,
+          "total_entities": 325,
+          "validation": "lexical rule match; semantic review pending"
+        },
+        {
+          "tag_id": "L0-CHL-003",
+          "name_cn": "物超所值",
+          "theme": "价格价值感",
+          "tag_sentiment": "正向",
+          "post_entities": 12,
+          "comment_entities": 84,
+          "total_entities": 96,
+          "validation": "lexical rule match; semantic review pending"
+        },
+        {
+          "tag_id": "L0-SVC-010",
+          "name_cn": "客服体验",
+          "theme": "客服售后",
+          "tag_sentiment": "中性",
+          "post_entities": 8,
+          "comment_entities": 81,
+          "total_entities": 89,
+          "validation": "lexical rule match; semantic review pending"
+        },
+        {
+          "tag_id": "L0-GEN-020",
+          "name_cn": "无线免提",
+          "theme": "产品属性-无线",
+          "tag_sentiment": "正向",
+          "post_entities": 10,
+          "comment_entities": 51,
+          "total_entities": 61,
+          "validation": "lexical rule match; semantic review pending"
+        },
+        {
+          "tag_id": "L0-GEN-164",
+          "name_cn": "功能需求驱动购买",
+          "theme": "购买动机",
+          "tag_sentiment": "中性",
+          "post_entities": 25,
+          "comment_entities": 36,
+          "total_entities": 61,
+          "validation": "lexical rule match; semantic review pending"
+        },
+        {
+          "tag_id": "L0-GEN-075",
+          "name_cn": "工作场景",
+          "theme": "使用场景-工作",
+          "tag_sentiment": "中性",
+          "post_entities": 11,
+          "comment_entities": 46,
+          "total_entities": 57,
+          "validation": "lexical rule match; semantic review pending"
+        },
+        {
+          "tag_id": "L2-PUMP-030",
+          "name_cn": "出奶量不输主泵/竞品",
+          "theme": "竞品对比支持",
+          "tag_sentiment": "正向",
+          "post_entities": 7,
+          "comment_entities": 49,
+          "total_entities": 56,
+          "validation": "lexical rule match; semantic review pending"
+        },
+        {
+          "tag_id": "L2-PUMP-007",
+          "name_cn": "考虑购买配件",
+          "theme": "复购行为",
+          "tag_sentiment": "正向",
+          "post_entities": 9,
+          "comment_entities": 46,
+          "total_entities": 55,
+          "validation": "lexical rule match; semantic review pending"
+        },
+        {
+          "tag_id": "L0-GEN-103",
+          "name_cn": "强烈推荐",
+          "theme": "推荐意愿",
+          "tag_sentiment": "正向",
+          "post_entities": 3,
+          "comment_entities": 49,
+          "total_entities": 52,
+          "validation": "lexical rule match; semantic review pending"
+        },
+        {
+          "tag_id": "L2-PUMP-016",
+          "name_cn": "法兰尺码不合适",
+          "theme": "使用舒适度",
+          "tag_sentiment": "负向",
+          "post_entities": 4,
+          "comment_entities": 32,
+          "total_entities": 36,
+          "validation": "lexical rule match; semantic review pending"
+        },
+        {
+          "tag_id": "L0-GEN-074",
+          "name_cn": "夜间使用",
+          "theme": "使用场景-夜间",
+          "tag_sentiment": "中性",
+          "post_entities": 4,
+          "comment_entities": 27,
+          "total_entities": 31,
+          "validation": "lexical rule match; semantic review pending"
+        },
+        {
+          "tag_id": "L0-GEN-098",
+          "name_cn": "性能满意",
+          "theme": "性能表现",
+          "tag_sentiment": "正向",
+          "post_entities": 2,
+          "comment_entities": 28,
+          "total_entities": 30,
+          "validation": "lexical rule match; semantic review pending"
+        },
+        {
+          "tag_id": "L1-LGRE-012",
+          "name_cn": "二次购买",
+          "theme": "持续使用",
+          "tag_sentiment": "正向",
+          "post_entities": 4,
+          "comment_entities": 24,
+          "total_entities": 28,
+          "validation": "lexical rule match; semantic review pending"
+        },
+        {
+          "tag_id": "L2-PUMP-022",
+          "name_cn": "法兰适配后体验改善",
+          "theme": "使用舒适度",
+          "tag_sentiment": "正向",
+          "post_entities": 5,
+          "comment_entities": 21,
+          "total_entities": 26,
+          "validation": "lexical rule match; semantic review pending"
+        },
+        {
+          "tag_id": "L1-PUMP-024",
+          "name_cn": "可穿戴解放双手",
+          "theme": "操作便捷性",
+          "tag_sentiment": "正向",
+          "post_entities": 4,
+          "comment_entities": 20,
+          "total_entities": 24,
+          "validation": "lexical rule match; semantic review pending"
+        }
+      ],
+      "layers": [
+        {
+          "layer": "L1 immutable occurrences",
+          "grain": "One source observation",
+          "key": "dataset/source capture + entity ID",
+          "rule": "Preserve every lineage occurrence; never publish raw files."
+        },
+        {
+          "layer": "L2 canonical entities",
+          "grain": "One Reddit post or comment",
+          "key": "reddit + post_id/comment_id",
+          "rule": "Choose the most complete observation and retain all source_occurrences."
+        },
+        {
+          "layer": "L3 analysis + UI snapshot",
+          "grain": "Sanitized canonical entity and aggregate",
+          "key": "dataset_version + entity ID",
+          "rule": "One analysis version; hashed authors; bots excluded; PII redacted."
+        }
+      ],
+      "activation": [
+        {
+          "priority": "P0",
+          "surface": "Search",
+          "real_data": "221 posts, linked comments, dates, subreddit, score, permalink, topic/sentiment, provisional rule tags",
+          "must_remove": "Mock fallback, template summary, fake author/status",
+          "acceptance": "Filters and detail counts reconcile to the versioned snapshot."
+        },
+        {
+          "priority": "P0",
+          "surface": "Dashboard",
+          "real_data": "Unique posts, 4,549 linked comments, coverage, source/time boundaries",
+          "must_remove": "ROI, response-time and team-state claims",
+          "acceptance": "Every headline recomputes from snapshot and shows its denominator."
+        },
+        {
+          "priority": "P0",
+          "surface": "Analytics",
+          "real_data": "Trend, community, topic, pain point, brand co-mention, provisional aspect-tag distribution",
+          "must_remove": "Market-share wording and unsupported VADER claim",
+          "acceptance": "Use sample mention share and expose source evidence IDs."
+        },
+        {
+          "priority": "P0",
+          "surface": "Data quality",
+          "real_data": "Source coverage, 28 More nodes, 18 quarantined comments, analysis version",
+          "must_remove": "Silent degradation",
+          "acceptance": "Missing or invalid snapshot fails closed with a visible error."
+        },
+        {
+          "priority": "P1",
+          "surface": "Insights / UGC / Messages",
+          "real_data": "Evidence-linked insights and rule-generated candidates",
+          "must_remove": "Automatic authorization or delivery claims",
+          "acceptance": "Labels remain candidate/local-only and no webhook is called."
+        }
+      ],
+      "decisions": [
+        {
+          "decision": "Author display",
+          "recommendation": "Stable pseudonym derived from author_hash",
+          "reason": "Raw Reddit usernames are unnecessary for analysis and create privacy risk.",
+          "blocking": "UI snapshot contract"
+        },
+        {
+          "decision": "Brand semantics",
+          "recommendation": "collection_bucket separate from mentioned_brands[]",
+          "reason": "111/136 discussions mention multiple brands; other is not Momcozy ownership.",
+          "blocking": "Competitor charts and filters"
+        },
+        {
+          "decision": "Competitor wording",
+          "recommendation": "Sample mention share, never market share",
+          "reason": "The corpus is search- and community-directed rather than probability sampled.",
+          "blocking": "Dashboard copy"
+        },
+        {
+          "decision": "Intent fields",
+          "recommendation": "Use topic; rename intentScore to analysis confidence",
+          "reason": "Current real pipeline does not produce the UI's requested purchase-intent score.",
+          "blocking": "Search and detail schema"
+        },
+        {
+          "decision": "Delivery architecture",
+          "recommendation": "Versioned static snapshot first; live API later",
+          "reason": "Fastest safe activation while the UI repo is dirty and API contracts do not match.",
+          "blocking": "P0 implementation batch"
+        },
+        {
+          "decision": "Tag exposure",
+          "recommendation": "Show as provisional rule tags; keep out of executive KPIs until semantic QA",
+          "reason": "The dictionary contains shared, low-specificity and relational phrases that exact matching alone cannot validate semantically.",
+          "blocking": "Search filters, detail badges and tag analytics copy"
+        }
+      ]
+    },
+    "accessIssues": []
+  },
+  "sources": [
+    {
+      "id": "fusion_audit",
+      "title": "Three-source identity and quality audit",
+      "type": "file",
+      "path": "data/imports/ai_nlp_voc_reddit_20260714/fusion-audit.json",
+      "query": {
+        "engine": "python3/sqlite-readonly",
+        "description": "Recomputes source sets, overlaps, net increments, orphan boundaries and analysis coverage.",
+        "sql": "SELECT * FROM reddit_threads; SELECT * FROM reddit_comments; SELECT source_type, COUNT(*) FROM analysis_results GROUP BY source_type;",
+        "tables_used": [
+          "raw/*.json",
+          "reddit_threads",
+          "reddit_comments",
+          "analysis_results"
+        ],
+        "filters": [
+          "Tencent source restricted to the primary production database",
+          "Comment IDs normalized by removing an optional t1_ prefix",
+          "Raw usernames and text are excluded from this report snapshot"
+        ],
+        "metric_definitions": {
+          "Canonical posts": "COUNT(DISTINCT reddit + post_id) across all three sources after ID normalization.",
+          "Linked comments": "COUNT(DISTINCT reddit + comment_id) whose post_id exists in the canonical post set.",
+          "Archive net new": "Archive IDs MINUS local historical IDs MINUS production IDs.",
+          "Raw capture ratio": "Parsed t1 comment nodes divided by Reddit-reported num_comments; descriptive only."
+        },
+        "executed_at": "2026-07-14T11:28:52.792057+00:00"
+      }
+    },
+    {
+      "id": "source_profile",
+      "title": "Imported archive quality profile",
+      "type": "file",
+      "path": "data/imports/ai_nlp_voc_reddit_20260714/source-profile.json",
+      "query": {
+        "engine": "python3/sqlite-readonly",
+        "description": "Profiles schema, fields, dates, coverage, community concentration and privacy risk without publishing raw text.",
+        "sql": "WITH profile(parsed_comment_count, reported_comment_count) AS (VALUES (4153, 4294)) SELECT parsed_comment_count * 1.0 / reported_comment_count AS raw_comment_capture_ratio FROM profile;",
+        "tables_used": [
+          "136 Reddit thread JSON files"
+        ],
+        "filters": [
+          "Tencent source restricted to the primary production database",
+          "Comment IDs normalized by removing an optional t1_ prefix",
+          "Raw usernames and text are excluded from this report snapshot"
+        ],
+        "metric_definitions": {
+          "Structural full": "No visible kind=more node in the captured comment tree.",
+          "Comment count gap": "SUM(num_comments reported) - COUNT(parsed t1 nodes)."
+        },
+        "executed_at": "2026-07-14T11:28:52.792057+00:00"
+      }
+    },
+    {
+      "id": "import_manifest",
+      "title": "Immutable copy manifest",
+      "type": "file",
+      "path": "data/imports/ai_nlp_voc_reddit_20260714/import-manifest.json",
+      "query": {
+        "engine": "python3/sqlite-readonly",
+        "description": "Lists copied file counts, total bytes and the SHA-256 inventory digest.",
+        "sql": "SELECT 'd1fb7242302392f93a20e6c46f1ee7481667d05809b004e79b36733b7c5e9825' AS inventory_sha256, 145 AS file_count, 18450589 AS total_bytes;",
+        "tables_used": [
+          "file-inventory.jsonl"
+        ],
+        "filters": [
+          "Tencent source restricted to the primary production database",
+          "Comment IDs normalized by removing an optional t1_ prefix",
+          "Raw usernames and text are excluded from this report snapshot"
+        ],
+        "metric_definitions": {
+          "Inventory hash": "SHA-256 of sorted canonical JSONL inventory rows."
+        },
+        "executed_at": "2026-07-14T11:24:04.582267+00:00"
+      }
+    },
+    {
+      "id": "production_identity",
+      "title": "Tencent production identity snapshot",
+      "type": "file",
+      "path": "data/imports/tencent_production_20260714/production-identity-snapshot.json",
+      "query": {
+        "engine": "python3/sqlite-readonly",
+        "description": "Read-only primary-database snapshot containing only IDs, parent post IDs, timestamps and counts.",
+        "sql": "SELECT post_id, created_at_utc FROM reddit_threads ORDER BY post_id; SELECT comment_id, post_id, created_at_utc FROM reddit_comments ORDER BY comment_id; SELECT source_type, COUNT(*) FROM analysis_results GROUP BY source_type;",
+        "tables_used": [
+          "reddit_threads",
+          "reddit_comments",
+          "analysis_results"
+        ],
+        "filters": [
+          "Tencent source restricted to the primary production database",
+          "Comment IDs normalized by removing an optional t1_ prefix",
+          "Raw usernames and text are excluded from this report snapshot"
+        ],
+        "metric_definitions": {
+          "Production primary posts": "COUNT(*) from the primary production reddit_threads table."
+        },
+        "executed_at": "2026-07-14T10:48:16.422089+00:00"
+      }
+    },
+    {
+      "id": "site_snapshot_validation",
+      "title": "Sanitized site snapshot and tag validation",
+      "type": "file",
+      "path": "data/processed/reddit_voc_site_snapshot_20260714/validation-receipt.json",
+      "query": {
+        "engine": "python3/sqlite-readonly",
+        "description": "Independently verifies public-file hashes, identity links, analysis version, tag governance, aggregate denominators and privacy patterns.",
+        "sql": "SELECT 'passed' AS snapshot_validation_status, 221 AS posts, 4549 AS linked_comments, 18 AS quarantined_comments, 2346 AS dictionary_rows;",
+        "tables_used": [
+          "posts.json",
+          "comments.json",
+          "aggregates.json",
+          "tag-dictionary.json"
+        ],
+        "filters": [
+          "Tencent source restricted to the primary production database",
+          "Comment IDs normalized by removing an optional t1_ prefix",
+          "Raw usernames and text are excluded from this report snapshot"
+        ],
+        "metric_definitions": {
+          "Rule-tag coverage": "Entities with at least one unambiguous lexical dictionary match after scope, collision, negation and specificity gates.",
+          "Aspect-tag coverage": "Rule-tag coverage excluding brand-mention tags."
+        },
+        "executed_at": "2026-07-14T11:23:42.158060+00:00"
+      }
+    }
+  ],
+  "package_info": {
+    "root": ".",
+    "manifestPath": "artifact.json",
+    "snapshotPath": "artifact.json#snapshot"
+  }
+}

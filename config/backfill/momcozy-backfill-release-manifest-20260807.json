@@ -1,0 +1,34 @@
+{
+  "reviewed_files_sha256": {
+    "config/backfill/momcozy-comment-cursor-contract-20260711.json": "a76c979ddca756ba4bd15f6efa52fda966c8778660a4272568f88c9f2acd5824",
+    "config/backfill/momcozy-seed-baseline-20250101-20260711.json": "ec3fd0aac2ba32b89348a4f98935bc1a851d9250e39304285107f671c1944abc",
+    "pyproject.toml": "32c9c1ebea98000933f2ee8609b2df6cb8c9d3191686e3c77f6331d26706c26f",
+    "scripts/run_historical_backfill.sh": "c4a6904a5a7e8f01f58598270640bc9923c64a5a5733e4d0723feb7b558b9105",
+    "src/reddit_voc/__init__.py": "07dd9995b249e54eeaf96ddb17749d4b7dc926f614479806a0bc79da6b509649",
+    "src/reddit_voc/adapters.py": "2614aae532cc6d4c62d132695e551df47e9374c29491f15c9a830f32a649271e",
+    "src/reddit_voc/analyzer.py": "caa2f84c4a9d06c3f3ea92d3bb7291142e011aace330b3377ce658081216ef56",
+    "src/reddit_voc/backfill_archive.py": "ba4620f0fee3dc9297efba95a2fc37eba133ee067e6d517cc1361270200f648b",
+    "src/reddit_voc/backfill_archived_recovery.py": "1e0ccc8a8def05a08677db8d0ea682605a2ea732b5b53b2e0bbf206ef30d9e54",
+    "src/reddit_voc/backfill_cli.py": "9d6b34576507127d7ac2ab7c3ed5b9b412e8e06c0c2057fb2ff189d5ef62220e",
+    "src/reddit_voc/backfill_merge.py": "b30ae30c5227c0f0b627d0f22e8cd61c79442d254e0ae12ff80324511143b6ca",
+    "src/reddit_voc/backfill_models.py": "631e0efd5009c02b36c6194bc821e6b376961f7d63e5e7d494cd9cbab640fa66",
+    "src/reddit_voc/backfill_provider.py": "d426004fc5acaa5d0ef33465689c3bea85ab24ca172e68113f02d4ee506b2d94",
+    "src/reddit_voc/backfill_profile.py": "eca5806451b484620925092a50a02aaddd23ee5a8d0d3beb370972464025f07d",
+    "src/reddit_voc/backfill_seed.py": "148a222cb650e39587e8ce2c4e920db2df357709032ee2d7bbe607949629e85a",
+    "src/reddit_voc/backfill_source_batch.py": "92b09423ba21ae36f7ff4b56b58d7f64ae6869b070eae828c25d9efdbf71eea3",
+    "src/reddit_voc/backfill_storage.py": "786978598e557f7d8e7a80b8c2dfc9f9e0539e1089dea45a41c5ce7584604099",
+    "src/reddit_voc/backfill_validation.py": "bee6c1f688c5eb57e3095faf5a899670939c98f512cabaa396dffa95f5759a23",
+    "src/reddit_voc/keywords.py": "7a403ba251d46ef2dd67b44b90c5e570576232017c9eb3d4564745b7cc61dff9",
+    "src/reddit_voc/models.py": "0ca3ff008cbcec9c57e102a1e726b4c06e313f704c6db42f9485b214b3ee52b5",
+    "src/reddit_voc/search_config.py": "9b863435689de2905c51ec440d55285449747e3b329ddfbc3c194c043ad32b86",
+    "src/reddit_voc/storage.py": "36aa716312ca7e2fa525c8e34dc7d130b212dd24e4832ace36e4cb660a8c4ac5",
+    "src/reddit_voc/tikhub.py": "d68183d0d755db06cddddc0fd4d54a57faf61d659547cc5202067e039999f8d6",
+    "src/reddit_voc/time_window.py": "19b22faabe4102e05bc5436a06978e73363f6987e2a3ac02ac35802b5c5cfbad"
+  },
+  "run_id": "backfill_momcozy_v2_20250101_20260807",
+  "schema_version": "momcozy_backfill_release_manifest_v1",
+  "seed_baseline": {
+    "relative_path": "config/backfill/momcozy-seed-baseline-20250101-20260711.json",
+    "sha256": "ec3fd0aac2ba32b89348a4f98935bc1a851d9250e39304285107f671c1944abc"
+  }
+}
