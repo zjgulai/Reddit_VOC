@@ -4,7 +4,7 @@ doc_type: project_handoff
 status: active
 created: 2026-08-12
 updated: 2026-08-22
-evidence_cutoff_bjt: 2026-08-22T17:04:27+08:00
+evidence_cutoff_bjt: 2026-08-22T18:13:00+08:00
 owner: Reddit VOC project team
 ---
 
@@ -29,7 +29,7 @@ owner: Reddit VOC project team
 4. 日报、周报、月报继续显示同环比和六点趋势；三者是对每日来源数据的周期聚合，不是三套独立采集器。
 5. 8 月 15 日、8 月 21 日与 8 月 22 日 exact outbox 的双目标受控补推与终态验收均已完成；生产已有唯一北京时间 08:00 guarded cron。8 月 22 日已修复 `scheduled-cycle` 被误路由到 smoke 的生产根因，当前必须由 8 月 23 日首个自然周期证明自动链路，并在当前年度 authority 到期前完成续期验收。
 
-下一阶段完成标准：2026-08-23 自然 07:00→08:00 周期对同一 immutable outbox 完成 source、DeepSeek translation、prepared、primary/secondary terminal `sent`、DB projection 和 cycle=`send_consumed`；TikHub comments 路由恢复并重新产生非零评论，或由上游正式证据确认持续不可用并保留降级状态；公开洞察站 current 指向包含最新已准入数据的 release；根仓库和嵌套 UI 都有可追溯 Git 基线。
+下一阶段完成标准：2026-08-23 自然 07:00→08:00 周期对同一 immutable outbox 完成 source、DeepSeek translation、prepared、primary/secondary terminal `sent`、DB projection 和 cycle=`send_consumed`；TikHub comments 路由恢复并重新产生非零评论，或由上游正式证据确认持续不可用并保留降级状态；公开洞察站 current 指向包含最新已准入数据的 release；每次变更由 GitHub `main`、生产 version lock 和只读 postflight 共同闭合。
 
 ## 2. 当前状态摘要
 
@@ -44,7 +44,7 @@ owner: Reddit VOC project team
 | 日/周/月报告 | 最新本地数据候选通过同环比/同比/六点趋势审计：日报 5/5/5、周报 9/9/9、月报 10/10/10 | L2 本地候选 | 历史采集完整性没有 Owner 证明，比较口径仍应标为 observed |
 | 洞察站 UI | 当前嵌套 UI 测试 229 passed / 46 skipped；真实 Dashboard、报告、搜索、分析、洞察和帖子中文详情能力在本地源码中存在 | L2 本地代码 | 当前生产 site/data current 最后一次只读确认仍是 2026-08-10 线，未包含 2026-08-12 日报补推 |
 | 公开生产站 | 最近只读事实：site current=`da9b94b5e0a6e39941765779164303e54b92a338b1754d035dd3fea798052acc`，data current=`reddit_voc_release_20260810_observed_translation_v1` | 2026-08-11 L3 快照 | 本轮没有执行 public current 切换，页面日期不会因补推自动变成今天 |
-| Git 可追溯性 | 根分支 `codex/momcozy-reddit-backfill-20260711` 无任何 commit，根目录文件均显示 untracked；嵌套 UI 在 commit `d754bc7` 上有大量 tracked/untracked 变更 | 当前 Git 事实 | 无法从根 Git 自动生成可信的“本轮改动 diff” |
+| Git 可追溯性 | 根仓库已建立 `main`，初始导入 commit=`ebcaede01a57e32a60448746d07d31e8d7989197` 并推送至 `zjgulai/Reddit_VOC`；原嵌套 UI 历史 `d754bc7` 已以完整 bundle 保存在根 `.git/pre-import-backups/`，UI 文件改由根 Git 直接跟踪 | 当前 Git/GitHub 事实 | 每次完成必须满足 clean worktree、`HEAD=origin/main`、GitHub Actions green；本地 backup 不属于 GitHub 或生产制品 |
 
 ### 2026-08-22 G6R6：自然周期根因修复与今日双机器人补推终态
 
@@ -261,6 +261,7 @@ flowchart LR
 - DeepSeek 和 DingTalk credential 由受限文件读取，不从普通环境变量回退；不在日志或 receipt 中保存 secret 派生值。
 - daily report 与 periodic report 使用不同 namespace/current；激活事务使用 shared lock、CAS、journal、marker-last 和安全单调恢复。
 - 发送成功、rejected、unknown 和数据库投影失败保留不同证据；已成功或 unknown 的目标不自动重发。
+- 根 Git 只提交源码、合同、公开测试投影和不可变 manifest；credential、生产数据库、运行态输出与生产数据 current 均继续留在 Git 外。`scripts/verify_version_consistency.py` 负责 local/GitHub/production 三方只读核验。
 
 ## 5. 关键技术决策
 
@@ -273,10 +274,11 @@ flowchart LR
 7. **日期由数据决定**：洞察站日期来自 current release 的 `data_as_of`，日报日期来自 source run/report period；不得用系统当天日期覆盖旧 release。
 8. **公开站和日报 runtime 分离**：daily current 的激活不会切换 site current/data current；两条发布链必须各自有 receipt。
 9. **生产 claim 以回执为准**：本地测试、candidate SHA、HTTP 200、container exit 0 都不是完整生产证明。
+10. **CI 按证据依赖分 lane**：GitHub 默认运行全部 repository-contained tests；新测试默认进入该 lane。依赖 `add_data`、`data/processed`、`output` 或历史 archive 的 38 个模块必须显式登记为 `local-artifact`，本地全量继续执行，不能用缺制品的 GitHub runner制造假失败或假通过。
 
 ## 6. 修改过的核心文件
 
-根 Git 无 commit，无法可靠区分所有历史修改。下表是通过当前代码职责、冻结 release manifest 和本轮回执能够确认的核心修改面，不代表完整 `git diff`。
+根 Git 已于 2026-08-22 建立初始可追溯基线。下表同时记录当前生产职责面和本次 GitHub 一致性治理入口；历史代码在初始导入前的逐文件演进仍只能由旧 UI bundle 与既有回执追溯。
 
 | 文件/目录 | 作用 | 当前注意事项 |
 |---|---|---|
@@ -292,6 +294,10 @@ flowchart LR
 | `scripts/report_control.py` | policy、permit、cycle ledger、authority、prepared commit、激活/恢复 | 主线 SHA `69b8be5e...9358`；attempt env 会规范化 artifact origin，并以 formal Provider v2 hash-chain/manifest closure 完成 host commit；生产 19ff 尚未包含这些字节 |
 | `tests/test_daily_report_launcher.py` | daily launcher 调度与安全回归 | 新增 `scheduled-cycle` 必须进入 prepare 分支且先于 smoke fallback 的原始故障回归 |
 | `tests/test_storage_dingtalk.py` | DingTalk storage/transport 单测 | 业务 `errcode != 0` fixture 已改用合法的假钉钉 URL，并适配有界 `read(size)`；未放宽生产 webhook 校验 |
+| `scripts/verify_version_consistency.py`、`config/production-version-lock.json` | 重建 daily release，并可选核验 GitHub HEAD 与生产 current/manifest/cron/report-env metadata | 生产检查只读，禁止读取 credential 内容、数据库和容器 |
+| `scripts/frontend_test_data.py`、`test-fixtures/public-data-20260723/` | 从 public manifests 构建、验签并物化 81 文件的前端合同夹具 | 历史公开投影，仅供 clean clone 测试，不是 production current；含公开 Reddit ID/permalink，不含 author/credential |
+| `scripts/run_backend_test_lane.py`、`config/ci/test-lanes.json` | fail-closed 划分 repository 与 local-artifact backend tests | 38 个制品依赖模块保留本地全量门禁，新模块默认进入 GitHub lane |
+| `.github/workflows/ci.yml` | GitHub `main`/PR 的 backend、frontend tests、lint、build 与 version lock 门禁 | CI 不执行 Provider、发送、生产写入或部署 |
 | `config/schemas/daily-translation-*.schema.json` | complete/blocked translation 证据 schema | manifest SHA `11845b8e...`，attempt SHA `ec823a77...` |
 | `ref/UI/momcozy-reddit-workbench/` | React 洞察站、真实 routes、日期/freshness、报告与帖子详情 | 嵌套 Git 有 95 条 dirty/untracked 状态；不能直接把工作树当 release |
 | `docs/superpowers/specs/2026-08-11-g6r1-b2-dual-destination-design.md` | 双目标数据、ledger、幂等与聚合状态设计 | 当前双目标设计基线 |
@@ -312,7 +318,10 @@ flowchart LR
 
 | 范围 | 命令/结果 | 结论 |
 |---|---|---|
-| 根仓库全量 Python | `PYTHONDONTWRITEBYTECODE=1 uv run --frozen pytest -q`：2014 passed、989 subtests passed | 当前正确 pytest 入口全绿；此前用 `unittest discover` 误收集 pytest 模块的 13 个 import/fixture error 不构成产品回归 |
+| 迁移前根仓库全量 Python（含本地冻结制品） | `PYTHONDONTWRITEBYTECODE=1 uv run --frozen pytest -q`：2019 passed、989 subtests passed | 初始导入前全绿；本次新增 lane/fixture tests 由下列当前证据覆盖 |
+| clean clone 前端 | 81 文件夹具物化后：46 files passed、1 skipped；229 passed、46 skipped；lint 0 error/15 warning；Vite 2,666 modules build passed | 前端测试不再隐式依赖本机 `public/data` |
+| clean archive backend repository lane | 144 modules：1642 passed、1 skipped、862 subtests passed | 使用真实 `npm ci` 和公开夹具，全绿且不依赖 Git 外本地制品 |
+| 当前本地 backend artifact lane | 38 modules：379 passed、127 subtests passed | 与 repository lane 合计覆盖当前 182 个 backend test modules：2021 passed、1 skipped；未删除或弱化制品测试 |
 | 原始故障与 DingTalk fixture 定向回归 | `uv run --frozen pytest -q ...`：20 passed | 19 个 launcher 测试与 1 个 HTTP 200/业务拒绝测试通过 |
 | 冻结生产 release | bundled Python + `PYTHONPATH=.:src`：263/263 | exact release 自包含回归通过；系统 Python 缺 Pillow/openpyxl 的失败调用已识别为错误测试入口 |
 | G6R6 gate | activation 12/12、validation R2 5/5、dual send 26/26 | 原子激活、network-none 验收、双 ledger/DB 投影候选合同通过 |
@@ -327,7 +336,7 @@ flowchart LR
 | React UI | `npm test -- --run`：46 files passed、1 skipped；229 tests passed、46 skipped | 当前 UI 单测通过 |
 | React lint | `npm run lint`：0 error、15 warnings | 仍有 Hook dependency、cleanup ref 和 fast-refresh warning |
 
-本次文档更新没有重跑根 Python 全量测试，也没有重建 UI `dist`，以避免把文档任务扩展成 artifact 变更。最近可查的 G5 UI 构建/验收记录是 2,666 modules、229 passed、46 skipped、Playwright 桌面/移动各 15/15；该记录证明当时本地候选，不证明今天的公开 current。
+本次 GitHub 迁移已重新物化前端测试数据、运行完整前端 unit/lint/build，并分别运行 clean repository 与本地 artifact backend lane。未重跑 Playwright 浏览器矩阵，也未部署 UI；历史 Playwright 桌面/移动各 15/15 只证明当时本地候选，不证明今天的公开 current。
 
 ### 冻结与生产证据
 
@@ -368,20 +377,22 @@ flowchart LR
 2. **TikHub 评论采集仍不可用**：8 月 22 日 source 为 12 posts、0 comments；full/bare Reddit ID 的有界 live 请求都返回 HTTP 400。继续前先冻结原始 status/response metadata，与 TikHub 当前正式路由合同核对；禁止靠伪造评论、降级为帖子正文或无界重试掩盖。
 3. **公开洞察站没有跟随最新日报**：最近生产 data current 仍为 `reddit_voc_release_20260810_observed_translation_v1`。日报补推只消费 prepared outbox，不会自动发布站点 data current，因此页面日期仍可能早于今天。
 4. **历史自然周期缺口仍存在**：08-13、08-14、08-15、08-21、08-22 均没有自然完整送达；其中 08-15、08-21、08-22 已受控补推。任何历史补推必须逐日期绑定自己的 source/prepared/outbox/ledger，禁止混用 authorization。
-5. **根仓库不可追溯**：根 Git 没有 commit，所有内容显示 untracked；任何生产 release 都无法回溯到根 commit。下一次构建前必须建立不丢失现有文件的基线和明确 artifact source。
+5. **公开站仍不是 exact source rebuild**：daily runtime 的 62 文件可以由 `main` 精确重建，但旧 production site dist 目前只能由 artifact manifest 锁定；较新的 UI 源码不能被表述为旧 production dist 的逐字节来源。下次站点发布必须把 source commit、build inputs、dist manifest 和 public current 一次闭合。
 
 ### P1：下一迭代处理
 
 1. 两个日期耦合测试已经随 08:30 窗口过期；将 wall clock 注入并用冻结 clock 测试，避免每日失效。
-2. 嵌套 UI 仍有 95 条 dirty/untracked 状态和 15 条 lint warning；先分类 source/data/evidence/generated，再建立干净基线。
+2. UI 已纳入根 Git，原嵌套历史另存完整 bundle；仍有 15 条 lint warning，需要按 Hook dependency、cleanup ref 和 fast-refresh 三类逐项修复，不能在本次迁移中顺手大改。
 3. `tmp/` 当前约 40 GB、`output/` 约 1.7 GB；只能在建立精确保留清单和 receipt 后清理，禁止直接递归删除。B5BR5 gate 目录当前还能看到 18 个 `pyc`，不得把该目录直接当不可变 release。
 4. source batch 仍为 `partial`；同环比和趋势可展示观察值，但不能宣称历史全量、完整率或严格统计总体。
 5. 最终投递只能证明机器人接受，不能证明人工阅读；如业务需要阅读确认，必须设计独立回执，不得从 HTTP 200 推断。
+6. `npm ci` 对当前锁文件报告 2 个 high severity dependency finding；本轮未执行会引入 breaking change 的 `npm audit fix --force`。下一迭代应先取得 `npm audit --json` 的依赖路径和可修复版本，再单独升级和回归。
 
 ## 9. 尝试过但失败的方案
 
 | 尝试 | 失败原因 | 已采取的正确方向 |
 |---|---|---|
+| GitHub 首次直接运行全量 backend/frontend | clean clone 没有安全排除的 `public/data`、`add_data`、`data/processed`、`output`、历史 archive；backend 也未安装 UI lockfile，导致首次 Actions 失败 | 提交经 SHA/隐私合同验证的最小公开前端夹具；新测试默认进入 repository lane，38 个本地制品模块显式登记并继续由本地全量门禁覆盖，不提交私有/运行态制品 |
 | 旧日报 launcher 仅传 `translation_mode=deepseek` | host 有 key，但 one-off 容器没有显式 secret 注入，结果为 `provider_missing_config`；中文槽实际是英文/占位 | 使用受限 secret file mount；发送前验证完整 translation manifest |
 | 直接把 2026-08-10 G6 candidate 提升为最新站点 | 2026-08-11 source 已出现，候选 freshness 已过期 | fail-closed，要求 fresh candidate forward-port |
 | 默认 Docker bridge 创建 | 默认 IPAM 池耗尽/重叠 | 只在独立授权下创建无重叠 `192.168.243.0/28` report network，并验证为空 |

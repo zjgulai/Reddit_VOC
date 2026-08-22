@@ -23,12 +23,25 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: ref/UI/momcozy-reddit-workbench/package-lock.json
       - name: Install project and test dependencies
         run: python -m pip install --disable-pip-version-check -e . pytest
+      - name: Install locked UI dependencies
+        working-directory: ref/UI/momcozy-reddit-workbench
+        run: npm ci
+      - name: Materialize verified frontend contract data
+        run: >-
+          python scripts/frontend_test_data.py materialize
+          --fixture-root ref/UI/momcozy-reddit-workbench/test-fixtures/public-data-20260723
+          --public-root ref/UI/momcozy-reddit-workbench/public
       - name: Verify production release lock against source
         run: python scripts/verify_version_consistency.py
-      - name: Run backend tests
-        run: python -m pytest -q
+      - name: Run repository-contained backend tests
+        run: python scripts/run_backend_test_lane.py repository
 
   frontend:
     runs-on: ubuntu-latest
@@ -45,6 +58,12 @@ jobs:
           cache-dependency-path: ref/UI/momcozy-reddit-workbench/package-lock.json
       - name: Install locked dependencies
         run: npm ci
+      - name: Materialize verified frontend contract data
+        working-directory: ${{ github.workspace }}
+        run: >-
+          python scripts/frontend_test_data.py materialize
+          --fixture-root ref/UI/momcozy-reddit-workbench/test-fixtures/public-data-20260723
+          --public-root ref/UI/momcozy-reddit-workbench/public
       - name: Run frontend tests
         run: npm test
       - name: Run frontend lint

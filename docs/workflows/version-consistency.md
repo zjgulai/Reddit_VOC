@@ -10,6 +10,11 @@ manifest 激活生产，最后更新 version lock 并提交。
 这里的“一致”指可验证的版本闭包，不是把数据库、报表、浏览器记录、`.env`、
 私钥、构建目录或生产数据快照提交到 Git。
 
+前端测试是例外但仍保持窄边界：`test-fixtures/public-data-20260723` 只保存被
+`current-release.json`、各 public manifest 精确引用的文件，以及 V3 insights 合约直接
+校验且反向绑定 manifest 的 `public-validation-receipt.json`，共 81 个隐私安全公开投影
+文件，用于让干净 clone 重现现有 UI 合同测试；它不是 production current，也不得用于发布。
+
 ## 当前证据边界
 
 - 日报 runtime：本地源码可精确重建生产 release
@@ -43,6 +48,26 @@ python3 scripts/verify_version_consistency.py \
 生产观察器只读取 current symlink、release manifest、cron SHA 和
 `reddit-voc-report.env` 的 `lstat` 元数据；不读取 credential 内容，不访问数据库，
 不启动容器，也不写远端。
+
+## 测试 lane
+
+GitHub backend 使用：
+
+```bash
+python scripts/run_backend_test_lane.py repository
+```
+
+该入口会发现全部 `tests/test_*.py`，并从
+`config/ci/test-lanes.json` 扣除 38 个依赖 Git 外冻结制品的模块。新测试默认进入
+repository lane；登记了不存在的模块会 fail-closed。完整本地工作区仍执行：
+
+```bash
+uv run --frozen pytest -q
+```
+
+如只复验制品依赖模块，可执行
+`python scripts/run_backend_test_lane.py local-artifact`。GitHub lane 通过不替代本地
+artifact lane，反之亦然。
 
 ## 后续发布顺序
 

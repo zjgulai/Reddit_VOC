@@ -1,0 +1,3 @@
+# The frontend contract fixture is a reviewed, generated public projection.
+# Keep it reproducible without rendering large Reddit JSON payloads as code diffs.
+ref/UI/momcozy-reddit-workbench/test-fixtures/public-data-20260723/files/** -diff linguist-generated=true

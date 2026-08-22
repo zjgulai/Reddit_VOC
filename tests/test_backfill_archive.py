@@ -18,12 +18,9 @@ from reddit_voc.backfill_archive import (
 
 FIXED_NOW = datetime(2026, 7, 11, 4, 17, 9, tzinfo=timezone.utc)
 PAYLOAD = b'{"ok":true}'
-TEST_TEMP_PARENT = Path(__file__).resolve().parents[1] / ".superpowers" / "sdd"
-
-
 class PrivateRawArchiveTests(unittest.TestCase):
     def setUp(self) -> None:
-        self.temporary_directory = TemporaryDirectory(dir=TEST_TEMP_PARENT)
+        self.temporary_directory = TemporaryDirectory()
         self.addCleanup(self.temporary_directory.cleanup)
         self.root = Path(self.temporary_directory.name) / "private-raw"
         self.archive = PrivateRawArchive(self.root)

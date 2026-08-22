@@ -51,7 +51,7 @@ ref/UI/momcozy-reddit-workbench/output/
 ref/UI/momcozy-reddit-workbench/webbridge_*.json
 ref/UI/momcozy-reddit-workbench/DATA_REALITY_AUDIT.md#
 ref/UI/ENDOFJSON
-ref/UI/{cr.severity, text-status-error
+ref/UI/\{cr.severity, text-status-error
 
 # Third-party product studies are reference checkouts, not Reddit_VOC source.
 ref/product/RedditVideoMakerBot-master/

@@ -1,0 +1,84 @@
+{
+  "schema_version": "reddit_voc_current_release_v2",
+  "release_id": "reddit_voc_release_20260723_daily_v2",
+  "generated_at_utc": "2026-07-23T15:00:00Z",
+  "datasets": {
+    "base": {
+      "dataset_version": "reddit_voc_site_snapshot_20260723_v3_daily_001",
+      "manifest_path": "data/reddit-voc/reddit_voc_site_snapshot_20260723_v3_daily_001/manifest-public.json",
+      "public_manifest_sha256": "f95e9e485e80a667d469fec3329622ef1ac3c42c6e32bb5179809eb9e018e91e",
+      "lineage_manifest_sha256": "486a39cccf924ba4815c6fcb88284ae2756f0db34bf367d087bb0a87e301e4af"
+    },
+    "insights": {
+      "dataset_version": "reddit_voc_insights_20260723_v3_47c49395e785",
+      "manifest_path": "data/reddit-voc/reddit_voc_insights_20260723_v3_47c49395e785/public/manifest.json",
+      "public_manifest_sha256": "9c0d84009e25090e14a278e3d953908f255e65a33707f627bbb476d134c5354a",
+      "lineage_manifest_sha256": "72f3f0dbe12c61e2d224e011119e9e5ff8a0dd08a2eeb930844500674cfbee31"
+    },
+    "reports": {
+      "dataset_version": "reddit_voc_reports_20260723_v3_47c49395e785_history2",
+      "manifest_path": "data/reddit-voc/reddit_voc_reports_20260723_v3_47c49395e785_history2/public/manifest.json",
+      "public_manifest_sha256": "0a95f263a9df87738b3e5678a93b71950f996fe128bc2fa0e32cbf0b2a243ce7",
+      "lineage_manifest_sha256": "d1392c6dff6fb6f90e22e39aa9d4233fdd9dcbbe2770f760a40de83cdd279f91"
+    },
+    "personas": {
+      "dataset_version": "reddit_voc_personas_20260723_daily_v1",
+      "manifest_path": "data/reddit-voc/reddit_voc_personas_20260723_daily_v1/manifest.json",
+      "public_manifest_sha256": "28964053b8ab32a6b4a1a6b976b0a4a940ce939ba26ab59258e895a0ec488a0b",
+      "lineage_manifest_sha256": "28964053b8ab32a6b4a1a6b976b0a4a940ce939ba26ab59258e895a0ec488a0b"
+    },
+    "brand_health": {
+      "dataset_version": "reddit_voc_brand_health_20260723_public_v1",
+      "manifest_path": "data/reddit-voc/reddit_voc_brand_health_20260723_public_v1/manifest.json",
+      "public_manifest_sha256": "83625ca2a375f25b4a2ebc6ab7f0330d01c687bc7ce15fbdf387fc8b37eaeeca",
+      "lineage_manifest_sha256": "83625ca2a375f25b4a2ebc6ab7f0330d01c687bc7ce15fbdf387fc8b37eaeeca"
+    },
+    "quarter_insights": {
+      "dataset_version": "reddit_voc_quarter_insights_20260723_public_v1",
+      "manifest_path": "data/reddit-voc/reddit_voc_quarter_insights_20260723_public_v1/manifest.json",
+      "public_manifest_sha256": "ee2e3bc2fbea8f0b4b41907f40c1609946d0b3899f174ab97ddcb86a754a6bd1",
+      "lineage_manifest_sha256": "ee2e3bc2fbea8f0b4b41907f40c1609946d0b3899f174ab97ddcb86a754a6bd1"
+    },
+    "casebook": {
+      "dataset_version": "reddit_voc_casebook_20260716_public_a1",
+      "manifest_path": "data/reddit-voc/reddit_voc_casebook_20260716_public_a1/manifest.json",
+      "public_manifest_sha256": "8e79fe8c86e08e60b693ca93f3ca6560476bec53a979c67ed8120d00ec121126",
+      "lineage_manifest_sha256": "8e79fe8c86e08e60b693ca93f3ca6560476bec53a979c67ed8120d00ec121126"
+    }
+  },
+  "freshness": {
+    "status": "partial",
+    "timezone": "Asia/Shanghai",
+    "data_as_of_utc": "2026-07-22T23:00:00Z",
+    "window_start_utc": "2026-07-21T23:00:00Z",
+    "window_end_utc": "2026-07-22T23:00:00Z",
+    "collector_run_id": "daily_collect_20260723_0700",
+    "source_batch_id": "server_snapshot_20260706_20260723",
+    "center_snapshot_id": "reddit_voc_center_20260723_v3_canonical_v2",
+    "net_new": {
+      "comments": 246,
+      "posts": 56,
+      "repaired_parent_links": 0,
+      "updated_historical_posts": 139
+    },
+    "coverage": {
+      "full_posts": 7,
+      "partial_posts": 5,
+      "unresolved_continuations": 5
+    }
+  },
+  "cases": {
+    "dataset_version": "case_catalog_20260715_v1",
+    "manifest_path": "data/cases/manifest.v1.json",
+    "public_manifest_sha256": "6a233c0ef7fb207c9d3cd62b5920730686149911cfae3ad8af2a1d7fead6b969",
+    "index_path": "data/cases/case-index.v1.json",
+    "index_sha256": "a1da92f832fafb357da234d01fcb50abfb55b945d784d54f6d1d3b34e555cd68",
+    "stock_content_preserved": true,
+    "approved_delta_count": 0
+  },
+  "boundaries": {
+    "case_gallery_stock_preserved": true,
+    "collector_isolation_required": true,
+    "login_required": false
+  }
+}

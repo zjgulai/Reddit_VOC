@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "datasetVersion": "case_catalog_20260715_v1",
+  "generatedAt": "2026-07-15T00:00:00.000Z",
+  "freshness": {
+    "mode": "static",
+    "asOf": "2026-07-15T00:00:00.000Z",
+    "staleAfter": "2026-08-15T00:00:00.000Z"
+  },
+  "provenance": {
+    "process": "manual_seed_plus_approved_static_delta",
+    "networkSearch": false,
+    "owner": "Reddit_VOC"
+  },
+  "seed": {
+    "source": "bundled_seed",
+    "version": "case_seed_bundled_v1",
+    "count": 38,
+    "contentSha256": "372fa672767ed2585300cd1d47141b6189d3d6784b98c4bc8a69074db5ba48a7"
+  },
+  "legacyUnverified": {
+    "source": "bundled_legacy_snapshot",
+    "version": "legacy_unverified_bundled_v1",
+    "count": 12,
+    "contentSha256": "9d09b10949eb3790b34507d13dcbddcaf5fcd6e9f81e96dddd7e12ef86691de2"
+  },
+  "approvedDelta": {
+    "source": "versioned_static_index",
+    "version": "approved_delta_20260715_v1",
+    "count": 0,
+    "contentSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  },
+  "index": {
+    "path": "/data/cases/case-index.v1.json",
+    "sha256": "a1da92f832fafb357da234d01fcb50abfb55b945d784d54f6d1d3b34e555cd68"
+  }
+}
