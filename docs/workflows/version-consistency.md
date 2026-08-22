@@ -57,6 +57,14 @@ GitHub backend 使用：
 python scripts/run_backend_test_lane.py repository
 ```
 
+该 job 当前固定运行在 GitHub `macos-latest`，与本地 operator 侧 BSD userland
+一致。原因是当前生产 daily release 的不可变身份包含
+`tests/test_daily_report_launcher.py`；直接修改其中两个 `readlink -f` 错误分类
+断言，会使 GitHub 源码无法再精确重建现役生产 release。这个选择只保留当前
+三方版本闭包，不构成 Linux 原生 shell 行为证明。后续如要把断言改成 GNU/BSD
+双平台合同，必须构建、测试并正式晋升新的 production daily release，再同步
+version lock，不能只在 GitHub 端改测试。
+
 该入口会发现全部 `tests/test_*.py`，并从
 `config/ci/test-lanes.json` 扣除 38 个依赖 Git 外冻结制品的模块。新测试默认进入
 repository lane；登记了不存在的模块会 fail-closed。完整本地工作区仍执行：

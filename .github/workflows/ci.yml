@@ -15,7 +15,9 @@ concurrency:
 
 jobs:
   backend:
-    runs-on: ubuntu-latest
+    # The locked production release includes tests whose operator-side shell
+    # contracts use the BSD userland shipped on the development host.
+    runs-on: macos-latest
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7

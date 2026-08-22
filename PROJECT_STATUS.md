@@ -4,7 +4,7 @@ doc_type: project_handoff
 status: active
 created: 2026-08-12
 updated: 2026-08-22
-evidence_cutoff_bjt: 2026-08-22T18:13:00+08:00
+evidence_cutoff_bjt: 2026-08-22T18:37:37+08:00
 owner: Reddit VOC project team
 ---
 
@@ -322,6 +322,8 @@ flowchart LR
 | clean clone 前端 | 81 文件夹具物化后：46 files passed、1 skipped；229 passed、46 skipped；lint 0 error/15 warning；Vite 2,666 modules build passed | 前端测试不再隐式依赖本机 `public/data` |
 | clean archive backend repository lane | 144 modules：1642 passed、1 skipped、862 subtests passed | 使用真实 `npm ci` 和公开夹具，全绿且不依赖 Git 外本地制品 |
 | 当前本地 backend artifact lane | 38 modules：379 passed、127 subtests passed | 与 repository lane 合计覆盖当前 182 个 backend test modules：2021 passed、1 skipped；未删除或弱化制品测试 |
+| GitHub Actions 第二轮 Ubuntu backend | 1636 passed、1 skipped、862 subtests，6 failed | 4 项暴露 GNU `stat -f` 成功但返回文件系统信息的真实兼容缺陷；2 项是锁定测试对 BSD/GNU `readlink -f` 错误分类的差异，不是锁/lease 功能失败 |
+| 跨平台定向修复 | rollback + 两个 launcher 边界共 22 passed；本地 production version lock passed | rollback 权限检查改用 Python `lstat`；未修改 production release 内的 launcher/test bytes，GitHub backend 改在 `macos-latest` 运行以保持三方版本闭包 |
 | 原始故障与 DingTalk fixture 定向回归 | `uv run --frozen pytest -q ...`：20 passed | 19 个 launcher 测试与 1 个 HTTP 200/业务拒绝测试通过 |
 | 冻结生产 release | bundled Python + `PYTHONPATH=.:src`：263/263 | exact release 自包含回归通过；系统 Python 缺 Pillow/openpyxl 的失败调用已识别为错误测试入口 |
 | G6R6 gate | activation 12/12、validation R2 5/5、dual send 26/26 | 原子激活、network-none 验收、双 ledger/DB 投影候选合同通过 |
@@ -387,12 +389,14 @@ flowchart LR
 4. source batch 仍为 `partial`；同环比和趋势可展示观察值，但不能宣称历史全量、完整率或严格统计总体。
 5. 最终投递只能证明机器人接受，不能证明人工阅读；如业务需要阅读确认，必须设计独立回执，不得从 HTTP 200 推断。
 6. `npm ci` 对当前锁文件报告 2 个 high severity dependency finding；本轮未执行会引入 breaking change 的 `npm audit fix --force`。下一迭代应先取得 `npm audit --json` 的依赖路径和可修复版本，再单独升级和回归。
+7. GitHub backend 当前使用 `macos-latest`，因为现役 production daily release 的哈希身份包含 BSD `readlink -f` 错误分类断言。它不证明锁定 shell 在 GNU/Linux 上的原生错误标签一致；要恢复 Ubuntu 全量 CI，必须把双平台测试合同与 successor production release 作为同一版本变更晋升。
 
 ## 9. 尝试过但失败的方案
 
 | 尝试 | 失败原因 | 已采取的正确方向 |
 |---|---|---|
 | GitHub 首次直接运行全量 backend/frontend | clean clone 没有安全排除的 `public/data`、`add_data`、`data/processed`、`output`、历史 archive；backend 也未安装 UI lockfile，导致首次 Actions 失败 | 提交经 SHA/隐私合同验证的最小公开前端夹具；新测试默认进入 repository lane，38 个本地制品模块显式登记并继续由本地全量门禁覆盖，不提交私有/运行态制品 |
+| GitHub 第二次在 Ubuntu 运行完整 backend | 4 个 rollback 测试命中 BSD/GNU `stat` 探测缺陷；2 个 production-locked launcher 测试把等价 fail-closed 结果限定为 BSD `release_pointer_invalid`，而 GNU 返回 `release_path_invalid` | rollback 改为 Python `lstat` 并以禁用外部 `stat` 的测试验证；锁定 launcher/test bytes 不单改，backend 暂与本地 BSD userland 对齐，双平台合同留待 successor production release 一次晋升 |
 | 旧日报 launcher 仅传 `translation_mode=deepseek` | host 有 key，但 one-off 容器没有显式 secret 注入，结果为 `provider_missing_config`；中文槽实际是英文/占位 | 使用受限 secret file mount；发送前验证完整 translation manifest |
 | 直接把 2026-08-10 G6 candidate 提升为最新站点 | 2026-08-11 source 已出现，候选 freshness 已过期 | fail-closed，要求 fresh candidate forward-port |
 | 默认 Docker bridge 创建 | 默认 IPAM 池耗尽/重叠 | 只在独立授权下创建无重叠 `192.168.243.0/28` report network，并验证为空 |

@@ -260,6 +260,10 @@ def _fake_transport(
         "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
     )
     _write_executable(
+        binaries / "stat",
+        "#!/usr/bin/env bash\nset -euo pipefail\nexit 99\n",
+    )
+    _write_executable(
         binaries / "scp",
         """#!/usr/bin/env bash
 set -euo pipefail

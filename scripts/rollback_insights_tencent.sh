@@ -234,7 +234,19 @@ for local_file in \
     fail "required local file is missing or is a symlink: ${local_file}"
   fi
 done
-if [[ "$(stat -f '%Lp' "${SSH_KEY}" 2>/dev/null || stat -c '%a' "${SSH_KEY}")" != "600" ]]; then
+SSH_KEY_MODE="$(
+  python3 - "${SSH_KEY}" <<'PY'
+import os
+import stat
+import sys
+
+metadata = os.lstat(sys.argv[1])
+if not stat.S_ISREG(metadata.st_mode):
+    raise SystemExit(1)
+print(f"{stat.S_IMODE(metadata.st_mode):03o}")
+PY
+)" || fail "SSH key must have mode 600"
+if [[ "${SSH_KEY_MODE}" != "600" ]]; then
   fail "SSH key must have mode 600"
 fi
 if [[ ! -f "${KNOWN_HOSTS}" || -L "${KNOWN_HOSTS}" ]] || \
