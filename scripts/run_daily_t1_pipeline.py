@@ -532,36 +532,151 @@ def step5_feishu_push(run_id: str, report_date: str, receipts: list[dict], outpu
     return result
 
 
-def _preflight_writability(public_root: Path, store_path: Path, output_dir: Path) -> None:
-    """Fail the run BEFORE collecting if any pipeline write-target is not writable.
+def _collect_write_targets(public_root: Path, store_path: Path, output_dir: Path) -> list[Path]:
+    """Enumerate every path the pipeline may create, rewrite, or read-for-copy.
 
-    The 10-29 07:05 run collected and merged 73 posts / 291 comments, then died in
-    recompute on a root-owned lineage directory — the pointer was correctly blocked,
-    but the corpus was already written and the run needed manual repair. Enumerate
-    every directory the pipeline writes (data-tree lineage dirs included, not just
-    per-dataset ones) and fail loudly up front instead.
+    Driven by the release bindings rather than a hand-written list: a dataset added
+    to current-release.json without a matching preflight entry is exactly how the
+    10-29 failure shipped. Walks each binding's manifest `files` map, the dataset's
+    own `lineage/` directory (both <version>/lineage and <version>/public/../lineage
+    layouts), the reports top-level files, the agent-studio latest pointers, the
+    store file itself, and the generations root when it exists.
     """
     data_voc = public_root / "data" / "reddit-voc"
-    targets = [
+    targets: list[Path] = [
+        store_path,
         store_path.parent,
         output_dir,
         data_voc,
         data_voc / "lineage",
-        public_root / "data" / "reddit-voc" / "current-release.json",
+        data_voc / "current-release.json",
     ]
+
+    generations = public_root / "data" / "reddit-voc-generations"
+    if generations.exists():
+        targets.append(generations)
+
+    agent_public = Path(os.getenv("AGENT_PUBLIC_ROOT", str(public_root)))
+    agent_dir = agent_public / "data" / "reddit-voc" / "agent-studio"
+    targets.extend(
+        agent_dir / name
+        for name in (
+            "latest-content-ideas.json",
+            "latest-rnd-tickets.json",
+            "latest-competitor-radar.json",
+        )
+    )
+    targets.append(agent_dir)
+
     release_path = data_voc / "current-release.json"
-    if release_path.exists():
+    if not release_path.exists():
+        return targets
+    try:
         release = json.loads(release_path.read_text(encoding="utf-8"))
-        for binding in release.get("datasets", {}).values():
-            manifest_abs = public_root / (binding.get("manifest_path") or "")
-            if manifest_abs.exists():
-                targets.append(manifest_abs.parent)
-                lineage = manifest_abs.parent.parent / "lineage"
-                if lineage.exists():
-                    targets.append(lineage)
-    unwritable = [str(t) for t in targets if t.exists() and not os.access(t, os.W_OK)]
-    if unwritable:
-        raise RuntimeError(f"pipeline_preflight_unwritable_targets: {unwritable}")
+    except (OSError, json.JSONDecodeError):
+        # An unreadable or corrupt pointer is itself a preflight failure; the
+        # caller surfaces it when the same path fails the readability check.
+        return targets
+
+    for binding in (release.get("datasets") or {}).values():
+        manifest_abs = public_root / (binding.get("manifest_path") or "")
+        dataset_dir = manifest_abs.parent
+        targets.append(manifest_abs)
+        targets.append(dataset_dir)
+        # Both layouts: <version>/manifest.json and <version>/public/manifest.json
+        for candidate in (dataset_dir / "lineage", dataset_dir.parent / "lineage"):
+            targets.append(candidate)
+            if candidate.is_dir():
+                try:
+                    targets.extend(sorted(p for p in candidate.iterdir() if p.is_file()))
+                except OSError:
+                    pass
+        manifest = None
+        if manifest_abs.exists():
+            try:
+                manifest = json.loads(manifest_abs.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                manifest = None
+        for rel_name in ((manifest or {}).get("files") or {}):
+            targets.append(dataset_dir / rel_name)
+
+    return targets
+
+
+def _preflight_writability(public_root: Path, store_path: Path, output_dir: Path) -> dict:
+    """Fail the run BEFORE collecting if any write-target is unusable.
+
+    The 10-29 07:05 run passed preflight, collected and merged 73 posts / 291
+    comments, then died in recompute writing a root-owned 0600
+    lineage/product-entity-ledger.json that lived inside a *writable* directory.
+    Directory-level `os.access(W_OK)` cannot see that, so check every target file
+    itself: mode write bits first (a 0400 file denies everyone, root included),
+    then readability (the generation copy reads what it publishes), then writability.
+
+    Returns {'checked': int, 'warnings': [...]} on success; raises
+    RuntimeError('pipeline_preflight_unwritable_targets: ...') with a per-path
+    {path, uid, mode, reason} payload otherwise.
+    """
+    blocked: list[dict] = []
+    warnings: list[dict] = []
+    checked = 0
+    seen: set[str] = set()
+    euid = os.geteuid()
+
+    for target in _collect_write_targets(public_root, store_path, output_dir):
+        key = str(target)
+        if key in seen:
+            continue
+        seen.add(key)
+
+        try:
+            stat = target.stat()
+        except FileNotFoundError:
+            # Not created yet: the nearest existing parent must be writable+searchable.
+            parent = target.parent
+            while not parent.exists() and parent != parent.parent:
+                parent = parent.parent
+            checked += 1
+            if not (os.access(parent, os.W_OK) and os.access(parent, os.X_OK)):
+                blocked.append({"path": key, "uid": None, "mode": None, "reason": "parent_not_writable"})
+            continue
+        except OSError as exc:
+            checked += 1
+            blocked.append({"path": key, "uid": None, "mode": None, "reason": f"stat_failed:{exc.strerror}"})
+            continue
+
+        checked += 1
+        mode = stat.st_mode & 0o7777
+        is_dir = target.is_dir()
+
+        if is_dir:
+            if not os.access(target, os.W_OK | os.X_OK):
+                blocked.append({"path": key, "uid": stat.st_uid, "mode": oct(mode), "reason": "dir_not_writable"})
+            elif stat.st_uid != euid:
+                warnings.append({"path": key, "uid": stat.st_uid, "mode": oct(mode), "reason": "foreign_owner"})
+            continue
+
+        # Regular file. A file with no write bit set at all is a hard stop even for
+        # root: that is the 0400/0600 root-owned artifact that broke 10-29.
+        if mode & 0o222 == 0:
+            blocked.append({"path": key, "uid": stat.st_uid, "mode": oct(mode), "reason": "mode_denies_write"})
+            continue
+        if not os.access(target, os.R_OK):
+            blocked.append({"path": key, "uid": stat.st_uid, "mode": oct(mode), "reason": "not_readable"})
+            continue
+        if not os.access(target, os.W_OK):
+            blocked.append({"path": key, "uid": stat.st_uid, "mode": oct(mode), "reason": "not_writable"})
+            continue
+        if stat.st_uid != euid:
+            warnings.append({"path": key, "uid": stat.st_uid, "mode": oct(mode), "reason": "foreign_owner"})
+
+    if blocked:
+        payload = json.dumps(blocked, ensure_ascii=False)
+        raise RuntimeError(f"pipeline_preflight_unwritable_targets: {payload}")
+
+    if warnings:
+        logging.warning("pipeline_preflight_foreign_owner: %s", json.dumps(warnings, ensure_ascii=False))
+    return {"checked": checked, "warnings": warnings}
 
 
 def run_pipeline(*, store_path: Path, public_root: Path, output_dir: Path, skip_feishu: bool = False) -> dict:
