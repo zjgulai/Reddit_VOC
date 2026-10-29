@@ -1,4 +1,5 @@
-import { getReleaseDatasetBasePath, loadCurrentRelease } from './release';
+import { getReleaseDatasetBasePath, loadCurrentRelease, releaseGenerationKey } from './release';
+import { ReleaseKeyedCache } from './releaseKeyedCache';
 
 export const CASEBOOK_PUBLIC_BASE_PATH = '/data/reddit-voc/reddit_voc_casebook_20260716_public_a1';
 export const CASEBOOK_PUBLIC_MANIFEST_SHA256 = '8e79fe8c86e08e60b693ca93f3ca6560476bec53a979c67ed8120d00ec121126';
@@ -142,7 +143,7 @@ const STAGE_ORDER: Array<{ id: CasebookStageId; label: PublicCasebookStage['labe
 const FIXED_POST_IDS = ['t3_1kkvihg', 't3_1l2aofi', 't3_1n2q1do', 't3_1o1pqox'];
 const FIXED_EXTERNAL_IDS = ['external_reddit_post:1u2gvn4'];
 
-let casebookCache: RedditPublicCasebook | null = null;
+const casebookCache = new ReleaseKeyedCache<RedditPublicCasebook>();
 
 function assertContract(condition: unknown, message: string): asserts condition {
   if (!condition) throw new CasebookContractError(message);
@@ -276,7 +277,21 @@ async function fetchText(path: string): Promise<string> {
 export async function loadRedditCasebook(
   options: LoadRedditCasebookOptions = {},
 ): Promise<RedditPublicCasebook> {
-  if (casebookCache) return casebookCache;
+  // An explicit basePath is a fixture/offline path, not the published release; it
+  // must not be memoized under a release key or a test could poison production.
+  const isReleaseBound = options.basePath === undefined
+    && options.expectedManifestSha256 === undefined;
+  if (!isReleaseBound) return loadCasebookUncached(options);
+  const boundRelease = await loadCurrentRelease();
+  return casebookCache.get(
+    releaseGenerationKey(boundRelease),
+    () => loadCasebookUncached(options),
+  );
+}
+
+async function loadCasebookUncached(
+  options: LoadRedditCasebookOptions,
+): Promise<RedditPublicCasebook> {
   let releaseBasePath: string | undefined;
   let releaseManifestSha256: string | undefined;
   if (options.basePath === undefined && options.expectedManifestSha256 === undefined) {
@@ -300,10 +315,9 @@ export async function loadRedditCasebook(
   assertContract(await sha256Hex(dataText) === manifest.files['casebook.json'].sha256, 'casebook.json SHA-256不一致');
   const data = validatePublicCasebookData(JSON.parse(dataText));
   assertContract(data.projection_id === manifest.projection_id && data.source_casebook_id === manifest.source_casebook_id && data.source_snapshot_id === manifest.source_snapshot_id, 'casebook lineage不一致');
-  casebookCache = { manifest, data };
-  return casebookCache;
+  return { manifest, data };
 }
 
 export function resetRedditCasebookCacheForTests(): void {
-  casebookCache = null;
+  casebookCache.clear();
 }

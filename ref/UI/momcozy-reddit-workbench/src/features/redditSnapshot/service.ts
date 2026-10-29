@@ -25,8 +25,10 @@ import {
   fetchVerifiedReleaseManifest,
   getReleaseDatasetBasePath,
   loadCurrentRelease,
+  releaseGenerationKey,
   type CurrentRelease,
 } from './release';
+import { ReleaseKeyedCache } from './releaseKeyedCache';
 
 export const SNAPSHOT_MANIFEST_SCHEMA_V1 = 'reddit_voc_site_snapshot_manifest_v1';
 export const SNAPSHOT_MANIFEST_SCHEMA_V2 = 'reddit_voc_site_snapshot_manifest_v2';
@@ -100,10 +102,14 @@ export class SnapshotContractError extends Error {
   }
 }
 
-let corePromise: Promise<RedditSnapshotCore> | null = null;
-let summaryPromise: Promise<RedditSnapshotSummary> | null = null;
-let commentsPromise: Promise<SnapshotComment[]> | null = null;
-let insightsPromise: Promise<RedditInsightsSnapshot> | null = null;
+// Keyed by release generation instead of a bare singleton. A module-level
+// `xPromise` populated on first call never invalidated, so a tab left open across
+// the 07:05 publish kept showing the previous generation with nothing on screen
+// saying so. See releaseKeyedCache.ts.
+const coreCache = new ReleaseKeyedCache<RedditSnapshotCore>();
+const summaryCache = new ReleaseKeyedCache<RedditSnapshotSummary>();
+const commentsCache = new ReleaseKeyedCache<SnapshotComment[]>();
+const insightsCache = new ReleaseKeyedCache<RedditInsightsSnapshot>();
 
 function assertContract(condition: unknown, message: string): asserts condition {
   if (!condition) throw new SnapshotContractError(message);
@@ -547,8 +553,9 @@ async function loadInsightsUncached(): Promise<RedditInsightsSnapshot> {
 }
 
 export function loadRedditInsights(): Promise<RedditInsightsSnapshot> {
-  insightsPromise ??= loadInsightsUncached();
-  return insightsPromise;
+  return loadCurrentRelease().then((release) => (
+    insightsCache.get(releaseGenerationKey(release), loadInsightsUncached)
+  ));
 }
 
 function assertExactObjectKeys(value: unknown, expected: readonly string[], label: string): asserts value is Record<string, unknown> {
@@ -1479,13 +1486,15 @@ async function loadSummaryUncached(): Promise<RedditSnapshotSummary> {
 }
 
 export function loadRedditSnapshotSummary(): Promise<RedditSnapshotSummary> {
-  summaryPromise ??= loadSummaryUncached();
-  return summaryPromise;
+  return loadCurrentRelease().then((release) => (
+    summaryCache.get(releaseGenerationKey(release), loadSummaryUncached)
+  ));
 }
 
 export function loadRedditSnapshot(): Promise<RedditSnapshotCore> {
-  corePromise ??= loadCoreUncached();
-  return corePromise;
+  return loadCurrentRelease().then((release) => (
+    coreCache.get(releaseGenerationKey(release), loadCoreUncached)
+  ));
 }
 
 async function loadCommentsUncached(): Promise<SnapshotComment[]> {
@@ -1581,15 +1590,16 @@ export function validateSnapshotComments(
 }
 
 export async function loadCommentsForPost(postId: string): Promise<SnapshotComment[]> {
-  commentsPromise ??= loadCommentsUncached();
-  const comments = await commentsPromise;
+  const release = await loadCurrentRelease();
+  const comments = await commentsCache.get(releaseGenerationKey(release), loadCommentsUncached);
   return comments
     .filter((comment) => comment.post_id === postId)
     .sort((left, right) => right.score - left.score || left.created_at_utc.localeCompare(right.created_at_utc));
 }
 
 export function resetSnapshotCacheForTests(): void {
-  corePromise = null;
-  commentsPromise = null;
-  insightsPromise = null;
+  coreCache.clear();
+  summaryCache.clear();
+  commentsCache.clear();
+  insightsCache.clear();
 }

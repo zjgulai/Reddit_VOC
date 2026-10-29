@@ -4,8 +4,10 @@ import {
   fetchVerifiedReleaseManifest,
   getReleaseDatasetBasePath,
   loadCurrentRelease,
+  releaseGenerationKey,
   type CurrentRelease,
 } from './release';
+import { ReleaseKeyedCache } from './releaseKeyedCache';
 import {
   loadRedditV3Personas,
   resetV3PersonaRuntimeForTests,
@@ -214,7 +216,7 @@ export class PersonasContractError extends Error {
   }
 }
 
-let personasPromise: Promise<AnyRedditPersonasSnapshot> | null = null;
+const personasCache = new ReleaseKeyedCache<AnyRedditPersonasSnapshot>();
 let activeAvatarUrls: string[] = [];
 
 function isV3PersonaManifest(
@@ -761,8 +763,9 @@ async function loadPersonasUncached(): Promise<AnyRedditPersonasSnapshot> {
 }
 
 export function loadRedditPersonas(): Promise<AnyRedditPersonasSnapshot> {
-  personasPromise ??= loadPersonasUncached();
-  return personasPromise;
+  return loadCurrentRelease().then((release) => (
+    personasCache.get(releaseGenerationKey(release), loadPersonasUncached)
+  ));
 }
 
 export function resetPersonasCacheForTests(): void {
@@ -770,6 +773,6 @@ export function resetPersonasCacheForTests(): void {
     activeAvatarUrls.forEach((url) => URL.revokeObjectURL(url));
   }
   activeAvatarUrls = [];
-  personasPromise = null;
+  personasCache.clear();
   resetV3PersonaRuntimeForTests();
 }

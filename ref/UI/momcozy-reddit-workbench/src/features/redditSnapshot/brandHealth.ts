@@ -1,4 +1,5 @@
-import { getReleaseDatasetBasePath, loadCurrentRelease } from './release';
+import { getReleaseDatasetBasePath, loadCurrentRelease, releaseGenerationKey } from './release';
+import { ReleaseKeyedCache } from './releaseKeyedCache';
 
 export const BRAND_HEALTH_PUBLIC_BASE_PATH = '/data/reddit-voc/reddit_voc_brand_health_20260719_center_refresh_003';
 export const BRAND_HEALTH_PUBLIC_MANIFEST_SHA256 = 'a162120439ba80b2444f15ffbd46f1e7cd3d900ff4801f6947faaf10c243ec86';
@@ -111,7 +112,7 @@ const DIMENSION_ORDER: Array<{ id: BrandHealthDimensionId; label: PublicBrandHea
   { id: 'risk_resilience', label: '风险韧性' },
 ];
 
-let brandHealthCache: RedditPublicBrandHealth | null = null;
+const brandHealthCache = new ReleaseKeyedCache<RedditPublicBrandHealth>();
 
 function assertContract(condition: unknown, message: string): asserts condition {
   if (!condition) throw new BrandHealthContractError(message);
@@ -264,7 +265,21 @@ async function fetchText(path: string): Promise<string> {
 export async function loadRedditBrandHealth(
   options: LoadRedditBrandHealthOptions = {},
 ): Promise<RedditPublicBrandHealth> {
-  if (brandHealthCache) return brandHealthCache;
+  // An explicit basePath is a fixture/offline path, not the published release; it
+  // must not be memoized under a release key or a test could poison production.
+  const isReleaseBound = options.basePath === undefined
+    && options.expectedManifestSha256 === undefined;
+  if (!isReleaseBound) return loadBrandHealthUncached(options);
+  const release = await loadCurrentRelease();
+  return brandHealthCache.get(
+    releaseGenerationKey(release),
+    () => loadBrandHealthUncached(options),
+  );
+}
+
+async function loadBrandHealthUncached(
+  options: LoadRedditBrandHealthOptions,
+): Promise<RedditPublicBrandHealth> {
   let releaseBasePath: string | undefined;
   let releaseManifestSha256: string | undefined;
   if (options.basePath === undefined && options.expectedManifestSha256 === undefined) {
@@ -295,10 +310,9 @@ export async function loadRedditBrandHealth(
       && data.source.snapshot_id === manifest.source_snapshot_id,
     'brand health lineage不一致',
   );
-  brandHealthCache = { data, manifest };
-  return brandHealthCache;
+  return { data, manifest };
 }
 
 export function resetRedditBrandHealthCacheForTests(): void {
-  brandHealthCache = null;
+  brandHealthCache.clear();
 }

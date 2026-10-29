@@ -1,4 +1,5 @@
-import { getReleaseDatasetBasePath, loadCurrentRelease } from './release';
+import { getReleaseDatasetBasePath, loadCurrentRelease, releaseGenerationKey } from './release';
+import { ReleaseKeyedCache } from './releaseKeyedCache';
 
 export const QUARTER_INSIGHTS_PUBLIC_BASE_PATH = '/data/reddit-voc/reddit_voc_quarter_insights_20260719_center_refresh_003';
 export const QUARTER_INSIGHTS_PUBLIC_MANIFEST_SHA256 = 'fd27b784e5ad31219bfc8e62a1b5ca1e1284c839227d95fef8cb2eb28c991867';
@@ -280,7 +281,7 @@ const FORBIDDEN_KEYS = new Set([
   'source_text', 'text', 'title', 'url', 'username',
 ]);
 
-let quarterInsightsCache: RedditPublicQuarterInsights | null = null;
+const quarterInsightsCache = new ReleaseKeyedCache<RedditPublicQuarterInsights>();
 
 function assertContract(condition: unknown, message: string): asserts condition {
   if (!condition) throw new QuarterInsightsContractError(message);
@@ -686,7 +687,21 @@ function parseJson(raw: string, label: string): unknown {
 export async function loadRedditQuarterInsights(
   options: LoadRedditQuarterInsightsOptions = {},
 ): Promise<RedditPublicQuarterInsights> {
-  if (quarterInsightsCache) return quarterInsightsCache;
+  // An explicit basePath is a fixture/offline path, not the published release; it
+  // must not be memoized under a release key or a test could poison production.
+  const isReleaseBound = options.basePath === undefined
+    && options.expectedManifestSha256 === undefined;
+  if (!isReleaseBound) return loadQuarterInsightsUncached(options);
+  const release = await loadCurrentRelease();
+  return quarterInsightsCache.get(
+    releaseGenerationKey(release),
+    () => loadQuarterInsightsUncached(options),
+  );
+}
+
+async function loadQuarterInsightsUncached(
+  options: LoadRedditQuarterInsightsOptions,
+): Promise<RedditPublicQuarterInsights> {
   let releaseBasePath: string | undefined;
   let releaseManifestSha256: string | undefined;
   if (options.basePath === undefined && options.expectedManifestSha256 === undefined) {
@@ -717,10 +732,9 @@ export async function loadRedditQuarterInsights(
       && JSON.stringify(data.source) === JSON.stringify(manifest.source),
     'quarter insights manifest与data lineage不一致',
   );
-  quarterInsightsCache = { data, manifest };
-  return quarterInsightsCache;
+  return { data, manifest };
 }
 
 export function resetRedditQuarterInsightsCacheForTests(): void {
-  quarterInsightsCache = null;
+  quarterInsightsCache.clear();
 }

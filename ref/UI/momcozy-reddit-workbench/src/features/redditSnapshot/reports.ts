@@ -17,8 +17,10 @@ import {
   fetchVerifiedReleaseManifest,
   getReleaseDatasetBasePath,
   loadCurrentRelease,
+  releaseGenerationKey,
   type CurrentRelease,
 } from './release';
+import { ReleaseKeyedCache } from './releaseKeyedCache';
 
 export const REPORTS_MANIFEST_SCHEMA = 'reddit_voc_reports_manifest_v1';
 export const REPORTS_INDEX_SCHEMA = 'reddit_voc_report_index_v1';
@@ -799,7 +801,7 @@ export class ReportsContractError extends Error {
   }
 }
 
-let reportsPromise: Promise<AnyRedditReportsSnapshot> | null = null;
+const reportsCache = new ReleaseKeyedCache<AnyRedditReportsSnapshot>();
 const historicalReportPromises = new Map<string, Promise<V3CurrentReport>>();
 
 function assertContract(condition: unknown, message: string): asserts condition {
@@ -2194,14 +2196,20 @@ async function loadReportsUncached(forceReload = false): Promise<AnyRedditReport
 }
 
 export function loadRedditReports(): Promise<AnyRedditReportsSnapshot> {
-  reportsPromise ??= loadReportsUncached();
-  return reportsPromise;
+  return loadCurrentRelease().then((release) => (
+    reportsCache.get(releaseGenerationKey(release), () => loadReportsUncached())
+  ));
 }
 
 export function reloadRedditReports(): Promise<AnyRedditReportsSnapshot> {
+  // An explicit reload must both drop the historical promises and force the
+  // release-keyed cache to re-fetch, otherwise the button appears to do nothing
+  // until the pointer TTL expires.
   historicalReportPromises.clear();
-  reportsPromise = loadReportsUncached(true);
-  return reportsPromise;
+  reportsCache.clear();
+  return loadCurrentRelease().then((release) => (
+    reportsCache.get(releaseGenerationKey(release), () => loadReportsUncached(true))
+  ));
 }
 
 export function loadV3HistoricalReport(
@@ -2250,6 +2258,6 @@ export function loadV3HistoricalReport(
 }
 
 export function resetReportsCacheForTests(): void {
-  reportsPromise = null;
+  reportsCache.clear();
   historicalReportPromises.clear();
 }

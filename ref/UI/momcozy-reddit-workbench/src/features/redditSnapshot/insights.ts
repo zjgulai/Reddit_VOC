@@ -13,13 +13,15 @@ import {
 import {
   fetchVerifiedReleaseManifest,
   loadCurrentRelease,
+  releaseGenerationKey,
 } from './release';
+import { ReleaseKeyedCache } from './releaseKeyedCache';
 
 export * from './insightsV3';
 
 export type AnyRedditInsightsSnapshot = RedditInsightsSnapshot | V3RedditInsightsSnapshot;
 
-let insightsPromise: Promise<AnyRedditInsightsSnapshot> | null = null;
+const insightsCache = new ReleaseKeyedCache<AnyRedditInsightsSnapshot>();
 
 async function loadInsightsUncached(forceReload = false): Promise<AnyRedditInsightsSnapshot> {
   const release = await loadCurrentRelease();
@@ -36,16 +38,21 @@ async function loadInsightsUncached(forceReload = false): Promise<AnyRedditInsig
 }
 
 export function loadRedditInsights(): Promise<AnyRedditInsightsSnapshot> {
-  insightsPromise ??= loadInsightsUncached();
-  return insightsPromise;
+  return loadCurrentRelease().then((release) => (
+    insightsCache.get(releaseGenerationKey(release), () => loadInsightsUncached())
+  ));
 }
 
 export function reloadRedditInsights(): Promise<AnyRedditInsightsSnapshot> {
-  insightsPromise = loadInsightsUncached(true);
-  return insightsPromise;
+  // The explicit reload must drop the release-keyed entry too, or the button is a
+  // no-op until the pointer TTL expires.
+  insightsCache.clear();
+  return loadCurrentRelease().then((release) => (
+    insightsCache.get(releaseGenerationKey(release), () => loadInsightsUncached(true))
+  ));
 }
 
 export function resetInsightsCacheForTests(): void {
-  insightsPromise = null;
+  insightsCache.clear();
   resetSnapshotCacheForTests();
 }

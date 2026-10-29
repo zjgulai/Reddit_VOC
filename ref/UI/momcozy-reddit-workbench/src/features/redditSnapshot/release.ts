@@ -1,3 +1,5 @@
+import { ReleasePointerCache } from './releaseKeyedCache';
+
 export const CURRENT_RELEASE_SCHEMA = 'reddit_voc_current_release_v1';
 export const CURRENT_RELEASE_SCHEMA_V2 = 'reddit_voc_current_release_v2';
 
@@ -68,8 +70,6 @@ export class ReleaseContractError extends Error {
     this.name = 'ReleaseContractError';
   }
 }
-
-let releasePromise: Promise<CurrentRelease> | null = null;
 
 function assertContract(condition: unknown, message: string): asserts condition {
   if (!condition) throw new ReleaseContractError(message);
@@ -377,9 +377,34 @@ async function loadCurrentReleaseUncached(): Promise<CurrentRelease> {
   return validateCurrentRelease(value);
 }
 
+/**
+ * The pointer used to be cached for the lifetime of the tab (`releasePromise ??=`),
+ * so an open page never learned about a publish: every downstream dataset loader
+ * resolved against the generation that was live when the tab first loaded. A short
+ * TTL keeps that burst-collapsing behaviour while letting an open tab converge
+ * within minutes of a publish, without a manual reload.
+ */
+const releasePointerCache = new ReleasePointerCache<CurrentRelease>();
+
+/** Revalidate the pointer at most this often. */
+export const RELEASE_POINTER_TTL_MS = 5 * 60 * 1000;
+
 export function loadCurrentRelease(): Promise<CurrentRelease> {
-  releasePromise ??= loadCurrentReleaseUncached();
-  return releasePromise;
+  return releasePointerCache.read(loadCurrentReleaseUncached);
+}
+
+/**
+ * Force the next `loadCurrentRelease()` to hit the network, for an explicit
+ * "re-read the current published version" action. The in-flight pointer request is
+ * shared, so concurrent callers still produce a single fetch.
+ */
+export function invalidateCurrentRelease(): void {
+  releasePointerCache.invalidate();
+}
+
+/** The generation key every dataset cache must be keyed by. */
+export function releaseGenerationKey(release: CurrentRelease): string {
+  return `${release.release_id}@${release.generated_at_utc}`;
 }
 
 export async function fetchVerifiedReleaseManifest<T>(
@@ -408,5 +433,5 @@ export async function fetchVerifiedReleaseManifest<T>(
 }
 
 export function resetCurrentReleaseCacheForTests(): void {
-  releasePromise = null;
+  releasePointerCache.invalidate();
 }
