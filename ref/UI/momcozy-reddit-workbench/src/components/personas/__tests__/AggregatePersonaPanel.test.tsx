@@ -329,4 +329,122 @@ describe('AggregatePersonaPanel', () => {
 
     expect(screen.getByLabelText('正在加载用户画像')).toHaveAttribute('aria-busy', 'true');
   });
+
+  it('renders quarter cohort counts when the persona assignment id space is disjoint', () => {
+    // Production shape: the frozen persona snapshot's assignment ids are a
+    // different namespace from the quarter's live ids, so the allowlist filter
+    // matches nothing. The panel must read the quarter's per-cohort counts.
+    const quarterCounts: Record<string, number> = {
+      scenario_adapter: 320,
+      service_support_seeker: 77,
+      operations_troubleshooter: 91,
+      fit_output_optimizer: 80,
+      product_evaluator: 0,
+      purchase_decision: 0,
+      competitor_comparer: 187,
+      recommendation_expression: 0,
+    };
+    const total = Object.values(quarterCounts).reduce((sum, count) => sum + count, 0);
+
+    render(
+      <MemoryRouter>
+        <AggregatePersonaPanel
+          data={v3Snapshot}
+          error={null}
+          isLoading={false}
+          assignmentIds={['assignment-from-a-disjoint-namespace']}
+          periodLabel="最近一个季度"
+          cohortAssignmentCounts={quarterCounts}
+          declaredMainAssignmentCount={total}
+        />
+      </MemoryRouter>,
+    );
+
+    const bars = screen.getAllByTestId('persona-distribution-bar');
+    expect(bars).toHaveLength(8);
+    const shares = bars.reduce((sum, bar) => sum + Number(bar.getAttribute('data-share')), 0);
+    expect(shares).toBeCloseTo(100, 6);
+
+    // The largest cohort must be the scenario_adapter count, not zero.
+    const sorted = [...bars].sort(
+      (left, right) => Number(right.getAttribute('data-share')) - Number(left.getAttribute('data-share')),
+    );
+    expect(Number(sorted[0].getAttribute('data-share'))).toBeCloseTo((320 / total) * 100, 1);
+
+    // A cohort whose quarter count is non-zero must never render as empty. Cohorts
+    // that are genuinely zero (product_evaluator here) legitimately show 0.00%.
+    const barsByLabel = bars.map((bar) => bar.textContent ?? '');
+    const fundedCounts = Object.values(quarterCounts).filter((count) => count > 0);
+    expect(fundedCounts.length).toBeGreaterThan(0);
+    const emptyBars = barsByLabel.filter((label) => /0\.00%\s*·\s*0\s*条/.test(label));
+    expect(emptyBars).toHaveLength(8 - fundedCounts.length);
+    expect(screen.getByText('合计 100.00%')).toBeInTheDocument();
+  });
+
+  it('does not print 合计 100.00% when the displayed sum differs from the declared quarter total', () => {
+    const quarterCounts: Record<string, number> = {
+      scenario_adapter: 320,
+      service_support_seeker: 0,
+      operations_troubleshooter: 0,
+      fit_output_optimizer: 0,
+      product_evaluator: 0,
+      purchase_decision: 0,
+      competitor_comparer: 0,
+      recommendation_expression: 0,
+    };
+
+    render(
+      <MemoryRouter>
+        <AggregatePersonaPanel
+          data={v3Snapshot}
+          error={null}
+          isLoading={false}
+          assignmentIds={['assignment-from-a-disjoint-namespace']}
+          periodLabel="最近一个季度"
+          cohortAssignmentCounts={quarterCounts}
+          declaredMainAssignmentCount={755}
+        />
+      </MemoryRouter>,
+    );
+
+    expect(screen.queryByText('合计 100.00%')).not.toBeInTheDocument();
+    expect(screen.getByTestId('persona-denominator-note')).toHaveTextContent('分母不可用');
+    expect(screen.getByTestId('persona-denominator-note')).toHaveTextContent('320');
+    expect(screen.getByTestId('persona-denominator-note')).toHaveTextContent('755');
+  });
+
+  it('keeps post and comment splits only when the assignment count matches the quarter count', () => {
+    const quarterCounts: Record<string, number> = {
+      scenario_adapter: 320,
+      service_support_seeker: 0,
+      operations_troubleshooter: 0,
+      fit_output_optimizer: 0,
+      product_evaluator: 0,
+      purchase_decision: 0,
+      competitor_comparer: 0,
+      recommendation_expression: 0,
+    };
+
+    render(
+      <MemoryRouter>
+        <AggregatePersonaPanel
+          data={v3Snapshot}
+          error={null}
+          isLoading={false}
+          assignmentIds={['assignment-from-a-disjoint-namespace']}
+          periodLabel="最近一个季度"
+          cohortAssignmentCounts={quarterCounts}
+          declaredMainAssignmentCount={320}
+        />
+      </MemoryRouter>,
+    );
+
+    // The local assignment rows cannot be attributed to the quarter counts, so the
+    // grain split is unknown and must read "—" rather than a fabricated 0.
+    const scenarioCard = screen.getByRole('heading', { name: '工作与家庭场景适配者' }).closest('article');
+    expect(scenarioCard).not.toBeNull();
+    const splits = (scenarioCard as HTMLElement).textContent ?? '';
+    expect(splits).toContain('—');
+    expect(splits).toContain('320');
+  });
 });

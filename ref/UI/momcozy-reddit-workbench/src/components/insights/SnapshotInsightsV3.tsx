@@ -447,6 +447,15 @@ export default function SnapshotInsightsV3({
     categoryAssignments: quarterInsights.personas.category_context_assignment_count,
     categoryEntities: quarterInsights.personas.category_context_unique_entities,
   };
+  // The persona snapshot is a frozen artifact whose assignment id namespace is
+  // disjoint from the quarter's live ids, so filtering its rows by the quarter
+  // allowlist yields zero for every cohort. Pass the quarter's own per-cohort
+  // counts down as the authoritative distribution, plus its declared denominator
+  // so the panel can refuse to print 100.00% over a partial sum.
+  const quarterCohortAssignmentCounts: Record<string, number> = Object.fromEntries(
+    quarterInsights.personas.cohorts.map((cohort) => [cohort.cohort_id, cohort.assignment_count]),
+  );
+  const quarterDeclaredMainAssignmentCount = quarterInsights.personas.main_assignment_count;
 
   const selectTheme = (theme: ThemeId) => {
     const next = new URLSearchParams(searchParams);
@@ -535,6 +544,8 @@ export default function SnapshotInsightsV3({
           periodLabel={periodLabel}
           categoryContextAssignmentCount={quarterPersonaScope.categoryAssignments}
           categoryContextUniqueEntityCount={quarterPersonaScope.categoryEntities}
+          cohortAssignmentCounts={quarterCohortAssignmentCounts}
+          declaredMainAssignmentCount={quarterDeclaredMainAssignmentCount}
         />
       </div>
 

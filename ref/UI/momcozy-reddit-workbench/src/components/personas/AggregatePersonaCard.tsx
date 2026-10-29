@@ -10,9 +10,11 @@ export interface AggregatePersonaCardModel {
   avatarAlt: string;
   assignmentCount: number;
   distributionShare: number;
-  postCount: number;
-  commentCount: number;
-  threadCount: number;
+  /** null when the persona snapshot's assignment ids do not cover this cohort,
+   *  so the entity split cannot be attributed. Render "—", never 0. */
+  postCount: number | null;
+  commentCount: number | null;
+  threadCount: number | null;
   atomicReferenceCount: number | null;
   referenceTags: string[];
   evidenceHref: string | null;
@@ -97,9 +99,9 @@ export default function AggregatePersonaCard({
       <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-5">
         {[
           ['画像样本', cohort.assignmentCount],
-          ['帖子', cohort.postCount],
-          ['评论', cohort.commentCount],
-          ['证据线程', cohort.threadCount],
+          ['帖子', cohort.postCount ?? '—'],
+          ['评论', cohort.commentCount ?? '—'],
+          ['证据线程', cohort.threadCount ?? '—'],
           ['画像依据', cohort.atomicReferenceCount ?? '—'],
         ].map(([label, value]) => (
           <div key={label} className="rounded-icon bg-surface-tertiary px-3 py-2.5">

@@ -9,6 +9,7 @@ is out of repo scope (documented deviation in ADR-002).
 import hashlib
 import importlib.util
 import json
+import math
 from datetime import date, datetime
 from pathlib import Path
 from unittest.mock import patch
@@ -145,7 +146,16 @@ def test_brand_health_projection_is_self_consistent(snapshot):
     scores = [d["score"] for d in data["dimensions"]]
     assert all(s is None or 0 <= s <= 100 for s in scores)
     if all(s is not None for s in scores):
-        assert data["overall"]["score"] == round(sum(scores) / 4, 2)
+        # The overall must be reproducible from the PUBLISHED axis scores alone,
+        # using the same half-up rule the producer applies (JS Math.round
+        # semantics). Python's round() is banker's rounding and disagrees at
+        # half-way boundaries: round(301.66/4, 2) == 75.41 but Math.round gives
+        # 75.42, which is what the artifact may legitimately carry.
+        expected_overall = math.floor(sum(scores) / len(scores) * 100 + 0.5) / 100
+        assert data["overall"]["score"] == expected_overall, (
+            f"overall {data['overall']['score']} is not reproducible from the "
+            f"published axes {scores} (expected {expected_overall})"
+        )
         assert data["overall"]["status"] != "unavailable"
     # manifest lineage must mirror data.source exactly (the frontend asserts this)
     assert manifest["source_brand_health_sha256"] == data["source"]["brand_health_sha256"]
@@ -155,8 +165,12 @@ def test_brand_health_projection_is_self_consistent(snapshot):
         == data["source"]["metrics_validation_receipt_sha256"]
     )
     assert manifest["source_snapshot_id"] == data["source"]["snapshot_id"]
-    # the file entry must describe the exact serialized bytes
-    blob = (json.dumps(data, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
+    # The file entry must describe the exact bytes written to disk. Production
+    # serializes with `canonical_json_document` (sorted keys, compact separators,
+    # one trailing newline) because `validate_public_projection` reads brand-health
+    # with `canonical=True` and compares raw bytes. Hashing an `indent=2` rendering
+    # here asserted a contract the pipeline never writes.
+    blob = rd.canonical_json_document(data)
     assert manifest["files"]["brand-health.json"]["sha256"] == hashlib.sha256(blob).hexdigest()
     assert manifest["files"]["brand-health.json"]["bytes"] == len(blob)
     # boundaries the frontend enforces

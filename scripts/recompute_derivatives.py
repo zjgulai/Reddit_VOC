@@ -755,7 +755,6 @@ def recompute_brand_health(
         }
 
     dims: list[dict] = []
-    scores: list[float] = []
     for dim_id, label in DIMENSION_ORDER:
         if total < 30:
             dims.append(_dim(dim_id, label, None, ["insufficient_classified_voc"]))
@@ -779,16 +778,22 @@ def recompute_brand_health(
             # 风险韧性 = 100 减去 2 倍负向率（负向按双倍惩罚）
             value = 100 - 2 * neg * 100 / total
         dims.append(_dim(dim_id, label, value, list(reasons_common)))
-        if value is not None:
-            scores.append(max(0.0, min(100.0, value)))
 
-    # Half-up rounding, matching JS Math.round. Python's round() is banker's rounding:
-    # round(18.625, 2) == 18.62 while Math.round(1862.5)/100 == 18.63. The client
-    # recomputes this average itself and compares exactly, so a single half-way value
-    # would reject the whole brand-health page.
+    # Derive the overall score from the PUBLISHED (already rounded) axis scores,
+    # not from the raw floats. The four axes are all an external consumer can see,
+    # so `overall == mean(published axes)` must hold exactly or the artifact is not
+    # self-verifiable: rounding each axis to 2dp and then averaging the unrounded
+    # values produced 75.42 from 301.66/4 (75.415) while a reader summing the
+    # published axes gets a different number at the half-way boundary.
+    #
+    # Half-up rounding, matching JS Math.round: Python's round() is banker's
+    # rounding, so round(18.625, 2) == 18.62 while Math.round(1862.5)/100 == 18.63.
+    published_scores = [
+        d["score"] for d in dims if d["score"] is not None
+    ]
     overall_score = (
-        math.floor(sum(scores) / len(scores) * 100 + 0.5) / 100
-        if len(scores) == len(DIMENSION_ORDER) else None
+        math.floor(sum(published_scores) / len(published_scores) * 100 + 0.5) / 100
+        if len(published_scores) == len(DIMENSION_ORDER) else None
     )
     overall_status = "available" if overall_score is not None and not reasons_common else (
         "provisional" if overall_score is not None else "unavailable"

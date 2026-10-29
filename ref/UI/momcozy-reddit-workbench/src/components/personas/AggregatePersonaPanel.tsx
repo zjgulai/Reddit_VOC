@@ -21,6 +21,14 @@ interface AggregatePersonaPanelProps {
   periodLabel?: string;
   categoryContextAssignmentCount?: number;
   categoryContextUniqueEntityCount?: number;
+  /** Authoritative per-cohort counts from the daily-recomputed quarter projection.
+   *  The persona snapshot cannot be rebuilt by the pipeline, so its assignment ids
+   *  and the quarter's live ids are disjoint in production; the distribution must
+   *  read the quarter counts or every cohort renders 0.00%. */
+  cohortAssignmentCounts?: Readonly<Record<string, number>>;
+  /** `quarterInsights.personas.main_assignment_count` — the denominator the panel
+   *  must reconcile against before it may print a 100.00% total. */
+  declaredMainAssignmentCount?: number;
 }
 
 function isV3Snapshot(data: AnyRedditPersonasSnapshot): data is V3RedditPersonasSnapshot {
@@ -82,6 +90,7 @@ function PersonaDistributionChart({
   categoryContextUniqueEntities,
   momcozyScoped,
   periodLabel,
+  denominatorNote,
 }: {
   cohorts: AggregatePersonaCardModel[];
   totalAssignments: number;
@@ -89,6 +98,9 @@ function PersonaDistributionChart({
   categoryContextUniqueEntities?: number;
   momcozyScoped: boolean;
   periodLabel?: string;
+  /** Non-null when the displayed sum does not exhaust the declared denominator.
+   *  In that case the 100.00% badge is a false claim and must be replaced. */
+  denominatorNote?: string | null;
 }) {
   const title = momcozyScoped
     ? `${periodLabel ? `${periodLabel} · ` : ''}Momcozy 相关内容画像赋值占比`
@@ -122,7 +134,16 @@ function PersonaDistributionChart({
             )}
           </p>
         </div>
-        <span className="rounded-badge bg-primary-light px-3 py-1.5 text-tiny font-semibold text-primary-hover">合计 100.00%</span>
+        {denominatorNote ? (
+          <span
+            className="rounded-badge border border-status-warning/30 bg-status-warningBg px-3 py-1.5 text-tiny font-medium text-foreground-secondary"
+            data-testid="persona-denominator-note"
+          >
+            {denominatorNote}
+          </span>
+        ) : (
+          <span className="rounded-badge bg-primary-light px-3 py-1.5 text-tiny font-semibold text-primary-hover">合计 100.00%</span>
+        )}
       </div>
 
       <div className="mt-5 grid gap-x-8 gap-y-4 lg:grid-cols-2" role="list" aria-label={momcozyScoped ? '各类 Momcozy 相关内容画像赋值占比' : '各类用户画像证据占比'}>
@@ -167,6 +188,8 @@ export default function AggregatePersonaPanel({
   periodLabel,
   categoryContextAssignmentCount,
   categoryContextUniqueEntityCount,
+  cohortAssignmentCounts,
+  declaredMainAssignmentCount,
 }: AggregatePersonaPanelProps) {
   if (isLoading) {
     return (
@@ -234,23 +257,42 @@ export default function AggregatePersonaPanel({
     cardModels = data.data.personas.map((cohort) => {
       const assignment = evidenceByCohort.get(cohort.cohort_id);
       const cohortAssignments = momcozyAssignments.filter((row) => row.cohort_id === cohort.cohort_id);
+      // The quarter projection is the live, daily-recomputed truth. The persona
+      // snapshot is a frozen artifact whose assignment ids are a different
+      // namespace, so filtering by them yields zero in production. Prefer the
+      // quarter count whenever it is published; only fall back to the local
+      // filter when no quarterly block exists (July fixtures, offline snapshots).
+      const quarterCount = cohortAssignmentCounts?.[cohort.cohort_id];
+      const assignmentCount = typeof quarterCount === 'number'
+        ? quarterCount
+        : cohortAssignments.length;
+      // The entity split can only be attributed when the local assignment rows
+      // actually reconcile with the count being displayed. Otherwise it is
+      // unknown, not zero.
+      const splitIsAttributable = cohortAssignments.length === assignmentCount;
       return {
         cohortId: cohort.cohort_id,
         name: cohort.name_cn,
         definition: businessPersonaDefinition(cohort.definition),
         statusLabel: periodLabel
-          ? availabilityLabel(cohortAssignments.length >= 30
+          ? availabilityLabel(assignmentCount >= 30
               ? 'stable_observed_sample'
-              : cohortAssignments.length >= 10
+              : assignmentCount >= 10
                 ? 'directional_observed_sample'
                 : 'unavailable_insufficient_observed_sample')
           : availabilityLabel(cohort.status),
         avatarAlt: cohort.avatar.alt_text,
-        assignmentCount: cohortAssignments.length,
+        assignmentCount,
         distributionShare: 0,
-        postCount: cohortAssignments.filter((row) => row.source_entity_type === 'post').length,
-        commentCount: cohortAssignments.filter((row) => row.source_entity_type === 'comment').length,
-        threadCount: new Set(cohortAssignments.map((row) => row.thread_id)).size,
+        postCount: splitIsAttributable
+          ? cohortAssignments.filter((row) => row.source_entity_type === 'post').length
+          : null,
+        commentCount: splitIsAttributable
+          ? cohortAssignments.filter((row) => row.source_entity_type === 'comment').length
+          : null,
+        threadCount: splitIsAttributable
+          ? new Set(cohortAssignments.map((row) => row.thread_id)).size
+          : null,
         atomicReferenceCount: cohort.persona_atomic_tag_count,
         referenceTags: (bridgeByCohort.get(cohort.cohort_id)?.persona_tag_ids ?? [])
           .map((personaId) => personaNameById.get(personaId))
@@ -304,6 +346,19 @@ export default function AggregatePersonaPanel({
     .map((cohort, index) => ({ ...cohort, distributionShare: displayShares[index] }))
     .sort((left, right) => right.assignmentCount - left.assignmentCount || left.name.localeCompare(right.name, 'zh-CN'));
   const totalAssignments = cardModels.reduce((sum, cohort) => sum + cohort.assignmentCount, 0);
+  // The 100.00% total is a claim that the displayed rows exhaust the denominator.
+  // Print it only when that is arithmetically true; otherwise say the denominator
+  // is unavailable and show both numbers, so a partial count never reads as whole.
+  const declaredTotal = typeof declaredMainAssignmentCount === 'number'
+    ? declaredMainAssignmentCount
+    : null;
+  const totalIsSelfEvident = totalAssignments > 0
+    && (declaredTotal === null || declaredTotal === totalAssignments);
+  const denominatorNote = totalIsSelfEvident
+    ? null
+    : declaredTotal === null
+      ? `分母不可用（已展示 ${totalAssignments.toLocaleString('zh-CN')} 条，季度总数未提供）`
+      : `分母不可用（已展示 ${totalAssignments.toLocaleString('zh-CN')} / 声明 ${declaredTotal.toLocaleString('zh-CN')}）`;
   const snapshotDate = personaSnapshotDate(data);
   const quarterStart = quarterStartDate(periodLabel);
   const staleSnapshotNote = snapshotDate && quarterStart && snapshotDate < quarterStart
@@ -348,6 +403,7 @@ export default function AggregatePersonaPanel({
         categoryContextUniqueEntities={categoryContextUniqueEntityCount}
         momcozyScoped={v3}
         periodLabel={periodLabel}
+        denominatorNote={denominatorNote}
       />
 
       <div className={`grid gap-4 md:grid-cols-2 ${cohortCount > 2 ? 'xl:grid-cols-3' : ''}`}>
