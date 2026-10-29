@@ -1,0 +1,57 @@
+{
+  "schema_version": "reddit-voc-known-failures-v1",
+  "recorded_at": "2026-10-30",
+  "recorded_against_commit": "e2b04b5",
+  "purpose": "Freeze the failures that exist BEFORE this program so CI can distinguish pre-existing breakage from new regressions. Verified by running each module individually and in groups on a clean HEAD worktree.",
+  "genuine_preexisting": {
+    "description": "Fails in isolation on a clean e2b04b5 worktree; a real defect, not test pollution.",
+    "nodes": [
+      "tests/test_rollback_insights_tencent.py::test_runtime_seal_uses_stable_bytes_when_uploaded_source_is_replaced"
+    ]
+  },
+  "lane_isolation": {
+    "description": "Fail only inside a full-lane run; each module passes alone AND in small groups on the same commit. Root cause is cross-module state leakage (OSError: unknown file format reading a shared artifact), not a code defect. Ticket: stabilise isolation.",
+    "count": 34,
+    "nodes": [
+      "tests/test_daily_report.py::DailyReportTests::test_daily_report_builds_chinese_detail_table_and_insight_image",
+      "tests/test_daily_report.py::DailyReportTests::test_daily_report_cli_writes_business_dingtalk_dry_run",
+      "tests/test_daily_report.py::DailyReportTests::test_daily_report_uses_deepseek_for_body_and_comments",
+      "tests/test_daily_report.py::DailyReportTests::test_daily_report_uses_libretranslate_for_body_and_comments",
+      "tests/test_daily_report.py::PrevalidatedDailyReportTests::test_chinese_first_render_order_keyword_budget_and_fingerprint_noninterference",
+      "tests/test_daily_report.py::PrevalidatedDailyReportTests::test_daily_report_live_send_blocks_when_deepseek_translation_is_unavailable",
+      "tests/test_daily_report.py::PrevalidatedDailyReportTests::test_daily_report_live_send_records_delivery_with_mocked_transport",
+      "tests/test_daily_report.py::PrevalidatedDailyReportTests::test_daily_report_prefetches_media_to_local_files_in_html",
+      "tests/test_daily_report.py::PrevalidatedDailyReportTests::test_html_csv_xlsx_round_trip_exact_source_translation_and_chunk_boundaries",
+      "tests/test_daily_report.py::PrevalidatedDailyReportTests::test_prevalidated_packing_omits_overflow_only_after_full_artifacts_exist",
+      "tests/test_daily_report.py::PrevalidatedDailyReportTests::test_two_part_packing_and_fail_closed_size_limit",
+      "tests/test_daily_report_delivery.py::DailyReportDeliveryTests::test_database_record_failure_after_sent_returns_live_failure_summary",
+      "tests/test_daily_report_delivery.py::DailyReportDeliveryTests::test_duplicate_db_or_ledger_blocks_before_head_and_transport",
+      "tests/test_daily_report_delivery.py::DailyReportDeliveryTests::test_external_attempt_failure_becomes_unknown_and_sets_live_evidence",
+      "tests/test_daily_report_delivery.py::DailyReportDeliveryTests::test_secondary_webhook_is_blocked_before_any_transport_attempt",
+      "tests/test_daily_report_delivery.py::DailyReportDeliveryTests::test_send_blocks_when_sendable_source_state_changes_after_prepare",
+      "tests/test_daily_report_delivery.py::DailyReportDeliveryTests::test_send_cli_defers_dingtalk_credentials_until_after_artifact_preflight",
+      "tests/test_daily_report_delivery.py::DailyReportDeliveryTests::test_send_prepared_cli_missing_gate_blocks_before_head_or_transport",
+      "tests/test_daily_report_delivery.py::DailyReportDeliveryTests::test_send_prepared_cli_uses_synthetic_transport_without_provider_path",
+      "tests/test_daily_report_delivery.py::DailyReportDeliveryTests::test_synthetic_send_uses_frozen_bytes_and_writes_hash_chain_and_db_once",
+      "tests/test_daily_report_delivery.py::DailyReportDeliveryTests::test_terminal_ledger_failure_after_request_preserves_external_attempt_evidence",
+      "tests/test_dual_destination_delivery.py::DualDestinationDeliveryTests::test_both_destinations_share_frozen_bytes_but_have_isolated_evidence",
+      "tests/test_dual_destination_delivery.py::DualDestinationDeliveryTests::test_concurrent_invocations_attempt_each_destination_once",
+      "tests/test_dual_destination_delivery.py::DualDestinationDeliveryTests::test_deferred_projection_sends_all_parts_without_database_write",
+      "tests/test_dual_destination_delivery.py::DualDestinationDeliveryTests::test_dual_cli_gate_blocks_without_loading_credentials_or_transport",
+      "tests/test_dual_destination_delivery.py::DualDestinationDeliveryTests::test_dual_cli_uses_secret_file_and_outputs_no_credentials",
+      "tests/test_dual_destination_delivery.py::DualDestinationDeliveryTests::test_duplicate_destination_url_blocks_before_transport",
+      "tests/test_dual_destination_delivery.py::DualDestinationDeliveryTests::test_hard_crash_after_primary_allows_only_clean_secondary",
+      "tests/test_dual_destination_delivery.py::DualDestinationDeliveryTests::test_ledger_projection_is_atomic_and_idempotent",
+      "tests/test_dual_destination_delivery.py::DualDestinationDeliveryTests::test_ledger_projection_requires_external_sent_evidence_by_default",
+      "tests/test_dual_destination_delivery.py::DualDestinationDeliveryTests::test_ledger_projection_rolls_back_all_rows_on_database_failure",
+      "tests/test_dual_destination_delivery.py::DualDestinationDeliveryTests::test_report_control_projects_exact_external_ledgers_on_host",
+      "tests/test_dual_destination_delivery.py::DualDestinationDeliveryTests::test_sent_plus_rejected_is_partial_and_explicit_resend_is_isolated",
+      "tests/test_dual_destination_delivery.py::DualDestinationDeliveryTests::test_sent_plus_unknown_is_partial_unknown_and_never_retried"
+    ]
+  },
+  "not_baseline": {
+    "description": "Recorded so nobody re-derives them as debt.",
+    "frontend_all_green": "`npm test` (NODE_OPTIONS=--localstorage-file) => 47 files / 234 tests pass. Running bare `npx vitest run` fails 31 localStorage tests purely because the flag is missing; that is a harness invocation detail, not a defect.",
+    "python_full_suite": "Bare `pytest tests/` shows 68 failed + 23 errors because 38 modules are classified local-artifact in config/ci/test-lanes.json and need tmp/ artifacts that .gitignore excludes. CI runs scripts/run_backend_test_lane.py repository instead."
+  }
+}
