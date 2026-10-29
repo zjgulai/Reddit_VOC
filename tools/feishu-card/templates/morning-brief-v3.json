@@ -1,0 +1,128 @@
+{
+  "$comment": "Reddit舆情情报官-早报 v3 — 咨询洞察报告标准。在 v2 编辑部风格上增加：(1) 每条证据带原帖链接（脚注式 [1][2]，文末 Sources 区）；(2) 中英对照（中文分析句 + 英文原文引用，保留证据保真）；(3) 专业线条排版——hr 分节 + column_set 数字条 + grey 出处行，无装饰性元素。占位符 {{key}}。",
+  "config": {
+    "wide_screen_mode": true,
+    "enable_forward": true
+  },
+  "header": {
+    "title": {
+      "tag": "plain_text",
+      "content": "Reddit 舆情情报官 · 早报 ｜ {{report_date}}"
+    },
+    "subtitle": {
+      "tag": "plain_text",
+      "content": "{{narrative_headline}}"
+    },
+    "template": "{{header_template}}"
+  },
+  "elements": [
+    {
+      "tag": "column_set",
+      "flex_mode": "trisect",
+      "background_style": "default",
+      "columns": [
+        {
+          "tag": "column",
+          "width": "weighted",
+          "weight": 1,
+          "vertical_align": "top",
+          "elements": [
+            {
+              "tag": "markdown",
+              "content": "**{{obs_volume}}**\n<font color='grey'>观察量 · {{obs_mom}}</font>"
+            }
+          ]
+        },
+        {
+          "tag": "column",
+          "width": "weighted",
+          "weight": 1,
+          "vertical_align": "top",
+          "elements": [
+            {
+              "tag": "markdown",
+              "content": "**{{negative_rate}}**\n<font color='grey'>负向率 · {{negative_mom}}</font>"
+            }
+          ]
+        },
+        {
+          "tag": "column",
+          "width": "weighted",
+          "weight": 1,
+          "vertical_align": "top",
+          "elements": [
+            {
+              "tag": "markdown",
+              "content": "**{{recommend_rate}}**\n<font color='grey'>推荐表达 · {{recommend_mom}}</font>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tag": "markdown",
+      "content": "<font color='grey'>{{period_line}}</font>"
+    },
+    { "tag": "hr" },
+    {
+      "tag": "markdown",
+      "content": "**Executive Summary**\n{{exec_summary}}"
+    },
+    { "tag": "hr" },
+    {
+      "tag": "markdown",
+      "content": "**01 ｜ 风险与异动**\n\n{{risk_narrative}}\n\n{{risk_facts}}"
+    },
+    { "tag": "hr" },
+    {
+      "tag": "markdown",
+      "content": "**02 ｜ 产品缺陷**\n\n{{rnd_narrative}}\n\n{{rnd_facts}}"
+    },
+    { "tag": "hr" },
+    {
+      "tag": "markdown",
+      "content": "**03 ｜ 竞争与内容**\n\n{{comp_narrative}}\n\n{{comp_facts}}\n\n{{ideas_facts}}"
+    },
+    { "tag": "hr" },
+    {
+      "tag": "markdown",
+      "content": "**季度参照** ｜ <font color='grey'>{{quarter_anchor}}</font>"
+    },
+    {
+      "tag": "markdown",
+      "content": "**Sources**\n{{sources_footer}}"
+    },
+    {
+      "tag": "action",
+      "actions": [
+        {
+          "tag": "button",
+          "text": { "tag": "plain_text", "content": "工作台" },
+          "type": "default",
+          "url": "{{workbench_url}}"
+        },
+        {
+          "tag": "button",
+          "text": { "tag": "plain_text", "content": "痛点证据" },
+          "type": "default",
+          "url": "{{insights_pain_url}}"
+        },
+        {
+          "tag": "button",
+          "text": { "tag": "plain_text", "content": "指标口径" },
+          "type": "default",
+          "url": "{{methodology_url}}"
+        }
+      ]
+    },
+    {
+      "tag": "note",
+      "elements": [
+        {
+          "tag": "plain_text",
+          "content": "数据截至 {{data_as_of}} ｜ 语料 {{corpus_line}} ｜ {{trust_line}} ｜ 本卡为同口径 Reddit 样本观测，不构成市场份额或销量结论 ｜ 引用编号对应上方 Sources 原帖 ｜ Run {{run_id}}"
+        }
+      ]
+    }
+  ]
+}
