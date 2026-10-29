@@ -1,0 +1,42 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2026-10-26T00:00:00Z",
+  "competitors": [
+    { "name": "Elvie", "aliases": ["elvie", "elvie stride", "elvie pump"], "color": "#10B981" },
+    { "name": "Willow", "aliases": ["willow", "willow 3.0", "willow go"], "color": "#6366F1" },
+    { "name": "Spectra", "aliases": ["spectra", "spectra s1", "spectra s2", "synergy gold"], "color": "#F59E0B" },
+    { "name": "Medela", "aliases": ["medela", "freestyle", "pump in style", "sonata"], "color": "#EF4444" },
+    { "name": "Lansinoh", "aliases": ["lansinoh", "smartpump"], "color": "#8B5CF6" },
+    { "name": "Baby Buddha", "aliases": ["baby buddha", "babybuddha"], "color": "#06B6D4" }
+  ],
+  "agents": {
+    "content_scout": {
+      "enabled": true,
+      "target_platforms": ["TikTok", "Instagram", "Facebook 群组", "独立站博客"],
+      "min_upvotes_threshold": 5,
+      "max_ideas_per_post": 2
+    },
+    "rnd_voc": {
+      "enabled": true,
+      "severity_levels": ["critical", "major", "minor"],
+      "auto_ticket_on_severity": ["critical", "major"]
+    },
+    "competitor_radar": {
+      "enabled": true,
+      "focus_dimensions": [
+        "suction_power",
+        "motor_noise",
+        "leak_resistance",
+        "portability_discretion",
+        "cleaning_assembly",
+        "price_value"
+      ]
+    }
+  },
+  "reporting": {
+    "append_content_scout_to_daily_report": true,
+    "append_rnd_warnings_to_daily_report": true,
+    "max_daily_scout_highlights": 2,
+    "max_daily_rnd_highlights": 2
+  }
+}

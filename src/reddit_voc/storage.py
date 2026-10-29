@@ -2,10 +2,11 @@ from __future__ import annotations
 
 import json
 import sqlite3
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
+from . import content_entity
 from .models import RawCapture, RedditComment, RedditThread
 
 
@@ -35,6 +36,13 @@ def _json_list(value: Any) -> list[str]:
 
 def _thread_record(row: dict[str, Any]) -> dict[str, Any]:
     row["media_urls"] = _json_list(row.get("media_urls"))
+    return row
+
+
+def _comment_record(row: dict[str, Any]) -> dict[str, Any]:
+    # deleted_or_removed is stored as an int flag; callers expect a boolean.
+    if "deleted_or_removed" in row:
+        row["deleted_or_removed"] = bool(row["deleted_or_removed"])
     return row
 
 
@@ -125,7 +133,60 @@ CREATE TABLE IF NOT EXISTS delivery_previews (
     artifact_paths TEXT NOT NULL,
     live_send INTEGER NOT NULL DEFAULT 0
 );
+
+-- Collection coverage ledger.
+--
+-- This table exists because "the collector returned nothing for that day" and
+-- "nobody ever asked about that day" were indistinguishable, which is how a
+-- 74-day hole went unnoticed. One row per (run, lane, Shanghai business day).
+-- `reached_floor` is the load-bearing column: a day only counts as covered when
+-- an observed item actually sits on it.
+CREATE TABLE IF NOT EXISTS collection_coverage (
+    run_id TEXT NOT NULL,
+    lane TEXT NOT NULL,
+    business_date TEXT NOT NULL,
+    observed_posts INTEGER NOT NULL DEFAULT 0,
+    observed_comments INTEGER NOT NULL DEFAULT 0,
+    reached_floor INTEGER NOT NULL DEFAULT 0,
+    completeness TEXT NOT NULL,
+    reason TEXT,
+    plan_id TEXT,
+    recorded_at_utc TEXT NOT NULL,
+    PRIMARY KEY (run_id, lane, business_date)
+);
+CREATE INDEX IF NOT EXISTS idx_coverage_date
+    ON collection_coverage(business_date, lane);
+CREATE INDEX IF NOT EXISTS idx_coverage_incomplete
+    ON collection_coverage(completeness, business_date);
+
+-- Ingestion provenance: which run first saw an entity, which run last saw it.
+-- The entity tables are destructive upserts, so re-observing a post used to
+-- rewrite its run_id and erase the fact that it was first collected earlier.
+CREATE TABLE IF NOT EXISTS entity_observation (
+    entity_type TEXT NOT NULL,
+    entity_id TEXT NOT NULL,
+    run_id TEXT NOT NULL,
+    observed_at_utc TEXT NOT NULL,
+    event_at_utc TEXT,
+    payload_sha256 TEXT,
+    PRIMARY KEY (entity_type, entity_id, run_id)
+);
+CREATE INDEX IF NOT EXISTS idx_observation_entity
+    ON entity_observation(entity_type, entity_id, observed_at_utc);
+
+-- Indexes for the read paths the pipeline actually uses. The production database
+-- had none, so every daily read was a full scan.
+CREATE INDEX IF NOT EXISTS idx_threads_run ON reddit_threads(run_id);
+CREATE INDEX IF NOT EXISTS idx_threads_created ON reddit_threads(created_at_utc);
+CREATE INDEX IF NOT EXISTS idx_comments_run ON reddit_comments(run_id);
+CREATE INDEX IF NOT EXISTS idx_comments_post ON reddit_comments(post_id);
+CREATE INDEX IF NOT EXISTS idx_comments_created ON reddit_comments(created_at_utc);
 """
+
+# `content_entity` is the fact table the publish path reads. It has to be created by
+# the same migration that creates the legacy tables, otherwise a fresh database is
+# missing it and `merge_snapshot` has nothing to project from.
+SCHEMA = SCHEMA + content_entity.SCHEMA
 
 
 _SOURCE_BATCH_REQUIRED_TABLES = frozenset(
@@ -290,8 +351,23 @@ class VocStore:
                 (capture.raw_capture_id,),
             ).fetchone()
             if existing is not None:
-                if dict(existing) != record:
-                    raise ValueError(f"raw capture identity collision:{capture.raw_capture_id}")
+                # A capture id is content-addressed from (run_id, payload hash), so
+                # re-running the same run over the same bytes is the SAME capture, not
+                # a collision. `captured_at_utc` is wall-clock and will differ on a
+                # retry, so it must not participate in the identity comparison --
+                # otherwise every retry of a run raises and the run cannot be replayed.
+                existing_record = dict(existing)
+                volatile = {"captured_at_utc"}
+                differing = {
+                    key
+                    for key, value in record.items()
+                    if key not in volatile and existing_record.get(key) != value
+                }
+                if differing:
+                    raise ValueError(
+                        f"raw capture identity collision:{capture.raw_capture_id}"
+                        f" (fields differ: {sorted(differing)})"
+                    )
                 return
             conn.execute(
                 """
@@ -341,6 +417,22 @@ class VocStore:
                 """,
                 thread.as_record(),
             )
+            # Same transaction: the fact table the publish path reads must never lag
+            # behind the legacy table, or a run would publish without its own data.
+            content_entity.upsert_post(
+                conn,
+                post_id=thread.post_id,
+                run_id=thread.run_id,
+                subreddit=thread.subreddit,
+                title=thread.title,
+                body=thread.selftext,
+                created_at_utc=thread.created_at_utc.isoformat(),
+                score=thread.score,
+                num_comments=thread.num_comments_reported,
+                source_url=thread.source_url,
+                author_hash=thread.author_hash,
+                raw_payload_id=thread.raw_capture_id,
+            )
 
     def upsert_comment(self, comment: RedditComment) -> None:
         record = comment.as_record()
@@ -372,6 +464,20 @@ class VocStore:
                 """,
                 record,
             )
+            content_entity.upsert_comment(
+                conn,
+                comment_id=comment.comment_id,
+                post_id=comment.post_id,
+                run_id=comment.run_id,
+                body=comment.body,
+                created_at_utc=comment.created_at_utc.isoformat(),
+                score=comment.score,
+                depth=comment.depth,
+                parent_id=comment.parent_id,
+                author_hash=comment.author_hash,
+                raw_payload_id=comment.raw_capture_id,
+                deleted_or_removed=comment.deleted_or_removed,
+            )
 
     def table_count(self, table: str) -> int:
         if table not in {"runs", "raw_captures", "reddit_threads", "reddit_comments", "analysis_results", "delivery_previews"}:
@@ -396,6 +502,110 @@ class VocStore:
         with self.connect() as conn:
             for table in ("analysis_results", "reddit_comments", "reddit_threads", "raw_captures"):
                 conn.execute(f"DELETE FROM {table} WHERE run_id = ?", (run_id,))
+
+    def record_coverage(self, run_id: str, rows: list[dict[str, Any]], plan_id: str | None = None) -> int:
+        """Persist per-(lane, business day) coverage for a run.
+
+        Idempotent: re-recording the same run/lane/day overwrites, so a retried run
+        corrects its own earlier claim instead of double counting.
+        """
+        if not rows:
+            return 0
+        now = datetime.now(timezone.utc).isoformat()
+        with self.connect() as conn:
+            conn.executemany(
+                """
+                INSERT INTO collection_coverage(
+                    run_id, lane, business_date, observed_posts, observed_comments,
+                    reached_floor, completeness, reason, plan_id, recorded_at_utc
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(run_id, lane, business_date) DO UPDATE SET
+                    observed_posts=excluded.observed_posts,
+                    observed_comments=excluded.observed_comments,
+                    reached_floor=excluded.reached_floor,
+                    completeness=excluded.completeness,
+                    reason=excluded.reason,
+                    plan_id=excluded.plan_id,
+                    recorded_at_utc=excluded.recorded_at_utc
+                """,
+                [
+                    (
+                        run_id,
+                        row["lane"],
+                        row["business_date"],
+                        int(row.get("observed_posts") or 0),
+                        int(row.get("observed_comments") or 0),
+                        1 if row.get("reached_floor") else 0,
+                        row.get("completeness") or "unknown",
+                        row.get("reason"),
+                        plan_id,
+                        now,
+                    )
+                    for row in rows
+                ],
+            )
+        return len(rows)
+
+    def coverage_gaps(self, date_from: str, date_to: str) -> list[dict[str, Any]]:
+        """Business days in [date_from, date_to] that no lane ever reached.
+
+        This is the query that turns "we think we have data" into "here is exactly
+        which days we are missing", and it is what the backfill planner consumes.
+        """
+        with self.connect() as conn:
+            covered = {
+                row["business_date"]
+                for row in conn.execute(
+                    """
+                    SELECT DISTINCT business_date FROM collection_coverage
+                    WHERE reached_floor = 1 AND business_date BETWEEN ? AND ?
+                    """,
+                    (date_from, date_to),
+                ).fetchall()
+            }
+        start = datetime.fromisoformat(date_from).date()
+        end = datetime.fromisoformat(date_to).date()
+        gaps: list[dict[str, Any]] = []
+        cursor = start
+        while cursor <= end:
+            key = cursor.isoformat()
+            if key not in covered:
+                gaps.append({"business_date": key})
+            cursor += timedelta(days=1)
+        return gaps
+
+    def record_observation(
+        self,
+        *,
+        entity_type: str,
+        entity_id: str,
+        run_id: str,
+        event_at_utc: str | None = None,
+        payload_sha256: str | None = None,
+        observed_at_utc: str | None = None,
+    ) -> None:
+        """Append that this run saw this entity, preserving first-seen provenance.
+
+        The entity tables overwrite run_id on every re-observation, so without this
+        append-only log "when did we first collect this post" is unanswerable.
+        """
+        with self.connect() as conn:
+            conn.execute(
+                """
+                INSERT INTO entity_observation(
+                    entity_type, entity_id, run_id, observed_at_utc, event_at_utc, payload_sha256
+                ) VALUES (?, ?, ?, ?, ?, ?)
+                ON CONFLICT(entity_type, entity_id, run_id) DO NOTHING
+                """,
+                (
+                    entity_type,
+                    entity_id,
+                    run_id,
+                    observed_at_utc or datetime.now(timezone.utc).isoformat(),
+                    event_at_utc,
+                    payload_sha256,
+                ),
+            )
 
     def delivery_live_send_count_for_run(self, run_id: str) -> int:
         with self.connect() as conn:
@@ -425,6 +635,48 @@ class VocStore:
                 (run_id,),
             ).fetchall()
             return [_thread_record(dict(row)) for row in rows]
+
+    def fetch_threads_in_window(self, start_utc: str, end_utc: str) -> list[dict[str, Any]]:
+        """Threads whose own event date falls in [start_utc, end_utc).
+
+        Merging by run_id cannot work for a corpus that is assembled from several
+        independent runs (daily collection + weekly backfill shards): each run only
+        ever sees its own rows, so data collected by another run never reaches the
+        published snapshot. Selecting by the content's own date removes run_id from
+        the merge path entirely.
+        """
+        with self.connect() as conn:
+            rows = conn.execute(
+                """
+                SELECT
+                    post_id, run_id, raw_capture_id, subreddit, title, selftext,
+                    source_url, created_at_utc, score, num_comments_reported,
+                    parsed_comment_count, more_node_count, coverage_grade,
+                    matched_keywords, author_hash, media_urls
+                FROM reddit_threads
+                WHERE created_at_utc >= ? AND created_at_utc < ?
+                ORDER BY created_at_utc, post_id
+                """,
+                (start_utc, end_utc),
+            ).fetchall()
+            return [_thread_record(dict(row)) for row in rows]
+
+    def fetch_comments_in_window(self, start_utc: str, end_utc: str) -> list[dict[str, Any]]:
+        """Comments whose own event date falls in [start_utc, end_utc)."""
+        with self.connect() as conn:
+            rows = conn.execute(
+                """
+                SELECT
+                    comment_id, post_id, run_id, raw_capture_id, parent_id, body,
+                    created_at_utc, score, depth, is_submitter, matched_keywords,
+                    author_hash, deleted_or_removed
+                FROM reddit_comments
+                WHERE created_at_utc >= ? AND created_at_utc < ?
+                ORDER BY created_at_utc, comment_id
+                """,
+                (start_utc, end_utc),
+            ).fetchall()
+            return [_comment_record(dict(row)) for row in rows]
 
     def fetch_metric_threads_for_run(self, run_id: str) -> list[dict[str, Any]]:
         run = self.get_run(run_id)

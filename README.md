@@ -3,7 +3,7 @@ title: Reddit VOC Local Operator README
 doc_type: runbook
 status: active
 created: 2026-07-07
-updated: 2026-08-22
+updated: 2026-08-23
 owner: codex
 project: Reddit_VOC
 production_boundary: authorized_live_operational_partial
@@ -13,7 +13,7 @@ live_send: true
 
 # Reddit VOC Local Operator README
 
-## 当前状态入口（2026-08-22）
+## 当前状态入口（2026-08-23）
 
 当前产品状态、能力图谱、生产/本地证据边界、已知阻断和继续执行顺序统一见
 [`PROJECT_STATUS.md`](PROJECT_STATUS.md)。该文档取代本 README 下方各历史章节中的
@@ -22,17 +22,33 @@ live_send: true
 
 截至该交接状态：daily report current 已激活到
 `7b177962...c181`，2026-08-22 双机器人补推已有两个 destination terminal `sent` 和
-生产 DB 两行投影证据；自然 08:00 自动周期仍须以 8 月 23 日首轮真实证据验收。公开
+生产 DB 两行投影证据；2026-08-23 自然 08:00 周期已实证在 reservation 前因 annual
+parent authority 文件缺失而 fail-closed。parent-only 修复仅为本地冻结候选，尚未生产安装。公开
 洞察站仍运行 2026-08-10 的 site/data release，与日报 runtime 是两条独立 current 链，
 日报补推不会自动刷新站点日期。
+
+剩余 High 风险的唯一执行计划为
+[`docs/superpowers/plans/2026-08-23-reddit-voc-remaining-high-risk-closure.md`](docs/superpowers/plans/2026-08-23-reddit-voc-remaining-high-risk-closure.md)。截至 15:35 BJT，G6R6-R1 parent-only 与 H1-R3
+公开翻译都只完成 fresh production read-only preflight 和 exact authorization proposal；未发生
+parent 安装或 DeepSeek 调用。16:05 BJT 再次复核的 18 个 production/H1 绑定点全部未漂移；
+16:09 BJT fresh 只读回读进一步确认公网 data pointer 与生产
+data current SHA 相同，但仍是 `data_as_of_utc=2026-08-08T23:00:00Z`、freshness=`partial`；旧日期
+不是浏览器缓存，必须走独立 data candidate/current CAS。TikHub comments route/query 已与当前官方合同
+逐项一致，区域域名 `.dev` 对照探针仍待精确授权。Data volume 的 `df -P` 已为 100%、available
+`4078256 KiB`；四个 exact 可重建缓存目录预计仅回收 `757552 KiB`，expanded proposal 已冻结但实际
+删除仍为 0，不能据此把容量风险表述为关闭。
 
 ## GitHub 与生产版本
 
 GitHub 仓库为 `https://github.com/zjgulai/Reddit_VOC`，默认分支为 `main`。
 三端版本身份、生产只读校验和后续发布顺序见
-[`docs/workflows/version-consistency.md`](docs/workflows/version-consistency.md)。当前日报
-源码可精确重建生产 release；公开站只锁定旧生产制品 manifest，尚不能把当前较新的
-UI 源码表述为该旧 dist 的逐字节来源。
+[`docs/workflows/version-consistency.md`](docs/workflows/version-consistency.md)。已提交基线
+`HEAD=origin/main=15b286a2...e7` 对应 GitHub CI green，但当前 dirty 日报源码会重建为
+`750cfe17...82f`，不再等于生产锁定 `7b177962...c181`；必须经 successor release、生产
+postflight、version-lock 更新和 clean Git push 后才能恢复三端一致。该 successor 已完成两次
+确定性构建、21-module import closure 和 56 runtime tests；正式 backend CI 口径仍只有
+`daily_source_release_mismatch` 一项失败，因此它是 L2 候选，不是已部署版本。公开站只锁定旧生产
+制品 manifest，尚不能把当前较新的 UI 源码表述为该旧 dist 的逐字节来源。
 
 ## Reddit VOC 洞察站部署
 

@@ -2110,7 +2110,7 @@ async function fetchVerifiedJson<T>(
   forceReload = false,
 ): Promise<T> {
   const response = await fetch(`${basePath}/${filename}`, {
-    cache: forceReload ? 'reload' : 'force-cache',
+    cache: forceReload ? 'reload' : 'no-cache',
   });
   if (!response.ok) {
     throw new ReportsContractError(`真实报告文件加载失败：${filename}（HTTP ${response.status}）`);

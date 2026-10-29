@@ -181,7 +181,7 @@ class RequestEnvelopeTests(unittest.TestCase):
         self.assertEqual(len(transport.calls), 1)
         request, timeout = transport.calls[0]
         self.assertEqual(request.full_url, DEEPSEEK_CHAT_COMPLETIONS_URL)
-        self.assertEqual(timeout, 45.0)
+        self.assertEqual(timeout, 60.0)
         body = json.loads(request.data.decode("utf-8"))
         self.assertEqual(
             body,
@@ -204,6 +204,28 @@ class RequestEnvelopeTests(unittest.TestCase):
         self.assertEqual(headers["accept"], "application/json")
         self.assertEqual(headers["user-agent"], "Reddit-VOC-Daily-Report/1")
         self.assertEqual(headers["authorization"], f"Bearer {SYNTHETIC_KEY}")
+
+    def test_transport_timeout_uses_remaining_deadline_up_to_120_seconds(self) -> None:
+        client, transport, clock = _client(
+            [FakeResponse(200, _envelope()), FakeResponse(200, _envelope())]
+        )
+
+        client.complete_json(
+            phase="translation",
+            system_prompt="system json prompt",
+            user_payload={},
+            deadline=MonotonicDeadline(clock.monotonic() + 90),
+            attempt_budget=AttemptBudget(),
+        )
+        client.complete_json(
+            phase="translation",
+            system_prompt="system json prompt",
+            user_payload={},
+            deadline=MonotonicDeadline(clock.monotonic() + 300),
+            attempt_budget=AttemptBudget(),
+        )
+
+        self.assertEqual([timeout for _request, timeout in transport.calls], [90.0, 120.0])
 
     def test_validator_uses_smaller_fixed_output_cap(self) -> None:
         client, transport, clock = _client([FakeResponse(200, _envelope(content='{"verdicts":[]}'))])
@@ -264,6 +286,32 @@ class RetryAndEvidenceTests(unittest.TestCase):
         self.assertEqual(completion.attempts[1].outcome, "success")
         self.assertEqual(clock.sleeps, [1.125])
 
+    def test_invalid_json_content_exhaustion_preserves_reason_for_outer_recovery(self) -> None:
+        client, transport, clock = _client(
+            [
+                FakeResponse(200, _envelope(content='{"translations":')),
+                FakeResponse(200, _envelope(content='{"translations":')),
+                FakeResponse(200, _envelope(content='{"translations":')),
+            ]
+        )
+
+        with self.assertRaises(DeepSeekClientError) as raised:
+            client.complete_json(
+                phase="translation",
+                system_prompt="json",
+                user_payload={},
+                deadline=MonotonicDeadline(clock.monotonic() + 120),
+                attempt_budget=AttemptBudget(),
+            )
+
+        self.assertEqual(raised.exception.reason_code, "invalid_json_content")
+        self.assertEqual(len(transport.calls), 3)
+        self.assertEqual(
+            [attempt.outcome for attempt in raised.exception.attempts],
+            ["invalid_json_content"] * 3,
+        )
+        self.assertEqual(clock.sleeps, [1.125, 2.125])
+
     def test_retryable_transport_status_empty_and_resource_failures_cap_at_three(self) -> None:
         cases: list[FakeResponse | BaseException] = [
             FakeResponse(429, b"{}"),
@@ -288,6 +336,24 @@ class RetryAndEvidenceTests(unittest.TestCase):
                 self.assertEqual(len(transport.calls), 2)
                 self.assertEqual(len(completion.attempts), 2)
                 self.assertEqual(clock.sleeps, [1.125])
+
+        client, transport, clock = _client(
+            [FakeResponse(429, b"{}") for _ in range(3)]
+        )
+        with self.assertRaises(DeepSeekClientError) as raised:
+            client.complete_json(
+                phase="translation",
+                system_prompt="json",
+                user_payload={},
+                deadline=MonotonicDeadline(clock.monotonic() + 120),
+                attempt_budget=AttemptBudget(),
+            )
+        self.assertEqual(raised.exception.reason_code, "retry_exhausted")
+        self.assertEqual(len(transport.calls), 3)
+        self.assertEqual(
+            [attempt.outcome for attempt in raised.exception.attempts],
+            ["http_status_429"] * 3,
+        )
 
         client, transport, clock = _client([OSError("a"), OSError("b"), OSError("c")])
         with self.assertRaises(DeepSeekClientError) as raised:

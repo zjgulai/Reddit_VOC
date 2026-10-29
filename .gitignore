@@ -84,3 +84,6 @@ browser-profile/
 
 # Local upload-client state can contain machine-specific metadata.
 *.baiduyun.uploading.cfg
+
+# Generated audit/recheck logs (docs/analysis runs leave raw logs; keep the reports, drop the logs)
+docs/analysis/**/*.log

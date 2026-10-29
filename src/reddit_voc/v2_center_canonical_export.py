@@ -5,7 +5,7 @@ import json
 import os
 from pathlib import Path
 import sqlite3
-from typing import Any, Iterable, Mapping
+from typing import Any, Collection, Iterable, Mapping
 import uuid
 
 
@@ -129,6 +129,23 @@ def _bare(fullname: str, prefix: str, label: str) -> str:
     if not value or value != value.casefold() or not value.isascii() or not value.isalnum():
         raise CenterCanonicalExportError(f"{label} has an invalid identity")
     return value
+
+
+def _canonical_comment_state(
+    *,
+    post_id: str,
+    post_ids: Collection[str],
+    relationship_status: str,
+) -> str:
+    if relationship_status == "quarantined":
+        raise CenterCanonicalExportError(
+            "quarantined center comment requires quarantine export"
+        )
+    if relationship_status not in {"linked", "unresolved"}:
+        raise CenterCanonicalExportError(
+            "center comment relationship status is invalid"
+        )
+    return "linked" if post_id in post_ids else "unresolved_parent"
 
 
 def _source_occurrence(payload: Mapping[str, Any]) -> dict[str, object]:
@@ -402,16 +419,24 @@ def build_center_canonical_bundle(
             """
         ):
             payload = json.loads(source["payload_json"])
+            full_post_id = str(payload["post_id"])
+            state = _canonical_comment_state(
+                post_id=full_post_id,
+                post_ids=posts,
+                relationship_status=str(source["relationship_status"]),
+            )
             embedded = payload.get("source_record")
             if isinstance(embedded, dict) and embedded.get("schema_version") == "reddit_voc_canonical_comment_v1":
                 row = dict(embedded)
             else:
-                row = _new_comment_row(payload, source["relationship_status"])
+                row = _new_comment_row(
+                    payload,
+                    "linked" if state == "linked" else "unresolved",
+                )
             if row["canonical_reddit_id"] != source["comment_id"]:
                 raise CenterCanonicalExportError("center comment payload identity mismatch")
-            state = "linked" if source["relationship_status"] == "linked" else "unresolved_parent"
             row["comment_state"] = state
-            row["post_id"] = _bare(str(payload["post_id"]), "t3_", "center comment post")
+            row["post_id"] = _bare(full_post_id, "t3_", "center comment post")
             if row.get("record_authority") == "governed_base" and state == "unresolved_parent":
                 row["record"]["terminal_outcome"] = "unresolved_parent"
             comments[source["comment_id"]] = row

@@ -1676,6 +1676,114 @@ def reanalyze_run_command(args: argparse.Namespace) -> int:
     return 0
 
 
+def _build_agent_client(args: argparse.Namespace):
+    if not getattr(args, "authorize_provider_call", False):
+        return None
+    api_key = os.getenv("DEEPSEEK_API_KEY", "").strip()
+    if not api_key:
+        try:
+            api_key = _read_deepseek_key()
+        except RuntimeError:
+            api_key = ""
+    if not api_key:
+        return None
+    from .deepseek_client import DeepSeekClient
+    return DeepSeekClient(api_key=api_key)
+
+
+def _resolve_agent_target_post(args: argparse.Namespace) -> tuple[str, str, str, str]:
+    post_id = getattr(args, "post_id", None) or "post_input_001"
+    subreddit = getattr(args, "subreddit", None) or "r/ExclusivelyPumping"
+    title = getattr(args, "title", None) or ""
+    content = getattr(args, "content", None) or ""
+
+    if getattr(args, "from_database", False) and getattr(args, "post_id", None):
+        store = VocStore(args.database)
+        store.migrate()
+        with store.connect() as conn:
+            row = conn.execute(
+                "SELECT post_id, subreddit, title, selftext FROM reddit_threads WHERE post_id = ?",
+                (args.post_id,),
+            ).fetchone()
+            if row:
+                post_id = str(row["post_id"])
+                subreddit = str(row["subreddit"])
+                title = str(row["title"] or "")
+                content = str(row["selftext"] or "")
+
+    return post_id, subreddit, title, content
+
+
+def run_rnd_voc_command(args: argparse.Namespace) -> int:
+    from .agents import RndVocAgent
+
+    client = _build_agent_client(args)
+    if args.authorize_provider_call and client is None:
+        print(json.dumps({"status": "blocked", "reason": "deepseek_key_missing"}, ensure_ascii=False))
+        return 1
+
+    post_id, subreddit, title, content = _resolve_agent_target_post(args)
+    agent = RndVocAgent(client=client)
+    result = agent.analyze(
+        post_id=post_id,
+        subreddit=subreddit,
+        title=title,
+        content=content,
+    )
+    print(json.dumps(result.to_dict(), ensure_ascii=False, indent=2))
+    return 0
+
+
+def run_competitor_radar_command(args: argparse.Namespace) -> int:
+    from .agents import CompetitorRadarAgent
+
+    client = _build_agent_client(args)
+    if args.authorize_provider_call and client is None:
+        print(json.dumps({"status": "blocked", "reason": "deepseek_key_missing"}, ensure_ascii=False))
+        return 1
+
+    post_id, subreddit, title, content = _resolve_agent_target_post(args)
+    agent = CompetitorRadarAgent(client=client)
+    result = agent.analyze(
+        post_id=post_id,
+        subreddit=subreddit,
+        title=title,
+        content=content,
+    )
+    print(json.dumps(result.to_dict(), ensure_ascii=False, indent=2))
+    return 0
+
+
+def run_agent_suite_command(args: argparse.Namespace) -> int:
+    from .agents import CompetitorRadarAgent, ContentScoutAgent, RndVocAgent
+
+    client = _build_agent_client(args)
+    if args.authorize_provider_call and client is None:
+        print(json.dumps({"status": "blocked", "reason": "deepseek_key_missing"}, ensure_ascii=False))
+        return 1
+
+    post_id, subreddit, title, content = _resolve_agent_target_post(args)
+    content_agent = ContentScoutAgent(client=client)
+    rnd_agent = RndVocAgent(client=client)
+    radar_agent = CompetitorRadarAgent(client=client)
+
+    scout_res = content_agent.scout(post_id=post_id, subreddit=subreddit, title=title, content=content)
+    rnd_res = rnd_agent.analyze(post_id=post_id, subreddit=subreddit, title=title, content=content)
+    radar_res = radar_agent.analyze(post_id=post_id, subreddit=subreddit, title=title, content=content)
+
+    suite_payload = {
+        "status": "ok",
+        "post_id": post_id,
+        "subreddit": subreddit,
+        "title": title,
+        "content_scout": scout_res.to_dict(),
+        "rnd_voc": rnd_res.to_dict(),
+        "competitor_radar": radar_res.to_dict(),
+    }
+    print(json.dumps(suite_payload, ensure_ascii=False, indent=2))
+    return 0
+
+
 def prepare_daily_report_command(args: argparse.Namespace) -> int:
     # These imports stay command-local so every legacy CLI path remains isolated
     # from the DeepSeek translation runtime.
@@ -2179,6 +2287,7 @@ def send_prepared_daily_report_dual_command(args: argparse.Namespace) -> int:
             head_checker=_prepared_artifact_head_checker(),
             transport=_prepared_delivery_transport(),
             credential_loader=_prepared_dingtalk_destination_credentials,
+            defer_database_projection=args.defer_database_projection,
         )
     except Exception as exc:
         live_send = bool(getattr(exc, "external_attempt_made", False))
@@ -2396,6 +2505,9 @@ def main(argv: list[str] | None = None) -> int:
     send_prepared_dual_parser.add_argument(
         "--resend-part-index", action="append", type=int, default=None
     )
+    send_prepared_dual_parser.add_argument(
+        "--defer-database-projection", action="store_true", default=False
+    )
     daily_report_live_parser = subparsers.add_parser(
         "send-daily-report-live",
         help="Send Chinese daily report to DingTalk only with explicit live-send gate",
@@ -2478,6 +2590,34 @@ def main(argv: list[str] | None = None) -> int:
     _add_common_args(reanalyze_parser)
     reanalyze_parser.add_argument("--run-id", required=True, help="Run ID to reanalyze")
     reanalyze_parser.add_argument("--authorize-provider-call", action="store_true", default=False)
+
+    rnd_parser = subparsers.add_parser("run-rnd-voc", help="Run R&D VOC Agent to extract engineering defects and CAPA suggestions")
+    _add_common_args(rnd_parser)
+    rnd_parser.add_argument("--post-id", default=None, help="Reddit post ID")
+    rnd_parser.add_argument("--subreddit", default=None, help="Subreddit name")
+    rnd_parser.add_argument("--title", default=None, help="Post title")
+    rnd_parser.add_argument("--content", default=None, help="Post content")
+    rnd_parser.add_argument("--from-database", action="store_true", default=False, help="Read post from SQLite database by --post-id")
+    rnd_parser.add_argument("--authorize-provider-call", action="store_true", default=False)
+
+    radar_parser = subparsers.add_parser("run-competitor-radar", help="Run Competitor Radar Agent to extract competitor comparisons and switching intent")
+    _add_common_args(radar_parser)
+    radar_parser.add_argument("--post-id", default=None, help="Reddit post ID")
+    radar_parser.add_argument("--subreddit", default=None, help="Subreddit name")
+    radar_parser.add_argument("--title", default=None, help="Post title")
+    radar_parser.add_argument("--content", default=None, help="Post content")
+    radar_parser.add_argument("--from-database", action="store_true", default=False, help="Read post from SQLite database by --post-id")
+    radar_parser.add_argument("--authorize-provider-call", action="store_true", default=False)
+
+    suite_parser = subparsers.add_parser("run-agent-suite", help="Run all 3 core agents (ContentScout, RndVoc, CompetitorRadar) on a post")
+    _add_common_args(suite_parser)
+    suite_parser.add_argument("--post-id", default=None, help="Reddit post ID")
+    suite_parser.add_argument("--subreddit", default=None, help="Subreddit name")
+    suite_parser.add_argument("--title", default=None, help="Post title")
+    suite_parser.add_argument("--content", default=None, help="Post content")
+    suite_parser.add_argument("--from-database", action="store_true", default=False, help="Read post from SQLite database by --post-id")
+    suite_parser.add_argument("--authorize-provider-call", action="store_true", default=False)
+
     args = _apply_defaults(parser.parse_args(argv))
 
     if args.command == "init-local":
@@ -2536,6 +2676,12 @@ def main(argv: list[str] | None = None) -> int:
         return doctor(args)
     if args.command == "reanalyze-run":
         return reanalyze_run_command(args)
+    if args.command == "run-rnd-voc":
+        return run_rnd_voc_command(args)
+    if args.command == "run-competitor-radar":
+        return run_competitor_radar_command(args)
+    if args.command == "run-agent-suite":
+        return run_agent_suite_command(args)
     raise ValueError(args.command)
 
 

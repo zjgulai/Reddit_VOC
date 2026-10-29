@@ -233,7 +233,7 @@ def _discover_posts(
     for term in _brand_first_search_terms(search_terms):
         summary.listing_urls.append(FETCH_DYNAMIC_SEARCH + f"?query={term}")
         try:
-            payload = client.get_json(FETCH_DYNAMIC_SEARCH, {"query": term, "sort": "new", "limit": listing_limit})
+            payload = client.get_json(FETCH_DYNAMIC_SEARCH, {"query": term, "sort": "NEW", "limit": listing_limit})
             source_method = "tikhub_dynamic_search_brand" if _is_brand_search_term(term) else "tikhub_dynamic_search"
             _persist_tikhub_discovery_raw(
                 store,

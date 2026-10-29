@@ -1,0 +1,88 @@
+{
+  "schema": "reddit-voc-audit-artifacts-v1",
+  "date": "2026-10-14",
+  "head": "15b286a2a4f807023b999eec8b96333ddfce7eb7",
+  "tracked_originals_verified_unchanged": 4280,
+  "artifacts": {
+    "backend-isolation-recheck.log": {
+      "sha256": "7d422f4ee53fae109788a03657e112bd6f98b39ec903823a7912103661e62c02",
+      "bytes": 256
+    },
+    "backend-lane-list.log": {
+      "sha256": "e54446f3d0818a368fc10e319901c484aba1f7454a9ae3b4db66eb9234ec35bb",
+      "bytes": 5789
+    },
+    "backend-tests.json": {
+      "sha256": "04883d5e11e9b644531fb7b126d496318c820451667bb41136338ddae213f13e",
+      "bytes": 335
+    },
+    "backend-tests.log": {
+      "sha256": "f860a551c82f482dc83ff211e46d10d98a7bd6aa63bca3428083b7f56aa15689",
+      "bytes": 67021
+    },
+    "frontend-build.log": {
+      "sha256": "e27e325c3c7abad1342a5056b7db00068e603f03b195098d554f513fa5270bbf",
+      "bytes": 4266
+    },
+    "frontend-lint.log": {
+      "sha256": "60ee1fd852610c5ab8a41421001bca2bf875180e37a6dbf95a76bed16ba7b876",
+      "bytes": 3523
+    },
+    "frontend-test-summary.json": {
+      "sha256": "64d5cfcade91d959224d574eab1e75d78b97ef87c07e7f7885cc56ca75a3e794",
+      "bytes": 176
+    },
+    "report.md": {
+      "sha256": "ad3e4143e2e27fec49516cdab5801502b382898d9bb7da9a370bdbc49a3ecbba",
+      "bytes": 31070
+    },
+    "reproduce.py": {
+      "sha256": "ec6e8457ed0aad997e900d0ed9478c2e175515169062e91ff943405847684e43",
+      "bytes": 8254
+    },
+    "reproductions.json": {
+      "sha256": "26668cbe1ba7ab49a99865cfbfa2be8073b1151e94381d48e0116033c4d6b170",
+      "bytes": 1934
+    },
+    "run_runtime_tests.py": {
+      "sha256": "a020c0554415cae635f76dd770dadc1eae5a2db33cee8e0aaa97860f0f8ea5c0",
+      "bytes": 1634
+    },
+    "run_safe_tests.py": {
+      "sha256": "5633f6b45bdde92ddc1ca409142e405b578405134bc601bee9f80813a4da088b",
+      "bytes": 2139
+    },
+    "runtime-clock-recheck.log": {
+      "sha256": "3faa5a254a7ab16948418ece492c46d9dd2a63ab2d8cb271ac1e2878ee10141e",
+      "bytes": 358
+    },
+    "runtime-tests.json": {
+      "sha256": "283c8e4f6d21c45a4abaa742853e336c63374316a4bf30f5354ef2f1aa58711b",
+      "bytes": 206
+    },
+    "runtime-tests.log": {
+      "sha256": "fd150235a6e549addde444fe7fa3d893555ee432bb97dc31059030eaaef6d216",
+      "bytes": 17811
+    },
+    "syntax-check.json": {
+      "sha256": "ec9f2ee7ff33d90e768f8b006822eadec9f917e19d43999b594701be3166bbab",
+      "bytes": 48
+    },
+    "todo.md": {
+      "sha256": "d31897fe392c76c45e9acdac197c038124b84676932b506e5018b2a05d0687d5",
+      "bytes": 20836
+    },
+    "verification-summary.json": {
+      "sha256": "abe6c4a007789bec076b25ced866493c26a69b5e61faa24137490c6cb4af813f",
+      "bytes": 3100
+    },
+    "verification.md": {
+      "sha256": "c6f39cacb44bb9450d8322ad498d7f2cc801e9790216071a236b2e76943c36c0",
+      "bytes": 8271
+    },
+    "version-check.log": {
+      "sha256": "eb6cd826ba4866da68221339fbdbd457c0602aaa11de3db6e06b34a7dd6c9027",
+      "bytes": 57
+    }
+  }
+}

@@ -301,6 +301,43 @@ elif args and args[0] == "run":
         }
         log_path.write_text(json.dumps(result) + "\n", encoding="utf-8")
         exit_path.write_text("1\n", encoding="utf-8")
+    elif os.environ.get("FAKE_SEND_RESULT") == "dual-sent":
+        result = {
+            "status": "sent",
+            "run_id": os.environ["FAKE_RUN_ID"],
+            "artifact_version_id": os.environ["FAKE_VERSION_ID"],
+            "outbox_sha256": os.environ["FAKE_OUTBOX_SHA"],
+            "destinations": [
+                {
+                    "destination_id": "primary",
+                    "attempted_part_indexes": [1, 2],
+                    "sent_part_indexes": [1, 2],
+                    "rejected_part_indexes": [],
+                    "ledger_tip_before": None,
+                    "ledger_tip_after": "d" * 64,
+                    "status": "sent",
+                    "report_live_send": True,
+                },
+                {
+                    "destination_id": "secondary",
+                    "attempted_part_indexes": [1, 2],
+                    "sent_part_indexes": [1, 2],
+                    "rejected_part_indexes": [],
+                    "ledger_tip_before": None,
+                    "ledger_tip_after": "e" * 64,
+                    "status": "sent",
+                    "report_live_send": True,
+                },
+            ],
+            "report_live_send": True,
+            "alert_live_send": False,
+            "live_send": True,
+        }
+        log_path.write_text(json.dumps(result) + "\n", encoding="utf-8")
+        exit_path.write_text("0\n", encoding="utf-8")
+    elif os.environ.get("FAKE_SEND_RESULT") == "dual-sent-log-lost":
+        log_path.write_text("delivery summary unavailable\n", encoding="utf-8")
+        exit_path.write_text("137\n", encoding="utf-8")
     elif os.environ.get("FAKE_SEND_RESULT") == "sent":
         result = {
             "status": "sent",
@@ -1057,7 +1094,13 @@ else:
             admin.write_text(
                 "#!/usr/bin/env bash\n"
                 "set -euo pipefail\n"
-                "printf 'admin %s\\n' \"$*\" >>\"$FAKE_CALL_LOG\"\n",
+                "printf 'admin %s\\n' \"$*\" >>\"$FAKE_CALL_LOG\"\n"
+                "if [[ \"$1\" == project-delivery-ledgers ]]; then\n"
+                "  [[ \"${FAKE_PROJECT_RESULT:-fail}\" == success ]] || exit 1\n"
+                "  printf 'status=projected\\nrun_id=%s\\nartifact_version_id=%s\\n' \"$FAKE_RUN_ID\" \"$FAKE_VERSION_ID\"\n"
+                "  printf 'outbox_sha256=%s\\nexpected_count=4\\ninserted_count=4\\nexisting_count=0\\nfully_projected=True\\n' \"$FAKE_OUTBOX_SHA\"\n"
+                "  printf 'primary_ledger_tip=%s\\nsecondary_ledger_tip=%s\\n' \"$(printf 'd%.0s' {1..64})\" \"$(printf 'e%.0s' {1..64})\"\n"
+                "fi\n",
                 encoding="utf-8",
             )
             docker = fake / "docker"
@@ -1117,6 +1160,10 @@ else:
             self.assertIn(
                 "bash /app/scripts/run_daily_report.sh send-dual", calls
             )
+            self.assertIn("--defer-database-projection", calls)
+            self.assertIn(
+                f"src={database},dst={database},readonly", calls
+            )
             self.assertEqual(calls.count("docker run "), 1)
             self.assertIn("--terminal-status partial", calls)
             self.assertIn("--delivery-status partially_sent", calls)
@@ -1126,6 +1173,165 @@ else:
             self.assertIn("--secondary-ledger-tip " + "e" * 64, calls)
             self.assertIn("status=partially_sent", completed.stdout)
             self.assertIn("destination_mode=dual", completed.stdout)
+
+            call_log.write_text("", encoding="utf-8")
+            successful = subprocess.run(
+                [
+                    "bash",
+                    str(ROOT / "scripts/server_daily_report.sh"),
+                    "send",
+                    "--authorize-host-launch",
+                    "--authorization-id",
+                    "send-launcher-dual-success",
+                    "--expected-artifact-version-id",
+                    version_id,
+                    "--expected-bundle-sha256",
+                    "a" * 64,
+                    "--expected-outbox-sha256",
+                    "b" * 64,
+                ],
+                env={
+                    **os.environ,
+                    "REDDIT_VOC_LOCAL_TEST_MODE": "1",
+                    "REDDIT_VOC_RUN_ID": run_id,
+                    "REDDIT_VOC_ENABLE_HOST_LAUNCH": "1",
+                    "REDDIT_VOC_REPORT_LOCK_FILE": str(root / "daily-report.lock"),
+                    "REDDIT_VOC_REPORT_CURRENT_LINK": str(current),
+                    "REDDIT_VOC_REPORT_RELEASES_ROOT": str(releases),
+                    "REDDIT_VOC_REPORT_CIDFILE": str(root / "report.cid"),
+                    "REDDIT_VOC_LOCAL_FAKE_CONTROL_DIR": str(fake),
+                    "REDDIT_VOC_DOCKER_BIN": str(docker),
+                    "REDDIT_VOC_HOST_PYTHON_BIN": sys.executable,
+                    "REDDIT_VOC_LOCAL_SHADOW_ROOT": str(shadow),
+                    "FAKE_CALL_LOG": str(call_log),
+                    "FAKE_DOCKER_STATE": str(root / "docker-state.json"),
+                    "FAKE_DOCKER_LOG": str(root / "container.log"),
+                    "FAKE_DOCKER_EXIT": str(root / "container.exit"),
+                    "FAKE_SEND_RESULT": "dual-sent",
+                    "FAKE_PROJECT_RESULT": "success",
+                    "FAKE_RUN_ID": run_id,
+                    "FAKE_VERSION_ID": version_id,
+                    "FAKE_OUTBOX_SHA": "b" * 64,
+                    "FAKE_SHADOW": str(shadow),
+                    "PATH": f"{fake}:{os.environ.get('PATH', '')}",
+                },
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            self.assertEqual(successful.returncode, 0, successful.stderr)
+            success_calls = call_log.read_text(encoding="utf-8")
+            self.assertIn("admin project-delivery-ledgers", success_calls)
+            self.assertLess(
+                success_calls.index("admin project-delivery-ledgers"),
+                success_calls.index("admin terminalize-send-permit"),
+            )
+            self.assertIn("--terminal-status consumed", success_calls)
+            self.assertIn("status=sent", successful.stdout)
+
+            call_log.write_text("", encoding="utf-8")
+            recovered = subprocess.run(
+                [
+                    "bash",
+                    str(ROOT / "scripts/server_daily_report.sh"),
+                    "send",
+                    "--authorize-host-launch",
+                    "--authorization-id",
+                    "send-launcher-dual-log-lost",
+                    "--expected-artifact-version-id",
+                    version_id,
+                    "--expected-bundle-sha256",
+                    "a" * 64,
+                    "--expected-outbox-sha256",
+                    "b" * 64,
+                ],
+                env={
+                    **os.environ,
+                    "REDDIT_VOC_LOCAL_TEST_MODE": "1",
+                    "REDDIT_VOC_RUN_ID": run_id,
+                    "REDDIT_VOC_ENABLE_HOST_LAUNCH": "1",
+                    "REDDIT_VOC_REPORT_LOCK_FILE": str(root / "daily-report.lock"),
+                    "REDDIT_VOC_REPORT_CURRENT_LINK": str(current),
+                    "REDDIT_VOC_REPORT_RELEASES_ROOT": str(releases),
+                    "REDDIT_VOC_REPORT_CIDFILE": str(root / "report.cid"),
+                    "REDDIT_VOC_LOCAL_FAKE_CONTROL_DIR": str(fake),
+                    "REDDIT_VOC_DOCKER_BIN": str(docker),
+                    "REDDIT_VOC_HOST_PYTHON_BIN": sys.executable,
+                    "REDDIT_VOC_LOCAL_SHADOW_ROOT": str(shadow),
+                    "FAKE_CALL_LOG": str(call_log),
+                    "FAKE_DOCKER_STATE": str(root / "docker-state.json"),
+                    "FAKE_DOCKER_LOG": str(root / "container.log"),
+                    "FAKE_DOCKER_EXIT": str(root / "container.exit"),
+                    "FAKE_SEND_RESULT": "dual-sent-log-lost",
+                    "FAKE_PROJECT_RESULT": "success",
+                    "FAKE_RUN_ID": run_id,
+                    "FAKE_VERSION_ID": version_id,
+                    "FAKE_OUTBOX_SHA": "b" * 64,
+                    "FAKE_SHADOW": str(shadow),
+                    "PATH": f"{fake}:{os.environ.get('PATH', '')}",
+                },
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            self.assertEqual(recovered.returncode, 0, recovered.stderr)
+            recovered_calls = call_log.read_text(encoding="utf-8")
+            self.assertEqual(recovered_calls.count("docker run "), 1)
+            self.assertIn("admin project-delivery-ledgers", recovered_calls)
+            self.assertIn("--terminal-status consumed", recovered_calls)
+            self.assertIn("status=sent", recovered.stdout)
+
+            call_log.write_text("", encoding="utf-8")
+            unprojected = subprocess.run(
+                [
+                    "bash",
+                    str(ROOT / "scripts/server_daily_report.sh"),
+                    "send",
+                    "--authorize-host-launch",
+                    "--authorization-id",
+                    "send-launcher-dual-unprojected",
+                    "--expected-artifact-version-id",
+                    version_id,
+                    "--expected-bundle-sha256",
+                    "a" * 64,
+                    "--expected-outbox-sha256",
+                    "b" * 64,
+                ],
+                env={
+                    **os.environ,
+                    "REDDIT_VOC_LOCAL_TEST_MODE": "1",
+                    "REDDIT_VOC_RUN_ID": run_id,
+                    "REDDIT_VOC_ENABLE_HOST_LAUNCH": "1",
+                    "REDDIT_VOC_REPORT_LOCK_FILE": str(root / "daily-report.lock"),
+                    "REDDIT_VOC_REPORT_CURRENT_LINK": str(current),
+                    "REDDIT_VOC_REPORT_RELEASES_ROOT": str(releases),
+                    "REDDIT_VOC_REPORT_CIDFILE": str(root / "report.cid"),
+                    "REDDIT_VOC_LOCAL_FAKE_CONTROL_DIR": str(fake),
+                    "REDDIT_VOC_DOCKER_BIN": str(docker),
+                    "REDDIT_VOC_HOST_PYTHON_BIN": sys.executable,
+                    "REDDIT_VOC_LOCAL_SHADOW_ROOT": str(shadow),
+                    "FAKE_CALL_LOG": str(call_log),
+                    "FAKE_DOCKER_STATE": str(root / "docker-state.json"),
+                    "FAKE_DOCKER_LOG": str(root / "container.log"),
+                    "FAKE_DOCKER_EXIT": str(root / "container.exit"),
+                    "FAKE_SEND_RESULT": "dual-sent",
+                    "FAKE_PROJECT_RESULT": "fail",
+                    "FAKE_RUN_ID": run_id,
+                    "FAKE_VERSION_ID": version_id,
+                    "FAKE_OUTBOX_SHA": "b" * 64,
+                    "FAKE_SHADOW": str(shadow),
+                    "PATH": f"{fake}:{os.environ.get('PATH', '')}",
+                },
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            self.assertEqual(unprojected.returncode, 1, unprojected.stderr)
+            unprojected_calls = call_log.read_text(encoding="utf-8")
+            self.assertIn("admin project-delivery-ledgers", unprojected_calls)
+            self.assertNotIn("--terminal-status consumed", unprojected_calls)
+            self.assertIn("--terminal-status unknown", unprojected_calls)
+            self.assertIn("reason=delivery_projection_failed", unprojected.stderr)
 
     def test_fake_smoke_runtime_verifies_release_recovers_under_inherited_lock_and_mounts_files(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

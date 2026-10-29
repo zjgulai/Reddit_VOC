@@ -1,0 +1,84 @@
+{
+  "audit_A": {
+    "status": "partial",
+    "raw_count": 2,
+    "post_count": 1
+  },
+  "F03_browser_raw_collision": "raw capture identity collision:raw_browser_json_523b36e1f039e529",
+  "audit_B": {
+    "status": "partial",
+    "raw_count": 2,
+    "post_count": 1
+  },
+  "F02_history_after_reobserve": {
+    "reddit_threads": 0,
+    "reddit_comments": 0,
+    "analysis_results": 0,
+    "raw_captures": 2
+  },
+  "F03_browser_raw_second_run": 2,
+  "F04_failed_recollect": {
+    "status": "failed",
+    "post_count_after": 0
+  },
+  "F16_truncated_status": {
+    "browser": "success",
+    "tikhub": "success"
+  },
+  "F05_empty_despite_failure": {
+    "browser": "empty",
+    "tikhub": "empty",
+    "report_gate": {
+      "schema_version": "daily-report-source-state-v1",
+      "status": "empty",
+      "mode": "empty_success",
+      "post_count": 0,
+      "comment_count": 0,
+      "business_report_allowed": true,
+      "failure_alert_allowed": false
+    }
+  },
+  "F09_missed_run": {
+    "status": "covered",
+    "expected_run_at_local": "2026-07-08T07:00:00+08:00",
+    "window_start_utc": "2026-07-06T23:00:00+00:00",
+    "window_end_utc": "2026-07-07T23:00:00+00:00",
+    "matching_run_ids": [
+      "audit_failed_only"
+    ],
+    "matching_statuses": {
+      "audit_failed_only": "failed"
+    },
+    "provider_call": false,
+    "live_send": false
+  },
+  "F10_query_plan": [
+    [
+      2,
+      0,
+      216,
+      "SCAN reddit_comments"
+    ]
+  ],
+  "F08_analysis_provenance": {
+    "analysis_version": "local_rules_v1",
+    "provider_call": 0,
+    "confidence": 0.9
+  },
+  "F01_api_fields": {
+    "author_hash": true,
+    "selftext": true,
+    "raw_capture_id": true,
+    "comments": true,
+    "db_name": true
+  },
+  "F01_artifact_unlisted_file_readable": true,
+  "F06_xlsx_formula": {
+    "data_type": "f",
+    "value": "=1+1"
+  },
+  "F07_media_request": {
+    "url": "http://127.0.0.1/audit.png",
+    "read_arguments": []
+  }
+}

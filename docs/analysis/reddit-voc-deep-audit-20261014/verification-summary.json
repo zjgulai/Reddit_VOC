@@ -1,0 +1,77 @@
+{
+  "audit_date": "2026-10-14",
+  "root": "/Users/pray/project/Reddit_VOC",
+  "head": "15b286a2a4f807023b999eec8b96333ddfce7eb7",
+  "initial_git_status": " M PROJECT_STATUS.md\n M README.md\n M scripts/build_reddit_v3_translation_candidate.py\n M scripts/report_control.py\n M scripts/run_daily_report.sh\n M scripts/server_daily_report.sh\n M scripts/validate_reddit_v3_translation_candidate.py\n M src/reddit_voc/cli.py\n M src/reddit_voc/daily_report_delivery.py\n M src/reddit_voc/deepseek_client.py\n M src/reddit_voc/v2_center_canonical_export.py\n M tests/test_daily_report_launcher.py\n M tests/test_daily_report_ops.py\n M tests/test_deepseek_client.py\n M tests/test_dual_destination_delivery.py\n M tests/test_reddit_v3_translation_candidate.py\n M tests/test_v2_center_canonical_export.py\n?? docs/superpowers/plans/2026-08-23-reddit-voc-high-risk-phase-2.md\n?? docs/superpowers/plans/2026-08-23-reddit-voc-public-translation-risk-closure.md\n?? docs/superpowers/plans/2026-08-23-reddit-voc-remaining-high-risk-closure.md\n",
+  "original_tracked_files_checked": 4280,
+  "original_tracked_files_changed_during_audit": [],
+  "frontend_tests": {
+    "success": true,
+    "numTotalTests": 275,
+    "numPassedTests": 229,
+    "numFailedTests": 0,
+    "numPendingTests": 46,
+    "numTotalTestSuites": 102,
+    "numFailedTestSuites": 0
+  },
+  "frontend_lint": {
+    "exit_code": 0,
+    "warning_count": 15
+  },
+  "frontend_build": {
+    "exit_code": 0,
+    "output_dir": "/tmp/reddit-voc-audit-20261014/frontend-dist",
+    "production_artifact": false
+  },
+  "python_syntax": {
+    "python_files_parsed": 427,
+    "errors": []
+  },
+  "core_unittest": {
+    "runner": "stdlib unittest; socket.connect denied",
+    "requested_modules": 24,
+    "unavailable_modules": {
+      "test_v2_center_canonical_export": "No module named 'pytest'",
+      "test_translation_pipeline": "No module named 'PIL'"
+    },
+    "tests_run": 360,
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "elapsed_seconds": 215.2
+  },
+  "core_failure_isolated_recheck": "passed with PYTHONPATH inherited by child; original log retained",
+  "runtime_unittest": {
+    "runner": "stdlib unittest; socket.connect denied",
+    "requested_modules": 2,
+    "unavailable_modules": {},
+    "tests_run": 63,
+    "failures": 4,
+    "errors": 2,
+    "skipped": 0,
+    "elapsed_seconds": 46.78
+  },
+  "runtime_failure_classification": {
+    "expiry_clock_boundary": 5,
+    "missing_Pillow": 1,
+    "reader_test_only_clock_recheck": "passed under test-injected 2026-08-12 clock; production checks unchanged"
+  },
+  "version_consistency": {
+    "exit_code": 1,
+    "reason": "daily_source_release_mismatch"
+  },
+  "not_run": [
+    "full pytest repository lane",
+    "full pytest local-artifact lane",
+    "real Provider or webhook",
+    "production state and HTTP checks",
+    "container build/start and nginx -t",
+    "load benchmark",
+    "dependency CVE audit"
+  ],
+  "parent_progress_notification": {
+    "status": "failed",
+    "reason": "thread not found",
+    "parent_thread_id": "01a1110c-7269-77ad-9170-2c0f0686d01c"
+  }
+}

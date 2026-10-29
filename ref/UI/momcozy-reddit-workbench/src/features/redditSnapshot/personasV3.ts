@@ -924,7 +924,7 @@ function joinPublicPath(basePath: string, path: string): string {
 }
 
 async function fetchBytes(basePath: string, path: string): Promise<{ bytes: Uint8Array; mediaType: string | null }> {
-  const response = await fetch(joinPublicPath(basePath, path), { cache: 'force-cache' });
+  const response = await fetch(joinPublicPath(basePath, path), { cache: 'no-cache' });
   if (!response.ok) throw new V3PersonasContractError(`V3 画像文件加载失败：${path}（HTTP ${response.status}）`);
   return {
     bytes: new Uint8Array(await response.arrayBuffer()),

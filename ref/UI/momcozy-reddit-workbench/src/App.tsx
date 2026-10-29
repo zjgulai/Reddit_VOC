@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import type { ReactElement } from 'react';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -13,6 +13,7 @@ const Insights = lazy(() => import('./pages/SnapshotInsights'));
 const Reports = lazy(() => import('./pages/SnapshotReports'));
 const Search = lazy(() => import('./pages/SnapshotSearch'));
 const SnapshotWorkspace = lazy(() => import('./pages/SnapshotWorkspace'));
+const AgentStudio = lazy(() => import('./pages/AgentStudio'));
 const CaseGallery = lazy(() => import('./pages/CaseGallery'));
 const Features = lazy(() => import('./pages/Features'));
 const HowItWorks = lazy(() => import('./pages/HowItWorks'));
@@ -38,12 +39,14 @@ export type ProductionRouteDefinition =
 
 // oxlint-disable-next-line react/only-export-components -- production route source contract is consumed by App below
 export const PRODUCTION_ROUTE_DEFINITIONS = [
-  { path: '/', kind: 'page', element: <Home /> },
+  { path: '/', kind: 'page', element: <Navigate to="/dashboard" replace /> },
+  { path: '/home', kind: 'page', element: <Home /> },
   { path: '/dashboard', kind: 'page', element: <Dashboard /> },
   { path: '/dashboard/reports', kind: 'page', element: <Reports /> },
   { path: '/dashboard/analytics', kind: 'page', element: <Analytics /> },
   { path: '/dashboard/insights', kind: 'page', element: <Insights /> },
   { path: '/dashboard/search', kind: 'page', element: <Search /> },
+  { path: '/dashboard/agent-studio', kind: 'page', element: <AgentStudio /> },
   {
     path: '/dashboard/ugc-showcase',
     kind: 'snapshot-workspace',

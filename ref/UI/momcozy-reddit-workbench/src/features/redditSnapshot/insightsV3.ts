@@ -317,6 +317,11 @@ const PRIVACY_FORBIDDEN_KEYS = new Set([
 
 const PUBLIC_VALIDATION_SIDECAR = 'public-validation-receipt.json';
 const VALIDATED_PUBLIC_WRAPPERS: Readonly<Record<string, FileIntegrity>> = {
+  // 2026-10-28 rebuild: 17,469/58,296 corpus, owner-attested comparisons.
+  'e4f7d11a43e1b6fc5c75f696aca81f19aaf909e2e070bb31dc9eb133f086bd47': {
+    bytes: 868,
+    sha256: '2c4d8e3375213dbcd6598d4f8b29a938f11319ce8f7563c82d6b1ed99c3b5a5d',
+  },
   '9c0d84009e25090e14a278e3d953908f255e65a33707f627bbb476d134c5354a': {
     bytes: 633,
     sha256: 'a9d97d0778f2e1ada156a411835ffad03f2b159dd7c29433b0958cba8939517a',
@@ -1094,7 +1099,7 @@ async function fetchVerifiedJson<T>(
   forceReload: boolean,
 ): Promise<T> {
   const response = await fetch(`${basePath}/${filename}`, {
-    cache: forceReload ? 'reload' : 'force-cache',
+    cache: forceReload ? 'reload' : 'no-cache',
   });
   if (!response.ok) {
     throw new V3InsightsContractError(`V3 洞察文件加载失败：${filename}（HTTP ${response.status}）`);

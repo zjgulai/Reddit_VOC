@@ -11,7 +11,7 @@ import type {
 import AggregatePersonaCard from './AggregatePersonaCard';
 import type { AggregatePersonaCardModel } from './AggregatePersonaCard';
 
-type AnyRedditPersonasSnapshot = RedditPersonasSnapshot | V3RedditPersonasSnapshot;
+export type AnyRedditPersonasSnapshot = RedditPersonasSnapshot | V3RedditPersonasSnapshot;
 
 interface AggregatePersonaPanelProps {
   data: AnyRedditPersonasSnapshot | null;
@@ -25,6 +25,22 @@ interface AggregatePersonaPanelProps {
 
 function isV3Snapshot(data: AnyRedditPersonasSnapshot): data is V3RedditPersonasSnapshot {
   return data.manifest.schema_version === V3_PERSONAS_MANIFEST_SCHEMA;
+}
+
+/** The persona cohort cards come from a versioned snapshot that the daily pipeline
+ * cannot rebuild (it needs the out-of-repo governed-signal and persona-dictionary
+ * engines). Counts above them are current-quarter values, so when the snapshot
+ * predates the quarter the caption has to say so rather than imply freshness. */
+export function personaSnapshotDate(data: AnyRedditPersonasSnapshot): string | null {
+  const generated = data.manifest.generated_at_utc;
+  return typeof generated === 'string' && /^\d{4}-\d{2}-\d{2}/.test(generated)
+    ? generated.slice(0, 10)
+    : null;
+}
+
+export function quarterStartDate(periodLabel?: string): string | null {
+  const match = periodLabel?.match(/(\d{4}-\d{2}-\d{2})/);
+  return match ? match[1] : null;
 }
 
 function availabilityLabel(status: string): string {
@@ -288,6 +304,11 @@ export default function AggregatePersonaPanel({
     .map((cohort, index) => ({ ...cohort, distributionShare: displayShares[index] }))
     .sort((left, right) => right.assignmentCount - left.assignmentCount || left.name.localeCompare(right.name, 'zh-CN'));
   const totalAssignments = cardModels.reduce((sum, cohort) => sum + cohort.assignmentCount, 0);
+  const snapshotDate = personaSnapshotDate(data);
+  const quarterStart = quarterStartDate(periodLabel);
+  const staleSnapshotNote = snapshotDate && quarterStart && snapshotDate < quarterStart
+    ? `画像分组快照生成于 ${snapshotDate}，早于当前统计季度起点 ${quarterStart}；分组卡片来自该快照，上方计数为当前季度实时值。`
+    : null;
 
   return (
     <section aria-labelledby="aggregate-personas-title">
@@ -302,6 +323,14 @@ export default function AggregatePersonaPanel({
               ? `${periodLabel ? `${periodLabel}内，` : ''}从 Momcozy 相关真实 Reddit 帖子与评论中的需求、问题和使用场景归纳画像分组；每类画像均可回到原始证据核查。画像是内容证据分组，不是真实用户身份或人数。`
               : '从真实 Reddit 帖子与评论中的需求、问题和使用场景归纳画像分组；每类画像均可回到原始证据核查。'}
           </p>
+          {staleSnapshotNote ? (
+            <p
+              className="mt-1 max-w-3xl text-caption leading-relaxed text-foreground-muted"
+              data-testid="persona-snapshot-note"
+            >
+              {staleSnapshotNote}
+            </p>
+          ) : null}
         </div>
         <div className="inline-flex max-w-full items-center gap-2 rounded-badge border border-primary/20 bg-primary-light px-3 py-1.5 text-tiny font-medium text-foreground-secondary">
           <ShieldCheck className="h-3.5 w-3.5 text-primary-hover" strokeWidth={1.5} aria-hidden="true" />

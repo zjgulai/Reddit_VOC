@@ -223,7 +223,7 @@ class DeepSeekClient:
                     last_fingerprint,
                     last_finish_reason,
                 )
-            timeout = min(45.0, remaining)
+            timeout = min(120.0, remaining)
             try:
                 sequence = attempt_budget.reserve(phase)
             except RuntimeError as exc:
@@ -583,6 +583,7 @@ class DeepSeekClient:
                             last_fingerprint,
                             last_finish_reason,
                         ),
+                        exhausted_reason_code="invalid_json_content",
                     )
                     continue
                 if not isinstance(content_value, Mapping):
@@ -694,9 +695,10 @@ class DeepSeekClient:
         attempts: list[AttemptEvidence],
         billed_usage: list[TokenUsage],
         metadata: tuple[str | None, str | None, str | None, str | None],
+        exhausted_reason_code: str = "retry_exhausted",
     ) -> None:
         if retry_index >= _MAX_RETRIES:
-            raise self._error("retry_exhausted", attempts, billed_usage, *metadata)
+            raise self._error(exhausted_reason_code, attempts, billed_usage, *metadata)
         wait_seconds = (2**retry_index) + self._uniform(0, 0.25)
         if self._remaining(deadline) <= wait_seconds:
             raise self._error("deadline_exhausted", attempts, billed_usage, *metadata)

@@ -1,0 +1,10 @@
+{
+  "runner": "stdlib unittest; socket.connect denied",
+  "requested_modules": 2,
+  "unavailable_modules": {},
+  "tests_run": 63,
+  "failures": 4,
+  "errors": 2,
+  "skipped": 0,
+  "elapsed_seconds": 46.78
+}

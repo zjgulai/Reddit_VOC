@@ -36,8 +36,10 @@ from scripts.build_reddit_v3_translation_candidate import (  # noqa: E402
     TRANSLATION_SCHEMA,
     TranslationCandidateError,
     _assert_private_regular_file,
+    _checkpoint_reused_ids,
     _load_checkpoint,
     _load_json,
+    _load_reuse_candidate,
     _safe_identifier,
     _sha256,
     _validate_translation_map,
@@ -215,11 +217,13 @@ def _validate_attempt_log(
     source_manifest_sha256: str,
     translation_prompt_sha256: str,
     translation_terms_sha256: str,
-) -> tuple[int, dict[str, int], dict[str, str], set[int]]:
+) -> tuple[int, dict[str, int], dict[str, str], set[int], tuple[str, ...]]:
     _assert_private_regular_file(path, label="attempt_log")
     attempts = 0
     successful_outputs: dict[str, str] = {}
     observed_http_statuses: set[int] = set()
+    execution_authorization_ids: list[str] = []
+    seen_execution_authorization_ids: set[str] = set()
     usage = {field: 0 for field in USAGE_FIELDS}
     for line_number, raw in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
         try:
@@ -235,6 +239,21 @@ def _validate_attempt_log(
             and row.get("translation_terms_sha256") == translation_terms_sha256,
             f"attempt_log_binding_invalid:{line_number}",
         )
+        raw_execution_authorization_id = row.get(
+            "provider_execution_authorization_id",
+            authorization_id,
+        )
+        _require(
+            isinstance(raw_execution_authorization_id, str),
+            f"attempt_log_execution_authorization_invalid:{line_number}",
+        )
+        execution_authorization_id = _safe_identifier(
+            raw_execution_authorization_id,
+            label="provider_execution_authorization_id",
+        )
+        if execution_authorization_id not in seen_execution_authorization_ids:
+            seen_execution_authorization_ids.add(execution_authorization_id)
+            execution_authorization_ids.append(execution_authorization_id)
         sequence = row.get("sequence")
         if sequence == 0 and row.get("outcome") == "checkpoint_reuse_no_provider_attempt":
             _require(row.get("usage") is None, f"attempt_log_marker_invalid:{line_number}")
@@ -308,8 +327,17 @@ def _validate_attempt_log(
                 f"attempt_log_usage_invalid:{line_number}",
             )
             usage[field] += value
-    _require(attempts > 0 and successful_outputs, "attempt_log_has_no_successful_provider_call")
-    return attempts, usage, successful_outputs, observed_http_statuses
+    _require(
+        attempts == 0 or bool(successful_outputs),
+        "attempt_log_has_no_successful_provider_call",
+    )
+    return (
+        attempts,
+        usage,
+        successful_outputs,
+        observed_http_statuses,
+        tuple(execution_authorization_ids),
+    )
 
 
 def validate_candidate(
@@ -319,6 +347,7 @@ def validate_candidate(
     checkpoint_path: Path,
     attempt_log_path: Path,
     expected_authorization_id: str,
+    reuse_candidate_root: Path | None = None,
 ) -> dict[str, object]:
     _require(source_root.is_dir() and not source_root.is_symlink(), "source_root_unsafe")
     _require(candidate_root.is_dir() and not candidate_root.is_symlink(), "candidate_root_unsafe")
@@ -353,6 +382,7 @@ def validate_candidate(
     translation_prompt_sha256 = sha256_hex(assets.translation_prompt_bytes)
     translation_terms_sha256 = assets.terms_sha256
     boundaries = _mapping(candidate_manifest.get("boundaries"), "candidate_boundaries_invalid")
+    declared_provider_call = candidate_manifest.get("provider_call")
     _require(
         source_manifest.get("schema_version") == "reddit_voc_site_snapshot_manifest_v3"
         and source_manifest.get("provider_call") is False
@@ -363,13 +393,13 @@ def validate_candidate(
         and candidate_manifest.get("consumption_status")
         == "eligible_for_frontend_candidate_consumption"
         and candidate_manifest.get("promotable") is False
-        and candidate_manifest.get("provider_call") is True
+        and isinstance(declared_provider_call, bool)
         and candidate_manifest.get("production_unchanged") is True
         and candidate_manifest.get("database_write") is False
         and candidate_manifest.get("remote_write") is False
         and candidate_manifest.get("deploy") is False
         and candidate_manifest.get("live_send") is False
-        and boundaries.get("provider_call") is True
+        and boundaries.get("provider_call") is declared_provider_call
         and boundaries.get("database_write") is False
         and boundaries.get("remote_write") is False
         and boundaries.get("deploy") is False
@@ -381,7 +411,7 @@ def validate_candidate(
         translation_manifest.get("schema_version") == MANIFEST_EXTENSION_SCHEMA
         and translation_manifest.get("provider") == "deepseek"
         and translation_manifest.get("model") == DEEPSEEK_MODEL
-        and translation_manifest.get("provider_call") is True
+        and translation_manifest.get("provider_call") is declared_provider_call
         and translation_manifest.get("provider_authorization_id") == authorization_id
         and translation_manifest.get("source_dataset_version")
         == source_manifest.get("dataset_version")
@@ -404,12 +434,24 @@ def validate_candidate(
     comments = _load_json(source_root / "comments-public.json", expected_type=list)
     items = build_translation_items(posts, comments, include_comments=True)
     item_by_id = {item.stable_id: item for item in items}
+    reuse_translations: dict[str, str] = {}
+    reuse_provenance: dict[str, object] | None = None
+    if reuse_candidate_root is not None:
+        reuse_translations, reuse_provenance = _load_reuse_candidate(
+            reuse_candidate_root,
+            items=items,
+            translation_prompt_sha256=translation_prompt_sha256,
+            translation_terms_sha256=translation_terms_sha256,
+            terms=assets.terms,
+        )
     translations = _load_checkpoint(
         checkpoint_path,
         source_manifest_sha256=source_manifest_sha256,
         item_by_id=item_by_id,
         translation_prompt_sha256=translation_prompt_sha256,
         translation_terms_sha256=translation_terms_sha256,
+        reuse_translations=reuse_translations,
+        reuse_provenance=reuse_provenance,
     )
     post_item_ids = {
         item.stable_id for item in items if item.item_type in {"title", "body"}
@@ -426,12 +468,47 @@ def validate_candidate(
     )
     _validate_translation_map(items=items, translations=translations, terms=assets.terms)
 
-    attempt_count, usage, successful_outputs, observed_http_statuses = _validate_attempt_log(
+    (
+        attempt_count,
+        usage,
+        successful_outputs,
+        observed_http_statuses,
+        execution_authorization_ids,
+    ) = _validate_attempt_log(
         attempt_log_path,
         authorization_id=authorization_id,
         source_manifest_sha256=source_manifest_sha256,
         translation_prompt_sha256=translation_prompt_sha256,
         translation_terms_sha256=translation_terms_sha256,
+    )
+    declared_execution_authorization_ids = translation_manifest.get(
+        "provider_execution_authorization_ids"
+    )
+    if declared_execution_authorization_ids is None:
+        _require(
+            execution_authorization_ids == (authorization_id,),
+            "translation_execution_authorization_chain_invalid",
+        )
+    else:
+        _require(
+            declared_execution_authorization_ids
+            == list(execution_authorization_ids),
+            "translation_execution_authorization_chain_invalid",
+        )
+    reused_ids = _checkpoint_reused_ids(checkpoint_path)
+    declared_reuse = translation_manifest.get("reuse")
+    if reuse_provenance is None:
+        _require(not reused_ids and declared_reuse is None, "translation_reuse_binding_invalid")
+    else:
+        _require(
+            reused_ids.issubset(reuse_translations)
+            and declared_reuse
+            == {**reuse_provenance, "reused_items": len(reused_ids)},
+            "translation_reuse_binding_invalid",
+        )
+    _require(
+        declared_provider_call is (attempt_count > 0),
+        "translation_provider_call_boundary_invalid",
     )
     response_batches: dict[str, dict[str, str]] = {}
     response_declared_hashes: dict[str, set[str]] = {}
@@ -519,7 +596,11 @@ def validate_candidate(
         "candidate_dataset_version": candidate_manifest["dataset_version"],
         "candidate_public_manifest_sha256": candidate_manifest_sha256,
         "provider_authorization_id": authorization_id,
+        "provider_execution_authorization_ids": list(
+            execution_authorization_ids
+        ),
         "provider_attempts": attempt_count,
+        "reused_items": len(reused_ids),
         "translated_items": len(translations),
         "posts": len(posts),
         "comments_translated": len(translated_comment_ids),
@@ -561,6 +642,7 @@ def main() -> int:
     parser.add_argument("--checkpoint", type=Path, required=True)
     parser.add_argument("--attempt-log", type=Path, required=True)
     parser.add_argument("--provider-authorization-id", required=True)
+    parser.add_argument("--reuse-candidate-root", type=Path)
     parser.add_argument("--receipt", type=Path, required=True)
     args = parser.parse_args()
     receipt = validate_candidate(
@@ -569,6 +651,7 @@ def main() -> int:
         checkpoint_path=args.checkpoint,
         attempt_log_path=args.attempt_log,
         expected_authorization_id=args.provider_authorization_id,
+        reuse_candidate_root=args.reuse_candidate_root,
     )
     _write_json(args.receipt, receipt)
     print(json.dumps(receipt, ensure_ascii=False, sort_keys=True))

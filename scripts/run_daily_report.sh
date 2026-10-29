@@ -320,6 +320,7 @@ case "$phase" in
     expected_outbox=""
     authorization_id=""
     authorize_resend=0
+    defer_database_projection=0
     resend_parts=()
     while [[ $# -gt 0 ]]; do
       case "$1" in
@@ -345,6 +346,11 @@ case "$phase" in
           ;;
         --authorize-resend)
           authorize_resend=1
+          shift
+          ;;
+        --defer-database-projection)
+          [[ "$phase" == "send-dual" ]] || fail "deferred_projection_requires_dual"
+          defer_database_projection=1
           shift
           ;;
         --resend-part-index)
@@ -417,6 +423,9 @@ case "$phase" in
       done
     elif [[ ${#resend_parts[@]} -gt 0 ]]; then
       fail "resend_not_authorized"
+    fi
+    if [[ "$defer_database_projection" == "1" ]]; then
+      send_args+=(--defer-database-projection)
     fi
     REDDIT_VOC_DINGTALK_MODE=live \
     REDDIT_VOC_ENABLE_DINGTALK_LIVE_SEND=1 \

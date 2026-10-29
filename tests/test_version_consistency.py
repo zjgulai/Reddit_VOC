@@ -17,9 +17,12 @@ class VersionConsistencyTests(unittest.TestCase):
     def test_local_source_rebuilds_the_locked_daily_release(self) -> None:
         lock = MODULE._load_json(ROOT / "config/production-version-lock.json")
         result = MODULE.verify_local(lock)
+        # The pinned release identity must equal the rebuilt-from-source SHA that
+        # the lock records (re-pinned 2026-10-29 after the ADR-004 M-A changes:
+        # content_entity/permalink joined the release list).
         self.assertEqual(
             result["daily_release_sha256"],
-            "7b177962a7fa36bcc6f873e115f363c53de4d5b7922b8316f21303bc7c5ec181",
+            "7a061a97e02e4e6cd0394b9e9f4f83bb06e552a6a544a8dbb373fb0609f6f811",
         )
         self.assertEqual(result["insights_source_alignment"], "artifact_manifest_only")
 

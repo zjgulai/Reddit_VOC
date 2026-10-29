@@ -13,6 +13,7 @@ import {
   ChevronLeft,
   FileText,
   Globe,
+  Lightbulb,
 } from 'lucide-react';
 import { getStorage, setStorage } from '../utils/storage';
 import CollectorBackendLink from './CollectorBackendLink';
@@ -21,8 +22,9 @@ const menuItems = [
   { path: '/dashboard', icon: LayoutDashboard, label: '概览' },
   { path: '/dashboard/reports', icon: FileText, label: '报告' },
   { path: '/dashboard/search', icon: Search, label: '搜索' },
+  { path: '/dashboard/agent-studio', icon: Zap, label: 'Agent 工作室' },
   { path: '/dashboard/analytics', icon: BarChart3, label: '分析' },
-  { path: '/dashboard/insights', icon: Zap, label: '洞察' },
+  { path: '/dashboard/insights', icon: Lightbulb, label: '洞察' },
   { path: '/cases', icon: Globe, label: '案例广场' },
   { path: '/dashboard/ugc-showcase', icon: Archive, label: '高价值内容' },
   { path: '/dashboard/messages', icon: MessageSquare, label: '舆情信号' },

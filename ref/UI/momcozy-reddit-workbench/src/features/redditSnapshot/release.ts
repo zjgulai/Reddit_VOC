@@ -390,7 +390,7 @@ export async function fetchVerifiedReleaseManifest<T>(
   const binding = release.datasets[key];
   assertContract(binding !== undefined, `current release 缺少数据集：${key}`);
   const response = await fetch(publicUrl(binding.manifest_path), {
-    cache: forceReload ? 'reload' : 'force-cache',
+    cache: forceReload ? 'reload' : 'no-cache',
   });
   if (!response.ok) {
     throw new ReleaseContractError(`发布 manifest 加载失败：${key}（HTTP ${response.status}）`);

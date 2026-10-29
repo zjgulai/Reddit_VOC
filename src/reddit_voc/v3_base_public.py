@@ -14,6 +14,7 @@ from typing import Any
 from urllib.parse import urlparse
 
 from .analyzer import analyze_text
+from .permalink import permalink_targets_entity
 from .tag_dictionary import TagDictionary
 from .v3_periodized_metrics import (
     UNATTESTED_REASON,
@@ -320,16 +321,23 @@ def _governed_post_permalink(
 ) -> tuple[str, str, str]:
     if not isinstance(subreddit, str) or SUBREDDIT_RE.fullmatch(subreddit) is None:
         raise ValueError(f"post_{post_id}_subreddit_invalid")
-    try:
-        permalink, normalized_subreddit = _reddit_url(
-            value,
-            f"post_{post_id}",
-            subreddit_hint=subreddit,
-        )
-        return permalink, normalized_subreddit, "source_permalink"
-    except ValueError as exc:
-        if not str(exc).endswith("_reddit_url_invalid"):
-            raise
+    # A permalink must identify THIS post. Accepting any reddit URL let 90 rows carry
+    # `https://i.redd.it/<hash>.jpeg` (the post's image) and
+    # `https://www.reddit.com/gallery/<id>` (its gallery) as if they were evidence
+    # links, so clicking a quote opened an image instead of the source thread.
+    # Check identity first; fall back to the canonical identity URL, which Reddit
+    # resolves without a title slug.
+    if permalink_targets_entity(value, post_id):
+        try:
+            permalink, normalized_subreddit = _reddit_url(
+                value,
+                f"post_{post_id}",
+                subreddit_hint=subreddit,
+            )
+            return permalink, normalized_subreddit, "source_permalink"
+        except ValueError as exc:
+            if not str(exc).endswith("_reddit_url_invalid"):
+                raise
     return (
         f"https://www.reddit.com/r/{subreddit}/comments/{post_id}",
         subreddit,

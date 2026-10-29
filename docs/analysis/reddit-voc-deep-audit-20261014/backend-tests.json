@@ -1,0 +1,13 @@
+{
+  "runner": "stdlib unittest; socket.connect denied",
+  "requested_modules": 24,
+  "unavailable_modules": {
+    "test_v2_center_canonical_export": "No module named 'pytest'",
+    "test_translation_pipeline": "No module named 'PIL'"
+  },
+  "tests_run": 360,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "elapsed_seconds": 215.2
+}

@@ -8,9 +8,9 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test": "NODE_OPTIONS=\"--localstorage-file=/tmp/vitest_ls.json\" vitest run",
+    "test:watch": "NODE_OPTIONS=\"--localstorage-file=/tmp/vitest_ls.json\" vitest",
+    "test:coverage": "NODE_OPTIONS=\"--localstorage-file=/tmp/vitest_ls.json\" vitest run --coverage"
   },
   "dependencies": {
     "docx": "^9.7.1",

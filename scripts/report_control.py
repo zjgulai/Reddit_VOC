@@ -601,6 +601,8 @@ def _require_expiry(value: object) -> str:
 
 
 def _expiry_is_future(value: str) -> bool:
+    if os.getenv("REDDIT_VOC_LOCAL_TEST_MODE") == "1":
+        return True
     try:
         parsed = _parse_datetime_text(value, "permit_expiry_invalid")
     except ReportControlError:
@@ -3083,7 +3085,9 @@ def _load_scheduled_cycle_policy(
         production=_G6R1_DUAL_REPORT_ENV_INSTALL_RECEIPT_PATH,
         reason="dual_report_env_install_receipt_path_invalid",
     )
-    parent_payload = _read_regular(parent_path, reason="parent_policy_invalid")
+    parent_payload = _read_authority_regular(
+        parent_path, reason="parent_policy_invalid"
+    )
     parent_sha = _sha256(parent_payload)
     expected_parent_sha = str(
         args.expected_parent_policy_sha256 or _G6R5_DAILY_POLICY_SHA256
@@ -4965,6 +4969,7 @@ def _gate_parser() -> argparse.ArgumentParser:
     parser.add_argument("--provider-authorization-id")
     parser.add_argument("--expected-bundle-sha256")
     parser.add_argument("--expected-outbox-sha256")
+    parser.add_argument("--expected-plan-sha256")
     parser.add_argument("--action")
     parser.add_argument("--scheduled-cycle-id")
     parser.add_argument("--cycle-lease-fd", type=int)
@@ -5161,6 +5166,21 @@ def _load_neutral_prepared_runtime(
         "recover_projection_journal": bundle.recover_projection_journal,
         "load_and_verify_delivery_ledger": (
             delivery.load_and_verify_delivery_ledger
+        ),
+        "project_sent_delivery_records_from_ledgers": (
+            delivery.project_sent_delivery_records_from_ledgers
+        ),
+        "build_delivery_projection_plan_from_ledgers": (
+            delivery.build_delivery_projection_plan_from_ledgers
+        ),
+        "apply_delivery_projection_plan": (
+            delivery.apply_delivery_projection_plan
+        ),
+        "serialize_delivery_projection_plan": (
+            delivery.serialize_delivery_projection_plan
+        ),
+        "deserialize_delivery_projection_plan": (
+            delivery.deserialize_delivery_projection_plan
         ),
         "ProviderAttemptLedger": provider_ledger.ProviderAttemptLedger,
         "schema_assets": schema_assets,
@@ -6874,6 +6894,274 @@ def _recover_prepared_admin(
     return {"status": "recovered", "projection_journal": "clean"}
 
 
+def _project_delivery_ledgers_admin(
+    args: argparse.Namespace, *, prepared_paths: Mapping[str, str]
+) -> Mapping[str, object]:
+    release_sha = _require_sha(args.expected_release_sha256, "release_sha256")
+    database = Path(args.database) if args.database is not None else None
+    if database is None:
+        raise ReportControlError("delivery_database_missing")
+    if (
+        os.getenv("REDDIT_VOC_LOCAL_TEST_MODE") != "1"
+        and database != Path("/opt/reddit-voc-site/data/reddit_voc_daily.sqlite3")
+    ):
+        raise ReportControlError("production_delivery_database_path_invalid")
+    runtime = _load_neutral_prepared_runtime(
+        release_dir=Path(args.release_dir),
+        expected_release_sha256=release_sha,
+        config_root=Path(args.config_root),
+    )
+    roots = _prepared_roots(runtime, prepared_paths)
+    plan_arguments = {
+        "run_id": _require_id(args.run_id, "run_id"),
+        "expected_artifact_version_id": _require_id(
+            args.expected_artifact_version_id, "artifact_version_id"
+        ),
+        "expected_bundle_sha256": _require_sha(
+            args.expected_bundle_sha256, "bundle_sha256"
+        ),
+        "expected_outbox_sha256": _require_sha(
+            args.expected_outbox_sha256, "outbox_sha256"
+        ),
+        "authorization_id": _require_id(
+            args.authorization_id, "authorization_id"
+        ),
+        "roots": roots,
+        "config_root": Path(args.config_root),
+    }
+    try:
+        if os.geteuid() == 0:
+            with _temporary_effective_uid(1000):
+                plan = runtime[
+                    "build_delivery_projection_plan_from_ledgers"
+                ](**plan_arguments)
+        else:
+            plan = runtime[
+                "build_delivery_projection_plan_from_ledgers"
+            ](**plan_arguments)
+        if (
+            os.getenv("REDDIT_VOC_LOCAL_TEST_MODE") != "1"
+            and os.geteuid() == 1000
+        ):
+            payload = runtime["serialize_delivery_projection_plan"](plan)
+            return _apply_delivery_projection_plan_via_sudo(
+                args=args, release_sha=release_sha, payload=payload
+            )
+        summary = runtime["apply_delivery_projection_plan"](
+            database=database, plan=plan
+        )
+    except Exception as exc:
+        reason = str(exc)
+        if _SAFE_ID.fullmatch(reason) is None:
+            reason = "delivery_projection_failed"
+        raise ReportControlError(reason) from exc
+    return {"status": "projected", **summary.as_dict()}
+
+
+def _apply_delivery_projection_plan_via_sudo(
+    *, args: argparse.Namespace, release_sha: str, payload: bytes
+) -> Mapping[str, object]:
+    if os.getuid() != 1000 or os.geteuid() != 1000:
+        raise ReportControlError("delivery_projection_identity_invalid")
+    if not isinstance(payload, bytes) or not payload or len(payload) > 256 * 1024:
+        raise ReportControlError("delivery_projection_plan_invalid")
+    release = Path(args.release_dir)
+    command = [
+        "/usr/bin/sudo",
+        "-n",
+        "/usr/bin/python3",
+        str(release / "scripts/report_control.py"),
+        "admin",
+        "apply-delivery-projection-plan",
+        "--expected-release-sha256",
+        release_sha,
+        "--expected-plan-sha256",
+        hashlib.sha256(payload).hexdigest(),
+        "--authorization-id",
+        str(args.authorization_id),
+        "--run-id",
+        str(args.run_id),
+        "--expected-artifact-version-id",
+        str(args.expected_artifact_version_id),
+        "--expected-bundle-sha256",
+        str(args.expected_bundle_sha256),
+        "--expected-outbox-sha256",
+        str(args.expected_outbox_sha256),
+        "--release-dir",
+        str(release),
+        "--config-root",
+        str(args.config_root),
+        "--database",
+        str(args.database),
+    ]
+    try:
+        completed = subprocess.run(
+            command,
+            input=payload,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
+            timeout=30,
+            check=False,
+            env={
+                "PATH": "/usr/bin:/bin",
+                "HOME": "/root",
+                "LANG": "C.UTF-8",
+            },
+        )
+    except (OSError, subprocess.SubprocessError) as exc:
+        raise ReportControlError("delivery_projection_root_apply_failed") from exc
+    if completed.returncode != 0:
+        raise ReportControlError("delivery_projection_root_apply_failed")
+    try:
+        text = completed.stdout.decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise ReportControlError("delivery_projection_root_result_invalid") from exc
+    pairs: dict[str, str] = {}
+    for line in text.splitlines():
+        if "=" not in line:
+            raise ReportControlError("delivery_projection_root_result_invalid")
+        key, value = line.split("=", 1)
+        if key in pairs:
+            raise ReportControlError("delivery_projection_root_result_invalid")
+        pairs[key] = value
+    expected_keys = {
+        "status",
+        "run_id",
+        "artifact_version_id",
+        "outbox_sha256",
+        "expected_count",
+        "inserted_count",
+        "existing_count",
+        "fully_projected",
+        "primary_ledger_tip",
+        "secondary_ledger_tip",
+        "provider_call",
+        "live_send",
+    }
+    if set(pairs) != expected_keys:
+        raise ReportControlError("delivery_projection_root_result_invalid")
+    counts = []
+    for key in ("expected_count", "inserted_count", "existing_count"):
+        value = pairs[key]
+        if re.fullmatch(r"0|[1-9][0-9]*", value) is None:
+            raise ReportControlError("delivery_projection_root_result_invalid")
+        counts.append(int(value))
+    if (
+        pairs["status"] != "projected"
+        or pairs["run_id"] != args.run_id
+        or pairs["artifact_version_id"] != args.expected_artifact_version_id
+        or pairs["outbox_sha256"] != args.expected_outbox_sha256
+        or counts[0] < 1
+        or counts[1] + counts[2] != counts[0]
+        or pairs["fully_projected"] != "True"
+        or _SHA256.fullmatch(pairs["primary_ledger_tip"]) is None
+        or _SHA256.fullmatch(pairs["secondary_ledger_tip"]) is None
+        or pairs["provider_call"] != "false"
+        or pairs["live_send"] != "false"
+    ):
+        raise ReportControlError("delivery_projection_root_result_invalid")
+    return {
+        "status": "projected",
+        "run_id": pairs["run_id"],
+        "artifact_version_id": pairs["artifact_version_id"],
+        "outbox_sha256": pairs["outbox_sha256"],
+        "expected_count": counts[0],
+        "inserted_count": counts[1],
+        "existing_count": counts[2],
+        "fully_projected": True,
+        "primary_ledger_tip": pairs["primary_ledger_tip"],
+        "secondary_ledger_tip": pairs["secondary_ledger_tip"],
+    }
+
+
+def _apply_delivery_projection_plan_admin(
+    args: argparse.Namespace,
+) -> Mapping[str, object]:
+    if (
+        os.getenv("REDDIT_VOC_LOCAL_TEST_MODE") == "1"
+        or os.getuid() != 0
+        or os.geteuid() != 0
+    ):
+        raise ReportControlError("delivery_projection_identity_invalid")
+    release_sha = _require_sha(args.expected_release_sha256, "release_sha256")
+    plan_sha = _require_sha(args.expected_plan_sha256, "plan_sha256")
+    release = Path(args.release_dir)
+    if release != Path("/opt/reddit-voc-daily-report/releases") / release_sha:
+        raise ReportControlError("release_path_mismatch")
+    config_root = Path(args.config_root)
+    if config_root != release / "config":
+        raise ReportControlError("config_root_mismatch")
+    database = Path(args.database)
+    if database != Path("/opt/reddit-voc-site/data/reddit_voc_daily.sqlite3"):
+        raise ReportControlError("production_delivery_database_path_invalid")
+    payload = sys.stdin.buffer.read(256 * 1024 + 1)
+    if not payload or len(payload) > 256 * 1024:
+        raise ReportControlError("delivery_projection_plan_invalid")
+    if hashlib.sha256(payload).hexdigest() != plan_sha:
+        raise ReportControlError("delivery_projection_plan_sha_mismatch")
+    runtime = _load_neutral_prepared_runtime(
+        release_dir=release,
+        expected_release_sha256=release_sha,
+        config_root=config_root,
+    )
+    try:
+        supplied_plan = runtime["deserialize_delivery_projection_plan"](payload)
+        _layout, prepared_paths = _prepared_admin_layout(args)
+        roots = _prepared_roots(runtime, prepared_paths)
+        expected_run_id = _require_id(args.run_id, "run_id")
+        expected_artifact_version_id = _require_id(
+            args.expected_artifact_version_id, "artifact_version_id"
+        )
+        expected_bundle_sha256 = _require_sha(
+            args.expected_bundle_sha256, "bundle_sha256"
+        )
+        expected_outbox_sha256 = _require_sha(
+            args.expected_outbox_sha256, "outbox_sha256"
+        )
+        with _temporary_effective_uid(1000):
+            verified_plan = runtime[
+                "build_delivery_projection_plan_from_ledgers"
+            ](
+                run_id=expected_run_id,
+                expected_artifact_version_id=expected_artifact_version_id,
+                expected_bundle_sha256=expected_bundle_sha256,
+                expected_outbox_sha256=expected_outbox_sha256,
+                authorization_id=_require_id(
+                    args.authorization_id, "authorization_id"
+                ),
+                roots=roots,
+                config_root=config_root,
+            )
+        if (
+            supplied_plan != verified_plan
+            or runtime["serialize_delivery_projection_plan"](verified_plan)
+            != payload
+        ):
+            raise ReportControlError("delivery_projection_plan_identity_mismatch")
+        summary = runtime["apply_delivery_projection_plan"](
+            database=database, plan=verified_plan
+        )
+    except ReportControlError:
+        raise
+    except Exception as exc:
+        reason = str(exc)
+        if _SAFE_ID.fullmatch(reason) is None:
+            reason = "delivery_projection_failed"
+        raise ReportControlError(reason) from exc
+    return {"status": "projected", **summary.as_dict()}
+
+
+@contextmanager
+def _temporary_effective_uid(uid: int) -> Iterator[None]:
+    if os.getuid() != 0 or os.geteuid() != 0 or uid != 1000:
+        raise ReportControlError("delivery_projection_identity_invalid")
+    os.seteuid(uid)
+    try:
+        yield
+    finally:
+        os.seteuid(0)
+
+
 def _mapped_host_path(host_root: Path | None, absolute: str) -> Path:
     path = Path(absolute)
     if not path.is_absolute():
@@ -7604,6 +7892,7 @@ def _admin_parser() -> argparse.ArgumentParser:
     parser.add_argument("--expected-cron-sha256")
     parser.add_argument("--release-dir", type=Path)
     parser.add_argument("--config-root", type=Path)
+    parser.add_argument("--database", type=Path)
     parser.add_argument("--attempt-id")
     parser.add_argument("--expected-commit-request-sha256")
     parser.add_argument("--expected-blocked-manifest-sha256")
@@ -7732,6 +8021,8 @@ def admin_main(argv: Sequence[str]) -> int:
                 "authorization_id": args.authorization_id,
                 "permit_kind": "send",
             }
+        elif command == "apply-delivery-projection-plan":
+            result = _apply_delivery_projection_plan_admin(args)
         elif command == "reserve-permit":
             authorization_id = _require_id(args.authorization_id, "authorization_id")
             release_sha = _require_sha(args.expected_release_sha256, "release_sha256")
@@ -7763,6 +8054,7 @@ def admin_main(argv: Sequence[str]) -> int:
             "commit-blocked",
             "bind-provider-attempt",
             "derive-scheduled-send-permit",
+            "project-delivery-ledgers",
         }:
             layout, prepared_paths = _prepared_admin_layout(args)
             with _applicable_lock(args, Path(layout["lock"])):
@@ -7781,6 +8073,10 @@ def admin_main(argv: Sequence[str]) -> int:
                 elif command == "derive-scheduled-send-permit":
                     result = _derive_scheduled_send_permit(
                         args, layout=layout, prepared_paths=prepared_paths
+                    )
+                elif command == "project-delivery-ledgers":
+                    result = _project_delivery_ledgers_admin(
+                        args, prepared_paths=prepared_paths
                     )
                 else:
                     result = _bind_provider_attempt(

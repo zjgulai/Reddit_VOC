@@ -677,7 +677,7 @@ async function sha256Bytes(bytes: Uint8Array): Promise<string> {
 }
 
 async function fetchBytes(basePath: string, path: string): Promise<{ bytes: Uint8Array; mediaType: string | null }> {
-  const response = await fetch(`${basePath}/${path}`, { cache: 'force-cache' });
+  const response = await fetch(`${basePath}/${path}`, { cache: 'no-cache' });
   if (!response.ok) {
     throw new PersonasContractError(`画像文件加载失败：${path}（HTTP ${response.status}）`);
   }

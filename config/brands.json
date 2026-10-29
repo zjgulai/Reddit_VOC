@@ -1,0 +1,480 @@
+{
+  "schema_version": "echo_agent_brand_registry_v1",
+  "note": "单一品牌注册表。keywords.py / product ledger / recompute 三处此前各有一份不一致的清单，本文件是唯一权威来源；alias 匹配统一小写并做词边界匹配。",
+  "brands": [
+    {
+      "brand_id": "momcozy",
+      "display_name": "Momcozy",
+      "aliases": [
+        "Momcozy",
+        "Mom Cozy",
+        "MomCozy"
+      ],
+      "role": "subject"
+    },
+    {
+      "brand_id": "abiie",
+      "display_name": "Abiie",
+      "aliases": [
+        "Abiie"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "ardo",
+      "display_name": "Ardo",
+      "aliases": [
+        "Ardo"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "baby_brezza",
+      "display_name": "Baby Brezza",
+      "aliases": [
+        "Baby Brezza",
+        "Baby Brezza Washer Pro"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "baby_buddha",
+      "display_name": "Baby Buddha",
+      "aliases": [
+        "Baby Buddha"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "babybjorn",
+      "display_name": "BabyBjorn",
+      "aliases": [
+        "Baby Bjorn",
+        "BabyBjorn"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "beaugen",
+      "display_name": "BeauGen",
+      "aliases": [
+        "BeauGen"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "bellababy",
+      "display_name": "Bellababy",
+      "aliases": [
+        "Bellababy"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "boba",
+      "display_name": "Boba",
+      "aliases": [
+        "Boba"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "boppy",
+      "display_name": "Boppy",
+      "aliases": [
+        "Boppy"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "ceres_chill",
+      "display_name": "Ceres Chill",
+      "aliases": [
+        "Ceres Chill"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "comfelie",
+      "display_name": "Comfelie",
+      "aliases": [
+        "Comfelie"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "didymos",
+      "display_name": "Didymos",
+      "aliases": [
+        "Didymos"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "dr_brown_s",
+      "display_name": "Dr. Brown's",
+      "aliases": [
+        "Dr Browns",
+        "Dr. Brown",
+        "Dr. Brown's"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "dreamegg",
+      "display_name": "Dreamegg",
+      "aliases": [
+        "Dreamegg"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "elvie",
+      "display_name": "Elvie",
+      "aliases": [
+        "Elvie"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "ergobaby",
+      "display_name": "Ergobaby",
+      "aliases": [
+        "Ergo Embrace",
+        "Ergobaby"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "fetalplus",
+      "display_name": "FetalPlus",
+      "aliases": [
+        "Fetal Plus",
+        "FetalPlus"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "fraupow",
+      "display_name": "Fraupow",
+      "aliases": [
+        "Fraupow"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "freemie",
+      "display_name": "Freemie",
+      "aliases": [
+        "Freemie"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "graco",
+      "display_name": "Graco",
+      "aliases": [
+        "Graco"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "grownsy",
+      "display_name": "Grownsy",
+      "aliases": [
+        "Grownsy"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "haakaa",
+      "display_name": "Haakaa",
+      "aliases": [
+        "Haakaa"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "hatch",
+      "display_name": "Hatch",
+      "aliases": [
+        "Hatch"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "imani",
+      "display_name": "Imani",
+      "aliases": [
+        "Imani"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "kindred_bravely",
+      "display_name": "Kindred Bravely",
+      "aliases": [
+        "Kindred Bravely"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "lalo",
+      "display_name": "Lalo",
+      "aliases": [
+        "Lalo"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "lansinoh",
+      "display_name": "Lansinoh",
+      "aliases": [
+        "Lansinoh",
+        "Lansinoh DiscreetDuo"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "legendairy_milk",
+      "display_name": "Legendairy Milk",
+      "aliases": [
+        "Legendairy Milk"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "lennylamb",
+      "display_name": "LennyLamb",
+      "aliases": [
+        "LennyLamb"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "lillebaby",
+      "display_name": "Lillebaby",
+      "aliases": [
+        "Lillebaby"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "maymom",
+      "display_name": "Maymom",
+      "aliases": [
+        "Maymom"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "medela",
+      "display_name": "Medela",
+      "aliases": [
+        "Medela",
+        "Medela Freestyle",
+        "Medela InBra"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "mommed",
+      "display_name": "MomMed",
+      "aliases": [
+        "MomMed"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "motif",
+      "display_name": "Motif",
+      "aliases": [
+        "Motif",
+        "Motif Aura"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "my_brest_friend",
+      "display_name": "My Brest Friend",
+      "aliases": [
+        "My Brest Friend"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "nanit",
+      "display_name": "Nanit",
+      "aliases": [
+        "Nanit"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "nenesupply",
+      "display_name": "Nenesupply",
+      "aliases": [
+        "Nenesupply"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "owlet",
+      "display_name": "Owlet",
+      "aliases": [
+        "Owlet"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "papablic",
+      "display_name": "Papablic",
+      "aliases": [
+        "Papablic"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "philips_avent",
+      "display_name": "Philips Avent",
+      "aliases": [
+        "Avent",
+        "Philips Avent"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "pumpables",
+      "display_name": "Pumpables",
+      "aliases": [
+        "Pumpables"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "skip_hop",
+      "display_name": "Skip Hop",
+      "aliases": [
+        "Skip Hop"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "solly_baby",
+      "display_name": "Solly Baby",
+      "aliases": [
+        "Solly Baby"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "spectra",
+      "display_name": "Spectra",
+      "aliases": [
+        "Spectra"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "stokke",
+      "display_name": "Stokke",
+      "aliases": [
+        "Stokke"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "tsrete",
+      "display_name": "TSRETE",
+      "aliases": [
+        "TSRETE"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "tommee_tippee",
+      "display_name": "Tommee Tippee",
+      "aliases": [
+        "Tommee Tippee"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "tula",
+      "display_name": "Tula",
+      "aliases": [
+        "Tula"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "tushbaby",
+      "display_name": "Tushbaby",
+      "aliases": [
+        "Tushbaby"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "wabi_baby",
+      "display_name": "Wabi Baby",
+      "aliases": [
+        "Wabi",
+        "Wabi Baby"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "wildbird",
+      "display_name": "WildBird",
+      "aliases": [
+        "WildBird"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "willow",
+      "display_name": "Willow",
+      "aliases": [
+        "Willow"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "youha",
+      "display_name": "YOUHA",
+      "aliases": [
+        "YOUHA"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "yogasleep",
+      "display_name": "Yogasleep",
+      "aliases": [
+        "Yogasleep"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "zomee",
+      "display_name": "Zomee",
+      "aliases": [
+        "Zomee"
+      ],
+      "role": "competitor"
+    },
+    {
+      "brand_id": "eufy",
+      "display_name": "eufy",
+      "aliases": [
+        "eufy",
+        "eufy E10",
+        "eufy E20",
+        "eufy S1",
+        "eufy S1 Pro"
+      ],
+      "role": "competitor"
+    }
+  ]
+}

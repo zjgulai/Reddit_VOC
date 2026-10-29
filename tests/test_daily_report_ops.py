@@ -645,6 +645,82 @@ class DailyReportOpsTests(unittest.TestCase):
         finally:
             os.close(lease_fd)
 
+    def test_scheduled_cycle_loads_parent_through_immutable_authority_reader(
+        self,
+    ) -> None:
+        """Catches the annual parent being read with the 0600 secret reader."""
+        with tempfile.TemporaryDirectory() as tmp:
+            fixture = self._scheduled_cycle_fixture(Path(tmp))
+            installed = self._install_scheduled_cycle_policy_permit(fixture)
+            self.assertEqual(installed.returncode, 0, installed.stderr)
+            args = SimpleNamespace(
+                parent_policy_file=fixture["parent_path"],
+                policy_file=fixture["policy_path"],
+                credential_rotation_receipt_file=fixture["rotation_path"],
+                report_env_install_receipt_file=fixture[
+                    "report_env_receipt_path"
+                ],
+                dual_credential_set_receipt_file=None,
+                dual_report_env_install_receipt_file=None,
+                report_env_file=fixture["report_env_path"],
+                expected_parent_policy_sha256=fixture["parent_sha"],
+                owner_policy_permit_file=fixture["owner_permit_path"],
+                activation_marker_file=fixture["activation_marker_path"],
+                transactions_root=fixture["transactions_root"],
+                primary_cron_file=fixture["primary_cron_path"],
+                stable_entrypoint_file=fixture["stable_entrypoint_path"],
+                secondary_disposition_file=fixture[
+                    "secondary_disposition_path"
+                ],
+                user_crontab_snapshot_file=fixture["user_crontab_path"],
+                process_snapshot_file=fixture["process_snapshot_path"],
+                scheduled_at="2026-08-12T08:00:15+08:00",
+            )
+            parent_path = Path(fixture["parent_path"])
+            original_regular = report_control._read_regular
+            original_authority_regular = report_control._read_authority_regular
+
+            def guarded_regular(path: Path, *, reason: str) -> bytes:
+                if path == parent_path:
+                    raise report_control.ReportControlError(
+                        "ordinary_parent_reader_used"
+                    )
+                return original_regular(path, reason=reason)
+
+            def authority_regular(path: Path, *, reason: str) -> bytes:
+                if path == parent_path:
+                    return original_regular(path, reason=reason)
+                return original_authority_regular(path, reason=reason)
+
+            with (
+                mock.patch.dict(
+                    os.environ, {"REDDIT_VOC_LOCAL_TEST_MODE": "1"}
+                ),
+                mock.patch.object(
+                    report_control,
+                    "_read_regular",
+                    side_effect=guarded_regular,
+                ),
+                mock.patch.object(
+                    report_control,
+                    "_read_authority_regular",
+                    side_effect=authority_regular,
+                ),
+            ):
+                authority = report_control._load_scheduled_cycle_policy(
+                    args,
+                    control_root=Path(fixture["control"]),
+                    release_sha256=str(fixture["release_sha"]),
+                    launcher_sha256=str(fixture["launcher_sha"]),
+                    run_id="daily_collect_20260812_0700",
+                    scheduled_at="2026-08-12T08:00:15+08:00",
+                )
+
+            self.assertEqual(authority["report_date"], "2026-08-12")
+            self.assertEqual(
+                authority["parent_policy_sha256"], fixture["parent_sha"]
+            )
+
     def test_scheduled_cycle_requires_new_owner_policy_and_consumes_one_exact_slot(
         self,
     ) -> None:

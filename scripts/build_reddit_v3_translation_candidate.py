@@ -278,6 +278,8 @@ def _load_checkpoint(
     item_by_id: Mapping[str, TranslationItem],
     translation_prompt_sha256: str,
     translation_terms_sha256: str,
+    reuse_translations: Mapping[str, str] | None = None,
+    reuse_provenance: Mapping[str, object] | None = None,
 ) -> dict[str, str]:
     if not path.exists():
         return {}
@@ -313,6 +315,25 @@ def _load_checkpoint(
             and row.get("translation_terms_sha256") == translation_terms_sha256
         )
         attempt_sequence = row.get("provider_attempt_sequence")
+        expected_reuse_sidecar_sha256 = None
+        if reuse_provenance is not None:
+            expected_reuse_sidecar_sha256 = reuse_provenance.get(
+                "comment_sidecar_sha256"
+                if item.item_type == "comment"
+                else "post_sidecar_sha256"
+            )
+        reused_translation = (
+            bool(item.source_text)
+            and reuse_translations is not None
+            and reuse_translations.get(stable_id) == zh
+            and reuse_provenance is not None
+            and row.get("reuse_candidate_manifest_sha256")
+            == reuse_provenance.get("candidate_manifest_sha256")
+            and row.get("reuse_sidecar_sha256")
+            == expected_reuse_sidecar_sha256
+            and row.get("reuse_translation_sha256")
+            == sha256_hex(str(zh).encode("utf-8"))
+        )
         attempt_binding_valid = (
             (
                 not item.source_text
@@ -330,6 +351,12 @@ def _load_checkpoint(
                 and bool(row["provider_response_id"])
                 and isinstance(row.get("provider_output_sha256"), str)
                 and len(row["provider_output_sha256"]) == 64
+            )
+            or (
+                reused_translation
+                and attempt_sequence is None
+                and row.get("provider_response_id") is None
+                and row.get("provider_output_sha256") is None
             )
         )
         if (
@@ -372,6 +399,135 @@ def _validate_translation_map(
             raise TranslationCandidateError(
                 f"checkpoint_deterministic_validation_failed:{reason_code}"
             ) from exc
+
+
+def _load_reuse_candidate(
+    root: Path,
+    *,
+    items: Sequence[TranslationItem],
+    translation_prompt_sha256: str,
+    translation_terms_sha256: str,
+    terms: object,
+) -> tuple[dict[str, str], dict[str, object]]:
+    if root.is_symlink() or not root.is_dir():
+        raise TranslationCandidateError("reuse_candidate_root_unsafe")
+    manifest_path = root / "manifest-public.json"
+    manifest = _load_json(manifest_path, expected_type=dict)
+    files = manifest.get("files")
+    translations_extension = manifest.get("translations")
+    if (
+        manifest.get("schema_version") != "reddit_voc_site_snapshot_manifest_v3"
+        or manifest.get("status") != "validated_local_translation_candidate"
+        or not isinstance(files, dict)
+        or not isinstance(translations_extension, dict)
+        or translations_extension.get("provider") != "deepseek"
+        or translations_extension.get("model") != DEEPSEEK_MODEL
+        or translations_extension.get("translation_prompt_sha256")
+        != translation_prompt_sha256
+        or translations_extension.get("translation_terms_sha256")
+        != translation_terms_sha256
+        or translations_extension.get("quality_gate")
+        != "deterministic_contract_v1"
+    ):
+        raise TranslationCandidateError("reuse_candidate_manifest_invalid")
+
+    sidecars: dict[str, dict[str, Any]] = {}
+    sidecar_hashes: dict[str, str] = {}
+    for name, entity_type in zip(SIDE_CAR_NAMES, ("post", "comment"), strict=True):
+        path = root / name
+        declaration = files.get(name)
+        if (
+            not isinstance(declaration, dict)
+            or set(declaration) != {"bytes", "sha256"}
+            or declaration.get("bytes") != path.stat().st_size
+            or declaration.get("sha256") != _sha256(path)
+        ):
+            raise TranslationCandidateError(f"reuse_candidate_file_binding_invalid:{name}")
+        sidecar = _load_json(path, expected_type=dict)
+        if (
+            sidecar.get("schema_version") != TRANSLATION_SCHEMA
+            or sidecar.get("dataset_version") != manifest.get("dataset_version")
+            or sidecar.get("provider") != "deepseek"
+            or sidecar.get("model") != DEEPSEEK_MODEL
+            or sidecar.get("quality_gate") != "deterministic_contract_v1"
+            or sidecar.get("entity_type") != entity_type
+            or not isinstance(sidecar.get("items"), list)
+        ):
+            raise TranslationCandidateError(
+                f"reuse_candidate_sidecar_envelope_invalid:{name}"
+            )
+        sidecars[entity_type] = sidecar
+        sidecar_hashes[entity_type] = declaration["sha256"]
+
+    post_rows: dict[str, Mapping[str, Any]] = {}
+    for row in sidecars["post"]["items"]:
+        post_id = row.get("post_id") if isinstance(row, dict) else None
+        if not isinstance(post_id, str) or post_id in post_rows:
+            raise TranslationCandidateError("reuse_candidate_post_identity_invalid")
+        post_rows[post_id] = row
+    comment_rows: dict[str, Mapping[str, Any]] = {}
+    for row in sidecars["comment"]["items"]:
+        comment_id = row.get("comment_id") if isinstance(row, dict) else None
+        if not isinstance(comment_id, str) or comment_id in comment_rows:
+            raise TranslationCandidateError("reuse_candidate_comment_identity_invalid")
+        comment_rows[comment_id] = row
+
+    reusable: dict[str, str] = {}
+    for item in items:
+        if not item.source_text:
+            continue
+        if item.item_type == "comment":
+            row = comment_rows.get(str(item.comment_id))
+            if row is None or row.get("input_sha256") != item.input_sha256:
+                continue
+            zh = row.get("zh")
+            valid = (
+                row.get("post_id") == item.post_id
+                and row.get("provider") == "deepseek"
+                and row.get("quality_status") == "deterministic_passed_unreviewed"
+            )
+        else:
+            row = post_rows.get(item.post_id)
+            field = "title" if item.item_type == "title" else "content"
+            if row is None or row.get(f"{field}_input_sha256") != item.input_sha256:
+                continue
+            zh = row.get(f"{field}_zh")
+            valid = (
+                row.get(f"{field}_quality_status")
+                == "deterministic_passed_unreviewed"
+            )
+        if valid and isinstance(zh, str) and zh.strip():
+            reusable[item.stable_id] = zh
+
+    _validate_translation_map(items=items, translations=reusable, terms=terms)
+    provenance: dict[str, object] = {
+        "candidate_dataset_version": manifest.get("dataset_version"),
+        "candidate_manifest_sha256": _sha256(manifest_path),
+        "post_sidecar_sha256": sidecar_hashes["post"],
+        "comment_sidecar_sha256": sidecar_hashes["comment"],
+    }
+    return reusable, provenance
+
+
+def _checkpoint_reused_ids(path: Path) -> set[str]:
+    if not path.exists():
+        return set()
+    reused: set[str] = set()
+    for line_number, raw in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+        try:
+            row = json.loads(raw)
+        except json.JSONDecodeError as exc:
+            raise TranslationCandidateError(
+                f"checkpoint_invalid_json:{line_number}"
+            ) from exc
+        if row.get("reuse_candidate_manifest_sha256") is not None:
+            stable_id = row.get("stable_id")
+            if not isinstance(stable_id, str) or stable_id in reused:
+                raise TranslationCandidateError(
+                    f"checkpoint_reuse_identity_invalid:{line_number}"
+                )
+            reused.add(stable_id)
+    return reused
 
 
 def _batches(
@@ -498,7 +654,14 @@ def _provider_batch(
     timeout_seconds: float,
     protect_source: bool = True,
     source_overrides: Mapping[str, str] | None = None,
+    repair_reason_codes_by_id: Mapping[str, tuple[str, ...]] | None = None,
 ) -> tuple[dict[str, str], object]:
+    expected_ids = {item.stable_id for item in items}
+    if repair_reason_codes_by_id is not None and (
+        set(repair_reason_codes_by_id) != expected_ids
+        or any(not reason_codes for reason_codes in repair_reason_codes_by_id.values())
+    ):
+        raise TranslationCandidateError("translation_repair_scope_invalid")
     bundle = PostTranslationBundle(post_id=f"batch-{items[0].post_id}", items=items)
     protected = (
         {
@@ -530,6 +693,20 @@ def _provider_batch(
             for item in items
         ]
     }
+    if repair_reason_codes_by_id is not None:
+        payload["repair_context"] = {
+            "reason_codes_by_id": {
+                item.stable_id: list(
+                    repair_reason_codes_by_id[item.stable_id]
+                )
+                for item in items
+            },
+            "requirements": [
+                "return_a_materially_translated_chinese_value",
+                "do_not_return_the_source_text_unchanged",
+                "preserve_all_protected_placeholders_exactly",
+            ],
+        }
     completion = client.complete_json(
         phase="translation",
         system_prompt=assets.translation_prompt,
@@ -802,7 +979,13 @@ def _request_with_split(
                 in {"source_equal_translation", "non_chinese_translation"}
                 else None
             )
-            if retry_raw_source or source_equal_override is not None:
+            repair_reason_codes = (
+                {items[0].stable_id: (exc.reason_code,)}
+                if exc.reason_code
+                in {"source_equal_translation", "non_chinese_translation"}
+                else None
+            )
+            if retry_raw_source or repair_reason_codes is not None:
                 try:
                     source_overrides = (
                         {items[0].stable_id: source_equal_override}
@@ -815,8 +998,12 @@ def _request_with_split(
                         items=items,
                         budget=budget,
                         timeout_seconds=timeout_seconds,
-                        protect_source=False,
+                        protect_source=(
+                            repair_reason_codes is not None
+                            and source_equal_override is None
+                        ),
                         source_overrides=source_overrides,
+                        repair_reason_codes_by_id=repair_reason_codes,
                     )
                     on_success(batch_translations, completion)
                     return
@@ -1063,6 +1250,42 @@ def _attempt_log_summary(path: Path) -> tuple[int, dict[str, int]]:
     return attempts, usage
 
 
+def _attempt_log_execution_authorization_ids(
+    path: Path,
+    *,
+    campaign_authorization_id: str,
+) -> tuple[str, ...]:
+    if not path.exists():
+        return ()
+    execution_ids: list[str] = []
+    seen: set[str] = set()
+    for line_number, raw in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+        try:
+            row = json.loads(raw)
+        except json.JSONDecodeError as exc:
+            raise TranslationCandidateError(
+                f"attempt_log_invalid_json:{line_number}"
+            ) from exc
+        if not isinstance(row, dict):
+            raise TranslationCandidateError(f"attempt_log_invalid:{line_number}")
+        value = row.get(
+            "provider_execution_authorization_id",
+            row.get("provider_authorization_id"),
+        )
+        execution_id = _safe_identifier(
+            str(value),
+            label="provider_execution_authorization_id",
+        )
+        if row.get("provider_authorization_id") != campaign_authorization_id:
+            raise TranslationCandidateError(
+                f"attempt_log_authorization_binding_invalid:{line_number}"
+            )
+        if execution_id not in seen:
+            seen.add(execution_id)
+            execution_ids.append(execution_id)
+    return tuple(execution_ids)
+
+
 def _attempt_log_proves_http_402(
     path: Path,
     *,
@@ -1150,6 +1373,7 @@ def _build_completed_candidate(
     dataset_version: str,
     generated_at_utc: str,
     authorization_id: str,
+    execution_authorization_ids: Sequence[str],
     checkpoint_path: Path,
     attempt_log_path: Path,
     items: Sequence[TranslationItem],
@@ -1159,6 +1383,8 @@ def _build_completed_candidate(
     translation_terms_sha256: str,
     comments_total: int,
     partial_comments_reason: str | None,
+    reuse_provenance: Mapping[str, object] | None,
+    reused_item_count: int,
 ) -> None:
     if output_root.exists() or output_root.is_symlink():
         raise TranslationCandidateError("output_root_must_not_exist")
@@ -1191,11 +1417,11 @@ def _build_completed_candidate(
         "artifact_stage": "local_translation_candidate",
         "consumption_status": "eligible_for_frontend_candidate_consumption",
         "promotable": False,
-        "provider_call": True,
+        "provider_call": provider_attempts > 0,
         "files": files,
         "boundaries": {
             **source_manifest["boundaries"],
-            "provider_call": True,
+            "provider_call": provider_attempts > 0,
             "database_write": False,
             "remote_write": False,
             "deploy": False,
@@ -1206,8 +1432,11 @@ def _build_completed_candidate(
             "schema_version": MANIFEST_EXTENSION_SCHEMA,
             "provider": "deepseek",
             "model": DEEPSEEK_MODEL,
-            "provider_call": True,
+            "provider_call": provider_attempts > 0,
             "provider_authorization_id": authorization_id,
+            "provider_execution_authorization_ids": list(
+                execution_authorization_ids
+            ),
             "source_dataset_version": source_manifest["dataset_version"],
             "source_public_manifest_sha256": source_manifest_sha256,
             "translation_prompt_sha256": _sha256(ROOT / "config/prompts/deepseek-translation-v1.txt"),
@@ -1230,6 +1459,11 @@ def _build_completed_candidate(
             },
             "provider_attempts": provider_attempts,
             "usage": dict(usage),
+            "reuse": (
+                {**reuse_provenance, "reused_items": reused_item_count}
+                if reuse_provenance is not None
+                else None
+            ),
         },
     }
     _write_json(manifest_path, manifest)
@@ -1271,6 +1505,11 @@ def run(args: argparse.Namespace, *, client: DeepSeekClient | None = None) -> di
         args.provider_authorization_id,
         label="provider_authorization_id",
     )
+    execution_authorization_id = _safe_identifier(
+        getattr(args, "provider_execution_authorization_id", None)
+        or authorization_id,
+        label="provider_execution_authorization_id",
+    )
     generated_at_utc = (
         datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
         if args.generated_at_utc == "now"
@@ -1300,6 +1539,17 @@ def run(args: argparse.Namespace, *, client: DeepSeekClient | None = None) -> di
     item_by_id = {item.stable_id: item for item in items}
     assets = load_translation_runtime_assets(ROOT / "config")
     translation_prompt_sha256 = sha256_hex(assets.translation_prompt_bytes)
+    reuse_candidate_root = getattr(args, "reuse_candidate_root", None)
+    reuse_translations: dict[str, str] = {}
+    reuse_provenance: dict[str, object] | None = None
+    if reuse_candidate_root is not None:
+        reuse_translations, reuse_provenance = _load_reuse_candidate(
+            Path(reuse_candidate_root),
+            items=items,
+            translation_prompt_sha256=translation_prompt_sha256,
+            translation_terms_sha256=assets.terms_sha256,
+            terms=assets.terms,
+        )
     checkpoint_path = work_root / "translations-checkpoint.jsonl"
     attempt_log_path = work_root / "provider-attempts.jsonl"
     run_receipts_root = work_root / "run-receipts"
@@ -1309,12 +1559,51 @@ def run(args: argparse.Namespace, *, client: DeepSeekClient | None = None) -> di
         item_by_id=item_by_id,
         translation_prompt_sha256=translation_prompt_sha256,
         translation_terms_sha256=assets.terms_sha256,
+        reuse_translations=reuse_translations,
+        reuse_provenance=reuse_provenance,
     )
     _validate_translation_map(
         items=items,
         translations=translations,
         terms=assets.terms,
     )
+    for stable_id in sorted(reuse_translations):
+        if stable_id in translations:
+            continue
+        item = item_by_id[stable_id]
+        assert reuse_provenance is not None
+        sidecar_sha256 = reuse_provenance[
+            "comment_sidecar_sha256"
+            if item.item_type == "comment"
+            else "post_sidecar_sha256"
+        ]
+        zh = reuse_translations[stable_id]
+        _append_jsonl(
+            checkpoint_path,
+            {
+                "schema_version": CHECKPOINT_SCHEMA,
+                "source_manifest_sha256": source_manifest_sha256,
+                "stable_id": stable_id,
+                "item_type": item.item_type,
+                "post_id": item.post_id,
+                "comment_id": item.comment_id,
+                "input_sha256": item.input_sha256,
+                "zh": zh,
+                "provider": "deepseek",
+                "model": DEEPSEEK_MODEL,
+                "provider_attempt_sequence": None,
+                "provider_response_id": None,
+                "provider_output_sha256": None,
+                "translation_prompt_sha256": translation_prompt_sha256,
+                "translation_terms_sha256": assets.terms_sha256,
+                "reuse_candidate_manifest_sha256": reuse_provenance[
+                    "candidate_manifest_sha256"
+                ],
+                "reuse_sidecar_sha256": sidecar_sha256,
+                "reuse_translation_sha256": sha256_hex(zh.encode("utf-8")),
+            },
+        )
+        translations[stable_id] = zh
     for item in items:
         if not item.source_text and item.stable_id not in translations:
             row = {
@@ -1392,6 +1681,9 @@ def run(args: argparse.Namespace, *, client: DeepSeekClient | None = None) -> di
                     {
                         "schema_version": "reddit_voc_translation_provider_attempt_v1",
                         "provider_authorization_id": authorization_id,
+                        "provider_execution_authorization_id": (
+                            execution_authorization_id
+                        ),
                         "source_manifest_sha256": source_manifest_sha256,
                         "translation_prompt_sha256": translation_prompt_sha256,
                         "translation_terms_sha256": assets.terms_sha256,
@@ -1449,6 +1741,9 @@ def run(args: argparse.Namespace, *, client: DeepSeekClient | None = None) -> di
                 attempt_document = {
                     "schema_version": "reddit_voc_translation_provider_attempt_v1",
                     "provider_authorization_id": authorization_id,
+                    "provider_execution_authorization_id": (
+                        execution_authorization_id
+                    ),
                     "source_manifest_sha256": source_manifest_sha256,
                     "translation_prompt_sha256": translation_prompt_sha256,
                     "translation_terms_sha256": assets.terms_sha256,
@@ -1582,6 +1877,9 @@ def run(args: argparse.Namespace, *, client: DeepSeekClient | None = None) -> di
                 {
                     "schema_version": "reddit_voc_translation_provider_attempt_v1",
                     "provider_authorization_id": authorization_id,
+                    "provider_execution_authorization_id": (
+                        execution_authorization_id
+                    ),
                     "source_manifest_sha256": source_manifest_sha256,
                     "translation_prompt_sha256": translation_prompt_sha256,
                     "translation_terms_sha256": assets.terms_sha256,
@@ -1601,6 +1899,10 @@ def run(args: argparse.Namespace, *, client: DeepSeekClient | None = None) -> di
         cumulative_provider_attempts, cumulative_usage = _attempt_log_summary(
             attempt_log_path
         )
+        execution_authorization_ids = _attempt_log_execution_authorization_ids(
+            attempt_log_path,
+            campaign_authorization_id=authorization_id,
+        )
         _build_completed_candidate(
             source_root=source_root,
             output_root=output_root,
@@ -1609,6 +1911,7 @@ def run(args: argparse.Namespace, *, client: DeepSeekClient | None = None) -> di
             dataset_version=dataset_version,
             generated_at_utc=generated_at_utc,
             authorization_id=authorization_id,
+            execution_authorization_ids=execution_authorization_ids,
             checkpoint_path=checkpoint_path,
             attempt_log_path=attempt_log_path,
             items=items,
@@ -1622,6 +1925,8 @@ def run(args: argparse.Namespace, *, client: DeepSeekClient | None = None) -> di
                 if status == "complete_post_coverage_partial_comments"
                 else None
             ),
+            reuse_provenance=reuse_provenance,
+            reused_item_count=len(_checkpoint_reused_ids(checkpoint_path)),
         )
 
     receipt = {
@@ -1629,6 +1934,7 @@ def run(args: argparse.Namespace, *, client: DeepSeekClient | None = None) -> di
         "status": status,
         "failure_reason": failure_reason,
         "provider_authorization_id": authorization_id,
+        "provider_execution_authorization_id": execution_authorization_id,
         "provider_call_authorized": bool(args.authorize_provider_call),
         "provider_call": provider_attempts > 0,
         "provider_attempts": provider_attempts,
@@ -1638,6 +1944,7 @@ def run(args: argparse.Namespace, *, client: DeepSeekClient | None = None) -> di
         "include_comments": bool(args.include_comments),
         "item_count": len(items),
         "translated_item_count": len(translations),
+        "reused_item_count": len(_checkpoint_reused_ids(checkpoint_path)),
         "remaining_item_count": len(items) - len(translations),
         "complete_post_coverage": complete_post_coverage,
         "comments_translated": sum(
@@ -1677,6 +1984,7 @@ def main() -> int:
     parser.add_argument("--output-root", type=Path, required=True)
     parser.add_argument("--dataset-version", required=True)
     parser.add_argument("--provider-authorization-id", required=True)
+    parser.add_argument("--provider-execution-authorization-id")
     parser.add_argument("--generated-at-utc", default="now")
     parser.add_argument("--include-comments", action="store_true")
     parser.add_argument(
@@ -1690,6 +1998,11 @@ def main() -> int:
         help="Required auditable reason when --allow-partial-comments is used.",
     )
     parser.add_argument("--authorize-provider-call", action="store_true")
+    parser.add_argument(
+        "--reuse-candidate-root",
+        type=Path,
+        help="Reuse only hash-matching deterministic translations from this prior candidate.",
+    )
     parser.add_argument(
         "--api-key-file",
         type=Path,

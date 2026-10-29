@@ -121,7 +121,7 @@ async function fetchVerifiedJson<T>(
   integrity: { bytes: number; sha256: string },
   label: string,
 ): Promise<T> {
-  const response = await fetch(`${basePath}/${filename}`, { cache: 'force-cache' });
+  const response = await fetch(`${basePath}/${filename}`, { cache: 'no-cache' });
   if (!response.ok) {
     throw new SnapshotContractError(`${label}加载失败：${filename}（HTTP ${response.status}）`);
   }

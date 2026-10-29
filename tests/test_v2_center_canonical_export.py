@@ -8,6 +8,7 @@ import pytest
 
 from reddit_voc.v2_center_canonical_export import (
     CenterCanonicalExportError,
+    _canonical_comment_state,
     _read_previous_bundle,
 )
 
@@ -81,3 +82,22 @@ def test_previous_canonical_bundle_rejects_unknown_schema(tmp_path: Path) -> Non
 
     with pytest.raises(CenterCanonicalExportError, match="manifest is invalid"):
         _read_previous_bundle(root)
+
+
+def test_comment_with_missing_immediate_parent_stays_linked_when_root_post_exists() -> None:
+    assert (
+        _canonical_comment_state(
+            post_id="t3_present",
+            post_ids={"t3_present"},
+            relationship_status="unresolved",
+        )
+        == "linked"
+    )
+    assert (
+        _canonical_comment_state(
+            post_id="t3_missing",
+            post_ids={"t3_present"},
+            relationship_status="unresolved",
+        )
+        == "unresolved_parent"
+    )

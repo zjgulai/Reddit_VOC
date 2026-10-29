@@ -1096,8 +1096,12 @@ if [[ "$operation" == "send" ]]; then
   fi
   [[ ! -L "$RUNTIME_ENV_PATH" && -f "$RUNTIME_ENV_PATH" ]] \
     || fail "send_runtime_env_invalid"
+  database_mount="type=bind,src=$DATABASE_PATH,dst=$DATABASE_PATH"
+  if [[ "$SEND_RUNTIME_MODE" == "dual" ]]; then
+    database_mount+=",readonly"
+  fi
   PHASE_MOUNT_ARGS+=(
-    --mount "type=bind,src=$DATABASE_PATH,dst=$DATABASE_PATH"
+    --mount "$database_mount"
     --mount "type=bind,src=$PUBLIC_ROOT,dst=$PUBLIC_ROOT,readonly"
     --mount "type=bind,src=$PRIVATE_ROOT,dst=$PRIVATE_ROOT,readonly"
     --mount "type=bind,src=$STATE_ROOT,dst=$STATE_ROOT,readonly"
@@ -1115,6 +1119,9 @@ if [[ "$operation" == "send" ]]; then
     --expected-outbox-sha256 "$EXPECTED_OUTBOX_SHA256"
     --authorization-id "$SEND_AUTHORIZATION_ID"
   )
+  if [[ "$SEND_RUNTIME_MODE" == "dual" ]]; then
+    CONTAINER_COMMAND+=(--defer-database-projection)
+  fi
   if [[ "$AUTHORIZE_RESEND" == "1" ]]; then
     CONTAINER_COMMAND+=(--authorize-resend)
     for part in ${RESEND_PARTS[@]+"${RESEND_PARTS[@]}"}; do
@@ -1945,6 +1952,8 @@ print("\t".join(fields))
     exit 1
   fi
 elif [[ "$operation" == "send" ]]; then
+  parsed_result=""
+  parse_result_status=0
   parsed_result="$(printf '%s\n' "$container_logs" | "$PYTHON_BIN" -c '
 import json
 import re
@@ -2090,22 +2099,121 @@ fields = [
 if any(not isinstance(item, str) or "\t" in item or "\n" in item for item in fields):
     raise SystemExit(1)
 print("\t".join(fields))
-' "$SEND_RUNTIME_MODE")" || fail "send_result_invalid"
-  IFS=$'\t' read -r \
-    SEND_STATUS RESULT_RUN_ID RESULT_VERSION RESULT_OUTBOX \
-    RESULT_ATTEMPT_COUNT RESULT_REPORT_LIVE RESULT_ALERT_LIVE RESULT_LIVE \
-    PRIMARY_DELIVERY_STATUS SECONDARY_DELIVERY_STATUS \
-    PRIMARY_LEDGER_TIP SECONDARY_LEDGER_TIP \
-    <<<"$parsed_result"
-  [[ "$RESULT_RUN_ID" == "$RUN_ID" \
-      && "$RESULT_VERSION" == "$EXPECTED_ARTIFACT_VERSION_ID" \
-      && "$RESULT_OUTBOX" == "$EXPECTED_OUTBOX_SHA256" ]] \
-    || fail "send_result_identity_mismatch"
-  [[ "$exit_code" == "0" || "$exit_code" == "1" ]] \
+' "$SEND_RUNTIME_MODE")" || parse_result_status=$?
+  [[ "$exit_code" =~ ^(0|[1-9][0-9]{0,2})$ ]] \
     || fail "send_exit_code_invalid"
+  (( exit_code <= 255 )) || fail "send_exit_code_invalid"
+
+  SEND_STATUS=""
+  RESULT_RUN_ID=""
+  RESULT_VERSION=""
+  RESULT_OUTBOX=""
+  RESULT_ATTEMPT_COUNT=0
+  RESULT_REPORT_LIVE=false
+  RESULT_ALERT_LIVE=false
+  RESULT_LIVE=false
+  PRIMARY_DELIVERY_STATUS="-"
+  SECONDARY_DELIVERY_STATUS="-"
+  PRIMARY_LEDGER_TIP="-"
+  SECONDARY_LEDGER_TIP="-"
+  parsed_identity_valid=0
+  if [[ "$parse_result_status" == "0" ]]; then
+    IFS=$'\t' read -r \
+      SEND_STATUS RESULT_RUN_ID RESULT_VERSION RESULT_OUTBOX \
+      RESULT_ATTEMPT_COUNT RESULT_REPORT_LIVE RESULT_ALERT_LIVE RESULT_LIVE \
+      PRIMARY_DELIVERY_STATUS SECONDARY_DELIVERY_STATUS \
+      PRIMARY_LEDGER_TIP SECONDARY_LEDGER_TIP \
+      <<<"$parsed_result"
+    if [[ "$RESULT_RUN_ID" == "$RUN_ID" \
+        && "$RESULT_VERSION" == "$EXPECTED_ARTIFACT_VERSION_ID" \
+        && "$RESULT_OUTBOX" == "$EXPECTED_OUTBOX_SHA256" ]]; then
+      parsed_identity_valid=1
+    fi
+  fi
+
+  if [[ "$SEND_RUNTIME_MODE" == "single" ]]; then
+    [[ "$exit_code" == "0" || "$exit_code" == "1" ]] \
+      || fail "send_exit_code_invalid"
+    [[ "$parse_result_status" == "0" ]] || fail "send_result_invalid"
+    [[ "$parsed_identity_valid" == "1" ]] \
+      || fail "send_result_identity_mismatch"
+  else
+    projection_verified=0
+    projection_result=""
+    if projection_result="$("$ADMIN" project-delivery-ledgers \
+      ${CONTROL_SCOPE_ARGS[@]+"${CONTROL_SCOPE_ARGS[@]}"} \
+      --authorization-id "$SEND_AUTHORIZATION_ID" \
+      --expected-release-sha256 "$RELEASE_SHA256" \
+      --run-id "$RUN_ID" \
+      --expected-artifact-version-id "$EXPECTED_ARTIFACT_VERSION_ID" \
+      --expected-bundle-sha256 "$EXPECTED_BUNDLE_SHA256" \
+      --expected-outbox-sha256 "$EXPECTED_OUTBOX_SHA256" \
+      --release-dir "$RELEASE_DIR" \
+      --config-root "$RELEASE_DIR/config" \
+      --database "$DATABASE_PATH" \
+      --inherited-lock-fd "$LOCK_FD")"; then
+      PROJECTED_STATUS="$(printf '%s\n' "$projection_result" \
+        | sed -n 's/^status=//p')"
+      PROJECTED_RUN_ID="$(printf '%s\n' "$projection_result" \
+        | sed -n 's/^run_id=//p')"
+      PROJECTED_VERSION="$(printf '%s\n' "$projection_result" \
+        | sed -n 's/^artifact_version_id=//p')"
+      PROJECTED_OUTBOX="$(printf '%s\n' "$projection_result" \
+        | sed -n 's/^outbox_sha256=//p')"
+      PROJECTED_EXPECTED_COUNT="$(printf '%s\n' "$projection_result" \
+        | sed -n 's/^expected_count=//p')"
+      PROJECTED_INSERTED_COUNT="$(printf '%s\n' "$projection_result" \
+        | sed -n 's/^inserted_count=//p')"
+      PROJECTED_EXISTING_COUNT="$(printf '%s\n' "$projection_result" \
+        | sed -n 's/^existing_count=//p')"
+      PROJECTED_COMPLETE="$(printf '%s\n' "$projection_result" \
+        | sed -n 's/^fully_projected=//p')"
+      PROJECTED_PRIMARY_TIP="$(printf '%s\n' "$projection_result" \
+        | sed -n 's/^primary_ledger_tip=//p')"
+      PROJECTED_SECONDARY_TIP="$(printf '%s\n' "$projection_result" \
+        | sed -n 's/^secondary_ledger_tip=//p')"
+      [[ "$PROJECTED_STATUS" == "projected" \
+          && "$PROJECTED_RUN_ID" == "$RUN_ID" \
+          && "$PROJECTED_VERSION" == "$EXPECTED_ARTIFACT_VERSION_ID" \
+          && "$PROJECTED_OUTBOX" == "$EXPECTED_OUTBOX_SHA256" \
+          && "$PROJECTED_EXPECTED_COUNT" =~ ^[1-9][0-9]*$ \
+          && "$PROJECTED_INSERTED_COUNT" =~ ^[0-9]+$ \
+          && "$PROJECTED_EXISTING_COUNT" =~ ^[0-9]+$ \
+          && $((PROJECTED_INSERTED_COUNT + PROJECTED_EXISTING_COUNT)) \
+            -eq "$PROJECTED_EXPECTED_COUNT" \
+          && "$PROJECTED_COMPLETE" == "True" \
+          && "$PROJECTED_PRIMARY_TIP" =~ ^[0-9a-f]{64}$ \
+          && "$PROJECTED_SECONDARY_TIP" =~ ^[0-9a-f]{64}$ ]] \
+        || fail "delivery_projection_result_invalid"
+      projection_verified=1
+    fi
+    if [[ "$projection_verified" == "1" ]]; then
+      SEND_STATUS="sent"
+      RESULT_RUN_ID="$RUN_ID"
+      RESULT_VERSION="$EXPECTED_ARTIFACT_VERSION_ID"
+      RESULT_OUTBOX="$EXPECTED_OUTBOX_SHA256"
+      RESULT_ATTEMPT_COUNT="$PROJECTED_EXPECTED_COUNT"
+      RESULT_REPORT_LIVE=true
+      RESULT_ALERT_LIVE=false
+      RESULT_LIVE=true
+      PRIMARY_DELIVERY_STATUS="sent"
+      SECONDARY_DELIVERY_STATUS="sent"
+      PRIMARY_LEDGER_TIP="$PROJECTED_PRIMARY_TIP"
+      SECONDARY_LEDGER_TIP="$PROJECTED_SECONDARY_TIP"
+    else
+      [[ "$exit_code" == "0" || "$exit_code" == "1" ]] \
+        || fail "send_exit_code_invalid"
+      [[ "$parse_result_status" == "0" ]] || fail "send_result_invalid"
+      [[ "$parsed_identity_valid" == "1" ]] \
+        || fail "send_result_identity_mismatch"
+      [[ "$SEND_STATUS" != "sent" ]] || fail "delivery_projection_failed"
+    fi
+  fi
   send_terminal_status="closed_no_attempt"
   if [[ "$SEND_STATUS" == "sent" ]]; then
-    [[ "$exit_code" == "0" ]] || fail "send_sent_exit_code_invalid"
+    if [[ "$SEND_RUNTIME_MODE" == "single" ]]; then
+      [[ "$exit_code" == "0" ]] || fail "send_sent_exit_code_invalid"
+    fi
     send_terminal_status="consumed"
   elif [[ "$SEND_STATUS" == "partially_sent" ]]; then
     [[ "$SEND_RUNTIME_MODE" == "dual" ]] || fail "send_result_invalid"

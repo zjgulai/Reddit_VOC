@@ -4,6 +4,7 @@ import argparse
 from hashlib import sha256
 import json
 from pathlib import Path
+import shutil
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -27,9 +28,15 @@ def _sha(path: Path) -> str:
 
 
 class _Completion:
-    def __init__(self, *, content: str, sequence: int) -> None:
+    def __init__(
+        self,
+        *,
+        content: str,
+        sequence: int,
+        request_id: str | None = None,
+    ) -> None:
         usage = TokenUsage(20, 10, 0, 20, 30)
-        self.request_id = f"test-request-{sequence}"
+        self.request_id = request_id or f"test-request-{sequence}"
         self.model = "deepseek-v4-flash"
         self.system_fingerprint = "fixture"
         self.finish_reason = "stop"
@@ -53,6 +60,9 @@ class _Completion:
 
 
 class _FakeClient:
+    def __init__(self, *, request_prefix: str = "test-request") -> None:
+        self.request_prefix = request_prefix
+
     def complete_json(self, *, user_payload, attempt_budget, **_kwargs):
         sequence = attempt_budget.reserve("translation")
         translations = [
@@ -62,6 +72,21 @@ class _FakeClient:
         return _Completion(
             content=json.dumps({"translations": translations}, ensure_ascii=False),
             sequence=sequence,
+            request_id=f"{self.request_prefix}-{sequence}",
+        )
+
+
+class _RecordingFakeClient(_FakeClient):
+    def __init__(self) -> None:
+        super().__init__()
+        self.requested_ids: list[str] = []
+
+    def complete_json(self, *, user_payload, attempt_budget, **kwargs):
+        self.requested_ids.extend(item["id"] for item in user_payload["items"])
+        return super().complete_json(
+            user_payload=user_payload,
+            attempt_budget=attempt_budget,
+            **kwargs,
         )
 
 
@@ -284,6 +309,24 @@ class _NormalizedSourceEqualRetryClient:
         )
 
 
+class _GenericSourceEqualRepairClient:
+    def __init__(self) -> None:
+        self.payloads: list[dict[str, object]] = []
+
+    def complete_json(self, *, user_payload, attempt_budget, **_kwargs):
+        sequence = attempt_budget.reserve("translation")
+        self.payloads.append(user_payload)
+        item = user_payload["items"][0]
+        translated = item["source_text"] if len(self.payloads) == 1 else "同意"
+        return _Completion(
+            content=json.dumps(
+                {"translations": [{"id": item["id"], "zh": translated}]},
+                ensure_ascii=False,
+            ),
+            sequence=sequence,
+        )
+
+
 class _SingleInvalidJsonRetryClient:
     def __init__(self) -> None:
         self.calls = 0
@@ -489,6 +532,193 @@ class RedditV3TranslationCandidateTests(unittest.TestCase):
             )
             self.assertTrue(validation["checks"]["complete_comment_coverage"])
 
+    def test_resume_records_distinct_execution_authorizations_under_one_campaign(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            source = self._source(root)
+            args = self._args(root, source, authorize=True)
+            args.batch_size = 1
+            args.max_provider_requests = 1
+            args.provider_execution_authorization_id = "translation-resume-r1"
+
+            first = run(args, client=_FakeClient(request_prefix="resume-r1"))
+            self.assertEqual(first["status"], "partial_attempt_budget_exhausted")
+            self.assertEqual(
+                first.get("provider_execution_authorization_id"),
+                "translation-resume-r1",
+            )
+
+            args.max_provider_requests = 100
+            args.provider_execution_authorization_id = "translation-resume-r2"
+            second = run(args, client=_FakeClient(request_prefix="resume-r2"))
+            self.assertEqual(second["status"], "complete")
+            self.assertEqual(
+                second.get("provider_execution_authorization_id"),
+                "translation-resume-r2",
+            )
+
+            attempts = [
+                json.loads(line)
+                for line in (args.work_root / "provider-attempts.jsonl")
+                .read_text(encoding="utf-8")
+                .splitlines()
+            ]
+            self.assertEqual(
+                {
+                    row.get("provider_execution_authorization_id")
+                    for row in attempts
+                },
+                {"translation-resume-r1", "translation-resume-r2"},
+            )
+            manifest = json.loads(
+                (args.output_root / "manifest-public.json").read_text(encoding="utf-8")
+            )
+            self.assertEqual(
+                manifest["translations"].get(
+                    "provider_execution_authorization_ids"
+                ),
+                ["translation-resume-r1", "translation-resume-r2"],
+            )
+            validation = validate_candidate(
+                source_root=source,
+                candidate_root=args.output_root,
+                checkpoint_path=args.work_root / "translations-checkpoint.jsonl",
+                attempt_log_path=args.work_root / "provider-attempts.jsonl",
+                expected_authorization_id=args.provider_authorization_id,
+            )
+            self.assertEqual(
+                validation.get("provider_execution_authorization_ids"),
+                ["translation-resume-r1", "translation-resume-r2"],
+            )
+
+    def test_validator_accepts_legacy_single_authorization_candidate(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            source = self._source(root)
+            args = self._args(root, source, authorize=True)
+            run(args, client=_FakeClient())
+
+            attempt_log = args.work_root / "provider-attempts.jsonl"
+            legacy_rows = []
+            for line in attempt_log.read_text(encoding="utf-8").splitlines():
+                row = json.loads(line)
+                row.pop("provider_execution_authorization_id")
+                legacy_rows.append(json.dumps(row, ensure_ascii=False, sort_keys=True))
+            attempt_log.write_text(
+                "\n".join(legacy_rows) + "\n",
+                encoding="utf-8",
+            )
+
+            manifest_path = args.output_root / "manifest-public.json"
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            manifest["translations"].pop(
+                "provider_execution_authorization_ids"
+            )
+            manifest["translations"]["provider_attempt_log_sha256"] = _sha(
+                attempt_log
+            )
+            manifest_path.write_text(
+                json.dumps(manifest, ensure_ascii=False) + "\n",
+                encoding="utf-8",
+            )
+
+            validation = validate_candidate(
+                source_root=source,
+                candidate_root=args.output_root,
+                checkpoint_path=args.work_root / "translations-checkpoint.jsonl",
+                attempt_log_path=attempt_log,
+                expected_authorization_id=args.provider_authorization_id,
+            )
+            self.assertEqual(
+                validation["provider_execution_authorization_ids"],
+                [args.provider_authorization_id],
+            )
+
+    def test_reuses_hash_bound_previous_candidate_and_requests_only_new_items(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            source = self._source(root)
+            previous_args = self._args(root, source, authorize=True)
+            previous_args.work_root = root / "previous-work"
+            previous_args.output_root = root / "previous-candidate"
+            run(previous_args, client=_FakeClient())
+
+            next_source = root / "next-source"
+            shutil.copytree(source, next_source)
+            posts_path = next_source / "posts-public.json"
+            comments_path = next_source / "comments-public.json"
+            posts = json.loads(posts_path.read_text(encoding="utf-8"))
+            comments = json.loads(comments_path.read_text(encoding="utf-8"))
+            posts.append(
+                {
+                    "post_id": "p2",
+                    "title": "A new wearable pump",
+                    "content": "The new pump works well.",
+                }
+            )
+            comments.append(
+                {
+                    "comment_id": "c2",
+                    "post_id": "p2",
+                    "body": "I would buy it again.",
+                }
+            )
+            posts_path.write_text(
+                json.dumps(posts, ensure_ascii=False) + "\n",
+                encoding="utf-8",
+            )
+            comments_path.write_text(
+                json.dumps(comments, ensure_ascii=False) + "\n",
+                encoding="utf-8",
+            )
+            manifest_path = next_source / "manifest-public.json"
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            manifest["dataset_version"] = "reddit_voc_site_snapshot_fixture_source_next"
+            manifest["canonical_counts"] = {"posts": 2, "linked_comments": 2}
+            for name in ("posts-public.json", "comments-public.json"):
+                path = next_source / name
+                manifest["files"][name] = {
+                    "bytes": path.stat().st_size,
+                    "sha256": _sha(path),
+                }
+            manifest_path.write_text(
+                json.dumps(manifest, ensure_ascii=False) + "\n",
+                encoding="utf-8",
+            )
+
+            args = self._args(root, next_source, authorize=True)
+            args.work_root = root / "next-work"
+            args.output_root = root / "next-candidate"
+            args.dataset_version = "reddit_voc_site_snapshot_fixture_next_zh_deepseek"
+            args.reuse_candidate_root = previous_args.output_root
+            client = _RecordingFakeClient()
+            result = run(args, client=client)
+
+            self.assertEqual(result["status"], "complete")
+            self.assertEqual(result["reused_item_count"], 3)
+            self.assertEqual(
+                set(client.requested_ids),
+                {
+                    "post:p2:title",
+                    "post:p2:content",
+                    "comment:c2:body",
+                },
+            )
+            manifest = json.loads(
+                (args.output_root / "manifest-public.json").read_text(encoding="utf-8")
+            )
+            self.assertEqual(manifest["translations"]["reuse"]["reused_items"], 3)
+            validation = validate_candidate(
+                source_root=next_source,
+                candidate_root=args.output_root,
+                checkpoint_path=args.work_root / "translations-checkpoint.jsonl",
+                attempt_log_path=args.work_root / "provider-attempts.jsonl",
+                expected_authorization_id=args.provider_authorization_id,
+                reuse_candidate_root=previous_args.output_root,
+            )
+            self.assertEqual(validation["status"], "passed_local_candidate_only")
+            self.assertEqual(validation["reused_items"], 3)
+
     def test_builds_explicit_partial_comment_candidate_from_complete_posts(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
@@ -678,13 +908,13 @@ class RedditV3TranslationCandidateTests(unittest.TestCase):
             key_path = Path(temporary) / "deepseek.key"
             key_path.write_text("fixture-secret\n", encoding="utf-8")
             key_path.chmod(0o644)
-            with self.assertRaisesRegex(
-                TranslationCandidateError,
-                "deepseek_credential_file_permissions_unsafe",
-            ):
-                _load_api_key(key_path)
-            key_path.chmod(0o600)
             with patch.dict("os.environ", {}, clear=True):
+                with self.assertRaisesRegex(
+                    TranslationCandidateError,
+                    "deepseek_credential_file_permissions_unsafe",
+                ):
+                    _load_api_key(key_path)
+                key_path.chmod(0o600)
                 self.assertEqual(_load_api_key(key_path), "fixture-secret")
 
     def test_split_persists_successful_half_before_later_single_item_failure(self) -> None:
@@ -938,6 +1168,55 @@ class RedditV3TranslationCandidateTests(unittest.TestCase):
         self.assertEqual(successes, [{"post:slang:title": "Momcozy 搞什么鬼 😩"}])
         self.assertIn("what the fuck momcozy", client.sources[1].casefold())
         self.assertEqual(len(errors), 1)
+
+    def test_generic_source_equal_uses_one_reason_bound_repair_without_mutating_source(
+        self,
+    ) -> None:
+        items = build_translation_items(
+            [
+                {
+                    "post_id": "generic-repair",
+                    "title": "Agreed",
+                    "content": "",
+                }
+            ],
+            [],
+            include_comments=False,
+        )
+        client = _GenericSourceEqualRepairClient()
+        successes: list[dict[str, str]] = []
+
+        _request_with_split(
+            client=client,
+            assets=load_translation_runtime_assets(
+                Path(__file__).resolve().parents[1] / "config"
+            ),
+            items=(items[0],),
+            budget=AttemptBudget(max_attempts=2),
+            timeout_seconds=60.0,
+            on_error=lambda _error: None,
+            on_success=lambda translations, _completion: successes.append(translations),
+        )
+
+        self.assertEqual(successes, [{items[0].stable_id: "同意"}])
+        self.assertEqual(len(client.payloads), 2)
+        self.assertEqual(
+            client.payloads[1]["items"][0]["source_text"],
+            client.payloads[0]["items"][0]["source_text"],
+        )
+        self.assertEqual(
+            client.payloads[1]["repair_context"],
+            {
+                "reason_codes_by_id": {
+                    items[0].stable_id: ["source_equal_translation"],
+                },
+                "requirements": [
+                    "return_a_materially_translated_chinese_value",
+                    "do_not_return_the_source_text_unchanged",
+                    "preserve_all_protected_placeholders_exactly",
+                ],
+            },
+        )
 
     def test_opaque_link_provider_formatting_is_canonicalized_to_source(self) -> None:
         source = (

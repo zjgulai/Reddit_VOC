@@ -1378,13 +1378,31 @@ def _has_rendered_voc_block(lines: list[str]) -> bool:
 
 
 def _business_markdown_footer(report: DailyReportResult, artifact_base_url: str | None) -> list[str]:
-    return [
+    lines = [
         "",
         "## 采集明细",
         f"- {_artifact_reference(str(report.insight_html), artifact_base_url, label='HTML 洞察报告')}",
         f"- {_artifact_reference(str(report.detail_xlsx), artifact_base_url, label='采集明细表（Excel）')}",
         f"- {_artifact_reference(str(report.detail_csv), artifact_base_url, label='采集明细表（CSV）')}",
     ]
+    # Check for Agent generated artifacts in the report output folder
+    run_id = getattr(report, "run_id", None)
+    insight_html = getattr(report, "insight_html", None)
+    if run_id and isinstance(insight_html, Path):
+        out_dir = insight_html.parent
+        content_ideas_path = out_dir / f"{run_id}-daily-content-ideas.json"
+        rnd_tickets_path = out_dir / f"{run_id}-daily-rnd-tickets.json"
+        if content_ideas_path.exists() or rnd_tickets_path.exists():
+            lines.extend([
+                "",
+                "## AI Agent 决策支持",
+            ])
+            if content_ideas_path.exists():
+                lines.append(f"- {_artifact_reference(str(content_ideas_path), artifact_base_url, label='社媒爆款选题与分镜脚本库（JSON）')}")
+            if rnd_tickets_path.exists():
+                lines.append(f"- {_artifact_reference(str(rnd_tickets_path), artifact_base_url, label='产品研发缺陷与改款 CAPA 工单（JSON）')}")
+    return lines
+
 
 
 def _markdown_fits(lines: list[str], footer: list[str], *, max_bytes: int | None) -> bool:

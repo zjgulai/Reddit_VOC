@@ -20,7 +20,10 @@ from .report_contracts import (
     load_report_schema_assets,
     sha256_hex,
 )
-from .report_source_state import classify_report_source_state
+from .report_source_state import (
+    classify_report_source_state,
+    validate_frozen_report_source_state,
+)
 
 
 TransportKind = Literal["synthetic", "external"]
@@ -58,6 +61,16 @@ _EVENT_V2_KEYS = {
     "entry_hash",
 }
 _DESTINATION_IDS = ("primary", "secondary")
+_DELIVERY_RECORD_KEYS = (
+    "delivery_id",
+    "run_id",
+    "channel",
+    "mode",
+    "status",
+    "message_hash",
+    "artifact_paths",
+    "live_send",
+)
 
 
 class ArtifactHeadChecker(Protocol):
@@ -182,6 +195,162 @@ class MultiDestinationDeliverySummary:
         }
 
 
+@dataclass(frozen=True)
+class DeliveryProjectionSummary:
+    run_id: str
+    artifact_version_id: str
+    outbox_sha256: str
+    expected_count: int
+    inserted_count: int
+    existing_count: int
+    fully_projected: bool
+    primary_ledger_tip: str
+    secondary_ledger_tip: str
+
+    def as_dict(self) -> Mapping[str, object]:
+        return {
+            "run_id": self.run_id,
+            "artifact_version_id": self.artifact_version_id,
+            "outbox_sha256": self.outbox_sha256,
+            "expected_count": self.expected_count,
+            "inserted_count": self.inserted_count,
+            "existing_count": self.existing_count,
+            "fully_projected": self.fully_projected,
+            "primary_ledger_tip": self.primary_ledger_tip,
+            "secondary_ledger_tip": self.secondary_ledger_tip,
+        }
+
+
+@dataclass(frozen=True)
+class DeliveryProjectionPlan:
+    run_id: str
+    artifact_version_id: str
+    bundle_sha256: str
+    outbox_sha256: str
+    source_state: Mapping[str, object]
+    record_rows: tuple[tuple[object, ...], ...]
+    primary_ledger_tip: str
+    secondary_ledger_tip: str
+
+
+def serialize_delivery_projection_plan(plan: DeliveryProjectionPlan) -> bytes:
+    if not isinstance(plan, DeliveryProjectionPlan):
+        raise RuntimeError("delivery_projection_plan_invalid")
+    value = {
+        "schema_version": "delivery-projection-plan-v1",
+        "run_id": plan.run_id,
+        "artifact_version_id": plan.artifact_version_id,
+        "bundle_sha256": plan.bundle_sha256,
+        "outbox_sha256": plan.outbox_sha256,
+        "source_state": dict(plan.source_state),
+        "records": [
+            dict(zip(_DELIVERY_RECORD_KEYS, row, strict=True))
+            for row in plan.record_rows
+        ],
+        "primary_ledger_tip": plan.primary_ledger_tip,
+        "secondary_ledger_tip": plan.secondary_ledger_tip,
+    }
+    return canonical_json_bytes(value)
+
+
+def deserialize_delivery_projection_plan(payload: bytes) -> DeliveryProjectionPlan:
+    if not isinstance(payload, bytes) or not payload or len(payload) > 256 * 1024:
+        raise RuntimeError("delivery_projection_plan_invalid")
+    value = _decode_json_object(payload, "delivery_projection_plan_invalid")
+    if canonical_json_bytes(value) != payload or set(value) != {
+        "schema_version",
+        "run_id",
+        "artifact_version_id",
+        "bundle_sha256",
+        "outbox_sha256",
+        "source_state",
+        "records",
+        "primary_ledger_tip",
+        "secondary_ledger_tip",
+    }:
+        raise RuntimeError("delivery_projection_plan_invalid")
+    if value.get("schema_version") != "delivery-projection-plan-v1":
+        raise RuntimeError("delivery_projection_plan_invalid")
+    run_id = _require_safe_id(value.get("run_id"), "run_id")
+    artifact_version_id = _require_safe_id(
+        value.get("artifact_version_id"), "artifact_version_id"
+    )
+    bundle_sha256 = _require_sha(value.get("bundle_sha256"), "bundle_sha256")
+    outbox_sha256 = _require_sha(value.get("outbox_sha256"), "outbox_sha256")
+    source_state = validate_frozen_report_source_state(value.get("source_state"))
+    primary_tip = _require_sha(
+        value.get("primary_ledger_tip"), "primary_ledger_tip"
+    )
+    secondary_tip = _require_sha(
+        value.get("secondary_ledger_tip"), "secondary_ledger_tip"
+    )
+    records_value = value.get("records")
+    if not isinstance(records_value, list) or not records_value:
+        raise RuntimeError("delivery_projection_plan_invalid")
+    rows: list[tuple[object, ...]] = []
+    identities: set[str] = set()
+    hashes_by_destination: dict[str, list[str]] = {
+        "dingtalk:primary": [],
+        "dingtalk:secondary": [],
+    }
+    for record in records_value:
+        if not isinstance(record, Mapping) or set(record) != set(
+            _DELIVERY_RECORD_KEYS
+        ):
+            raise RuntimeError("delivery_projection_plan_invalid")
+        delivery_id = record.get("delivery_id")
+        channel = record.get("channel")
+        message_hash = record.get("message_hash")
+        artifact_paths = record.get("artifact_paths")
+        if (
+            not isinstance(delivery_id, str)
+            or re.fullmatch(r"prepared_[0-9a-f]{64}", delivery_id) is None
+            or delivery_id in identities
+            or record.get("run_id") != run_id
+            or channel not in hashes_by_destination
+            or record.get("mode") != "live"
+            or record.get("status") != "sent"
+            or not isinstance(message_hash, str)
+            or _HASH_LABEL.fullmatch(message_hash) is None
+            or not isinstance(artifact_paths, str)
+            or record.get("live_send") != 1
+        ):
+            raise RuntimeError("delivery_projection_plan_invalid")
+        try:
+            urls = json.loads(artifact_paths)
+        except json.JSONDecodeError as exc:
+            raise RuntimeError("delivery_projection_plan_invalid") from exc
+        if (
+            not isinstance(urls, list)
+            or not urls
+            or any(
+                not isinstance(url, str)
+                or not url.startswith(("http://", "https://"))
+                for url in urls
+            )
+        ):
+            raise RuntimeError("delivery_projection_plan_invalid")
+        identities.add(delivery_id)
+        hashes_by_destination[str(channel)].append(message_hash)
+        rows.append(tuple(record[key] for key in _DELIVERY_RECORD_KEYS))
+    if (
+        sorted(hashes_by_destination["dingtalk:primary"])
+        != sorted(hashes_by_destination["dingtalk:secondary"])
+        or not hashes_by_destination["dingtalk:primary"]
+    ):
+        raise RuntimeError("delivery_projection_plan_invalid")
+    return DeliveryProjectionPlan(
+        run_id=run_id,
+        artifact_version_id=artifact_version_id,
+        bundle_sha256=bundle_sha256,
+        outbox_sha256=outbox_sha256,
+        source_state=dict(source_state),
+        record_rows=tuple(rows),
+        primary_ledger_tip=primary_tip,
+        secondary_ledger_tip=secondary_tip,
+    )
+
+
 def load_current_report_source_state(
     *, database: Path, run_id: str
 ) -> Mapping[str, object]:
@@ -198,20 +367,8 @@ def load_current_report_source_state(
         connection = sqlite3.connect(uri, uri=True)
         connection.execute("PRAGMA query_only=ON")
         connection.execute("BEGIN")
-        row = connection.execute(
-            "SELECT status FROM runs WHERE run_id=?", (run_id,)
-        ).fetchone()
-        if row is None:
-            raise RuntimeError("run_not_found")
-        post_count = int(
-            connection.execute(
-                "SELECT COUNT(*) FROM reddit_threads WHERE run_id=?", (run_id,)
-            ).fetchone()[0]
-        )
-        comment_count = int(
-            connection.execute(
-                "SELECT COUNT(*) FROM reddit_comments WHERE run_id=?", (run_id,)
-            ).fetchone()[0]
+        source_state = _load_report_source_state_from_connection(
+            connection=connection, run_id=run_id
         )
         connection.rollback()
     except RuntimeError:
@@ -221,6 +378,27 @@ def load_current_report_source_state(
     finally:
         if "connection" in locals():
             connection.close()
+    return source_state
+
+
+def _load_report_source_state_from_connection(
+    *, connection: sqlite3.Connection, run_id: str
+) -> Mapping[str, object]:
+    row = connection.execute(
+        "SELECT status FROM runs WHERE run_id=?", (run_id,)
+    ).fetchone()
+    if row is None:
+        raise RuntimeError("run_not_found")
+    post_count = int(
+        connection.execute(
+            "SELECT COUNT(*) FROM reddit_threads WHERE run_id=?", (run_id,)
+        ).fetchone()[0]
+    )
+    comment_count = int(
+        connection.execute(
+            "SELECT COUNT(*) FROM reddit_comments WHERE run_id=?", (run_id,)
+        ).fetchone()[0]
+    )
     return classify_report_source_state(
         status=row[0], post_count=post_count, comment_count=comment_count
     )
@@ -790,6 +968,7 @@ def send_prepared_daily_report_to_destinations(
         [DestinationDeliverySummary], None
     ]
     | None = None,
+    defer_database_projection: bool = False,
     authorize_resend: bool = False,
     resend_part_indexes: tuple[int, ...] = (),
 ) -> MultiDestinationDeliverySummary:
@@ -887,6 +1066,7 @@ def send_prepared_daily_report_to_destinations(
             timeout_seconds=timeout_seconds,
             authorize_resend=authorize_resend,
             resend_part_indexes=resend_part_indexes,
+            defer_database_projection=defer_database_projection,
             transport=transport,
         )
         summary_items.append(destination_summary)
@@ -907,6 +1087,266 @@ def send_prepared_daily_report_to_destinations(
     )
 
 
+def build_delivery_projection_plan_from_ledgers(
+    *,
+    run_id: str,
+    expected_artifact_version_id: str,
+    expected_bundle_sha256: str,
+    expected_outbox_sha256: str,
+    authorization_id: str,
+    roots: PreparedReportRoots,
+    config_root: Path,
+    require_external_attempts: bool = True,
+) -> DeliveryProjectionPlan:
+    """Validate one fully-sent dual outbox and freeze its database projection."""
+    _require_safe_id(run_id, "run_id")
+    _require_safe_id(authorization_id, "authorization_id")
+    _require_sha(expected_bundle_sha256, "bundle_sha256")
+    _require_sha(expected_outbox_sha256, "outbox_sha256")
+    current = _load_current(roots.state_root)
+    expected_current = {
+        "run_id": run_id,
+        "artifact_version_id": expected_artifact_version_id,
+        "bundle_sha256": expected_bundle_sha256,
+        "outbox_sha256": expected_outbox_sha256,
+    }
+    if any(current.get(key) != value for key, value in expected_current.items()):
+        raise RuntimeError("delivery_projection_prepared_current_mismatch")
+    verified = load_verified_prepared_report(
+        roots=roots,
+        expected_run_id=run_id,
+        expected_artifact_version_id=expected_artifact_version_id,
+        expected_bundle_sha256=expected_bundle_sha256,
+        expected_outbox_sha256=expected_outbox_sha256,
+        schema_assets=load_report_schema_assets(config_root=Path(config_root)),
+    )
+    if verified.translation_status != "complete":
+        raise RuntimeError("delivery_projection_translation_not_complete")
+
+    parts = tuple(verified.parts)
+    part_by_index = {part.index: part for part in parts}
+    expected_indexes = set(part_by_index)
+    records: list[Mapping[str, object]] = []
+    ledger_tips: list[str] = []
+    for destination_id in _DESTINATION_IDS:
+        ledger = load_and_verify_delivery_ledger(
+            _destination_ledger_path(roots, run_id, destination_id),
+            run_id=run_id,
+            destination_id=destination_id,
+        )
+        report_entries = [
+            entry for entry in ledger if entry.get("part_kind") == "report"
+        ]
+        if not report_entries:
+            raise RuntimeError("delivery_projection_ledger_incomplete")
+        ledger_tips.append(str(ledger[-1]["entry_hash"]))
+        if any(
+            entry.get("artifact_version_id") != expected_artifact_version_id
+            or entry.get("bundle_sha256") != expected_bundle_sha256
+            or entry.get("outbox_sha256") != expected_outbox_sha256
+            or entry.get("authorization_id") != authorization_id
+            for entry in report_entries
+        ):
+            raise RuntimeError("delivery_projection_ledger_identity_mismatch")
+        if any(
+            entry.get("status") in {"rejected", "unknown_delivery_state"}
+            for entry in report_entries
+        ):
+            raise RuntimeError("delivery_projection_ledger_not_sent")
+        sent_entries = [
+            entry for entry in report_entries if entry.get("status") == "sent"
+        ]
+        sent_indexes = {int(entry["part_index"]) for entry in sent_entries}
+        if sent_indexes != expected_indexes or len(sent_entries) != len(parts):
+            raise RuntimeError("delivery_projection_ledger_incomplete")
+        terminal_indexes = {
+            int(entry["part_index"])
+            for entry in report_entries
+            if entry.get("status") == "sent"
+        }
+        if any(
+            entry.get("status") == "attempting"
+            and int(entry["part_index"]) not in terminal_indexes
+            for entry in report_entries
+        ):
+            raise RuntimeError("delivery_projection_ledger_incomplete")
+        for entry in sorted(sent_entries, key=lambda item: int(item["part_index"])):
+            part = part_by_index[int(entry["part_index"])]
+            if entry.get("part_sha256") != part.sha256:
+                raise RuntimeError("delivery_projection_part_mismatch")
+            if require_external_attempts and (
+                entry.get("external_attempt_made") is not True
+                or entry.get("http_status") != 200
+            ):
+                raise RuntimeError(
+                    "delivery_projection_external_evidence_required"
+                )
+            records.append(
+                _delivery_record(
+                    run_id=run_id,
+                    artifact_version_id=expected_artifact_version_id,
+                    outbox_sha256=expected_outbox_sha256,
+                    authorization_id=authorization_id,
+                    part=part,
+                    artifact_urls=verified.public_artifact_urls,
+                    external_attempt_made=bool(entry["external_attempt_made"]),
+                    destination_id=destination_id,
+                )
+            )
+    return DeliveryProjectionPlan(
+        run_id=run_id,
+        artifact_version_id=expected_artifact_version_id,
+        bundle_sha256=expected_bundle_sha256,
+        outbox_sha256=expected_outbox_sha256,
+        source_state=dict(verified.source_state),
+        record_rows=tuple(
+            tuple(record[key] for key in _DELIVERY_RECORD_KEYS)
+            for record in records
+        ),
+        primary_ledger_tip=ledger_tips[0],
+        secondary_ledger_tip=ledger_tips[1],
+    )
+
+
+def apply_delivery_projection_plan(
+    *, database: Path, plan: DeliveryProjectionPlan
+) -> DeliveryProjectionSummary:
+    """Apply one trusted in-process projection plan in a single transaction."""
+    if not isinstance(plan, DeliveryProjectionPlan):
+        raise RuntimeError("delivery_projection_plan_invalid")
+    database = Path(database)
+    try:
+        metadata = database.lstat()
+    except FileNotFoundError as exc:
+        raise RuntimeError("delivery_database_missing") from exc
+    if stat.S_ISLNK(metadata.st_mode) or not stat.S_ISREG(metadata.st_mode):
+        raise RuntimeError("delivery_database_not_regular")
+    expected_records = tuple(
+        dict(zip(_DELIVERY_RECORD_KEYS, row, strict=True))
+        for row in plan.record_rows
+    )
+    expected_by_id = {
+        str(record["delivery_id"]): record for record in expected_records
+    }
+    if len(expected_by_id) != len(expected_records) or not expected_records:
+        raise RuntimeError("delivery_projection_plan_invalid")
+    inserted_count = 0
+    existing_count = 0
+    try:
+        connection = sqlite3.connect(database)
+        connection.row_factory = sqlite3.Row
+        connection.execute("BEGIN IMMEDIATE")
+        if dict(
+            _load_report_source_state_from_connection(
+                connection=connection, run_id=plan.run_id
+            )
+        ) != dict(plan.source_state):
+            raise RuntimeError("delivery_projection_source_state_changed")
+        columns = {
+            str(row[1])
+            for row in connection.execute(
+                "PRAGMA table_info(delivery_previews)"
+            ).fetchall()
+        }
+        required = {
+            "delivery_id",
+            "run_id",
+            "channel",
+            "mode",
+            "status",
+            "message_hash",
+            "artifact_paths",
+            "live_send",
+        }
+        if not required.issubset(columns):
+            raise RuntimeError("delivery_database_schema_invalid")
+        existing_rows = connection.execute(
+            "SELECT delivery_id,run_id,channel,mode,status,message_hash,artifact_paths,live_send "
+            "FROM delivery_previews WHERE run_id=? AND channel IN (?,?) "
+            "ORDER BY delivery_id",
+            (plan.run_id, "dingtalk:primary", "dingtalk:secondary"),
+        ).fetchall()
+        seen_existing: set[str] = set()
+        for row in existing_rows:
+            actual = dict(row)
+            delivery_id = str(actual["delivery_id"])
+            expected = expected_by_id.get(delivery_id)
+            if expected is None or actual != dict(expected):
+                raise RuntimeError("delivery_database_projection_conflict")
+            if delivery_id in seen_existing:
+                raise RuntimeError("delivery_database_duplicate_id")
+            seen_existing.add(delivery_id)
+            existing_count += 1
+        for delivery_id in sorted(set(expected_by_id) - seen_existing):
+            record = expected_by_id[delivery_id]
+            connection.execute(
+                "INSERT INTO delivery_previews("
+                "delivery_id,run_id,channel,mode,status,message_hash,artifact_paths,live_send"
+                ") VALUES(?,?,?,?,?,?,?,?)",
+                tuple(record[key] for key in _DELIVERY_RECORD_KEYS),
+            )
+            inserted_count += 1
+        projected_rows = connection.execute(
+            "SELECT delivery_id,run_id,channel,mode,status,message_hash,artifact_paths,live_send "
+            "FROM delivery_previews WHERE run_id=? AND channel IN (?,?) "
+            "ORDER BY delivery_id",
+            (plan.run_id, "dingtalk:primary", "dingtalk:secondary"),
+        ).fetchall()
+        if {
+            str(row["delivery_id"]): dict(row) for row in projected_rows
+        } != expected_by_id:
+            raise RuntimeError("delivery_database_projection_postflight_failed")
+        connection.commit()
+    except RuntimeError:
+        if "connection" in locals():
+            connection.rollback()
+        raise
+    except sqlite3.Error as exc:
+        if "connection" in locals():
+            connection.rollback()
+        raise RuntimeError("delivery_database_write_failed") from exc
+    finally:
+        if "connection" in locals():
+            connection.close()
+    return DeliveryProjectionSummary(
+        run_id=plan.run_id,
+        artifact_version_id=plan.artifact_version_id,
+        outbox_sha256=plan.outbox_sha256,
+        expected_count=len(expected_records),
+        inserted_count=inserted_count,
+        existing_count=existing_count,
+        fully_projected=True,
+        primary_ledger_tip=plan.primary_ledger_tip,
+        secondary_ledger_tip=plan.secondary_ledger_tip,
+    )
+
+
+def project_sent_delivery_records_from_ledgers(
+    *,
+    database: Path,
+    run_id: str,
+    expected_artifact_version_id: str,
+    expected_bundle_sha256: str,
+    expected_outbox_sha256: str,
+    authorization_id: str,
+    roots: PreparedReportRoots,
+    config_root: Path,
+    require_external_attempts: bool = True,
+) -> DeliveryProjectionSummary:
+    """Validate ledgers and atomically project their sent rows into SQLite."""
+    plan = build_delivery_projection_plan_from_ledgers(
+        run_id=run_id,
+        expected_artifact_version_id=expected_artifact_version_id,
+        expected_bundle_sha256=expected_bundle_sha256,
+        expected_outbox_sha256=expected_outbox_sha256,
+        authorization_id=authorization_id,
+        roots=roots,
+        config_root=config_root,
+        require_external_attempts=require_external_attempts,
+    )
+    return apply_delivery_projection_plan(database=database, plan=plan)
+
+
 def _send_verified_destination(
     *,
     database: Path,
@@ -921,6 +1361,7 @@ def _send_verified_destination(
     timeout_seconds: int,
     authorize_resend: bool,
     resend_part_indexes: tuple[int, ...],
+    defer_database_projection: bool,
     transport: DingTalkByteTransport,
 ) -> DestinationDeliverySummary:
     destination_id = _require_destination_id(credential.destination_id)
@@ -1000,38 +1441,39 @@ def _send_verified_destination(
             status = str(outcome["status"])
             if status == "sent":
                 sent.append(index)
-                try:
-                    _insert_delivery_record(
-                        database=database,
-                        run_id=run_id,
-                        artifact_version_id=expected_artifact_version_id,
-                        outbox_sha256=expected_outbox_sha256,
-                        authorization_id=authorization_id,
-                        part=part,
-                        artifact_urls=getattr(verified, "public_artifact_urls"),
-                        external_attempt_made=bool(
-                            outcome["external_attempt_made"]
-                        ),
-                        destination_id=destination_id,
-                    )
-                except RuntimeError as exc:
-                    ledger_after = load_and_verify_delivery_ledger(
-                        ledger_path,
-                        run_id=run_id,
-                        destination_id=destination_id,
-                    )
-                    reason = str(exc)
-                    if re.fullmatch(r"[a-z][a-z0-9_]{0,127}", reason) is None:
-                        reason = "delivery_database_write_failed"
-                    return _destination_summary(
-                        destination_id=destination_id,
-                        status=reason,
-                        ledger_before=ledger_before,
-                        ledger_after=ledger_after,
-                        attempted=attempted,
-                        sent=sent,
-                        rejected=rejected,
-                    )
+                if not defer_database_projection:
+                    try:
+                        _insert_delivery_record(
+                            database=database,
+                            run_id=run_id,
+                            artifact_version_id=expected_artifact_version_id,
+                            outbox_sha256=expected_outbox_sha256,
+                            authorization_id=authorization_id,
+                            part=part,
+                            artifact_urls=getattr(verified, "public_artifact_urls"),
+                            external_attempt_made=bool(
+                                outcome["external_attempt_made"]
+                            ),
+                            destination_id=destination_id,
+                        )
+                    except RuntimeError as exc:
+                        ledger_after = load_and_verify_delivery_ledger(
+                            ledger_path,
+                            run_id=run_id,
+                            destination_id=destination_id,
+                        )
+                        reason = str(exc)
+                        if re.fullmatch(r"[a-z][a-z0-9_]{0,127}", reason) is None:
+                            reason = "delivery_database_write_failed"
+                        return _destination_summary(
+                            destination_id=destination_id,
+                            status=reason,
+                            ledger_before=ledger_before,
+                            ledger_after=ledger_after,
+                            attempted=attempted,
+                            sent=sent,
+                            rejected=rejected,
+                        )
             elif status == "rejected":
                 rejected.append(index)
                 terminal_status = "rejected"
@@ -1400,6 +1842,50 @@ def _insert_delivery_record(
     external_attempt_made: bool,
     destination_id: str | None = None,
 ) -> None:
+    record = _delivery_record(
+        run_id=run_id,
+        artifact_version_id=artifact_version_id,
+        outbox_sha256=outbox_sha256,
+        authorization_id=authorization_id,
+        part=part,
+        artifact_urls=artifact_urls,
+        external_attempt_made=external_attempt_made,
+        destination_id=destination_id,
+    )
+    try:
+        connection = sqlite3.connect(database)
+        connection.execute("BEGIN IMMEDIATE")
+        connection.execute(
+            "INSERT INTO delivery_previews("
+            "delivery_id,run_id,channel,mode,status,message_hash,artifact_paths,live_send"
+            ") VALUES(?,?,?,?,?,?,?,?)",
+            tuple(record[key] for key in _DELIVERY_RECORD_KEYS),
+        )
+        connection.commit()
+    except sqlite3.IntegrityError as exc:
+        if "connection" in locals():
+            connection.rollback()
+        raise RuntimeError("delivery_database_duplicate_id") from exc
+    except sqlite3.Error as exc:
+        if "connection" in locals():
+            connection.rollback()
+        raise RuntimeError("delivery_database_write_failed") from exc
+    finally:
+        if "connection" in locals():
+            connection.close()
+
+
+def _delivery_record(
+    *,
+    run_id: str,
+    artifact_version_id: str,
+    outbox_sha256: str,
+    authorization_id: str,
+    part: PreparedOutboxPart,
+    artifact_urls: Sequence[str],
+    external_attempt_made: bool,
+    destination_id: str | None = None,
+) -> Mapping[str, object]:
     if destination_id is not None:
         _require_destination_id(destination_id)
     identity = canonical_json_bytes(
@@ -1417,40 +1903,22 @@ def _insert_delivery_record(
         }
     )
     delivery_id = "prepared_" + sha256_hex(identity)
-    try:
-        connection = sqlite3.connect(database)
-        connection.execute("BEGIN IMMEDIATE")
-        connection.execute(
-            "INSERT INTO delivery_previews("
-            "delivery_id,run_id,channel,mode,status,message_hash,artifact_paths,live_send"
-            ") VALUES(?,?,?,?,?,?,?,?)",
-            (
-                delivery_id,
-                run_id,
-                (
-                    f"dingtalk:{destination_id}"
-                    if destination_id is not None
-                    else "dingtalk"
-                ),
-                "live" if external_attempt_made else "synthetic",
-                "sent",
-                "sha256:" + part.sha256,
-                json.dumps(list(artifact_urls), ensure_ascii=False, sort_keys=True),
-                int(external_attempt_made),
-            ),
-        )
-        connection.commit()
-    except sqlite3.IntegrityError as exc:
-        if "connection" in locals():
-            connection.rollback()
-        raise RuntimeError("delivery_database_duplicate_id") from exc
-    except sqlite3.Error as exc:
-        if "connection" in locals():
-            connection.rollback()
-        raise RuntimeError("delivery_database_write_failed") from exc
-    finally:
-        if "connection" in locals():
-            connection.close()
+    return {
+        "delivery_id": delivery_id,
+        "run_id": run_id,
+        "channel": (
+            f"dingtalk:{destination_id}"
+            if destination_id is not None
+            else "dingtalk"
+        ),
+        "mode": "live" if external_attempt_made else "synthetic",
+        "status": "sent",
+        "message_hash": "sha256:" + part.sha256,
+        "artifact_paths": json.dumps(
+            list(artifact_urls), ensure_ascii=False, sort_keys=True
+        ),
+        "live_send": int(external_attempt_made),
+    }
 
 
 def _load_current(state_root: Path) -> Mapping[str, object]:

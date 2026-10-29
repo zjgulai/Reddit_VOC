@@ -3,8 +3,8 @@ title: Reddit VOC 项目状态与继续执行交接
 doc_type: project_handoff
 status: active
 created: 2026-08-12
-updated: 2026-08-22
-evidence_cutoff_bjt: 2026-08-22T18:37:37+08:00
+updated: 2026-08-25
+evidence_cutoff_bjt: 2026-08-25T08:42:36+08:00
 owner: Reddit VOC project team
 ---
 
@@ -19,6 +19,15 @@ owner: Reddit VOC project team
 - **未验证**：没有终态回执，或仅能证明配置就绪、不能证明自然运行结果。
 - HTTP 200、账本和数据库闭合只能证明钉钉机器人接受请求，不能证明群成员已阅读。
 
+## 0. 2026-08-25 最新执行断点
+
+- **生产事实（L3）**：`daily_collect_20260825_0700` 已产生 17 posts、72 comments。08:00 cron 正常触发，但在 scheduled-cycle reservation 前以 `parent_policy_invalid` → `scheduled_cycle_reserve_failed` 阻断；Provider、prepared、primary/secondary delivery ledger 和生产 DB delivery projection 均为 0，未发生钉钉 HTTP attempt。
+- **确定性根因**：annual parent policy 内容、SHA `98cbdd40...3cb4`、`root:root 0444` 均正确；active `report_control.py::_load_scheduled_cycle_policy` 却用只接受 `0600` 的 `_read_regular` 读取该 immutable authority，未使用既有的 `_read_authority_regular`。测试 fixture 同样把 parent 建成 `0600`，因此未覆盖真实生产权限合同。
+- **本地修复（L2）**：新增真实 reader-boundary 回归测试，先稳定 RED=`ordinary_parent_reader_used`，随后仅把 parent 读取切换为 `_read_authority_regular`；相同测试转 GREEN。GREEN 复验 1/1、相关 suites 78/78 通过，deterministic release=`aa0ec33e80cbd0d7ab63f1c0fea30d1df8174159238962d71cde030adb53d8da`、manifest=`36188bcd8acc2cc6254f7a43baebf760c497751e140b654754e7052ff18d3bc1`，21-module import closure 与 provider-free runtime smoke 通过。
+- **生产激活终态（L4 授权写 + L3 独立双快照）**：G6R7-R1 只执行一次并返回 `passed_terminal_postflight`。daily current 已原子切换至 release=`aa0ec33e80cbd0d7ab63f1c0fea30d1df8174159238962d71cde030adb53d8da`，manifest=`36188bcd8acc2cc6254f7a43baebf760c497751e140b654754e7052ff18d3bc1`，生产 `report_control.py`=`56a8679a...cd2f`；child policy=`5b3bd494...dbd98`、owner file=`93f85281...58b71`、journal=`8335102b...f8835` 且 phase=`committed`、marker-last=`667d67be...e6d7`。独立双快照完全一致，parent=`98cbdd40...3cb4`、cron=`f54ff2dd...7251`、stable=`e7dcd4bd...34a6`、disposition=`93e35a6b...7f09`、periodic current/inode 与 report-env inode=`729471` 均未漂移；smoke 容器和执行器进程无残留。L3 receipt SHA=`7ba5c821908f2cd6c0e5526e98570ffd747b7556418ea8b78b58ac2dddb9962c`。
+- **非干扰事实**：本门禁 Provider/DeepSeek/TikHub、钉钉/其他 HTTP、生产 DB access/write、cron、stable、parent、disposition、report-env credential、periodic/public current effect 均为 false。首次独立观察命令因 `pgrep` 匹配到观察命令自身而非零；只修正为 Python 进程限定后，同一只读双快照通过，没有重跑激活。
+- **下一顺序**：G6R7-R1 已消费，不得重跑。重新冻结 8 月 25 日 source、prepared/Provider/delivery/DB 前像，再构建独立 supplemental prepare/validate/send 门禁。08:00–08:30 自然窗口已经结束，今日动作只能明确标注为受控补发，不能表述为自然 08:00 成功；生产激活本身也不证明钉钉已送达。
+
 ## 1. 当前目标
 
 当前目标不是继续增加页面或报告类型，而是把已经具备的采集、分析、报告和双机器人能力收敛为一条可重复、可追溯、自动运行的生产链：
@@ -27,31 +36,78 @@ owner: Reddit VOC project team
 2. 日报使用 DeepSeek 完成标题、正文和评论中文翻译；任一翻译或语义门禁失败时禁止发送。
 3. 同一份 immutable prepared outbox 按 primary、secondary 两个目标独立幂等发送，支持部分送达和未知状态，禁止自动重复发送已成功目标。
 4. 日报、周报、月报继续显示同环比和六点趋势；三者是对每日来源数据的周期聚合，不是三套独立采集器。
-5. 8 月 15 日、8 月 21 日与 8 月 22 日 exact outbox 的双目标受控补推与终态验收均已完成；生产已有唯一北京时间 08:00 guarded cron。8 月 22 日已修复 `scheduled-cycle` 被误路由到 smoke 的生产根因，当前必须由 8 月 23 日首个自然周期证明自动链路，并在当前年度 authority 到期前完成续期验收。
+5. 8 月 15 日、8 月 21 日与 8 月 22 日 exact outbox 的双目标受控补推与终态验收均已完成；生产已有唯一北京时间 08:00 guarded cron。8 月 23 日自然周期进一步证明 G6R6 激活遗漏了 annual parent authority：cron 已运行，但在 reservation 前以 `parent_policy_invalid` 阻断。G6R6-R1 parent-only 候选已本地冻结，生产尚未安装。
 
-下一阶段完成标准：2026-08-23 自然 07:00→08:00 周期对同一 immutable outbox 完成 source、DeepSeek translation、prepared、primary/secondary terminal `sent`、DB projection 和 cycle=`send_consumed`；TikHub comments 路由恢复并重新产生非零评论，或由上游正式证据确认持续不可用并保留降级状态；公开洞察站 current 指向包含最新已准入数据的 release；每次变更由 GitHub `main`、生产 version lock 和只读 postflight 共同闭合。
+下一阶段完成标准：先经独立授权原子安装 exact annual parent authority，再由下一个自然 07:00→08:00 周期对同一 immutable outbox 完成 source、DeepSeek translation、prepared、primary/secondary terminal `sent`、DB projection 和 cycle=`send_consumed`；TikHub comments 路由恢复并重新产生非零评论，或由上游正式证据确认持续不可用并保留降级状态；公开洞察站 current 指向包含最新已准入数据的 release；每次变更由 clean GitHub `main`、生产 version lock 和只读 postflight 共同闭合。
 
 ## 2. 当前状态摘要
 
 | 能力面 | 当前状态 | 证据等级 | 继续执行时的边界 |
 |---|---|---|---|
 | 每日采集 | `daily_collect_20260822_0700` 已存在：12 posts、0 comments，source 状态为 `partial`；comments 路由对 full/bare Reddit ID 均返回 TikHub HTTP 400 | 2026-08-22 生产 source receipt + 有界 live 诊断 | 帖子可用于日报；0 comments 不得伪造，且不能把 TikHub 上游 400 表述为本地已修复 |
-| 日报生产 runtime | daily current=`7b177962a7fa36bcc6f873e115f363c53de4d5b7922b8316f21303bc7c5ec181`；`scheduled-cycle` 已进入真实 prepare/send 分支，不再落入 smoke；release manifest=`92c57f71...fadf` | 2026-08-22 G6R6 原子激活 + network-none smoke + 独立生产后检；263/263 self-contained tests | 代码根因已修复，但自动恢复必须由 8 月 23 日自然周期实证，不能用 8 月 22 日补推代替 |
+| 日报生产 runtime | daily current=`7b177962a7fa36bcc6f873e115f363c53de4d5b7922b8316f21303bc7c5ec181`；`scheduled-cycle` 已进入真实 prepare/send 分支，但 8 月 23 日在 reservation 前因 annual parent authority 缺失而阻断 | 2026-08-23 cron/log/authority 生产只读归因；release/child/owner/marker SHA 闭合 | G6R6-R1 仅为本地 parent-only 候选；未安装前每天 08:00 会继续在同一位置 fail-closed |
 | DeepSeek 翻译与 prepared | 2026-08-22 仅一次 prepare：10 次 DeepSeek request、retry=0、unknown=0；10/10 中文、10/10 semantic accepted、placeholder=0、1/1 outbox part 含中文 | L4 授权 Provider + R2 network-none validation + L3 后检 | prepared version=`20260822T074914983158Z-587dbe1938e642ed155762189fd31dc1` 已消费，不得二次 prepare |
 | 双机器人投递 | 8 月 22 日 outbox=`724b4450...763a` 已向 primary、secondary 各发 1 次；两个独立 ledger 的 part 1 均 terminal `sent`，生产 DB 恰好投影 2 条 live/sent | L4 生产发送终态 + L3 独立只读验收；receipt file=`5ce7babf...0a97` | 这是受控补推，不是自然 08:00 成功；HTTP/ledger 不能证明人工阅读，禁止复用 permit 或重发同一 part |
-| 自然双目标周期 | 8 月 22 日 08:00 cron 确实运行，但旧 launcher 将 `scheduled-cycle` 误路由到 smoke 并形成假完成，未调用 Provider、未 prepare、未发送 | 2026-08-22 生产 cron/cycle/Provider/prepared/delivery 联合归因 | 下一自然验收日期为 2026-08-23；只有 cycle=`send_consumed`、双 ledger 与 DB projection 全闭合才算自动恢复 |
-| 年度 08:00 authority | v3 policy/owner 已生产激活，覆盖 2026-08-22 至 2027-08-21 共 365 个北京时间 08:00 双目标时隙；policy SHA=`974f8ab4...c2df` | 2026-08-22 生产只读回读，`max_slots=365`、expires=`2027-08-21T00:30:00Z` | cron SHA 未变且仍为唯一 08:00 入口；年度 authority 生效不等于任何一天实际送达 |
+| 自然双目标周期 | 8 月 23 日 08:00 cron 确实运行，`cron-report.log` 终态为 `parent_policy_invalid` → `scheduled_cycle_reserve_failed`；scheduled-cycle ledger 未创建，Provider/prepare/send 均未开始 | 2026-08-23 生产 cron/log/路径存在性联合归因 | 只有安装 parent 后的下一自然周期达到 cycle=`send_consumed`、双 ledger 与 DB projection 全闭合才算自动恢复 |
+| 年度 08:00 authority | v3 child policy/owner/marker 已生产存在并覆盖 365 个时隙，但它们共同绑定的 parent SHA=`98cbdd40...3cb4` 对应文件在生产缺失 | 2026-08-23 生产只读回读：child=`974f8ab4...c2df`、owner=`eb4658b8...3dde`、marker=`c2c93212...1a46`、parent absent | 不能再表述为“年度 authority 已完整生效”；G6R6-R1 只允许补齐一个 root-owned `0444` parent 文件及自身事务证据 |
 | 日/周/月报告 | 最新本地数据候选通过同环比/同比/六点趋势审计：日报 5/5/5、周报 9/9/9、月报 10/10/10 | L2 本地候选 | 历史采集完整性没有 Owner 证明，比较口径仍应标为 observed |
 | 洞察站 UI | 当前嵌套 UI 测试 229 passed / 46 skipped；真实 Dashboard、报告、搜索、分析、洞察和帖子中文详情能力在本地源码中存在 | L2 本地代码 | 当前生产 site/data current 最后一次只读确认仍是 2026-08-10 线，未包含 2026-08-12 日报补推 |
-| 公开生产站 | 最近只读事实：site current=`da9b94b5e0a6e39941765779164303e54b92a338b1754d035dd3fea798052acc`，data current=`reddit_voc_release_20260810_observed_translation_v1` | 2026-08-11 L3 快照 | 本轮没有执行 public current 切换，页面日期不会因补推自动变成今天 |
-| Git 可追溯性 | 根仓库已建立 `main`，初始导入 commit=`ebcaede01a57e32a60448746d07d31e8d7989197` 并推送至 `zjgulai/Reddit_VOC`；原嵌套 UI 历史 `d754bc7` 已以完整 bundle 保存在根 `.git/pre-import-backups/`，UI 文件改由根 Git 直接跟踪 | 当前 Git/GitHub 事实 | 每次完成必须满足 clean worktree、`HEAD=origin/main`、GitHub Actions green；本地 backup 不属于 GitHub 或生产制品 |
+| 公开站中文候选 | H1-R2 唯一一次授权续跑将 checkpoint 从 29,674 推进到 29,757/30,284，剩余 527；H1-R3 reason-bound repair 已本地冻结。16:05 BJT 再次只读复核确认 checkpoint/Provider ledger 未漂移且五个 R3 目标仍 absent | H1-R2 为 L4 授权 DeepSeek + L3 终态回读；H1-R3 为 L2 本地 79+12 tests + L3 fresh preflight | 尚无 R3 Provider 或 candidate/validation 生产证据；授权提案不等于授权，不得发布、复用 R2 permit或表述为剩余 527 已完成 |
+| 公开生产站 | fresh site current=`da9b94b5e0a6e39941765779164303e54b92a338b1754d035dd3fea798052acc`；data current=`reddit_voc_release_20260810_observed_translation_v1`，`data_as_of_utc=2026-08-08T23:00:00Z`、freshness=`partial`；公网 pointer 与生产 data current SHA 完全相同 | 2026-08-23 L3 生产只读 + 公网 HTTPS 200/SHA | 页面仍展示旧日期是 data current 未提升，不是浏览器缓存；日报补推或 H1 候选都不会自动切换 public current |
+| Git 可追溯性 | `HEAD=origin/main=15b286a2...e7`，对应 GitHub CI run `32568341047` 成功；当前工作区有 9 个 tracked 修改和 3 个非忽略 untracked 计划文档。successor daily release=`750cfe17...82f` 已完成两次确定性构建和 import closure | 2026-08-23 L2 local release + Git/GitHub read-only；正式 backend lane 1649 passed/862 subtests、1 failed | 当前不是版本一致：生产锁仍为 `7b177962...c181`；唯一 CI blocker 是 `daily_source_release_mismatch`。不得只改 lock、直接 push dirty code或把 L2 candidate 表述为已部署 |
+
+### 2026-08-23 G6R6-R1：自然周期 parent authority 根因与本地冻结候选
+
+执行方案：`docs/superpowers/plans/2026-08-23-reddit-voc-high-risk-phase-2.md`；公开翻译前序方案：`docs/superpowers/plans/2026-08-23-reddit-voc-public-translation-risk-closure.md`。
+
+- **生产事实——稳定复现**：北京时间 08:00:01 cron 精确执行 `/usr/bin/python3 /opt/reddit-voc-daily-report/control/bin/g6r1_stable_launcher.py scheduled-cycle`；`cron-report.log` 终态依次为 `reason=parent_policy_invalid` 与 `reason=scheduled_cycle_reserve_failed`。`scheduled-cycles` 目录和当天 state 均未创建，故障发生在 Provider、prepared 和双机器人发送之前。
+- **生产事实——根因闭包**：active `report_control.py` 要求 `/opt/reddit-voc-daily-report/control/authority/g6r5-annual-daily-live-policy.json` SHA=`98cbdd40b6b7ce06b15c5fd73d6f9a9329c22fc8f78cf6df114fcff3764c3cb4`。生产 parent path absent；child policy=`974f8ab4...c2df` 与 owner=`eb4658b8...3dde` 均绑定该 parent SHA，marker=`c2c93212...1a46` 绑定现有 child/owner/release。该证据能预测每次自然周期都会在 reservation 前同样失败。
+- **代码归因**：已消费的 G6R6 activation builder 验证了 annual parent fixture，却只输出并安装 child policy 与 owner；activation executor 的生产 PATHS 也没有 parent。旧 smoke 未执行 scheduled-cycle authority load，因此 263/263 release tests 与 activation postflight 都没有发现缺失。已消费 G6R6 制品保持不变，禁止回写或重跑。
+- **最小 TDD 修复**：新增 successor `g6r6-r1-parent-authority-closure-20260823`。相同命令先因 executor absent RED，随后 6/6 GREEN；覆盖 exact parent 安装、preimage drift 阻断、捕获异常恢复 absent、硬崩溃前向恢复且 inode 不重写、gate/payload 漂移拒绝。生产只读准入还发现 shared lock 实际为 `0660 root:ubuntu`，候选已改为严格匹配 gate 中的 mode/uid/gid，而不是错误硬编码 `0600`。
+- **本地冻结事实**：archive SHA=`7d4d0d72ff897c5f325059450ae6327117aab69fbc7bf1558fa8c01a8a3e6547`、gate file SHA=`f64c78431c91b796e7ec5c9b2dcc0f94263cfb675914b1d5e6e9d70199df7635`、executor SHA=`74b663f1882287545c4ce36b9ad9129305eac85ab6268ff0e063b1e0bfda20b3`、freeze receipt SHA=`c1e17e90135033f32a059dc5155ed9e8c8e1ce5e335d7a4aa61adb477b9cdbe3`。两次冻结结果一致；archive 5 个精确成员，目录 `0555`、文件 `0444/0555`、uid/gid 0、mtime 0，无 link/bytecode。
+- **Fresh preimage**：2026-08-23T05:32:53Z 再次只读核验 active release/current、stable、launcher、report-control、child、owner、marker、cron、disposition、两份 metadata-only receipt 与 G6R6 journal，全部 SHA 匹配；parent、G6R6-R1 journal 与 terminal receipt 均仍 absent。未读取 credential 内容，未执行远端写入。
+- **当前边界**：候选尚未上传或安装，production unchanged。下一门禁必须仅允许原子安装上述 exact parent 为 `root:root 0444`，写 G6R6-R1 journal/terminal receipt；禁止 Provider/TikHub/钉钉/数据库、cron/current/child/owner/marker/credential/container 变化。安装完成也不能表述为已送达，仍需下一自然周期只读验收。
+
+### 2026-08-23 High 风险准入补充
+
+- **执行方案**：当前唯一计划入口为 `docs/superpowers/plans/2026-08-23-reddit-voc-remaining-high-risk-closure.md`。计划把 natural authority、daily release、公开翻译、Git、磁盘和 public current 分成独立 evidence lane；“开始执行”没有被扩大解释为生产写入、Provider、发送、删除或发布授权。
+- **G6R6-R1 fresh 准入**：6/6 executor tests 与确定性冻结再次通过。2026-08-23 14:50 BJT 的 structure-only SSH observer 逐项匹配 current、shared lock 和 11 个 bound preimage，parent/journal/terminal 仍 absent，日志最后匹配序列仍为 `parent_policy_invalid` → `scheduled_cycle_reserve_failed`。fresh preflight SHA=`428c6a81...2b0b`；exact authorization proposal SHA=`fad0aaab...83db`，状态仍为 `awaiting_exact_user_authorization`，未上传、未安装。
+- **G6R6-R2 local daily release**：当前源码以 pinned image 两次重建均得到 release=`750cfe171bdc2065b74e071fdd1d2601ca47222adc4c5bf7e20613aa6511d82f`、manifest=`88b50a728ed4870056dca22cc6dbb37f44a89701d787b23b294571dcbc893ee6`；持久候选和仓库外临时复制均完成 21-module import closure、`repository_fallback=false`，56 个 daily runtime tests 通过。相对生产锁只变更 `deepseek_client.py` 与对应 test；L2 receipt SHA=`b0e98165...a994`。生产锁/current 未变，因此原始 consistency test 仍应失败。
+- **H1-R3 fresh 准入**：79 source tests、12 executor tests 与临时 deterministic refreeze 通过，archive/gate/executor SHA 未漂移。第一次 observer 因把 gate 未绑定的目录 `size` 参与整字典比较而假阻断；只改为逐个比较 gate-bound metadata 后，相同观察路径通过。生产 checkpoint rows=`29757` / SHA=`7f10491a...610`，Provider ledger rows=`38` / SHA=`734d087f...849`，remaining=`527`，五个 R3 目标均 absent。fresh preflight SHA=`3c31e607...064c`；exact Provider authorization proposal SHA=`680d9630...309f`。这不证明翻译已执行。
+- **测试/Git 准入**：fresh 受影响链 125/125 tests、G6R6-R1 6/6、H1-R3 12/12 与 `git diff --check` 通过；完整 unittest discovery 新鲜复跑 1776 tests / 330.847s，唯一 error=`daily_source_release_mismatch`。GitHub CI 正式 repository lane 为 1649 passed、862 subtests passed、1 failed，失败仍是同一 production-lock drift。没有第二个回归；当前不得 commit/push 或改 lock 制造一致。
+- **磁盘准入**：Data volume 99%，available=`5414228 KiB`，repo `tmp=`42926872 KiB`。旧 preview `node_modules`=`341180 KiB` 与 `__pycache__`=`404 KiB` 均为非 symlink 目录、祖先无 symlink、open files=0、receipt reference=0；exact cleanup proposal SHA=`d74bc197...955a1`，但用户尚未点名授权，删除仍为 0 bytes。`candidate-orchestration` 约 15 GiB 且混有 receipts，继续禁止整目录清理。
+- **公开 current fresh 归因**：2026-08-23 15:22 BJT 只读回读确认 site release=`da9b94b5...2acc`、data release=`reddit_voc_release_20260810_observed_translation_v1`；7 个 dataset manifest SHA 全部闭合。公网 `/data/reddit-voc/current-release.json` HTTP 200，body SHA=`e9c6d4aa...a824c` 与生产 pointer 完全相同，但 `data_as_of_utc=2026-08-08T23:00:00Z`、freshness=`partial`。因此旧日期是生产 data current 的真实状态，不是 UI 缓存；只读 receipt SHA=`9f17fea3...f87bc`，本轮未切换 current。
+- **TikHub comments contract 决策**：当前官方 Reddit APP comments 文档与实现的 GET route、`t3_` fullname、`sort_type=CONFIDENCE`、`after=""`、`need_format=false` 全部一致，12/12 adapter tests 通过；既有 full/bare live 诊断仍均为 HTTP 400，因此不能再靠改 ID/sort 猜修。官方 API root 同时要求中国大陆使用 `api.tikhub.dev`，而仓库默认仍为 `api.tikhub.io`；生产 secret-bearing env 是否覆盖默认值未读取、仍未知。已冻结一次 `.dev` 对照探针 proposal SHA=`4ed84528...a14fd`，尚未授权、未调用 TikHub。
+- **16:05 BJT 漂移复核**：新的 structure-only SSH observer 对 daily authority/runtime 与 H1-R3 共 18 个绑定点复核，18/18 匹配；annual parent、G6R6-R1 journal/terminal 仍 absent，H1 checkpoint=`29757` / Provider ledger=`38`，五个 R3 目标仍 absent。receipt SHA=`9a1fde7d...3926c`；未读取 credential/数据库、未操作容器、未写远端。
+- **16:09 BJT public/storage 复核**：site/data current 与公网 pointer SHA 均未漂移，公开日期仍真实绑定 `2026-08-08T23:00:00Z / partial`。本机 Data volume 的 `df -P` 已达到 100%，available=`4078256 KiB`；repo 总计约 45 GiB，`tmp` 约 41 GiB。四个 exact 可重建缓存目录合计 `757552 KiB`、non-symlink、open files=0，expanded cleanup proposal SHA=`7635bd06...dea3`；实际删除仍为 0 bytes，且约 15 GiB mixed `candidate-orchestration` 继续禁止整目录删除。
+
+### 2026-08-23 H1-R2：公开站翻译续跑终态
+
+- **生产事实（L4 授权 live execution）**：冻结 archive=`0bbfa46bff4e58e2abb977e832d6d7a4f08fe57b94b2716e1ef716aa8a1bd750`、gate=`2b3bfc408dc58b1f04461292aee51a1e9cec1a0fde8b6ad0ae6b437b370ade8f`、executor=`0309ce24e29591c4b5e8c42daf9c382fc5ab1ab5d1c64ca6a29af416cf2f3a14` 已逐项复算。冻结包以 root-owned、目录 `0555`、文件 `0444` 原子安装到 `/home/ubuntu/.reddit-voc/frozen-gate-bundles/h1-translation-resume-20260822-r2`，未激活任何 current。生产 preflight status=`passed_read_only_preflight`，起始 remaining=`610`，Provider cap=`71`。
+- **生产事实（唯一执行结果）**：executor 只运行一次并以 exit 2、status=`blocked_partial_or_provider_failure` 结束；builder status=`partial_provider_or_quality_failure`，failure=`source_equal_translation`。实际新增 9 次 DeepSeek attempt，checkpoint 接受 83 项，remaining 从 610 降至 527；9 次响应均为 HTTP 200，其中 5 次 `invalid_json_content`、3 次完整成功，最后一次接受 11/12 项并因 1 项质量失败终止。HTTP 200 不等于候选通过。
+- **精确失败证据**：最后一行 Provider ledger 绑定 execution authorization=`h1_translation_resume_20260822_r2`；失败 stable ID=`comment:t1_p32fcuh:body`，error code=`source_equal_translation`，该 ID 在 checkpoint 中 match count=`0`。未读取、记录或输出原文与翻译内容。
+- **终态文件**：execution permit SHA=`e81780d53b6234835469fc939b7e0fecf17990c1bdfe4d3916e62adcacc651ee`；terminal receipt SHA=`a34e9d96eae068beecb412d83dce318f8f08805324460c48170f91832532333b`；builder receipt SHA=`7bdb416b0f67b9c7b922615bba4a3e5545444fca40ef089d9695daeab7f94a13`；checkpoint SHA=`7f10491afbdc73805dd8ae670e566adaeaada5cce88ad701a73da30b504da610`；Provider ledger SHA=`734d087f973f7c452f5b1ba8a3dfc2964769c11af62810a8642873dc04b3d849`。candidate root 与 validation receipt 均不存在。
+- **非干扰边界**：本门禁没有访问或写入数据库，没有 TikHub/采集调用、钉钉发送、cron/current/authority/credential 变更或容器操作；没有跨进程重试或自动补发。consumed execution permit 不得复用。
+- **本地验证**：H1-R2 executor 测试 10/10 通过；`source_equal` partial salvage、slang override 和 narrow normalized override 三个定向回归 3/3 通过。首次定向命令因缺少 `PYTHONPATH=src` 在收集阶段 0 tests executed，保持相同 test IDs、只修正启动环境后通过；没有为制造通过而修改代码或测试。
+- **合理推断（高）**：冻结 builder 只会为固定缩写、少数硬编码短语或含非 ASCII 字母的文本生成 `_source_equal_retry_override`。最后一次已把 11 个合格项增量写入 checkpoint，但失败项之后没有发生第 10 次 attempt，且预算尚余 62；这与该公开字段没有命中 override、单项分支直接抛出完全一致。直接问题不是 credential、HTTP、数据库或 candidate commit，而是通用 ASCII `source_equal` 缺少确定性的单项 repair prompt。
+- **未验证项**：未读取失败字段原文，尚不能判断它是应翻译的普通文本、应保持原文的官方专名，还是仅链接/不可翻译 token。下一步必须先做不外呼的 exact stable-ID 分类测试，再决定使用通用 repair context 或精确 proper-name allowance；未冻结新 gate 前不得再次调用 Provider。
+
+### 2026-08-23 H1-R3：通用 source-equal repair 与本地冻结候选
+
+- **只读分类事实**：exact stable ID=`comment:t1_p32fcuh:body` 对应一个 raw length 7、trimmed length 6、ASCII、单个 Title Case 纯字母 token；无 URL、CJK、数字、标点、`mentioned_brands`、`product_bindings`、brand tag 或 PII redaction flag。诊断没有输出原文。该特征不能证明它一定是普通词或专名，因此没有新增 source-equal allowance。
+- **根因与最小修复**：公开站 builder 原先只有 `_source_equal_retry_override()` 返回硬编码 source mutation 时才进入 singleton fallback；generic ASCII 项不会收到日报 `TranslationService` 已使用的 `repair_context`。现在 `_provider_batch()` 接受 exact-ID `repair_reason_codes_by_id`，并只为 singleton `source_equal_translation`/`non_chinese_translation` 执行现有唯一 fallback；generic 项保留原 protected source，reason-bound requirements 明确要求中文、禁止原文不变、保护 placeholders。第二次仍不合格继续 fail-closed，不增加 loop、跨进程重试或预算。
+- **TDD 证据**：synthetic `Agreed` 用例在修改前于第一次 deterministic validation 后精确 `source_equal_translation` ERROR，修改后同一命令 1/1 通过且恰好记录两次逻辑请求；focused matrix 6/6、完整 `test_reddit_v3_translation_candidate + test_translation_pipeline + test_deepseek_client` 79/79 通过。系统 Python 因缺 `PIL` 的收集失败由既有 `.venv` 解决，没有安装依赖或修改测试来制造通过。
+- **H1-R3 executor 证据**：gate schema v2 新增 post-R2 terminal receipt 与 consumed execution permit 闭包。两个 parent-drift 测试先 RED（旧 executor 忽略漂移）后 GREEN；完整 executor 12/12 通过。新 child execution ID 与 R2 parent ID 必须不同。
+- **本地冻结事实（provider-inert）**：archive SHA=`aa88e752c97c6af09943ea42d5bc6d72644b148cf3420d45cabd85d3f7d601b5`、gate SHA=`8c2c6f64feb713bb8a55d58bd7daf9cce15baa05657ee3a78bb69bb578e3b9d9`、executor SHA=`6e78eae1b3ee8c0bfb4d403d8a7e8085b021a1fad32c7e3562baae0bc639088d`、freeze receipt SHA=`8317d69ebc614ef40487f498936cea4af4f028d4555266b4c8b766e885734572`。archive 精确 9 个 runtime payload，root-owned archive metadata 为 dirs `0555` / files `0444`，无 symlink/pyc；三个冻结 entrypoint provider-free `--help` 通过。
+- **R3 前像绑定**：checkpoint rows=`29757` / SHA=`7f10491a...610`，Provider ledger rows=`38` / SHA=`734d087f...849`，R2 builder receipt=`7bdb416b...a13`、terminal=`a34e9d96...33b`、consumed permit=`e81780d5...1ee`，remaining=`527`，candidate/permit/terminal/validation R3 目标均在生产不存在。
+- **当前边界**：H1-R3 仅存在本地，`provider_call=false`、`production_unchanged=true`。未上传、未安装、未创建 execution permit、未调用 DeepSeek、未写 checkpoint/ledger/candidate、未发布 current。任何后续动作必须绑定上述 exact SHA，在北京时间 2026-08-24 23:59:59 前取得新的精确授权；否则重新冻结，不得复用 R2 authorization。
 
 ### 2026-08-22 G6R6：自然周期根因修复与今日双机器人补推终态
 
 本节覆盖所有早于 2026-08-22 的“当前自然周期/年度 authority 尚未激活”描述；旧条目只保留为历史证据。
 
 - **已确认事实——08:00 根因**：cron、stable launcher 和 `scheduled-cycle` 入口均真实运行；但 `scripts/server_daily_report.sh` 的 prepare 分支只接受 `prepare|scheduled-prepare`，遗漏 `scheduled-cycle`。因此自然任务完成 reservation 后落入 smoke 路径，错误形成无 Provider、无 prepared、无 delivery 的“完成”。这解释了“cron 看似成功但钉钉没有消息”，并能预测 Provider ledger、prepared current 和双 destination ledger 全部缺失。
-- **已确认事实——生产修复**：launcher 已把 `scheduled-cycle` 纳入真实 prepare/send 分支；self-contained release 263/263 tests 通过。生产原子激活 release=`7b177962a7fa36bcc6f873e115f363c53de4d5b7922b8316f21303bc7c5ec181`、manifest=`92c57f712bb745590b0ef8508789dd1052a4859036939ef243913f1e1e99fadf`；current、policy=`974f8ab4...c2df`、owner=`eb4658b8...3dde`、marker=`c2c93212...1a46`、journal=`be24653d...43e5` 已闭合，cron/periodic current/report-env inode 未变。v3 authority 已生产生效，365 个 slot 覆盖至 2027-08-21。
+- **已确认事实——生产修复**：launcher 已把 `scheduled-cycle` 纳入真实 prepare/send 分支；self-contained release 263/263 tests 通过。生产原子激活 release=`7b177962a7fa36bcc6f873e115f363c53de4d5b7922b8316f21303bc7c5ec181`、manifest=`92c57f712bb745590b0ef8508789dd1052a4859036939ef243913f1e1e99fadf`；current、child policy=`974f8ab4...c2df`、owner=`eb4658b8...3dde`、marker=`c2c93212...1a46`、journal=`be24653d...43e5` 已闭合，cron/periodic current/report-env inode 未变。后续 8 月 23 日证据修正了当时的完成判断：上述 child/owner 虽枚举 365 个 slot，但其绑定的 annual parent 文件未被 G6R6 安装，因此完整 authority 实际未生效。
 - **已确认事实——comments 独立故障**：`daily_collect_20260822_0700` 有 12 posts、0 comments，source=`partial`。对 TikHub comments 路由使用 Reddit fullname 与 bare ID 的有界生产诊断均返回 HTTP 400；这排除了单一 `t3_` 归一化或 sort 参数是充分根因。帖子日报可继续构建，但评论覆盖仍不可用。
 - **已确认事实——今日翻译与 prepared**：唯一 prepare authorization=`g6r6-prepare-20260822-r1` 已 consumed；DeepSeek `deepseek-v4-flash` 共 10 次 request、retry=0、unknown=0。prepared version=`20260822T074914983158Z-587dbe1938e642ed155762189fd31dc1`、bundle=`dbc97d8c...cb6e`、outbox=`724b4450...763a`；10/10 字段有中文并通过 semantic，placeholder=0、source-equal allowance=0，1/1 outbox part 含中文。
 - **失败方案与恢复**：首次 G6R6 validation R1 的 validator 已允许 1–2 parts，但 bootstrap 仍硬编码旧 release=`968845d5...41af`，容器在无 Provider/无发送/无 DB 写入状态下 terminal blocked，receipt=`5d1b126d...341c`。没有重跑 R1；R2 绑定该 blocked terminal evidence，只修正 bootstrap release path，network-none validation 通过，terminal receipt=`310209ed...6aa1`、validation receipt=`7550fb6a...77ec`。
@@ -102,7 +158,7 @@ owner: Reddit VOC project team
 - **生产事实**：当前 v2 authority 只有 20 个时隙，覆盖 2026-08-12 至 2026-08-31。8 月 22 日仍在有效范围内；8 月 31 日之后若不续期会按设计 fail-closed。
 - **本地候选（L2）**：G6R5 release=`915e2190ee4aa63bb950ef654635f5272f463650effb04f2ad33e762ea02efd4`、manifest=`6de4cfe3b08a99b694359f172eacd61010f986817333edb10b0af054faf134ed`、annual parent policy=`98cbdd40b6b7ce06b15c5fd73d6f9a9329c22fc8f78cf6df114fcff3764c3cb4`。authority 精确枚举 2026-08-22 至 2027-08-21 的 365 个 08:00 BJT 时隙，固定 `HighValueAssetDual`、primary/secondary 独立 ledger、每周期 Provider cap=100、全周期 cap=36,500、`automatic_resend=false`、`cross_process_retry=false`。
 - **本地验证（L2）**：冻结 release 262/262 tests 通过；manifest/file-set/mode/SHA 通过；全新副本 21 modules 自包含导入，`repository_fallback=false`；导入后 manifest 再验证通过；冻结 release `.pyc/.pyo=0`。local receipt file SHA=`12d03c7f21bd7644161b2d0f3bb04bb5124a73f5886ad1555a5033242855bfcd`。
-- **当前边界（已更新）**：以上是 8 月 21 日的历史候选/前像。G6R6 已在 8 月 22 日原子激活 successor release，并把 annual parent 绑定为 v3 policy/owner；生产只读回读确认 max_slots=365、覆盖至 2027-08-21。旧 L3 preimage 与旧 activation 设想不得复用。
+- **当前边界（已更新）**：以上是 8 月 21 日的历史候选/前像。G6R6 已在 8 月 22 日原子激活 successor release，并把 annual parent SHA 绑定进 v3 child policy/owner；生产只读回读确认 child 文档 max_slots=365、覆盖至 2027-08-21，但 8 月 23 日确认 parent 文件本身 absent。旧 L3 preimage 与旧 activation 设想不得复用；只能走新的 G6R6-R1 parent-only 门禁。
 
 ### 2026-08-15 自然周期失败与受控补推终态：最新结论
 
@@ -309,7 +365,7 @@ flowchart LR
 | `tmp/reddit-voc-v3/p2e-freshness-automation-20260810/g6r3-r6-dual-send-preflight-20260815/` | 8 月 15 日 exact prepared、双机器人 authority、DB 与空 delivery 前像的生产只读双快照 | R6 blocked receipt 被保留；R6-R1 passed receipt file `167cf3a8...f3b17`，无发送或生产写 |
 | `tmp/reddit-voc-v3/p2e-freshness-automation-20260810/g6r3-r7-dual-send-candidate-20260815/` | 8 月 15 日 exact outbox 的双目标 ledger、一次性容器与 host DB projection 候选 | L2 本地冻结；gate `52995754...72167`、core `481426d9...625ec`、executor `853273f6...4747`；无 production permit，不能直接表述为已发送 |
 | `tmp/reddit-voc-v3/p2e-freshness-automation-20260810/g6r3-r7-r5-part2-runtime-hotfix-candidate-20260816/` | R7-R3 部分送达后的 exact unattempted part2 continuation、attempt-scoped guard overlay 与终态证据 | gate `5957fae4...d43a`；27/27 本地测试；生产 final receipt file `09296727...4f79`，两个目标完整 sent、DB 4 行 |
-| `tmp/reddit-voc-v3/p2e-freshness-automation-20260810/g6r5-daily-dual-schedule-20260821/` | 2026-08-22 至 2027-08-21 的 365-slot 08:00 BJT 双目标 authority 基线 | annual parent=`98cbdd40...3cb4` 已被 G6R6 v3 policy/owner 生产绑定；当前 policy=`974f8ab4...c2df`、max_slots=365 |
+| `tmp/reddit-voc-v3/p2e-freshness-automation-20260810/g6r5-daily-dual-schedule-20260821/` | 2026-08-22 至 2027-08-21 的 365-slot 08:00 BJT 双目标 authority 基线 | annual parent=`98cbdd40...3cb4` 已被 G6R6 v3 policy/owner 文档绑定，但生产 parent 文件仍 absent；当前 policy=`974f8ab4...c2df`、max_slots=365 |
 | `tmp/reddit-voc-v3/p2e-freshness-automation-20260810/g6r6-scheduled-cycle-comments-resend-20260822/` | 08:00 scheduled-cycle 根因修复、原子激活、今日 prepare、one-part validation 恢复、双机器人 send-only 与 DB projection | 当前最新生产证据入口；release、activation、prepare、validation R1/R2、send 全部独立 namespace，已消费 authorization 不得重跑 |
 
 ## 7. 测试与验证结果
@@ -380,12 +436,13 @@ flowchart LR
 3. **公开洞察站没有跟随最新日报**：最近生产 data current 仍为 `reddit_voc_release_20260810_observed_translation_v1`。日报补推只消费 prepared outbox，不会自动发布站点 data current，因此页面日期仍可能早于今天。
 4. **历史自然周期缺口仍存在**：08-13、08-14、08-15、08-21、08-22 均没有自然完整送达；其中 08-15、08-21、08-22 已受控补推。任何历史补推必须逐日期绑定自己的 source/prepared/outbox/ledger，禁止混用 authorization。
 5. **公开站仍不是 exact source rebuild**：daily runtime 的 62 文件可以由 `main` 精确重建，但旧 production site dist 目前只能由 artifact manifest 锁定；较新的 UI 源码不能被表述为旧 production dist 的逐字节来源。下次站点发布必须把 source commit、build inputs、dist manifest 和 public current 一次闭合。
+6. **公开站中文候选仍未闭合**：H1-R2 在剩余 527 项处因 generic `source_equal_translation` fail-closed；H1-R3 的通用 reason-bound repair 仅完成本地代码、79+12 tests 与不可变冻结，尚未获新授权上传、调用 DeepSeek 或构建/验证生产候选。不得把本地冻结表述为剩余翻译完成。
 
 ### P1：下一迭代处理
 
 1. 两个日期耦合测试已经随 08:30 窗口过期；将 wall clock 注入并用冻结 clock 测试，避免每日失效。
 2. UI 已纳入根 Git，原嵌套历史另存完整 bundle；仍有 15 条 lint warning，需要按 Hook dependency、cleanup ref 和 fast-refresh 三类逐项修复，不能在本次迁移中顺手大改。
-3. `tmp/` 当前约 40 GB、`output/` 约 1.7 GB；只能在建立精确保留清单和 receipt 后清理，禁止直接递归删除。B5BR5 gate 目录当前还能看到 18 个 `pyc`，不得把该目录直接当不可变 release。
+3. Data volume 当前 99%、约 `5360432 KiB` 可用；`tmp/` 约 41 GB，`output/` 约 1.7 GB。两个可重建目标已完成 realpath/symlink/open-file/reference 准入，但仍需精确删除授权；更大根目录只能在建立 receipt-aware 保留清单后逐目标处理，禁止直接递归删除。B5BR5 gate 目录当前还能看到 18 个 `pyc`，不得把该目录直接当不可变 release。
 4. source batch 仍为 `partial`；同环比和趋势可展示观察值，但不能宣称历史全量、完整率或严格统计总体。
 5. 最终投递只能证明机器人接受，不能证明人工阅读；如业务需要阅读确认，必须设计独立回执，不得从 HTTP 200 推断。
 6. `npm ci` 对当前锁文件报告 2 个 high severity dependency finding；本轮未执行会引入 breaking change 的 `npm audit fix --force`。下一迭代应先取得 `npm audit --json` 的依赖路径和可修复版本，再单独升级和回归。
@@ -438,9 +495,19 @@ flowchart LR
 
 ## 10. 下一步开发顺序
 
-### 2026-08-22 当前执行优先级（覆盖下方历史清单）
+### 2026-08-23 当前执行优先级（覆盖下方历史清单）
 
-1. **G6R6 生产修复、年度 authority 与今日补推均已完成**：不得重跑 prepare、validation R1/R2 或 send permit。生产 current=`7b177962...c181`，v3 authority 覆盖至 2027-08-21；今日补推 receipt=`5ce7babf...0a97`，双 ledger terminal `sent`、DB 2 行投影闭合。
+1. **G6R6-R1 parent-only 生产安装**：fresh preflight=`428c6a81...2b0b`、authorization proposal=`fad0aaab...83db` 已生成；先取得绑定 archive=`7d4d0d72...6547`、gate=`f64c7843...7635`、executor=`74b663f1...20b3` 的精确授权。只允许补齐 annual parent authority 与写本门禁 journal/terminal；任何 preimage 漂移立即停止。安装后独立只读回读 parent SHA/mode/owner 与所有非目标 SHA。
+2. **下一自然 07:00→08:00 周期只读验收**：parent 安装不能替代送达证据。只读核验 scheduled-cycle hash chain、source、Provider v2、translation、prepared、两个 destination ledger、DB projection 与 cycle=`send_consumed`；禁止自动补采、prepare 或重发。
+3. **H1-R3 DeepSeek 续跑**：fresh preflight=`3c31e607...064c`、authorization proposal=`680d9630...309f` 已生成；独立授权现有 archive=`aa88e752...01b5`、gate=`8c2c6f64...b9d9`、executor=`6e78eae1...088d`，最多 71 external attempts、剩余 527 个公开 Reddit 字段。到期或任何前像漂移必须重新冻结；完成后先 validation，再开独立 public data current CAS，不能与钉钉日报 current 混用。
+4. **daily release / Git 三方一致性**：successor L2 release=`750cfe17...82f`、manifest=`88b50a72...ee6` 已通过确定性构建、fileset/import closure 和 56 runtime tests；正式 CI 唯一失败仍是 `daily_source_release_mismatch`。先把 public translation、center relationship、docs 三条 dirty lane 分开审阅；从被接受的 commit 重建 exact release，生产原子激活并 fresh version-lock，随后相同 CI lane 变绿，最后才推送 GitHub。不得只改 lock、只 push dirty code或先宣称三端一致。
+5. **磁盘清理门禁**：exact proposal=`d74bc197...955a1` 仅覆盖旧 preview `node_modules`=`341180 KiB` 和 `__pycache__`=`404 KiB`；取得目标级授权后先重验 guard，再只删除这两条绝对路径并记录前后 `df`。更大的 July/August candidate roots 必须先提取并冻结 must-keep receipts，再逐目标审批删除。
+6. **TikHub comments 一次区域域名对照探针**：route/query 已与当前官方合同逐项闭合，下一最小动作不是改代码，而是精确授权 proposal=`4ed84528...a14fd`：对同一 frozen public fullname 仅向 `api.tikhub.dev` 发 1 次 GET，禁止输出 key/post ID、重试、数据库和采集写入。只有 `.dev` 成功且 `.io` 既有证据失败时，才进入 base URL 最小补丁与相同复现测试。
+7. **公开站日期独立恢复**：fresh public pointer=`e9c6d4aa...a824c`、`data_as_of_utc=2026-08-08T23:00:00Z`，旧日期不是缓存。先完成 H1-R3 Provider + validation，再从已准入 source/translation 构建独立 data candidate，审计日/周/月同环比、趋势和帖子中文详情，最后使用 data current CAS 门禁提升；日报 current、钉钉发送、site release 均不能替代该证据。
+
+### 2026-08-22 历史执行优先级（已由 2026-08-23 清单覆盖）
+
+1. **当时完成判断的修正**：G6R6 release 修复与当天受控补推已完成，prepare、validation R1/R2 和 send permit 均不得重跑；但所谓“年度 authority 完成”已被 8 月 23 日 parent-absent 证据推翻。补推 receipt=`5ce7babf...0a97` 与双 ledger/DB 投影仍是有效历史事实，不代表自然周期恢复。
 2. **2026-08-23 07:00–08:00 自然周期只读验收**：观察 source manifest、scheduled-cycle hash chain、Provider v2 ledger、translation manifest、prepared current/bundle/outbox、primary/secondary ledger、DB projection 与 cycle status。任何 `running/waiting/blocked/partial/unknown` 只按事实报告，不自动补采、prepare 或重发。
 3. **若 8 月 23 日仍失败，按最早阻断层归因**：reservation/authority → source → Provider → translation validation → prepared commit → sender/container → destination ledger → DB projection。一次只修一个被终态证据证明的根因，不再叠加跨层 overlay。
 4. **TikHub comments 单独推进**：先对照正式接口合同冻结 route、query、HTTP status、非敏感 response metadata；只有上游路由/参数已确认后才构建采集器修复。帖子链路和日报发送不得因评论故障被误判为完全不可用，但报告必须明确 comments=0/partial。

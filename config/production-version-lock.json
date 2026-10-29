@@ -1,41 +1,41 @@
 {
-  "schema_version": "reddit-voc-production-version-lock-v1",
-  "observed_at": "2026-08-22T17:19:48+08:00",
-  "production_host": "101.34.52.232",
-  "github": {
-    "repository": "https://github.com/zjgulai/Reddit_VOC.git",
-    "default_branch": "main"
-  },
   "daily_report": {
+    "cron_sha256": "8d4a09de6665f096a73c4cba9448f45699ad6027671807b1a8b6fd8831090f00",
     "current_target": "releases/7b177962a7fa36bcc6f873e115f363c53de4d5b7922b8316f21303bc7c5ec181",
-    "release_sha256": "7b177962a7fa36bcc6f873e115f363c53de4d5b7922b8316f21303bc7c5ec181",
-    "manifest_path": "config/production/daily-report/7b177962a7fa36bcc6f873e115f363c53de4d5b7922b8316f21303bc7c5ec181/report-release-manifest.json",
-    "manifest_sha256": "92c57f712bb745590b0ef8508789dd1052a4859036939ef243913f1e1e99fadf",
+    "entry_count": 64,
     "image_id": "sha256:2e8dbc0225c2517ba58eb6151fab95ff271471c28e270515076e1b64e5334cb1",
-    "entry_count": 62,
-    "launcher_sha256": "6dcdddc219c34eb63aadf0bff776ae35e775b0258fad90bb35878bc4a3b87284",
-    "cron_sha256": "f54ff2ddc21d86d2de29445340bcf9339b2136cc7672c46166274dd49acd7251",
+    "launcher_sha256": "457cc8ca70aa0356efe84f3c1ac166cb0da913023d4fbbd01459a93bfc3dd8f3",
+    "manifest_path": "config/production/daily-report/7a061a97e02e4e6cd0394b9e9f4f83bb06e552a6a544a8dbb373fb0609f6f811/report-release-manifest.json",
+    "manifest_sha256": "d70ad60c7565f5111c0e46e4e61e9a297e865bcb1067a7e37edc79d89a80d6ed",
+    "release_sha256": "7a061a97e02e4e6cd0394b9e9f4f83bb06e552a6a544a8dbb373fb0609f6f811",
     "report_env_metadata": {
-      "inode": 729471,
-      "uid": 1000,
       "gid": 1000,
+      "inode": 729471,
       "mode": "0600",
-      "size": 1336
+      "size": 1336,
+      "uid": 1000
     },
     "source_alignment": "exact_rebuild"
   },
+  "github": {
+    "default_branch": "main",
+    "repository": "https://github.com/zjgulai/Reddit_VOC.git"
+  },
   "insights_site": {
     "current_target": "releases/da9b94b5e0a6e39941765779164303e54b92a338b1754d035dd3fea798052acc",
-    "release_sha256": "da9b94b5e0a6e39941765779164303e54b92a338b1754d035dd3fea798052acc",
+    "data_current_target": "releases/reddit_voc_release_20260810_observed_translation_v1",
+    "data_pointer_sha256": "e9c6d4aa368e15468ea1beeded2df9b37a02d7ae684eda0d323668f2a57a824c",
+    "data_release_id": "reddit_voc_release_20260810_observed_translation_v1",
+    "dist_file_count": 121,
+    "dist_inventory_sha256": "ad31fe49f311af8f1e76b56c97c0a68be29ec8a0a77d4a86e9e869648f005961",
+    "dist_total_bytes": 145260075,
     "manifest_path": "config/production/insights-site/da9b94b5e0a6e39941765779164303e54b92a338b1754d035dd3fea798052acc/release-manifest.json",
     "manifest_sha256": "d5aa6331f97f68df4661276b81d9512db1b27b724ab1fcd2d3a07c1dcd9f8eec",
-    "dist_inventory_sha256": "ad31fe49f311af8f1e76b56c97c0a68be29ec8a0a77d4a86e9e869648f005961",
-    "dist_file_count": 121,
-    "dist_total_bytes": 145260075,
+    "release_sha256": "da9b94b5e0a6e39941765779164303e54b92a338b1754d035dd3fea798052acc",
     "runtime_contract": "nginx_unprivileged_amd64_static_overlay_v1",
-    "data_current_target": "releases/reddit_voc_release_20260810_observed_translation_v1",
-    "data_release_id": "reddit_voc_release_20260810_observed_translation_v1",
-    "data_pointer_sha256": "e9c6d4aa368e15468ea1beeded2df9b37a02d7ae684eda0d323668f2a57a824c",
     "source_alignment": "artifact_manifest_only"
-  }
+  },
+  "observed_at": "2026-10-29T03:30:00Z",
+  "production_host": "101.34.52.232",
+  "schema_version": "reddit-voc-production-version-lock-v1"
 }
