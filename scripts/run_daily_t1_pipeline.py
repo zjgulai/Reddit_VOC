@@ -470,8 +470,15 @@ def step4_advance_pointer(public_root: Path, run_id: str) -> dict:
     return {"step": "advance_pointer", "status": result.get("status"), **result}
 
 
-def step5_feishu_push(run_id: str, report_date: str, receipts: list[dict]) -> dict:
-    """Step 5: push daily report card to the Feishu Echo-Agent group."""
+def step5_feishu_push(run_id: str, report_date: str, receipts: list[dict], output_dir: Path) -> dict:
+    """Step 5: push the morning-brief card to the Feishu Echo-Agent group.
+
+    ADR-005 v1: the card is business intelligence (risk radar, R&D defects,
+    competitor head-to-head, content ideas), not a pipeline dashboard. The
+    builder reads the run's own artifacts plus the public tree; falls back to
+    the legacy metrics card if the new builder fails, so the push never blocks
+    the pipeline on a template error.
+    """
     app_id = os.getenv("FEISHU_APP_ID", "").strip()
     app_secret = os.getenv("FEISHU_APP_SECRET", "").strip()
     chat_id = os.getenv("FEISHU_REPORT_CHAT_ID", "oc_59ad5fe5cf9bb6c7c85c80196ed6303e")
@@ -480,36 +487,47 @@ def step5_feishu_push(run_id: str, report_date: str, receipts: list[dict]) -> di
 
     from reddit_voc.feishu_bot import FeishuBotClient
 
-    collect = next((r for r in receipts if r.get("step") == "collect"), {})
-    agents = next((r for r in receipts if r.get("step") == "agents"), {})
-    merged = next((r for r in receipts if r.get("step") == "merge_snapshot"), {})
+    public_root = Path(os.getenv("PIPELINE_PUBLIC_ROOT", "/opt/voc-report/html"))
+    card = None
+    builder_error = None
+    try:
+        sys.path.insert(0, str(ROOT / "tools" / "feishu-card" / "builders"))
+        from build_morning_brief import build_card
 
-    posts = collect.get("ingested_threads", 0)
-    comments = collect.get("ingested_comments", 0)
-    new_added = merged.get("new_posts_added", 0)
-    ideas = agents.get("content_ideas", 0)
-    rnd = agents.get("rnd_tickets", 0)
-    comp = agents.get("competitor_comparisons", 0)
+        card = build_card(output_dir, public_root, run_id)
+    except Exception as exc:  # noqa: BLE001 — fallback card keeps the push alive
+        builder_error = f"{type(exc).__name__}: {exc}"
 
-    markdown = (
-        f"**📅 数据周期**: {report_date} (T-1 已闭合)\n"
-        f"**📥 采集**: 帖子 {posts} 篇 · 评论 {comments} 条 · 新增入库 {new_added} 篇\n"
-        f"**🤖 Agent 决策**: 爆款选题 {ideas} · 研发改款 {rnd} · 竞品情报 {comp}\n\n"
-        f"👉 [打开工作台](https://reddit.luteos.com/dashboard)"
-    )
-    card = {
-        "config": {"wide_screen_mode": True},
-        "header": {"title": {"tag": "plain_text", "content": f"📊 Echo-Agent 日报 · {report_date}"}, "template": "blue"},
-        "elements": [
-            {"tag": "markdown", "content": markdown},
-            {"tag": "hr"},
-            {"tag": "note", "elements": [{"tag": "plain_text", "content": f"🤖 Echo-Agent 自动流水线 · Run: {run_id}"}]},
-        ],
-    }
+    if card is None:
+        # Legacy fallback: pipeline readings only (v0 card).
+        collect = next((r for r in receipts if r.get("step") == "collect"), {})
+        agents = next((r for r in receipts if r.get("step") == "agents"), {})
+        merged = next((r for r in receipts if r.get("step") == "merge_snapshot"), {})
+        markdown = (
+            f"**📅 数据周期**: {report_date} (T-1 已闭合)\n"
+            f"**📥 采集**: 帖子 {collect.get('ingested_threads', 0)} 篇 · 评论 {collect.get('ingested_comments', 0)} 条"
+            f" · 新增入库 {merged.get('new_posts_added', 0)} 篇\n"
+            f"**🤖 Agent 决策**: 爆款选题 {agents.get('content_ideas', 0)} · "
+            f"研发改款 {agents.get('rnd_tickets', 0)} · 竞品情报 {agents.get('competitor_comparisons', 0)}\n\n"
+            f"👉 [打开工作台](https://radar.luteos.com/dashboard)"
+        )
+        card = {
+            "config": {"wide_screen_mode": True},
+            "header": {"title": {"tag": "plain_text", "content": f"📊 Echo-Agent 日报 · {report_date}"}, "template": "blue"},
+            "elements": [
+                {"tag": "markdown", "content": markdown},
+                {"tag": "hr"},
+                {"tag": "note", "elements": [{"tag": "plain_text", "content": f"🤖 Echo-Agent 自动流水线 · Run: {run_id}"}]},
+            ],
+        }
+
     client = FeishuBotClient(app_id=app_id, app_secret=app_secret)
     resp = client.send_interactive_card(chat_id, card)
     ok = resp.get("code") == 0
-    return {"step": "feishu_push", "status": "sent" if ok else f"failed_{resp.get('code')}", "msg": resp.get("msg")}
+    result: dict = {"step": "feishu_push", "status": "sent" if ok else f"failed_{resp.get('code')}", "msg": resp.get("msg")}
+    if builder_error:
+        result["builder_fallback"] = builder_error
+    return result
 
 
 def _preflight_writability(public_root: Path, store_path: Path, output_dir: Path) -> None:
@@ -571,7 +589,7 @@ def run_pipeline(*, store_path: Path, public_root: Path, output_dir: Path, skip_
     if not pointer_guard:
         steps.append(("advance_pointer", lambda: step4_advance_pointer(public_root, run_id)))
     if not skip_feishu:
-        steps.append(("feishu_push", lambda: step5_feishu_push(run_id, report_date, receipts)))
+        steps.append(("feishu_push", lambda: step5_feishu_push(run_id, report_date, receipts, output_dir)))
 
     for name, fn in steps:
         # Readiness gate: every step the pointer advance depends on must have

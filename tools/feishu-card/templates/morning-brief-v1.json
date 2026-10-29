@@ -1,0 +1,127 @@
+{
+  "$comment": "Reddit舆情情报官-早报 · v1 模板。占位符以 {{path.to.field}} 标注；builder 负责取数与填充。飞书 card JSON schema 1.0（interactive + markdown + column_set + note + hr + action/button）。header.template 可按风险级别动态替换：green=平稳 / orange=关注 / red=风险。",
+  "config": {
+    "wide_screen_mode": true,
+    "enable_forward": true
+  },
+  "header": {
+    "title": {
+      "tag": "plain_text",
+      "content": "🛰 Reddit舆情情报官-早报 · {{report_date}}"
+    },
+    "template": "{{header_template}}"
+  },
+  "elements": [
+    {
+      "tag": "column_set",
+      "flex_mode": "bisect",
+      "background_style": "default",
+      "columns": [
+        {
+          "tag": "column",
+          "width": "weighted",
+          "weight": 1,
+          "vertical_align": "top",
+          "elements": [
+            {
+              "tag": "markdown",
+              "content": "**📥 声量**\n<font color='{{volume_color}}'>**{{obs_volume}}**</font> 条\n<font color='grey'>观测环比 {{obs_mom}}</font>"
+            }
+          ]
+        },
+        {
+          "tag": "column",
+          "width": "weighted",
+          "weight": 1,
+          "vertical_align": "top",
+          "elements": [
+            {
+              "tag": "markdown",
+              "content": "**⚠️ 负向率**\n<font color='{{negative_color}}'>**{{negative_rate}}**</font>\n<font color='grey'>环比 {{negative_mom}}</font>"
+            }
+          ]
+        }
+      ]
+    },
+    { "tag": "hr" },
+    {
+      "tag": "markdown",
+      "content": "**🚨 今日风险雷达**\n{{risk_lines}}"
+    },
+    {
+      "tag": "markdown",
+      "content": "**🔬 研发缺陷速报**（{{rnd_total}} 条在册）\n{{rnd_lines}}"
+    },
+    {
+      "tag": "markdown",
+      "content": "**⚔️ 竞品交锋头条**\n{{competitor_lines}}"
+    },
+    {
+      "tag": "markdown",
+      "content": "**💎 内容选题金矿**（{{ideas_total}} 条在册）\n{{ideas_lines}}"
+    },
+    { "tag": "hr" },
+    {
+      "tag": "column_set",
+      "flex_mode": "bisect",
+      "background_style": "default",
+      "columns": [
+        {
+          "tag": "column",
+          "width": "weighted",
+          "weight": 1,
+          "vertical_align": "top",
+          "elements": [
+            {
+              "tag": "markdown",
+              "content": "**📈 季度锚点**\n{{quarter_anchor}}"
+            }
+          ]
+        },
+        {
+          "tag": "column",
+          "width": "weighted",
+          "weight": 1,
+          "vertical_align": "top",
+          "elements": [
+            {
+              "tag": "markdown",
+              "content": "**✅ 数据可信度**\n{{trust_badge}}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tag": "action",
+      "actions": [
+        {
+          "tag": "button",
+          "text": { "tag": "plain_text", "content": "📊 打开工作台" },
+          "type": "primary",
+          "url": "{{workbench_url}}"
+        },
+        {
+          "tag": "button",
+          "text": { "tag": "plain_text", "content": "🚨 痛点证据" },
+          "url": "{{insights_pain_url}}"
+        },
+        {
+          "tag": "button",
+          "text": { "tag": "plain_text", "content": "⚔️ 竞品情报" },
+          "url": "{{agent_studio_url}}"
+        }
+      ]
+    },
+    { "tag": "hr" },
+    {
+      "tag": "note",
+      "elements": [
+        {
+          "tag": "plain_text",
+          "content": "🛰 Reddit舆情情报官 · 数据截至 {{data_as_of}} · Run {{run_id}} · 群内 @Echo-Agent 可追问 · 口径与证据见工作台「指标口径」"
+        }
+      ]
+    }
+  ]
+}
