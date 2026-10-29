@@ -481,7 +481,9 @@ def step5_feishu_push(run_id: str, report_date: str, receipts: list[dict], outpu
     """
     app_id = os.getenv("FEISHU_APP_ID", "").strip()
     app_secret = os.getenv("FEISHU_APP_SECRET", "").strip()
-    chat_id = os.getenv("FEISHU_REPORT_CHAT_ID", "oc_59ad5fe5cf9bb6c7c85c80196ed6303e")
+    # Default target is the business group 品牌经营-舆情洞察Agent(Echo) (owner
+    # decision 2026-10-29); the dev group is used by explicit override only.
+    chat_id = os.getenv("FEISHU_REPORT_CHAT_ID", "oc_919ce85a13f3e19f6ca6c99dfdc01512")
     if not app_id or not app_secret:
         return {"step": "feishu_push", "status": "skipped_no_credentials"}
 

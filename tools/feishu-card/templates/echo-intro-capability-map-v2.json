@@ -1,0 +1,86 @@
+{
+  "$comment": "Echo 自我介绍 + 能力图谱 v2 — 加入工作台截图。结构：我是谁 → 能力图谱四层（每层带对应截图或页面链接）→ 工作台一览（三张截图并排/纵排）→ 预发布说明。image_key 由 builder 上传后注入，模板内为占位符。",
+  "config": {
+    "wide_screen_mode": true,
+    "enable_forward": true
+  },
+  "header": {
+    "title": {
+      "tag": "plain_text",
+      "content": "Echo ｜ Reddit 舆情洞察 Agent · 预发布"
+    },
+    "subtitle": {
+      "tag": "plain_text",
+      "content": "把 Reddit 上真实用户的声音，变成可核查的经营决策"
+    },
+    "template": "blue"
+  },
+  "elements": [
+    {
+      "tag": "markdown",
+      "content": "**我是 Echo** — 一个跑在 Reddit 全量语料上的舆情洞察 Agent。\n\n我不猜舆情、不抓热词糊弄：每一句结论都锚定在一条**可点击回原帖的证据**上。当前我维护着一座 **17,542 帖 / 58,587 评论**的语料库（覆盖 **601 个社区**、**63 个品牌**、**223 个产品标签**），每天 07:05 自动采集昨日新增，全部经过治理校验后才会对外发布。\n\n**我不生成内容、不代运营、不回复用户**——我只做一件事：让真实用户的声音以可核查、可追溯、可执行的方式抵达业务。"
+    },
+    { "tag": "hr" },
+    {
+      "tag": "markdown",
+      "content": "**能力图谱 ｜ 四层递进，每层解决一类问题**"
+    },
+    {
+      "tag": "markdown",
+      "content": "**一 ｜ 看 ｜ 采集与事实库**\n回答：*市场上正在发生什么？*\n\n  · **T-1 日更采集**：每天 07:05 自动抓取 Reddit 昨日新增帖与评论，进入治理流水线\n  · **统一事实库**：全部语料收口到单一事实表，带首次采集与状态变更审计\n  · **守恒校验**：发布前自动校验计数守恒与完整性，坏数据出不了门\n\n对应页面：[搜索](https://radar.luteos.com/dashboard/search) · [舆情信号](https://radar.luteos.com/dashboard/messages)"
+    },
+    {
+      "tag": "markdown",
+      "content": "**二 ｜ 测 ｜ 指标与报告**\n回答：*势头是好是坏？比昨天、比上周呢？*\n\n  · **26 项指标体系**：观察量、负向率、推荐表达率、竞品语境占比等，全部带同环比\n  · **日 / 周 / 月报**：完整周期自动成稿，数据所有者确认覆盖率 100%\n  · **品牌健康度**：四维指数独立投影，跨期可比\n\n对应页面：[概览](https://radar.luteos.com/dashboard) · [报告](https://radar.luteos.com/dashboard/reports) · [分析](https://radar.luteos.com/dashboard/analytics)\n\n工作台概览——核心经营指标与品牌健康度指数："
+    },
+    {
+      "tag": "img",
+      "img_key": "{{img_dashboard}}",
+      "alt": {
+        "tag": "plain_text",
+        "content": "工作台概览：核心经营指标与品牌健康度指数"
+      },
+      "compact_width": false
+    },
+    {
+      "tag": "markdown",
+      "content": "**三 ｜ 懂 ｜ 洞察与人群**\n回答：*谁在说？为什么说？机会在哪？*\n\n  · **风险洞察**：痛点 / 舆情合规 / 新品机会 / GEO 优化四大主题，78 条 storyline 每条可回证据\n  · **用户画像**：8 大人群分组，基于真实帖与评论的内容证据分组（不推断用户身份）\n  · **缺陷归因**：口语化抱怨归因到具体部件，附根因假设与建议动作\n  · **竞品交锋**：与 Elvie / Spectra / Medela 等的逐维度对比，附用户原话\n\n对应页面：[洞察](https://radar.luteos.com/dashboard/insights) · [Agent 工作室](https://radar.luteos.com/dashboard/agent-studio)\n\n洞察页——四主题 storyline，每条可下钻到原帖："
+    },
+    {
+      "tag": "img",
+      "img_key": "{{img_insights}}",
+      "alt": {
+        "tag": "plain_text",
+        "content": "洞察页：四主题 storyline 与用户画像"
+      },
+      "compact_width": false
+    },
+    {
+      "tag": "markdown",
+      "content": "**四 ｜ 用 ｜ 情报交付**\n回答：*我怎么每天不打开网站也能拿到？*\n\n  · **本群早报**：每个工作日 07:05 后自动推送——风险雷达 / 缺陷速报 / 竞品头条 / 爆款选题 Top 3\n  · **证据直链**：每条结论带编号引用，可一键回到 Reddit 原帖核查\n  · **边界诚实**：样本观测不冒充市场份额，覆盖不确认就明示\n\n报告页——日 / 周 / 月报与同环比："
+    },
+    {
+      "tag": "img",
+      "img_key": "{{img_reports}}",
+      "alt": {
+        "tag": "plain_text",
+        "content": "报告页：日报带同环比与证据下钻"
+      },
+      "compact_width": false
+    },
+    { "tag": "hr" },
+    {
+      "tag": "markdown",
+      "content": "**预发布说明**\n\n  · 早报卡已在本群试运行（v1–v4 四轮迭代），正式版随流水线每日推送\n  · 当前语料窗口：2013-04-28 至 2026-10-28（**数据所有者确认完整性 100%**）\n  · 欢迎在群里 @Echo 提问或提需求；能力扩展以业务价值排序\n\n**工作台入口**：[https://radar.luteos.com](https://radar.luteos.com/dashboard)\n\n**Sources**\n1. 语料规模：工作台 aggregates-public.json（实时）\n2. 覆盖确认：owner coverage attestation 2026-10-28（SHA 046693af…）\n3. 早报演进：v1→v4 见群内历史卡片"
+    },
+    {
+      "tag": "note",
+      "elements": [
+        {
+          "tag": "plain_text",
+          "content": "Echo · Reddit 舆情洞察 Agent ｜ Echo-Agent 平台 ｜ radar.luteos.com ｜ 本卡为产品预发布说明，能力均已在生产验证"
+        }
+      ]
+    }
+  ]
+}
