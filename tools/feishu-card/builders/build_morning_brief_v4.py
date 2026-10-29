@@ -34,8 +34,19 @@ VERDICT_CN = {
 }
 
 
-def _load(path: Path) -> dict[str, Any]:
-    return json.loads(path.read_text(encoding="utf-8"))
+def _load(path: Path, default: dict[str, Any] | None = None) -> dict[str, Any]:
+    """Read a JSON artifact, or fall back to `default` when it is absent.
+
+    The card must still render when an artifact is missing: a card that raises
+    leaves the group chat with yesterday's card and no signal at all, which is worse
+    than a red card that says what is missing.
+    """
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except (FileNotFoundError, NotADirectoryError):
+        if default is not None:
+            return default
+        raise
 
 
 def _pct(display: str) -> float:
@@ -64,8 +75,26 @@ def _indicator(daily: dict[str, Any], metric_id: str) -> tuple[str, str, str]:
     )
 
 
-def build_card(run_dir: Path, public_root: Path, run_id: str) -> dict[str, Any]:
-    receipt = _load(run_dir / f"{run_id}-pipeline-receipt.json")
+def build_card(
+    run_dir: Path,
+    public_root: Path,
+    run_id: str,
+    *,
+    receipt: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Render the morning brief card.
+
+    `receipt` may be passed in memory: step5 calls this builder from inside the run
+    that just produced the receipt, and re-reading it from disk raced the writer on
+    2026-10-29 (the card was assembled before the file landed). When it is omitted
+    the builder reads disk and degrades to an explicit `unavailable` receipt rather
+    than raising, so a missing artifact still produces an honest red card.
+    """
+    if receipt is None:
+        receipt = _load(
+            run_dir / f"{run_id}-pipeline-receipt.json",
+            default={"status": "unavailable", "steps": [], "errors": []},
+        )
     ideas = _load(run_dir / f"{run_id}-daily-content-ideas.json")
     rnd = _load(run_dir / f"{run_id}-daily-rnd-tickets.json")
     comp = _load(run_dir / f"{run_id}-daily-competitor-radar.json")
@@ -251,14 +280,48 @@ def build_card(run_dir: Path, public_root: Path, run_id: str) -> dict[str, Any]:
     )
 
     attested = bool(daily.get("data_owner_coverage_attestation_sha256"))
-    verified = receipt.get("status") in ("ok", "success", "partial_1_step_errors")
-    trust_line = (
-        f"版本完整性{'已验证' if verified else '部分通过'}"
-        + (" · 对比 owner-attested" if attested else "")
-    )
+
+    # The card is the only place a human learns whether today's publish is real.
+    # `partial_1_step_errors` used to count as verified, so on 2026-10-29 a run that
+    # died in recompute still told the group "版本完整性已验证". Only an exact
+    # `success` may claim verification; everything else states the failed steps.
+    receipt_status = str(receipt.get("status") or "unavailable")
+    verified = receipt_status == "success"
+
+    READY_STEP_STATUSES = {
+        "ok", "success", "empty_success", "partial", "skipped_already_covered",
+        "advanced", "sent", "skipped_by_kill_switch", "skipped_no_posts",
+    }
+
+    def _failed_steps() -> list[str]:
+        """Steps that did not reach a ready state, falling back to receipt.errors."""
+        names: list[str] = []
+        for step in receipt.get("steps") or []:
+            if not isinstance(step, dict):
+                continue
+            name = str(step.get("step") or "")
+            status = str(step.get("status") or "")
+            if name and status and status not in READY_STEP_STATUSES:
+                names.append(name)
+        if not names:
+            for err in receipt.get("errors") or []:
+                if isinstance(err, dict) and err.get("step"):
+                    names.append(str(err["step"]))
+        return names
+
+    failed_steps = _failed_steps()
+    if verified:
+        trust_line = "版本完整性已验证" + (" · 对比 owner-attested" if attested else "")
+    else:
+        detail = "、".join(failed_steps) if failed_steps else f"回执状态 {receipt_status}"
+        trust_line = f"版本完整性未验证 · 失败步骤：{detail}"
 
     header_template = "green"
-    if p0_entries or (neg[2] == "up" and _pct(neg[1]) >= 50):
+    if not verified:
+        # A failed pipeline outranks any business signal: the numbers below may be
+        # from a previous generation and must never look like a healthy report.
+        header_template = "red"
+    elif p0_entries or (neg[2] == "up" and _pct(neg[1]) >= 50):
         header_template = "red"
     elif neg[2] == "up":
         header_template = "orange"
