@@ -99,6 +99,40 @@ def build_card(
     rnd = _load(run_dir / f"{run_id}-daily-rnd-tickets.json")
     comp = _load(run_dir / f"{run_id}-daily-competitor-radar.json")
 
+    # How the agent prose was produced. Under `template_offline` every post gets the
+    # same component/symptom/root_cause, so "N 帖同症" is an artefact of the template
+    # collapsing onto one key -- not N independent reports.
+    #
+    # The receipt field is the primary signal, but it is not always available: a
+    # receipt written before this field existed (or by an older pipeline) has no
+    # `analysis_mode`. So also infer template mode from the data itself -- if every
+    # defect shares one component and one root cause, the analysis cannot be
+    # per-post reasoning. Inference is preferred here because it is self-evidencing.
+    analysis_mode = "llm"
+    for step in receipt.get("steps") or []:
+        if isinstance(step, dict) and step.get("step") == "agents":
+            candidate = step.get("analysis_mode")
+            if isinstance(candidate, str) and candidate:
+                analysis_mode = candidate
+            break
+
+    _rnd_defects = [
+        d
+        for result in (rnd.get("results") or [])
+        for d in (result.get("defects") or [])
+    ]
+    if len(_rnd_defects) > 1:
+        _keys = {
+            (
+                str(d.get("component") or ""),
+                str(d.get("symptom") or ""),
+                str(d.get("root_cause_hypothesis") or ""),
+            )
+            for d in _rnd_defects
+        }
+        if len(_keys) == 1:
+            analysis_mode = "template_offline"
+
     release = _load(public_root / "data/reddit-voc/current-release.json")
     reports_manifest = public_root / release["datasets"]["reports"]["manifest_path"]
     daily = _load(reports_manifest.parent / "current" / "daily.json")
@@ -184,18 +218,28 @@ def build_card(
         first = content_meta[(component, symptom, cause)]
         marker, _ = source_link(first["_result"].get("source_post_id"))
         zh_summary = str(first["_result"].get("engineering_summary") or "")[:60]
-        rnd_narrative = (
-            f"昨日新增 {total_defects} 条缺陷记录，聚焦度最高的是**「{component}」**——"
-            f"**{len(ids)} 帖独立报告同一症状**{marker}，佐证强度高。"
-            + (f"\n工程摘要｜{zh_summary}…" if zh_summary else "")
-        )
-        rnd_facts_lines.append(f"· 症状｜{symptom[:52]}…（{len(ids)} 帖同症）")
+        if analysis_mode == "template_offline":
+            # Every post collapsed onto the same template key, so the count here is
+            # the number of posts the template ran on -- not corroboration. Report
+            # the observation without claiming frequency.
+            rnd_narrative = (
+                f"昨日 {total_defects} 条缺陷记录均按同一模板归纳为**「{component}」**{marker}；"
+                f"模板模式未区分具体症状，**不构成同症频次证据**。"
+                + (f"\n工程摘要｜{zh_summary}…" if zh_summary else "")
+            )
+        else:
+            rnd_narrative = (
+                f"昨日新增 {total_defects} 条缺陷记录，聚焦度最高的是**「{component}」**——"
+                f"**{len(ids)} 帖独立报告同一症状**{marker}，佐证强度高。"
+                + (f"\n工程摘要｜{zh_summary}…" if zh_summary else "")
+            )
+        rnd_facts_lines.append(f"· 症状｜{symptom[:52]}…（{len(ids)} 条记录）")
         rnd_facts_lines.append(f"· 根因假设｜{cause[:60]}")
         if ranked[1:]:
             (c2, s2, _), ids2 = ranked[1]
             second = content_meta[(c2, s2, _)]
             marker2, _ = source_link(second["_result"].get("source_post_id"))
-            rnd_facts_lines.append(f"· 次要｜{c2[:32]}…（{len(ids2)} 帖）{marker2}")
+            rnd_facts_lines.append(f"· 次要｜{c2[:32]}…（{len(ids2)} 条）{marker2}")
     else:
         rnd_narrative = "昨日无新增缺陷记录。"
     rnd_facts = "\n".join(rnd_facts_lines) or "—"
@@ -262,10 +306,13 @@ def build_card(
     )
     ideas_facts_lines: list[str] = []
     for rank, e in enumerate(idea_entries, 1):
+        # "原文" is a claim that a human wrote this. Under template mode the hook is
+        # generated prose, so the label changes to match.
+        hook_label = "模板话术" if analysis_mode == "template_offline" else "原文"
         ideas_facts_lines.append(
             f"**Top {rank} ｜ {e['platform']} × {e['audience']}**{e['marker']}\n"
             f"  · 痛点｜{e['pain']}\n"
-            f"  · Hook（原文）｜\"{e['hook'][:58]}…\"\n"
+            f"  · Hook（{hook_label}）｜\"{e['hook'][:58]}…\"\n"
             f"  · 故事冲突｜{e['conflict']}…"
         )
     ideas_facts = "\n\n".join(ideas_facts_lines) or "—"
@@ -316,6 +363,14 @@ def build_card(
         detail = "、".join(failed_steps) if failed_steps else f"回执状态 {receipt_status}"
         trust_line = f"版本完整性未验证 · 失败步骤：{detail}"
 
+    # Section 02/03 stay as observations, not conclusions, when the analysis is a
+    # template. `analysis_mode` was already resolved near the top of build_card
+    # (receipt field first, then inferred from the data itself), so it is reused
+    # here rather than re-read -- a second read without the inference fallback would
+    # silently downgrade this line on receipts written before the field existed.
+    if analysis_mode == "template_offline":
+        trust_line += " · 分析为模板模式（未接入模型），仅原话可核"
+
     header_template = "green"
     if not verified:
         # A failed pipeline outranks any business signal: the numbers below may be
@@ -338,7 +393,15 @@ def build_card(
     exec_summary_parts = [narrative_headline]
     if ranked:
         (component, _, _), ids = ranked[0]
-        exec_summary_parts.append(f"产品侧聚焦**「{component}」**（{len(ids)} 帖同症）")
+        if analysis_mode == "template_offline":
+            # Must agree with section 02: under template mode the count is the number
+            # of posts analysed, not corroboration. Saying "N 帖同症" here while 02
+            # says the opposite is worse than either statement alone.
+            exec_summary_parts.append(
+                f"产品侧聚焦**「{component}」**（模板归纳，{len(ids)} 条记录）"
+            )
+        else:
+            exec_summary_parts.append(f"产品侧聚焦**「{component}」**（{len(ids)} 帖同症）")
     if idea_entries:
         exec_summary_parts.append(
             f"内容侧 Top 选题：**{idea_entries[0]['pain'] or idea_entries[0]['hook'][:20]}**"

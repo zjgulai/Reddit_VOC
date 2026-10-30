@@ -94,6 +94,30 @@ class CompetitorRadarAgent:
                 source_text,
                 (competitor.lower(), "momcozy", "pump", "compared", "instead of"),
             )
+
+            # A comparison needs BOTH sides and a citable sentence that names the
+            # competitor. Without an LLM this branch can only observe; it cannot
+            # reason. So it emits a comparison only when the post actually contains
+            # one, and returns nothing otherwise.
+            #
+            # Before this guard the fallback produced a comparison for every post
+            # that merely mentioned a brand: a r/MixCache novel titled "The Water
+            # Witch of Willow Creek" became a Momcozy-vs-Willow benchmark whose
+            # evidence was the book title.
+            has_subject = "momcozy" in text_lower
+            quote_names_competitor = bool(
+                quote and competitor.lower() in quote.lower()
+            )
+            if not (has_subject and quote_names_competitor):
+                return CompetitorRadarResult(
+                    source_post_id=post_id,
+                    subreddit=subreddit,
+                    source_title=title,
+                    comparisons=[],
+                    market_takeaway="",
+                    positioning_advice=[],
+                )
+
             comparisons = [
                 CompetitorComparison(
                     comparison_id=f"comp_{post_id}_1",

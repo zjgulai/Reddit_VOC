@@ -58,8 +58,9 @@ got_sha = hashlib.sha256(data).hexdigest()
 if len(data) != want_len or got_sha != want_sha:
     sys.exit(f"payload mismatch: want {want_len}/{want_sha[:12]} got {len(data)}/{got_sha[:12]}")
 
-if b'\x00' in data:
-    sys.exit(f"payload contains {data.count(b'\x00')} null bytes")
+null_count = data.count(b"\x00")
+if null_count:
+    sys.exit("payload contains %d null bytes" % null_count)
 
 data.decode('utf-8')  # must be valid text before we install it
 

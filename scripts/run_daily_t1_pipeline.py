@@ -106,54 +106,87 @@ def _verify_agent_evidence(batch, posts) -> dict:
     regression (quotes silently disappearing, or fabricated ones reappearing)
     is visible without reading the artifacts by hand.
     """
+    from dataclasses import is_dataclass, replace
+
     from reddit_voc.agents.evidence import verify_quote
+
+    def _null_quote(item, field: str):
+        """Return `item` with `field` cleared, tolerating frozen and plain objects."""
+        if is_dataclass(item):
+            return replace(item, **{field: None})
+        try:
+            setattr(item, field, None)
+            return item
+        except (AttributeError, TypeError):
+            return item
 
     source_by_id: dict[str, str] = {}
     for post in posts:
-        pid = str(getattr(post, "post_id", "") or "")
-        if not pid:
-            continue
-        source_by_id[pid] = f"{getattr(post, 'title', '') or ''}\n{getattr(post, 'selftext', '') or ''}"
+        if isinstance(post, dict):
+            pid = str(post.get("post_id") or "")
+            title = post.get("title") or ""
+            body = post.get("selftext") or ""
+        else:
+            pid = str(getattr(post, "post_id", "") or "")
+            title = getattr(post, "title", "") or ""
+            body = getattr(post, "selftext", "") or ""
+        if pid:
+            source_by_id[pid] = f"{title}\n{body}"
 
     checked = 0
     dropped = 0
     absent_examples: list[dict] = []
 
-    for result in getattr(batch, "competitor_radar_results", []) or []:
-        source = source_by_id.get(str(result.source_post_id), "")
-        for comparison in result.comparisons:
-            quote = getattr(comparison, "user_verbatim_quote", None)
-            if not quote:
-                continue
-            checked += 1
-            verdict = verify_quote(quote, source)
-            if verdict["status"] != "verified":
-                dropped += 1
-                if len(absent_examples) < 5:
-                    absent_examples.append({
-                        "post_id": result.source_post_id,
-                        "status": verdict["status"],
-                        "quote": quote[:80],
-                    })
-                comparison.user_verbatim_quote = None
+    def _scrub(records, quote_field: str):
+        """Null out unverifiable quotes, rebuilding the frozen dataclass in place."""
+        nonlocal checked, dropped
+        scrubbed = []
+        for record in records:
+            source = source_by_id.get(str(record.source_post_id), "")
+            changed = False
+            replacements = []
+            for item in (record.comparisons if quote_field == "user_verbatim_quote" else record.defects):
+                quote = getattr(item, quote_field, None)
+                if not quote:
+                    replacements.append(item)
+                    continue
+                checked += 1
+                verdict = verify_quote(quote, source)
+                if verdict["status"] != "verified":
+                    dropped += 1
+                    if len(absent_examples) < 5:
+                        absent_examples.append({
+                            "post_id": record.source_post_id,
+                            "status": verdict["status"],
+                            "quote": quote[:80],
+                        })
+                    # The contracts are frozen: rebuild rather than mutate.
+                    replacements.append(_null_quote(item, quote_field))
+                    changed = True
+                else:
+                    replacements.append(item)
+            field = "comparisons" if quote_field == "user_verbatim_quote" else "defects"
+            if changed:
+                if is_dataclass(record):
+                    scrubbed.append(replace(record, **{field: replacements}))
+                else:
+                    try:
+                        setattr(record, field, replacements)
+                    except (AttributeError, TypeError):
+                        pass
+                    scrubbed.append(record)
+            else:
+                scrubbed.append(record)
+        return scrubbed
 
-    for result in getattr(batch, "rnd_voc_results", []) or []:
-        source = source_by_id.get(str(result.source_post_id), "")
-        for defect in result.defects:
-            quote = getattr(defect, "user_quote", None)
-            if not quote:
-                continue
-            checked += 1
-            verdict = verify_quote(quote, source)
-            if verdict["status"] != "verified":
-                dropped += 1
-                if len(absent_examples) < 5:
-                    absent_examples.append({
-                        "post_id": result.source_post_id,
-                        "status": verdict["status"],
-                        "quote": quote[:80],
-                    })
-                defect.user_quote = None
+    # BatchAgentOutput is frozen too, so the scrubbed records are returned for the
+    # caller to rebuild the batch rather than mutated in place.
+    scrubbed_radar = list(getattr(batch, "competitor_radar_results", None) or [])
+    scrubbed_rnd = list(getattr(batch, "rnd_voc_results", None) or [])
+    if scrubbed_radar:
+        scrubbed_radar = _scrub(scrubbed_radar, "user_verbatim_quote")
+    if scrubbed_rnd:
+        scrubbed_rnd = _scrub(scrubbed_rnd, "user_quote")
 
     if dropped:
         logging.warning(
@@ -164,6 +197,8 @@ def _verify_agent_evidence(batch, posts) -> dict:
         "dropped": dropped,
         "kept": checked - dropped,
         "examples": absent_examples,
+        "competitor_radar_results": scrubbed_radar,
+        "rnd_voc_results": scrubbed_rnd,
     }
 
 
@@ -184,11 +219,23 @@ def step2_agents(store_path: Path, run_id: str, out_dir: Path) -> dict:
     # domain/transaction gate are eligible for product analysis at all.
     from reddit_voc.brand_binding import assess_brand_binding
 
+    def _field(post, name: str) -> str:
+        """fetch_threads_for_run returns dicts; older call sites pass objects.
+
+        Using getattr alone silently returned "" for every dict row, which made
+        every post look brand-less and excluded the whole run.
+        """
+        if isinstance(post, dict):
+            value = post.get(name)
+        else:
+            value = getattr(post, name, None)
+        return value if isinstance(value, str) else ""
+
     def _eligible(post) -> bool:
         assessment = assess_brand_binding(
-            getattr(post, "title", "") or "",
-            getattr(post, "selftext", "") or "",
-            getattr(post, "subreddit", "") or "",
+            _field(post, "title"),
+            _field(post, "selftext"),
+            _field(post, "subreddit"),
         )
         return assessment.is_bound()
 
@@ -212,6 +259,12 @@ def step2_agents(store_path: Path, run_id: str, out_dir: Path) -> dict:
     # brand (0 of 27 comparisons verified). A quote that cannot be found is dropped
     # here rather than rendered as if it were real.
     evidence_receipt = _verify_agent_evidence(batch, posts)
+
+    # The offline agent path is deterministic: it reproduces one template analysis
+    # per post, with a fixed takeaway and fixed advantages. The quotes are now real,
+    # but the *analysis* is not generated. The card must say so, or a reader will
+    # treat a template as a finding.
+    analysis_mode = "template_offline" if runner.client is None else "llm"
 
     files = runner.persist_artifacts(batch, out_dir)
 
@@ -249,6 +302,7 @@ def step2_agents(store_path: Path, run_id: str, out_dir: Path) -> dict:
         "artifacts": {k: str(v) for k, v in files.items()},
         "published": published,
         "evidence_gate": evidence_receipt,
+        "analysis_mode": analysis_mode,
     }
 
 

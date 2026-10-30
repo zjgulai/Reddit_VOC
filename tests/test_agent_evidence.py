@@ -123,13 +123,13 @@ def test_competitor_fallback_never_invents_a_quote() -> None:
         title="New Listing, Home For Sale - 1519 Peregrino Way",
         content=HOUSE_LISTING,
     )
-    assert result.comparisons, "an analysis should still be produced"
-    quote = result.comparisons[0].user_verbatim_quote
-    if quote:
-        assert quote_in_source(quote, HOUSE_LISTING), (
-            f"fallback produced a quote absent from the source: {quote!r}"
-        )
-    assert "empties me faster for a fraction of the cost" not in (quote or "")
+    # A house listing contains no Momcozy-vs-competitor comparison, so the honest
+    # answer is no comparison at all -- not a comparison padded with a quote
+    # scraped from the listing text.
+    assert result.comparisons == [], (
+        f"a non-comparative post must not yield a comparison: {result.comparisons}"
+    )
+    assert "empties me faster for a fraction of the cost" not in str(result.to_dict())
 
 
 def test_competitor_fallback_quotes_a_real_comparative_post() -> None:
@@ -213,8 +213,13 @@ def test_pipeline_gate_drops_unverifiable_quotes_and_records_why() -> None:
     assert receipt["kept"] == 1
     assert receipt["examples"][0]["status"] == "absent"
 
+    # The batch dataclass is frozen, so the scrubber returns rebuilt records.
     # The citable quote survives; the invented one is nulled rather than replaced.
-    kept = [c.user_verbatim_quote for r in batch.competitor_radar_results for c in r.comparisons]
+    kept = [
+        c.user_verbatim_quote
+        for r in receipt["competitor_radar_results"]
+        for c in r.comparisons
+    ]
     assert good in kept
     assert bad not in kept
     assert None in kept

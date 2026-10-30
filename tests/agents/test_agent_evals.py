@@ -103,7 +103,13 @@ class GoldenDatasetAgentEvaluationTests(unittest.TestCase):
         self.assertEqual(len(scores), len(GOLDEN_DATASET))
 
     def test_competitor_radar_evaluation_on_golden_dataset(self) -> None:
-        """Evaluate CompetitorRadarAgent against golden competitive comparison cases."""
+        """Evaluate CompetitorRadarAgent against golden competitive comparison cases.
+
+        Only cases that actually describe a head-to-head comparison may produce a
+        comparison. The offline fallback used to emit one for every post regardless
+        of content, which is how a house listing and a novel title became
+        "competitor benchmarks" on the 2026-10-30 morning card.
+        """
         for case in GOLDEN_DATASET:
             res = self.radar_agent.analyze(
                 post_id=case["case_id"],
@@ -112,6 +118,16 @@ class GoldenDatasetAgentEvaluationTests(unittest.TestCase):
                 content=case["content"],
             )
             self.assertIsInstance(res, CompetitorRadarResult)
+
+            expects_comparison = case["case_id"] == "golden_competitor_02"
+            if not expects_comparison:
+                # Non-comparative posts must stay silent rather than invent one.
+                self.assertEqual(
+                    res.comparisons, [],
+                    f"{case['case_id']} is not a comparison post but produced one",
+                )
+                continue
+
             self.assertGreaterEqual(len(res.comparisons), 1)
 
             first_comp = res.comparisons[0]
@@ -124,6 +140,15 @@ class GoldenDatasetAgentEvaluationTests(unittest.TestCase):
             )
             self.assertTrue(res.market_takeaway)
             self.assertGreaterEqual(len(res.positioning_advice), 1)
+
+            # The quote must come from the post, not from a template.
+            source = f"{case['title']}\n{case['content']}"
+            if first_comp.user_verbatim_quote:
+                self.assertIn(
+                    first_comp.user_verbatim_quote.strip().lower()[:40],
+                    source.lower().replace("\n", " "),
+                    "quote must be citable from the post it is attributed to",
+                )
 
             if case["case_id"] == "golden_competitor_02":
                 self.assertEqual(first_comp.competitor_brand, case["expected_competitor"])
