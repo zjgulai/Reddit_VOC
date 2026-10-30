@@ -8,6 +8,7 @@ from typing import Any, Mapping
 from ..deepseek_client import DeepSeekClient
 from ..report_contracts import AttemptBudget
 from .contracts import RndDefectFinding, RndVocResult
+from .evidence import MIN_QUOTE_CHARS, best_evidence_sentence
 
 logger = logging.getLogger(__name__)
 
@@ -61,8 +62,17 @@ class RndVocAgent:
         )
 
         if self.client is None:
-            # Deterministic domain-aware fallback when offline / no LLM client is configured
+            # Deterministic domain-aware fallback when offline / no LLM client is
+            # configured.
+            #
+            # The quotes here used to be hardcoded English sentences that no user
+            # ever wrote: the 2026-10-30 morning card cited them as 原话 and they
+            # appeared 0 times in the cited posts. A fallback may be less insightful
+            # than a model, but it may not invent evidence -- so every quote below is
+            # now copied out of the post itself, and is None when the post contains
+            # nothing quotable (the card renders that as unavailable).
             text_lower = (title + " " + content).lower()
+            source_text = f"{title}\n{content}"
             if "leak" in text_lower or "spill" in text_lower:
                 defects = [
                     RndDefectFinding(
@@ -74,8 +84,10 @@ class RndVocAgent:
                         root_cause_hypothesis="Under forward tilt, hydrostatic pressure exceeds the friction seal retention limit; lack of positive interlocking latch on cup lid.",
                         suggested_action="Redesign silicone flange with dual-lip sealing profile and add mechanical tactile snap latch to reinforce top cover under dynamic movement.",
                         frequency_signal="common_complaint",
-                        user_quote="Every time I lean forward to pick up my baby or type on my laptop, milk leaks right out of the top silicone seal.",
-                        user_workaround="Sitting upright and avoiding any torso bending during pumping.",
+                        user_quote=best_evidence_sentence(
+                            source_text, ("leak", "spill", "leaking", "drip")
+                        ),
+                        user_workaround=None,
                     )
                 ]
                 summary = "典型的穿戴式吸奶器动态倾斜密封失效。需重点通过双唇密封结合卡扣锁止方案消除倾斜漏奶。"
@@ -91,8 +103,10 @@ class RndVocAgent:
                         root_cause_hypothesis="Insufficient acoustic isolation damping between motor housing and outer chassis, causing resonance amplification against bra fabric.",
                         suggested_action="Incorporate silicone vibration dampening grommets on motor mounting posts and add acoustic baffling foam inside outer casing.",
                         frequency_signal="recurring",
-                        user_quote="Motor makes loud noises that can be heard across the room.",
-                        user_workaround="Covering pump with a thick sweater or blanket to muffle sound.",
+                        user_quote=best_evidence_sentence(
+                            source_text, ("noise", "loud", "squeak", "squeal", "noisy")
+                        ),
+                        user_workaround=None,
                     )
                 ]
                 summary = "电机共振与高频机械噪声问题。需优化电机减震阻尼并降低声学泄露。"
@@ -108,7 +122,15 @@ class RndVocAgent:
                         root_cause_hypothesis="Silicone fatigue after repeated steam sterilization cycles, leading to micro-clearance air gaps.",
                         suggested_action="Specify higher tear-strength medical silicone and add clear visual alignment markers on mating parts.",
                         frequency_signal="isolated",
-                        user_quote=content[:120] if content else title,
+                        # A truncated slice can cut a sentence in half; prefer a whole
+                        # sentence, else the opening clause. Must clear the same length
+                        # floor the verifier applies, or it is not citable evidence --
+                        # returning None is the honest answer.
+                        user_quote=(
+                            best_evidence_sentence(source_text, ("pump", "clean", "wash", "valve", "flange"))
+                            or ((content.strip()[:240] or None)
+                                if len(content.strip()) >= MIN_QUOTE_CHARS else None)
+                        ),
                         user_workaround=None,
                     )
                 ]

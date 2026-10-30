@@ -8,6 +8,7 @@ from typing import Any, Mapping
 from ..deepseek_client import DeepSeekClient
 from ..report_contracts import AttemptBudget
 from .contracts import CompetitorComparison, CompetitorRadarResult
+from .evidence import best_evidence_sentence
 
 logger = logging.getLogger(__name__)
 
@@ -61,8 +62,22 @@ class CompetitorRadarAgent:
         )
 
         if self.client is None:
-            # Deterministic domain-aware fallback when offline / no LLM client is configured
+            # Deterministic domain-aware fallback when offline / no LLM client is
+            # configured.
+            #
+            # This branch used to stamp one hardcoded sentence onto every comparison
+            # as `user_verbatim_quote`:
+            #   "Momcozy empties me faster for a fraction of the cost, ..."
+            # On 2026-10-30 that sentence reached a business group chat as a
+            # consumer's 原话, cited against a r/BayAreaBuyers house listing. Checked
+            # against all 27 cited posts, it appeared 0 times. A fallback may say
+            # less; it may not quote someone who never spoke.
+            #
+            # The quote below is copied out of the post, and is None when the post
+            # contains no comparative statement -- the card renders that as
+            # unavailable rather than substituting a template.
             text_lower = (title + " " + content).lower()
+            source_text = f"{title}\n{content}"
             competitor = "Elvie"
             competitor_model = "Elvie Stride"
             if "willow" in text_lower:
@@ -75,6 +90,10 @@ class CompetitorRadarAgent:
                 competitor = "Medela"
                 competitor_model = "Medela Freestyle Hands-free"
 
+            quote = best_evidence_sentence(
+                source_text,
+                (competitor.lower(), "momcozy", "pump", "compared", "instead of"),
+            )
             comparisons = [
                 CompetitorComparison(
                     comparison_id=f"comp_{post_id}_1",
@@ -85,7 +104,7 @@ class CompetitorRadarAgent:
                     our_advantage="Significant price advantage (approx. 1/3 of competitor price) with stronger, hospital-grade suction output.",
                     our_disadvantage="Competitor provides slightly sleeker profile under tight clothing and lower motor operating noise.",
                     sentiment_verdict="prefer_momcozy" if "momcozy" in text_lower else "mixed_tradeoff",
-                    user_verbatim_quote="Momcozy empties me faster for a fraction of the cost, even if competitor is a bit quieter.",
+                    user_verbatim_quote=quote,
                 )
             ]
             market_takeaway = f"用户在 {competitor} 与 Momcozy 之间的典型权衡：追求极致隐形与静音倾向高端竞品，但高频背奶排空效率与极高性价比驱动大量用户转向 Momcozy。"

@@ -99,6 +99,74 @@ def step1_collect(store_path: Path, run_id: str) -> dict:
     }
 
 
+def _verify_agent_evidence(batch, posts) -> dict:
+    """Drop any agent quote that does not appear in the post it cites.
+
+    Returns a receipt so the run records how much evidence survived, and so a
+    regression (quotes silently disappearing, or fabricated ones reappearing)
+    is visible without reading the artifacts by hand.
+    """
+    from reddit_voc.agents.evidence import verify_quote
+
+    source_by_id: dict[str, str] = {}
+    for post in posts:
+        pid = str(getattr(post, "post_id", "") or "")
+        if not pid:
+            continue
+        source_by_id[pid] = f"{getattr(post, 'title', '') or ''}\n{getattr(post, 'selftext', '') or ''}"
+
+    checked = 0
+    dropped = 0
+    absent_examples: list[dict] = []
+
+    for result in getattr(batch, "competitor_radar_results", []) or []:
+        source = source_by_id.get(str(result.source_post_id), "")
+        for comparison in result.comparisons:
+            quote = getattr(comparison, "user_verbatim_quote", None)
+            if not quote:
+                continue
+            checked += 1
+            verdict = verify_quote(quote, source)
+            if verdict["status"] != "verified":
+                dropped += 1
+                if len(absent_examples) < 5:
+                    absent_examples.append({
+                        "post_id": result.source_post_id,
+                        "status": verdict["status"],
+                        "quote": quote[:80],
+                    })
+                comparison.user_verbatim_quote = None
+
+    for result in getattr(batch, "rnd_voc_results", []) or []:
+        source = source_by_id.get(str(result.source_post_id), "")
+        for defect in result.defects:
+            quote = getattr(defect, "user_quote", None)
+            if not quote:
+                continue
+            checked += 1
+            verdict = verify_quote(quote, source)
+            if verdict["status"] != "verified":
+                dropped += 1
+                if len(absent_examples) < 5:
+                    absent_examples.append({
+                        "post_id": result.source_post_id,
+                        "status": verdict["status"],
+                        "quote": quote[:80],
+                    })
+                defect.user_quote = None
+
+    if dropped:
+        logging.warning(
+            "agent_evidence_gate: dropped %s of %s unverifiable quotes", dropped, checked
+        )
+    return {
+        "checked": checked,
+        "dropped": dropped,
+        "kept": checked - dropped,
+        "examples": absent_examples,
+    }
+
+
 def step2_agents(store_path: Path, run_id: str, out_dir: Path) -> dict:
     """Step 2: Agent batch runner over the just-collected run."""
     from reddit_voc.storage import VocStore
@@ -109,8 +177,42 @@ def step2_agents(store_path: Path, run_id: str, out_dir: Path) -> dict:
     if not posts:
         return {"step": "agents", "status": "skipped_no_posts", "run_id": run_id}
 
+    # Admission filter, separate from the evidence gate below. A verifiable quote is
+    # not enough: a r/BayAreaBuyers house listing that says "Willow Glen" produced a
+    # perfectly citable sentence about a neighbourhood, and the R&D agent turned it
+    # into a product-defect finding. Only posts whose brand binding survived the
+    # domain/transaction gate are eligible for product analysis at all.
+    from reddit_voc.brand_binding import assess_brand_binding
+
+    def _eligible(post) -> bool:
+        assessment = assess_brand_binding(
+            getattr(post, "title", "") or "",
+            getattr(post, "selftext", "") or "",
+            getattr(post, "subreddit", "") or "",
+        )
+        return assessment.is_bound()
+
+    admissible = [p for p in posts if _eligible(p)]
+    excluded = len(posts) - len(admissible)
+    if not admissible:
+        return {
+            "step": "agents",
+            "status": "skipped_no_admissible_posts",
+            "run_id": run_id,
+            "evaluated": len(posts),
+            "excluded_not_product_context": excluded,
+        }
+
     runner = AgentBatchRunner(client=None, config_path=ROOT / "config/agent_settings.json")
-    batch = runner.run_batch(posts, run_id=run_id)
+    batch = runner.run_batch(admissible, run_id=run_id)
+
+    # Evidence gate: every quote the agents emit must appear in the post it cites.
+    # On 2026-10-30 a hardcoded fallback sentence was served to a business group as
+    # a consumer's 原话, cited against a house listing that never mentioned the
+    # brand (0 of 27 comparisons verified). A quote that cannot be found is dropped
+    # here rather than rendered as if it were real.
+    evidence_receipt = _verify_agent_evidence(batch, posts)
+
     files = runner.persist_artifacts(batch, out_dir)
 
     # Publish into the canonical web root so the Agent Studio page can fetch them.
@@ -146,6 +248,7 @@ def step2_agents(store_path: Path, run_id: str, out_dir: Path) -> dict:
         "competitor_comparisons": len(batch.competitor_radar_results),
         "artifacts": {k: str(v) for k, v in files.items()},
         "published": published,
+        "evidence_gate": evidence_receipt,
     }
 
 
@@ -191,6 +294,12 @@ def step3_merge_snapshot(run_id: str, store_path: Path, public_root: Path) -> di
     known_ids = {str(p.get("post_id") or p.get("reddit_id") or "") for p in existing_posts}
     added = 0
     sys.path.insert(0, str(ROOT / "src"))
+    # Brand binding is decided by registry matching + a product-domain /
+    # transaction gate, not a hand-written substring test. The old
+    # `"willow" in text_l` turned a r/BayAreaBuyers house listing ("Willow Glen")
+    # into a competitor comparison, and a r/dubaiclassifieds "for sale" ad into a
+    # Momcozy post.
+    from reddit_voc.brand_binding import assess_brand_binding
     from reddit_voc.analyzer import analyze_text
     import re as _re
     for t in new_threads:
@@ -199,15 +308,14 @@ def step3_merge_snapshot(run_id: str, store_path: Path, public_root: Path) -> di
             continue
         title = t.get("title") or ""
         content = t.get("selftext") or ""
-        text_l = (title + " " + content).lower()
-        mentioned = sorted({b for b in ("Momcozy", "Elvie", "Willow", "Spectra", "Medela", "Lansinoh") if b.lower() in text_l})
-        if "momcozy" in text_l:
-            brand_binding = "momcozy_sentence_bound"
-        elif mentioned:
-            brand_binding = "competitor_sentence_bound"
-        else:
-            brand_binding = "brand_unbound"
-        analysis = analyze_text(title + " " + content)
+        full_text = title + " " + content
+        # Brand binding: registry match + product-domain / transaction gate. The gate
+        # is what stops "Willow Glen" (a neighbourhood) and "[WTS] ... for sale" ads
+        # from becoming VOC evidence.
+        assessment = assess_brand_binding(title, content, t.get("subreddit") or "")
+        brand_binding = assessment.binding
+        mentioned = list(assessment.mentions)
+        analysis = analyze_text(full_text)
         existing_posts.append({
             "post_id": pid,
             "reddit_id": f"t3_{pid}",
