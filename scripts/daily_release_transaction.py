@@ -202,6 +202,22 @@ class ReleaseGeneration:
 
     # -------------------------------------------------------------------- safety
 
+    def _relative_link_target(self) -> str:
+        """The link target, relative to the link's own directory.
+
+        An ABSOLUTE symlink breaks every consumer whose view of this tree is a
+        bind mount at a different path. The site root is served by the nginx
+        container as `/var/www/voc-report`, which does not contain
+        `/opt/voc-report/html`, so an absolute target dangles inside the
+        container and every `/data/` request 404s.
+
+        That is exactly what happened on 2026-10-31: the first adopted generation
+        was linked by absolute path and radar.luteos.com lost its data endpoints.
+        A relative target resolves identically on the host and in any mount of
+        the same tree, because it is computed against the link's parent.
+        """
+        return os.path.relpath(self.root, self.live_root.parent)
+
     def _assert_private(self) -> None:
         """The generation must be an independent tree, not a view of the live one.
 
@@ -269,7 +285,7 @@ class ReleaseGeneration:
         tmp_link = self.live_root.with_name(f".{LIVE_DIRNAME}.linking-{os.getpid()}")
         if tmp_link.exists() or tmp_link.is_symlink():
             tmp_link.unlink()
-        os.symlink(self.root, tmp_link)
+        os.symlink(self._relative_link_target(), tmp_link)
         os.replace(tmp_link, self.live_root)
         _fsync_dir(self.live_root.parent)
 
@@ -352,8 +368,12 @@ def _live_target(public_root: Path) -> Path | None:
     if not live_root.is_symlink():
         return None
     try:
-        return Path(os.readlink(live_root)).resolve()
-    except OSError:
+        # Resolve THROUGH the link. `Path(os.readlink(...)).resolve()` would
+        # resolve a relative target against the process CWD instead of the
+        # link's own directory, so restore() and gc() would read a path that
+        # does not exist and quietly treat the live generation as unknown.
+        return live_root.resolve(strict=True)
+    except (OSError, RuntimeError):
         return None
 
 
@@ -408,7 +428,9 @@ def restore(public_root: Path, generation_id: str | None = None) -> str:
     tmp_link = live_root.with_name(f".{LIVE_DIRNAME}.restoring-{os.getpid()}")
     if tmp_link.exists() or tmp_link.is_symlink():
         tmp_link.unlink()
-    os.symlink(target.resolve(), tmp_link)
+    # Relative for the same reason as commit(): an absolute target dangles in
+    # the nginx container, whose mount point differs from the host path.
+    os.symlink(os.path.relpath(target.resolve(), live_root.parent), tmp_link)
     os.replace(tmp_link, live_root)
     _fsync_dir(live_root.parent)
     return str(target.resolve())

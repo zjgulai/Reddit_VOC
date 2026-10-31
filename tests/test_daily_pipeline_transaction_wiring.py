@@ -308,7 +308,7 @@ def test_pointer_written_exactly_once_per_run(site, monkeypatch) -> None:
     assert len(replaced) == 1, f"live pointer replaced {len(replaced)} times"
 
     # The link now points at the committed generation, not the seed.
-    assert Path(os.readlink(site["link"])).resolve() == Path(
+    assert site["link"].resolve() == Path(
         receipt["release_transaction"]["root"]
     ).resolve()
 

@@ -90,6 +90,41 @@ def _release_for(site: dict, *, base_version: str | None = None) -> dict:
     }
 
 
+def test_commit_writes_a_relative_link(monkeypatch, tmp_path: Path) -> None:
+    """An absolute link dangles wherever the tree is bind-mounted elsewhere.
+
+    Production serves this tree through the nginx container as
+    /var/www/voc-report, which has no /opt/voc-report/html. On 2026-10-31 an
+    absolute link made every /data/ request 404 on radar.luteos.com while the
+    file was perfectly readable on the host.
+    """
+    site = make_live_site(tmp_path)
+    generation = tx.begin_generation(site["public_root"], run_id="gen-rel")
+    generation.commit(_release_for(site))
+
+    raw = os.readlink(site["link"])
+    assert not os.path.isabs(raw), f"link target must be relative, got {raw}"
+    assert raw == os.path.join("reddit-voc-generations", "gen-rel", "reddit-voc")
+
+    # And it still resolves correctly from the link's own directory.
+    assert site["link"].resolve() == generation.root.resolve()
+
+
+def test_relative_link_works_through_a_bind_mount(tmp_path: Path) -> None:
+    """Simulate the container: same tree seen at a different absolute path."""
+    site = make_live_site(tmp_path)
+    generation = tx.begin_generation(site["public_root"], run_id="gen-mount")
+    generation.commit(_release_for(site))
+
+    # A second path to the same directory, standing in for the container mount.
+    mount = tmp_path / "var-www-voc-report"
+    os.symlink(site["public_root"], mount)
+
+    served = mount / "data" / "reddit-voc" / tx.RELEASE_FILENAME
+    assert served.exists(), "the relative link must resolve through the mount too"
+    assert json.loads(served.read_text())["release_id"] == "demo_release_next"
+
+
 def test_commit_switches_symlink_atomically(tmp_path: Path) -> None:
     site = make_live_site(tmp_path)
     before = os.readlink(site["link"])
@@ -100,7 +135,10 @@ def test_commit_switches_symlink_atomically(tmp_path: Path) -> None:
 
     after = os.readlink(site["link"])
     assert after != before, "commit must repoint the live symlink"
-    assert Path(after).resolve() == generation.root.resolve()
+    # Resolve THROUGH the link, not the raw readlink text: the target is stored
+    # relative to the link's directory so it survives a bind mount at another
+    # path, and a bare Path(readlink(...)).resolve() would resolve against CWD.
+    assert site["link"].resolve() == generation.root.resolve()
 
     # The served content is the staged generation, not a mix of both.
     served = json.loads((site["link"] / site["dataset"] / "posts-public.json").read_text())
@@ -179,7 +217,7 @@ def test_commit_rejects_dataset_version_change(tmp_path: Path) -> None:
     assert "generation_dataset_version_changed:base" in str(excinfo.value)
 
     # The refused commit must not have moved the live symlink.
-    assert Path(os.readlink(site["link"])).resolve() == site["live_gen"].resolve()
+    assert site["link"].resolve() == site["live_gen"].resolve()
 
 
 def test_gc_keeps_current_and_previous(tmp_path: Path) -> None:
@@ -190,7 +228,7 @@ def test_gc_keeps_current_and_previous(tmp_path: Path) -> None:
         generation.commit(_release_for(site))
         ids.append(generation.generation_id)
 
-    live_target = Path(os.readlink(site["link"])).resolve()
+    live_target = site["link"].resolve()
     live_generation = live_target.parent.name
     removed = tx.gc(site["public_root"], keep=2)
 
@@ -211,11 +249,11 @@ def test_restore_returns_previous_generation(tmp_path: Path) -> None:
     generation = tx.begin_generation(site["public_root"], run_id="gen-next")
     generation.stage_write(f"{site['dataset']}/posts-public.json", b'[{"post_id": "NEW"}]\n')
     generation.commit(_release_for(site))
-    assert Path(os.readlink(site["link"])).resolve() == generation.root.resolve()
+    assert site["link"].resolve() == generation.root.resolve()
 
     restored = tx.restore(site["public_root"])
     assert Path(restored).resolve() == first
-    assert Path(os.readlink(site["link"])).resolve() == first
+    assert site["link"].resolve() == first
 
     # The generation we rolled back FROM is untouched, so the restore is reversible.
     assert (generation.root / site["dataset"] / "posts-public.json").read_bytes() == b'[{"post_id": "NEW"}]\n'
