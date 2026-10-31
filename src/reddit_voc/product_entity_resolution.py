@@ -7,8 +7,22 @@ import hashlib
 import json
 from pathlib import Path
 import re
-from typing import Literal, Self
+from typing import Literal
 import unicodedata
+
+try:  # Python 3.11+
+    from typing import Self
+except ImportError:  # pragma: no cover - production runs 3.10
+    # `typing.Self` arrived in 3.11. Production is 3.10.12 with no
+    # typing_extensions installed, so the bare import made this module
+    # unimportable there -- which is why the daily pipeline could never have
+    # produced product_bindings even once it called the resolver. The
+    # annotation is only ever used as `from_ledger(...) -> Self`, and
+    # `from __future__ import annotations` keeps it a string, so a TypeVar
+    # bound to the class is an exact stand-in.
+    from typing import TypeVar
+
+    Self = TypeVar("Self", bound="ProductEntityResolver")  # type: ignore[misc]
 
 
 RESOLVER_VERSION = "product-entity-resolver-v1"
