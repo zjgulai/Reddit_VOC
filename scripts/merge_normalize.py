@@ -66,6 +66,24 @@ _BLANK_TAGGING = {
 }
 
 
+def _own_product_bindings(record: dict) -> list:
+    """A record's own product bindings, never the template's.
+
+    Same rule as `tagging`: a merged record's bindings must come from ITS OWN
+    text. The previous code wrote a hardcoded `[]` here, which was safe but made
+    the field permanently empty -- step3 could compute bindings and they were
+    erased before the file was written. Taking the value from the record keeps
+    that safety while letting a producer supply one.
+
+    Non-list values become `[]` rather than propagating: the frontend validates
+    every element against the nine-field contract and rejects the dataset on a
+    mismatch, so a malformed value here would take the whole page down.
+    """
+    value = record.get("product_bindings")
+    return value if isinstance(value, list) else []
+
+
+
 def find_post_template(posts: list[dict]) -> dict | None:
     for post in reversed(posts):
         if post.get("schema_version") == POST_SCHEMA_V3:
@@ -125,7 +143,7 @@ def normalize_post(record: dict, template: dict | None, analysis) -> dict:
         "permalink": permalink or "",
         "permalink_basis": permalink_basis,
         "pii_redaction_flags": [],
-        "product_bindings": [],
+        "product_bindings": _own_product_bindings(record),
         "evidence_id": f"post:{post_id}",
         "linked_comment_count": linked,
         "num_comments_reported": record.get("num_comments_reported"),
@@ -187,7 +205,7 @@ def normalize_comment(
         "permalink": permalink or "",
         "permalink_basis": permalink_basis,
         "pii_redaction_flags": [],
-        "product_bindings": [],
+        "product_bindings": _own_product_bindings(record),
         "evidence_id": f"comment:{comment_id}",
         "is_bot": False,
         "record_authority": "workbook_net_new",
@@ -255,7 +273,7 @@ def normalize_all(posts: list[dict], comments: list[dict]) -> int:
             "permalink": fixed_permalink or "",
             "permalink_basis": fixed_basis,
             "pii_redaction_flags": [],
-            "product_bindings": [],
+            "product_bindings": _own_product_bindings(post),
             "evidence_id": f"post:{post_id}",
             "structural_coverage_grade": grade,
             "comment_coverage_status": grade,
@@ -360,7 +378,7 @@ def normalize_all(posts: list[dict], comments: list[dict]) -> int:
             "permalink": fixed_permalink or "",
             "permalink_basis": fixed_basis,
             "pii_redaction_flags": [],
-            "product_bindings": [],
+            "product_bindings": _own_product_bindings(comment),
             "evidence_id": f"comment:{comment_id}",
             "is_bot": False,
             "record_authority": "workbook_net_new",

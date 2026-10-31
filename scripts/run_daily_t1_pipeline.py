@@ -483,6 +483,51 @@ def step3_merge_snapshot(
     from reddit_voc.brand_binding import assess_brand_binding
     from reddit_voc.analyzer import analyze_text
     import re as _re
+
+    # Product entity resolution. Until now nothing in the daily path produced
+    # `product_bindings`: every merged record carried a hardcoded [], so any page
+    # aggregating by product family was really aggregating by topic. The resolver
+    # itself was already implemented and used by the offline site builder; only
+    # the daily producer was missing.
+    #
+    # Loaded once per run, not per record: from_ledger reads and hashes the whole
+    # ledger, and a nightly run adds thousands of records.
+    product_resolver = None
+    try:
+        from reddit_voc.product_entity_resolution import ProductEntityResolver
+
+        product_resolver = ProductEntityResolver.from_ledger(
+            ROOT / "config" / "product_entities" / "momcozy-product-entity-ledger-v1.json"
+        )
+    except Exception as exc:  # noqa: BLE001
+        # A missing or unreadable ledger must not stop the merge: the bindings
+        # are an enrichment, and the run still owes the site its base snapshot.
+        # The receipt records the failure so an empty page is explainable.
+        logging.warning("product entity resolver unavailable: %s", exc)
+        product_resolver = None
+    product_bound_posts = 0
+    product_bound_comments = 0
+    product_binding_total = 0
+
+    def _product_bindings(text: str) -> list:
+        """Nine-field binding records for one record's own text.
+
+        Returns [] on any resolver failure: the frontend validates every element
+        strictly and rejects the dataset on a mismatch, so a partial or malformed
+        binding is worse than none.
+        """
+        nonlocal product_binding_total
+        if product_resolver is None or not text:
+            return []
+        try:
+            result = product_resolver.resolve(text)
+        except Exception as exc:  # noqa: BLE001
+            logging.warning("product resolve failed: %s", exc)
+            return []
+        records = [binding.to_record() for binding in result.product_bindings]
+        product_binding_total += len(records)
+        return records
+
     for t in new_threads:
         pid = t.get("post_id")
         if pid in known_ids:
@@ -497,6 +542,9 @@ def step3_merge_snapshot(
         brand_binding = assessment.binding
         mentioned = list(assessment.mentions)
         analysis = analyze_text(full_text)
+        post_bindings = _product_bindings(full_text)
+        if post_bindings:
+            product_bound_posts += 1
         existing_posts.append({
             "post_id": pid,
             "reddit_id": f"t3_{pid}",
@@ -511,6 +559,10 @@ def step3_merge_snapshot(
             "linked_comment_count": t.get("parsed_comment_count"),
             "mentioned_brands": mentioned,
             "brand_binding": brand_binding,
+            # Product-level identity, from this record's own title+content.
+            # Reuse the value computed above: calling the helper again would
+            # resolve the post twice and double-count product_binding_total.
+            "product_bindings": post_bindings,
             "include_in_voc_metrics": brand_binding.startswith("momcozy"),
             "is_bot": False,
             "record_authority": "governed_base",
@@ -556,6 +608,9 @@ def step3_merge_snapshot(
             continue
         body = c.get("body") or ""
         c_analysis = analyze_text(body)
+        comment_bindings = _product_bindings(body)
+        if comment_bindings:
+            product_bound_comments += 1
         existing_comments.append({
             "comment_id": cid,
             "reddit_id": f"t1_{cid}",
@@ -565,6 +620,9 @@ def step3_merge_snapshot(
             "created_at_utc": c.get("created_at_utc"),
             "event_created_at_utc": c.get("created_at_utc"),
             "event_time_precision": "instant",
+            # Product identity from the comment's own body. Comments are half the
+            # VOC surface; resolving posts only would leave every reply unbound.
+            "product_bindings": _product_bindings(body),
             "parent_id": c.get("parent_id"),
             "matched_keywords": c.get("matched_keywords") or [],
             "is_bot": False,
@@ -653,6 +711,13 @@ def step3_merge_snapshot(
         "run_id": run_id,
         "new_posts_added": added,
         "new_comments_added": comments_added,
+        # How much of this run's new content carries product identity. Zero is a
+        # legitimate value (a run of unrelated posts), so it is reported rather
+        # than asserted; a sudden drop is the signal that the resolver broke.
+        "product_bound_posts": product_bound_posts,
+        "product_bound_comments": product_bound_comments,
+        "product_bindings_total": product_binding_total,
+        "product_resolver_loaded": product_resolver is not None,
         "total_posts_in_snapshot": len(existing_posts),
         "total_comments_in_snapshot": len(existing_comments),
         "manifest_sha256": manifest_sha,
