@@ -233,3 +233,70 @@ def test_max_tokens_has_a_floor(monkeypatch) -> None:
     monkeypatch.setenv("AGENT_LLM_MAX_TOKENS", "16")
 
     assert build_agent_client().max_tokens == 512
+
+
+# --------------------------------------------------------------- batch runner
+
+
+def test_batch_runner_runs_concurrently_but_keeps_input_order() -> None:
+    """Concurrency is a timeout requirement; determinism must survive it.
+
+    Serial LLM calls measured 35s/post, about 45 minutes for a 78-post day, which
+    the service timeout would kill. Results must still be ordered by the input,
+    not by whichever request finished first.
+    """
+    import time as _time
+
+    from reddit_voc.agents.batch_runner import AgentBatchRunner
+
+    class SlowClient:
+        """Answers after a delay that shrinks with the post id, to force reordering."""
+
+        model = "slow"
+
+        def complete_json(self, *, phase, user_payload, attempt_budget=None):
+            text = str(user_payload)
+            post = "p9" if '"p9"' in text else ("p1" if '"p1"' in text else "p5")
+            _time.sleep({"p1": 0.15, "p5": 0.08, "p9": 0.02}[post])
+            payload = {
+                "defects": [{
+                    "defect_id": post, "component": "seal", "symptom": "leaks",
+                    "root_cause_hypothesis": "x", "suggested_action": "y",
+                    "severity": "major", "category": "sealing_leakage",
+                    "user_quote": None,
+                }],
+                "engineering_summary": "s", "urgency_rating": "P1",
+            }
+
+            class R:
+                content = json.dumps(payload)
+
+            return R()
+
+    posts = [
+        {"post_id": "p1", "title": "pump leaks", "selftext": "leak"},
+        {"post_id": "p5", "title": "pump leaks", "selftext": "leak"},
+        {"post_id": "p9", "title": "pump leaks", "selftext": "leak"},
+    ]
+    runner = AgentBatchRunner(client=SlowClient(), config_path=ROOT / "config/agent_settings.json")
+
+    started = _time.time()
+    out = runner.run_batch(posts, run_id="order", max_workers=3)
+    elapsed = _time.time() - started
+
+    ids = [r.source_post_id for r in out.rnd_voc_results]
+    assert ids == ["p1", "p5", "p9"], f"input order lost: {ids}"
+    # Serial would be >= 0.25s; concurrent finishes in about the slowest request.
+    assert elapsed < 0.24, f"posts were not run concurrently ({elapsed:.2f}s)"
+
+
+def test_batch_runner_without_a_client_runs_inline() -> None:
+    """The template path has nothing to wait on, so it stays synchronous."""
+    from reddit_voc.agents.batch_runner import AgentBatchRunner
+
+    posts = [{"post_id": "p1", "title": "Momcozy pump leaks", "selftext": "it leaks"}]
+    runner = AgentBatchRunner(client=None, config_path=ROOT / "config/agent_settings.json")
+    out = runner.run_batch(posts, run_id="inline")
+
+    assert out.total_posts_analyzed == 1
+    assert [r.source_post_id for r in out.rnd_voc_results] == ["p1"]
