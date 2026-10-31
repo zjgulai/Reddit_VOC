@@ -1,0 +1,20 @@
+[Unit]
+Description=Echo-Agent site freshness check
+Documentation=https://github.com/lute/echo-agent
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=ubuntu
+WorkingDirectory=/opt/echo-agent-bot
+Environment="PYTHONPATH=/opt/echo-agent-bot:/opt/echo-agent-bot/scripts"
+EnvironmentFile=/home/ubuntu/.reddit-voc/secrets/agent-llm.env
+# A gap here is the whole point: no stamp means the check must fail loudly.
+ExecStart=/usr/bin/python3 /opt/echo-agent-bot/scripts/check_site_freshness.py --public-root /opt/voc-report/html --state-path /opt/echo-agent-bot/state/site-freshness.json --fail-on-breach
+TimeoutStartSec=300
+
+# Exit 2 means "the site is not what it claims". That is a finding, not a
+# service fault, so it must not be retried in a loop -- the next scheduled run
+# re-evaluates. Exit 1 (cannot evaluate) is kept as a plain failure.
+SuccessExitStatus=0 2
+Restart=no

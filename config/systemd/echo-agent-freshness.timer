@@ -1,0 +1,16 @@
+[Unit]
+Description=Echo-Agent site freshness schedule (three times daily, Asia/Shanghai)
+
+[Timer]
+# Three checks a day. The 07:05 pipeline runs at 07:05 Shanghai; the 07:45 check
+# gives a 40-minute window to finish and publish before the first evaluation,
+# so a normal run is never reported as stalled. 12:15 catches a morning that
+# silently broke, 20:15 catches an evening drift.
+OnCalendar=*-*-* 07:45:00 Asia/Shanghai
+OnCalendar=*-*-* 12:15:00 Asia/Shanghai
+OnCalendar=*-*-* 20:15:00 Asia/Shanghai
+Persistent=true
+Unit=echo-agent-freshness.service
+
+[Install]
+WantedBy=timers.target
