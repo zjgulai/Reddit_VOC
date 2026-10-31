@@ -14,6 +14,7 @@ structured error so systemd + Feishu alerting can pick it up.
 from __future__ import annotations
 
 import argparse
+from dataclasses import replace
 from datetime import datetime, timedelta, timezone
 import hashlib
 import json
@@ -119,14 +120,25 @@ def step1_collect(store_path: Path, run_id: str) -> dict:
     }
 
 
-def _verify_agent_evidence(batch, posts) -> dict:
+def _verify_agent_evidence(batch, posts) -> tuple[dict, dict]:
     """Drop any agent quote that does not appear in the post it cites.
 
-    Returns a receipt so the run records how much evidence survived, and so a
-    regression (quotes silently disappearing, or fabricated ones reappearing)
-    is visible without reading the artifacts by hand.
+    Returns `(receipt, scrubbed)`:
+
+      * `receipt` is JSON-serialisable and goes into the run receipt, so a
+        regression (quotes silently disappearing, or fabricated ones reappearing)
+        is visible without reading the artifacts by hand;
+      * `scrubbed` carries the cleaned records themselves.
+
+    The two are separate on purpose. This function used to return one dict that
+    held both, and the caller persisted the *original* batch -- so the gate
+    counted a fabricated quote as dropped, wrote the count into the receipt, and
+    then published the fabrication to disk and to the morning card. The 2026-10-30
+    incident, in other words, would have recurred with a clean-looking receipt.
+    That dict also carried raw dataclasses into `json.dumps`, which crashed the
+    production run of 2026-10-31 (exit 1 after 19m48s).
     """
-    from dataclasses import is_dataclass, replace
+    from dataclasses import is_dataclass
 
     from reddit_voc.agents.evidence import verify_quote
 
@@ -212,14 +224,32 @@ def _verify_agent_evidence(batch, posts) -> dict:
         logging.warning(
             "agent_evidence_gate: dropped %s of %s unverifiable quotes", dropped, checked
         )
-    return {
+    receipt = {
         "checked": checked,
         "dropped": dropped,
         "kept": checked - dropped,
         "examples": absent_examples,
-        "competitor_radar_results": scrubbed_radar,
-        "rnd_voc_results": scrubbed_rnd,
+        # Serialisable counts, not the records themselves: this dict is written
+        # with json.dumps into the run receipt, and raw dataclasses there raised
+        # "Object of type RndVocResult is not JSON serializable" in production.
+        "competitor_radar_results": _scrubbed_summary(scrubbed_radar, "comparisons"),
+        "rnd_voc_results": _scrubbed_summary(scrubbed_rnd, "defects"),
     }
+    scrubbed = {"competitor_radar_results": scrubbed_radar, "rnd_voc_results": scrubbed_rnd}
+    return receipt, scrubbed
+
+
+def _scrubbed_summary(records, collection_field: str) -> dict:
+    """Counts describing what survived, for the receipt."""
+    items = 0
+    with_evidence = 0
+    for record in records or []:
+        for item in getattr(record, collection_field, None) or []:
+            items += 1
+            field = "user_verbatim_quote" if collection_field == "comparisons" else "user_quote"
+            if getattr(item, field, None):
+                with_evidence += 1
+    return {"records": len(records or []), "items": items, "items_with_evidence": with_evidence}
 
 
 def _publish_agent_artifacts(run_id: str, out_dir: Path, *, data_root: Path | None = None) -> dict[str, str]:
@@ -341,7 +371,17 @@ def step2_agents(store_path: Path, run_id: str, out_dir: Path, *, data_root: Pat
     # a consumer's 原话, cited against a house listing that never mentioned the
     # brand (0 of 27 comparisons verified). A quote that cannot be found is dropped
     # here rather than rendered as if it were real.
-    evidence_receipt = _verify_agent_evidence(batch, posts)
+    evidence_receipt, scrubbed = _verify_agent_evidence(batch, posts)
+
+    # The gate must change what gets published, not just what gets reported.
+    # Persisting `batch` here published quotes the gate had just rejected.
+    gate_dropped = evidence_receipt["dropped"]
+    if gate_dropped:
+        batch = replace(
+            batch,
+            competitor_radar_results=scrubbed["competitor_radar_results"],
+            rnd_voc_results=scrubbed["rnd_voc_results"],
+        )
 
     # The offline agent path is deterministic: it reproduces one template analysis
     # per post, with a fixed takeaway and fixed advantages. The quotes are now real,

@@ -21,6 +21,7 @@ These tests pin three layers of the fix:
 from __future__ import annotations
 
 import importlib.util
+import json
 import sys
 from pathlib import Path
 
@@ -206,20 +207,32 @@ def test_pipeline_gate_drops_unverifiable_quotes_and_records_why() -> None:
     bad = "Momcozy empties me faster for a fraction of the cost."
     batch = _Batch([_RadarResult("p1", good), _RadarResult("p1", bad)])
 
-    receipt = pipeline._verify_agent_evidence(batch, posts)
+    receipt, scrubbed = pipeline._verify_agent_evidence(batch, posts)
 
     assert receipt["checked"] == 2
     assert receipt["dropped"] == 1
     assert receipt["kept"] == 1
     assert receipt["examples"][0]["status"] == "absent"
 
+    # The receipt is written with json.dumps into the run receipt. It used to
+    # carry the raw scrubbed dataclasses, so any run whose gate did work crashed
+    # here with "Object of type RndVocResult is not JSON serializable"
+    # (production 2026-10-31 07:31, exit 1, 19m48s lost). It must stay plain data.
+    json.dumps(receipt, ensure_ascii=False)
+
     # The batch dataclass is frozen, so the scrubber returns rebuilt records.
     # The citable quote survives; the invented one is nulled rather than replaced.
     kept = [
         c.user_verbatim_quote
-        for r in receipt["competitor_radar_results"]
+        for r in scrubbed["competitor_radar_results"]
         for c in r.comparisons
     ]
     assert good in kept
     assert bad not in kept
     assert None in kept
+
+    # And the counts in the receipt describe that surviving shape.
+    summary = receipt["competitor_radar_results"]
+    assert summary["records"] == 2
+    assert summary["items"] == 2
+    assert summary["items_with_evidence"] == 1
