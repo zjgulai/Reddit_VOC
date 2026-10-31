@@ -1187,6 +1187,27 @@ def run_pipeline(*, store_path: Path, public_root: Path, output_dir: Path, skip_
                 errors.append(commit_receipt)
         receipts.append(commit_receipt)
 
+        # Collect old generations after a successful publish. Without this the
+        # tree grows by a full copy (645M in production) every day, and nobody
+        # runs gc by hand: the disk would fill in about two months. Only runs
+        # that actually committed clean up -- a failed run's generation is the
+        # evidence of what went wrong, so it is kept until the next good run.
+        if commit_receipt.get("status") == "committed":
+            try:
+                from daily_release_transaction import gc
+
+                removed = gc(public_root, keep=2)
+                receipts.append({
+                    "step": "gc_generations",
+                    "status": "ok",
+                    "removed": removed,
+                    "kept": 2,
+                })
+            except Exception as exc:
+                # Cleanup must never fail a published run.
+                logging.warning("generation gc failed (disk pressure will follow): %s", exc)
+                receipts.append({"step": "gc_generations", "status": "error", "error": str(exc)})
+
         if not skip_feishu:
             # After the publish decision, and not counted as a run error: the data
             # is already live, so a card failure must not mark the release failed.

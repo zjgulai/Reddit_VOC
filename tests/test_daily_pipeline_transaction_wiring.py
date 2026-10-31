@@ -438,3 +438,62 @@ def test_agent_studio_written_into_generation(site, monkeypatch) -> None:
     assert published, published
     assert (Path(sentinel) / "data" / "reddit-voc" / "agent-studio"
             / "latest-content-ideas.json").exists()
+
+
+def test_committed_run_collects_old_generations(site, monkeypatch) -> None:
+    """Every run adds a full tree copy; nobody runs gc by hand.
+
+    Production's tree is 645M. Without cleanup after a successful publish the
+    disk fills in about two months, and the failure lands in the middle of a run
+    rather than at a convenient moment.
+    """
+    _stub_collect(monkeypatch)
+    _stub_agents(monkeypatch)
+    _set_mode(monkeypatch, "symlink")
+    monkeypatch.setattr(
+        "recompute_derivatives.run_recompute",
+        lambda public_root, *, data_root=None, dry_run=False: {
+            "engine": "fake", "step": "recompute_derivatives", "status": "ok",
+            "outputs": [], "reports_lineage_manifest_sha256": "0" * 64,
+        },
+        raising=False,
+    )
+
+    # Seed extra generations so gc has something to remove.
+    for name in ("gen-old-1", "gen-old-2"):
+        (site["generations"] / name / tx.LIVE_DIRNAME).mkdir(parents=True)
+        (site["generations"] / name / tx.LIVE_DIRNAME / "stale.json").write_text("{}", encoding="utf-8")
+
+    receipt = _run(site)
+
+    assert receipt["status"] == "success", receipt
+    steps = {s.get("step"): s for s in receipt["steps"]}
+    assert "gc_generations" in steps, [s.get("step") for s in receipt["steps"]]
+    assert steps["gc_generations"]["status"] == "ok"
+
+    # keep=2 retains the live generation and the one before it, nothing more.
+    assert len(list(site["generations"].iterdir())) <= 2
+    # And what is served is still the generation this run committed.
+    assert site["link"].resolve() == Path(receipt["release_transaction"]["root"]).resolve()
+
+
+def test_failed_run_keeps_its_generation_for_diagnosis(site, monkeypatch) -> None:
+    """A failed run's tree is evidence, not garbage: gc must not touch it."""
+    _stub_collect(monkeypatch)
+    _stub_agents(monkeypatch)
+    _set_mode(monkeypatch, "symlink")
+    monkeypatch.setattr(
+        "recompute_derivatives.run_recompute",
+        lambda public_root, *, data_root=None, dry_run=False: (_ for _ in ()).throw(
+            RuntimeError("recompute died")
+        ),
+        raising=False,
+    )
+
+    receipt = _run(site)
+    assert receipt["status"] == "failed", receipt
+
+    steps = {s.get("step"): s for s in receipt["steps"]}
+    assert "gc_generations" not in steps, "a failed run must keep its generation"
+    link_before = tx.tree_digest(site["live_gen"])
+    assert link_before, "the seed generation is untouched and still readable"
