@@ -218,3 +218,106 @@ def test_step3_binds_products_from_record_text() -> None:
     # The resolver is reachable from the pipeline's own module path.
     assert pipeline is not None
     assert (ROOT / "config" / "product_entities" / "momcozy-product-entity-ledger-v1.json").is_file()
+
+
+# ------------------------------------------------- end-to-end through step3
+
+
+def test_step3_output_passes_the_frontend_contract(tmp_path: Path) -> None:
+    """The ticket's completion bar: run step3, then validate what it wrote.
+
+    Unit-testing the resolver is not enough. The frontend calls
+    assertExactObjectKeys on every binding and rejects the whole dataset on a
+    mismatch, so what matters is the bytes step3 actually persists -- after
+    normalize_all has had its chance to erase or corrupt them.
+    """
+    from datetime import datetime, timezone
+
+    from reddit_voc.models import RedditThread
+    from reddit_voc.storage import VocStore
+
+    import run_daily_t1_pipeline as pipeline
+
+    public_root = tmp_path / "html"
+    data_root = public_root / "data" / "reddit-voc"
+    dataset = "reddit_voc_site_snapshot_demo_v1"
+    dataset_dir = data_root / dataset
+    dataset_dir.mkdir(parents=True)
+    (dataset_dir / "posts-public.json").write_text("[]\n", encoding="utf-8")
+    (dataset_dir / "comments-public.json").write_text("[]\n", encoding="utf-8")
+    manifest = {
+        "dataset_version": dataset,
+        "canonical_counts": {"posts": 0, "linked_comments": 0},
+        "projection_counts": {"public_posts": 0, "public_linked_comments": 0},
+        "files": {
+            "posts-public.json": {"sha256": "", "bytes": 0},
+            "comments-public.json": {"sha256": "", "bytes": 0},
+        },
+    }
+    (dataset_dir / "manifest-public.json").write_text(
+        json.dumps(manifest), encoding="utf-8"
+    )
+    (dataset_dir / "tag-dictionary-public.json").write_text('{"rules": []}', encoding="utf-8")
+    release = {
+        "schema_version": "reddit_voc_current_release_v2",
+        "release_id": "demo",
+        "datasets": {
+            "base": {
+                "dataset_version": dataset,
+                "manifest_path": f"data/reddit-voc/{dataset}/manifest-public.json",
+                "public_manifest_sha256": "",
+            }
+        },
+    }
+    (data_root / "current-release.json").write_text(json.dumps(release), encoding="utf-8")
+
+    store_path = tmp_path / "store.sqlite3"
+    store = VocStore(store_path)
+    store.migrate()
+    run_id = "daily_collect_test_0700"
+    store.upsert_thread(RedditThread(
+        post_id="p-s9",
+        run_id=run_id,
+        raw_capture_id="c1",
+        subreddit="r/ExclusivelyPumping",
+        title="Momcozy S9 Pro after two weeks",
+        source_url="https://www.reddit.com/r/ExclusivelyPumping/comments/p-s9/",
+        created_at_utc=datetime(2026, 10, 30, 4, 0, tzinfo=timezone.utc),
+        selftext="The Momcozy S9 Pro is comfortable and the suction is fine.",
+        matched_keywords=["momcozy"],
+        media_urls=[],
+    ))
+
+    receipt = pipeline.step3_merge_snapshot(run_id, store_path, public_root)
+
+    assert receipt["status"] == "ok", receipt
+    assert receipt["product_resolver_loaded"] is True
+    assert receipt["product_bound_posts"] > 0, "step3 bound nothing"
+    # Each post resolved exactly once: counting twice was a real bug.
+    assert receipt["product_bindings_total"] == receipt["product_bound_posts"]
+
+    posted = json.loads((dataset_dir / "posts-public.json").read_text(encoding="utf-8"))
+    merged = next(p for p in posted if p.get("post_id") == "p-s9")
+    bindings = merged["product_bindings"]
+    assert bindings, "normalize_all erased the bindings step3 wrote"
+
+    required = {
+        "brand_id", "category", "product_family", "exact_spu", "binding_level",
+        "match_type", "matched_alias", "governance_status", "governance_reason",
+    }
+    for binding in bindings:
+        assert set(binding) == required
+        assert binding["brand_id"] == "momcozy"
+        assert binding["binding_level"] in {"category", "product_family", "spu_exact"}
+        level, family, spu = (
+            binding["binding_level"], binding["product_family"], binding["exact_spu"]
+        )
+        assert (
+            (level == "category" and family is None and spu is None)
+            or (level == "product_family" and family is not None and spu is None)
+            or (level == "spu_exact" and family is not None and spu is not None)
+        )
+    assert bindings[0]["product_family"]["id"] == "s9-pro"
+
+    # Every record the file carries has the field as a list, whatever its source.
+    assert all(isinstance(p.get("product_bindings"), list) for p in posted)
