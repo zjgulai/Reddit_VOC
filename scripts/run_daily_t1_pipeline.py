@@ -1334,6 +1334,40 @@ def _run_pipeline_locked(
             isinstance(r, dict) and r.get("step") == "advance_pointer" and r.get("status") == "advanced"
             for r in receipts
         )
+
+        # Build stamps must be written BEFORE the commit: they live inside the
+        # generation, so a stamp written afterwards would describe a tree that
+        # was already published without one. Each stamp makes the dataset prove
+        # which run produced it, which is the evidence a freshness monitor needs
+        # and the tree has never carried.
+        if not pointer_guard and not errors and tx is not None and release_doc_holder.get("document"):
+            try:
+                sys.path.insert(0, str(ROOT / "scripts"))
+                from build_receipt import collect_dataset_stamps
+
+                stamped = collect_dataset_stamps(
+                    tx.root,
+                    release_doc_holder["document"],
+                    run_id=run_id,
+                    period_end_utc=window_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    generated_at_utc=datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                )
+                receipts.append({
+                    "step": "build_stamps",
+                    "status": "ok",
+                    "datasets": sorted(stamped),
+                })
+            except Exception as exc:
+                # A missing stamp is a monitoring gap, not a data defect: the
+                # bytes being published are fine. Record it and keep going, so
+                # stamp trouble never withholds a release the site needs.
+                logging.warning("build stamps failed: %s", exc)
+                receipts.append({
+                    "step": "build_stamps",
+                    "status": "error",
+                    "error": str(exc),
+                })
+
         if pointer_guard:
             commit_receipt = {"step": "commit_generation", "status": "skipped_by_kill_switch"}
         elif errors or tx is None or release_doc_holder.get("document") is None or failures or not advance_ok:
