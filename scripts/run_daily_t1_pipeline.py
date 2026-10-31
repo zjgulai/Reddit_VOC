@@ -309,8 +309,32 @@ def step2_agents(store_path: Path, run_id: str, out_dir: Path, *, data_root: Pat
             "excluded_not_product_context": excluded,
         }
 
-    runner = AgentBatchRunner(client=None, config_path=ROOT / "config/agent_settings.json")
-    batch = runner.run_batch(admissible, run_id=run_id)
+    # LLM wiring. `build_agent_client()` returns None unless AGENT_LLM_BASE_URL,
+    # AGENT_LLM_MODEL and a key (direct or file) are all configured, so the
+    # pipeline keeps running the template fallback when they are not -- which is
+    # the current production state, and which the card must disclose.
+    #
+    # This is the adapter the agents always needed: DeepSeekClient rejects their
+    # phase values ("rnd_voc", "content_scouting", "competitor_radar") and
+    # requires system_prompt/deadline they do not pass, so it could never have
+    # served them regardless of credentials.
+    from reddit_voc.agents.llm_adapter import AgentLLMError, build_agent_client
+
+    agent_client = build_agent_client()
+    runner = AgentBatchRunner(client=agent_client, config_path=ROOT / "config/agent_settings.json")
+    try:
+        batch = runner.run_batch(admissible, run_id=run_id)
+    except AgentLLMError as exc:
+        # A provider outage must not silence the whole run. Fall back to the
+        # template path and record why, so the receipt says which mode produced
+        # the analysis instead of leaving a partial LLM batch looking complete.
+        logging.warning("agent_llm_failed, falling back to template: %s", exc)
+        agent_client = None
+        runner = AgentBatchRunner(client=None, config_path=ROOT / "config/agent_settings.json")
+        batch = runner.run_batch(admissible, run_id=run_id)
+        llm_fallback_reason = str(exc)
+    else:
+        llm_fallback_reason = None
 
     # Evidence gate: every quote the agents emit must appear in the post it cites.
     # On 2026-10-30 a hardcoded fallback sentence was served to a business group as
@@ -330,7 +354,7 @@ def step2_agents(store_path: Path, run_id: str, out_dir: Path, *, data_root: Pat
     # Publish into the canonical web root so the Agent Studio page can fetch them.
     published = _publish_agent_artifacts(run_id, out_dir, data_root=data_root)
 
-    return {
+    receipt = {
         "step": "agents",
         "status": "ok",
         "run_id": run_id,
@@ -342,6 +366,13 @@ def step2_agents(store_path: Path, run_id: str, out_dir: Path, *, data_root: Pat
         "evidence_gate": evidence_receipt,
         "analysis_mode": analysis_mode,
     }
+    if analysis_mode == "llm":
+        receipt["llm_model"] = getattr(agent_client, "model", None)
+    if llm_fallback_reason:
+        # Distinguish "never configured" from "configured but the provider
+        # failed". The second is an incident; the first is the known state.
+        receipt["llm_fallback_reason"] = llm_fallback_reason
+    return receipt
 
 
 def step3_merge_snapshot(

@@ -27,7 +27,7 @@ SYSTEM_PROMPT = """你是一位拥有 12 年消费电子与海外母婴出海经
       "our_advantage": "string (用户认可的我方相对优势)",
       "our_disadvantage": "string (用户指出的我方相对劣势或竞品优势点)",
       "sentiment_verdict": "string (可选值: prefer_momcozy / prefer_competitor / mixed_tradeoff / neutral)",
-      "user_verbatim_quote": "string (体现对比评价的原帖/原评引言)"
+      "user_verbatim_quote": "string (体现对比评价的原帖/原评引言，必须逐字照抄原文，禁止省略号、禁止改写、禁止拼接)"
     }
   ],
   "market_takeaway": "string (对本次对比反映出的市场格局与消费心理核心洞察)",
