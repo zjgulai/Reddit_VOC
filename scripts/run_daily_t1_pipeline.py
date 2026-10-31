@@ -791,7 +791,14 @@ def step4_advance_pointer(
     return {"step": "advance_pointer", "status": result.get("status"), **result}
 
 
-def step5_feishu_push(run_id: str, report_date: str, receipts: list[dict], output_dir: Path) -> dict:
+def step5_feishu_push(
+    run_id: str,
+    report_date: str,
+    receipts: list[dict],
+    output_dir: Path,
+    *,
+    receipt: dict | None = None,
+) -> dict:
     """Step 5: push the morning-brief card to the Feishu Echo-Agent group.
 
     ADR-005 v1: the card is business intelligence (risk radar, R&D defects,
@@ -799,6 +806,11 @@ def step5_feishu_push(run_id: str, report_date: str, receipts: list[dict], outpu
     builder reads the run's own artifacts plus the public tree; falls back to
     the legacy metrics card if the new builder fails, so the push never blocks
     the pipeline on a template error.
+
+    `receipt` is the in-memory run receipt. Without it the builder re-reads
+    `<run_dir>/<run_id>-pipeline-receipt.json`, which this pipeline writes only
+    AFTER the step loop -- so the card always found it missing, degraded to
+    `status: unavailable`, and painted a successful run red on 2026-10-29.
     """
     app_id = os.getenv("FEISHU_APP_ID", "").strip()
     app_secret = os.getenv("FEISHU_APP_SECRET", "").strip()
@@ -817,7 +829,7 @@ def step5_feishu_push(run_id: str, report_date: str, receipts: list[dict], outpu
         sys.path.insert(0, str(ROOT / "tools" / "feishu-card" / "builders"))
         from build_morning_brief_v4 import build_card
 
-        card = build_card(output_dir, public_root, run_id)
+        card = build_card(output_dir, public_root, run_id, receipt=receipt)
     except Exception as exc:  # noqa: BLE001 — fallback card keeps the push alive
         builder_error = f"{type(exc).__name__}: {exc}"
 
@@ -1114,6 +1126,9 @@ def run_pipeline(*, store_path: Path, public_root: Path, output_dir: Path, skip_
     # In symlink mode the card is built after the commit decision, so it can never
     # describe a generation that was not published.
     if not skip_feishu and mode == "off":
+        # `receipts` is passed by reference, so the card sees the steps collected
+        # so far. It cannot see the final status: in off mode the receipt file is
+        # written after the loop, so the builder reads an `unavailable` receipt.
         steps.append(("feishu_push", lambda: step5_feishu_push(run_id, report_date, receipts, output_dir)))
 
     for name, fn in steps:
@@ -1211,8 +1226,23 @@ def run_pipeline(*, store_path: Path, public_root: Path, output_dir: Path, skip_
         if not skip_feishu:
             # After the publish decision, and not counted as a run error: the data
             # is already live, so a card failure must not mark the release failed.
+            #
+            # The in-memory receipt is handed to the builder so it can report the
+            # run's real outcome. It cannot be written to disk first: this block
+            # runs before the receipt is final, and re-reading the file here is
+            # exactly the race that made 2026-10-29's green run render red.
+            live_receipt = {
+                "schema_version": PIPELINE_SCHEMA,
+                "run_id": run_id,
+                "report_date": report_date,
+                "status": "success" if not errors else "failed",
+                "steps": list(receipts),
+                "errors": list(errors),
+            }
             try:
-                receipts.append(step5_feishu_push(run_id, report_date, receipts, output_dir))
+                receipts.append(step5_feishu_push(
+                    run_id, report_date, receipts, output_dir, receipt=live_receipt,
+                ))
             except Exception as exc:
                 receipts.append({
                     "step": "feishu_push",
