@@ -919,24 +919,35 @@ def refresh_base_manifest(
     manifest["time_precision"] = compute_time_precision(posts, comments)
 
 
-def run_recompute(public_root: Path, *, dry_run: bool = False) -> dict:
+def run_recompute(public_root: Path, *, data_root: Path | None = None, dry_run: bool = False) -> dict:
+    """Recompute every derivative dataset from the merged base snapshot.
+
+    `data_root` is the reddit-voc directory to read and write -- the live tree by
+    default, or a staged release generation when the pipeline runs in symlink
+    mode (L6-T08). Passing it explicitly is the whole reason this function is
+    safe to run before the pointer moves: without it every write below lands in
+    `public_root/data/reddit-voc`, which in symlink mode *is* the published tree.
+    """
     import sys
     sys.path.insert(0, str(Path(__file__).resolve().parent))
     from recompute_reports_bundle import build_reports_bundle
+    from release_paths import manifest_path as _manifest_path
 
-    ds_dir = public_root / "data" / "reddit-voc" / "reddit_voc_site_snapshot_20260723_v3_daily_001"
+    root = Path(data_root) if data_root is not None else public_root / "data" / "reddit-voc"
+
+    ds_dir = root / "reddit_voc_site_snapshot_20260723_v3_daily_001"
     posts = json.loads((ds_dir / "posts-public.json").read_text(encoding="utf-8"))
     comments = json.loads((ds_dir / "comments-public.json").read_text(encoding="utf-8"))
 
     t0 = datetime.now(timezone.utc)
 
-    qi_rel_path = public_root / "data" / "reddit-voc" / "current-release.json"
+    qi_rel_path = root / "current-release.json"
     release = json.loads(qi_rel_path.read_text(encoding="utf-8"))
 
     # Canonical comment status lives in the base manifest; the aggregate headline
     # must echo it verbatim or the client rejects the pair as non-conserving.
     base_manifest_rel = release["datasets"].get("base", {}).get("manifest_path") or ""
-    base_manifest_abs = public_root / base_manifest_rel
+    base_manifest_abs = _manifest_path(root, base_manifest_rel)
 
     # Compute the canonical counts ONCE from the data, then feed both the aggregates
     # and the manifest from this single result. Reading them from the previous
@@ -995,9 +1006,9 @@ def run_recompute(public_root: Path, *, dry_run: bool = False) -> dict:
         personas_binding = release["datasets"].get("personas") or {}
         casebook_binding = release["datasets"].get("casebook") or {}
         reports_binding = release["datasets"].get("reports") or {}
-        reports_manifest_abs = public_root / (reports_binding.get("manifest_path") or "")
+        reports_manifest_abs = _manifest_path(root, reports_binding.get("manifest_path") or "")
         reports_dir = reports_manifest_abs.parent
-        casebook_dir = public_root / (casebook_binding.get("manifest_path") or "")
+        casebook_dir = _manifest_path(root, casebook_binding.get("manifest_path") or "")
 
         # Produce the artifacts the source block names, then hash their real bytes.
         canonical_receipt_sha = base_validation_receipt(
@@ -1010,9 +1021,9 @@ def run_recompute(public_root: Path, *, dry_run: bool = False) -> dict:
             governed_bindings=GOVERNED_BINDINGS,
             snapshot_id=f"governed_signals_{_t1_anchor().date().isoformat()}",
         )
-        persona_hashes = personas_receipt(public_root, personas_binding.get("manifest_path") or "")
+        persona_hashes = personas_receipt(_manifest_path(root, personas_binding.get("manifest_path") or ""))
         product_ledger_sha = ship_product_ledger(
-            public_root, Path(__file__).resolve().parents[1] / "config" / "product_entities"
+            root, Path(__file__).resolve().parents[1] / "config" / "product_entities"
             / "momcozy-product-entity-ledger-v1.json"
         )
 
@@ -1052,7 +1063,7 @@ def run_recompute(public_root: Path, *, dry_run: bool = False) -> dict:
             unresolved_parent_comments=int((base_manifest.get("canonical_counts") or {}).get("unresolved_parent_comments") or 0),
             source=qi_source,
         )
-        qi_dir = public_root / "data" / "reddit-voc" / qi_version
+        qi_dir = root / qi_version
         qi_bytes = (json.dumps(quarter, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
         (qi_dir / "quarter-insights.json").write_bytes(qi_bytes)
         # The dataset manifest repeats the data's boundaries/period/source verbatim;
@@ -1079,7 +1090,7 @@ def run_recompute(public_root: Path, *, dry_run: bool = False) -> dict:
         # Step 3.5.4 — brand health projection. Must run before the reports bundle,
         # which embeds the four dimension scores.
         bh_binding = release["datasets"].get("brand_health") or {}
-        bh_manifest_path = public_root / bh_binding.get("manifest_path", "")
+        bh_manifest_path = _manifest_path(root, bh_binding.get("manifest_path", ""))
         bh_data: dict = {"dimensions": [], "overall": {}}
         if bh_manifest_path.parent.exists():
             bh_data, bh_manifest = recompute_brand_health(
@@ -1107,7 +1118,7 @@ def run_recompute(public_root: Path, *, dry_run: bool = False) -> dict:
                 "overall_score": bh_data["overall"]["score"],
             })
 
-        rp_root = public_root / "data" / "reddit-voc" / rp_version / "public"
+        rp_root = root / rp_version / "public"
         rp_root.mkdir(parents=True, exist_ok=True)
         report_files = build_reports_bundle(
             posts=posts,

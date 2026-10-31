@@ -31,6 +31,26 @@ sys.path.insert(0, str(ROOT / "src"))
 SHANGHAI_TZ = ZoneInfo("Asia/Shanghai")
 PIPELINE_SCHEMA = "echo_agent_daily_pipeline_receipt_v1"
 
+PIPELINE_GENERATION_MODE_ENV = "PIPELINE_GENERATION_MODE"
+
+
+def _generation_mode() -> str:
+    """Read the release-generation mode for this invocation.
+
+    `off` (default) keeps the historical in-place behaviour byte for byte.
+    `symlink` stages every data write into a new generation and publishes it with
+    a single atomic pointer swap, so a failed run cannot leave the live tree
+    half-updated.
+
+    Read per call, never cached at module level: operators roll back by changing
+    a systemd environment variable, and tests patch the environment after import.
+    A typo raises instead of silently falling back to the live-write path.
+    """
+    raw = os.getenv(PIPELINE_GENERATION_MODE_ENV, "off").strip().lower()
+    if raw in ("off", "symlink"):
+        return raw
+    raise RuntimeError(f"pipeline_generation_mode_invalid:{raw!r}")
+
 
 def _shanghai_now() -> datetime:
     return datetime.now(SHANGHAI_TZ)
@@ -202,7 +222,46 @@ def _verify_agent_evidence(batch, posts) -> dict:
     }
 
 
-def step2_agents(store_path: Path, run_id: str, out_dir: Path) -> dict:
+def _publish_agent_artifacts(run_id: str, out_dir: Path, *, data_root: Path | None = None) -> dict[str, str]:
+    """Copy the three latest-*.json artifacts into the served agent-studio dir.
+
+    In symlink mode the target is `<generation>/agent-studio`, and a failure is
+    fatal: the run must not commit a generation whose Agent Studio page still
+    shows the seed's stale artifacts. `AGENT_PUBLIC_ROOT` is not read at all in
+    that mode -- its default (`/opt/voc-report/html`) is unrelated to the run's
+    `public_root`, so honouring it would write a tree the caller never named.
+    """
+    published: dict[str, str] = {}
+    if data_root is not None:
+        public_agent_dir = data_root / "agent-studio"
+    else:
+        public_root_env = os.getenv("AGENT_PUBLIC_ROOT", "/opt/voc-report/html")
+        public_agent_dir = Path(public_root_env) / "data" / "reddit-voc" / "agent-studio"
+    try:
+        public_agent_dir.mkdir(parents=True, exist_ok=True)
+        latest = {
+            "content_ideas": public_agent_dir / "latest-content-ideas.json",
+            "rnd_tickets": public_agent_dir / "latest-rnd-tickets.json",
+            "competitor_radar": public_agent_dir / "latest-competitor-radar.json",
+        }
+        mapping = {
+            "content_ideas": f"{run_id}-daily-content-ideas.json",
+            "rnd_tickets": f"{run_id}-daily-rnd-tickets.json",
+            "competitor_radar": f"{run_id}-daily-competitor-radar.json",
+        }
+        for key, dst in latest.items():
+            src = out_dir / mapping[key]
+            if src.exists():
+                dst.write_bytes(src.read_bytes())
+                published[key] = str(dst)
+    except OSError as exc:
+        if data_root is not None:
+            raise
+        logging.warning("agent publish to public root failed: %s", exc)
+    return published
+
+
+def step2_agents(store_path: Path, run_id: str, out_dir: Path, *, data_root: Path | None = None) -> dict:
     """Step 2: Agent batch runner over the just-collected run."""
     from reddit_voc.storage import VocStore
     from reddit_voc.agents import AgentBatchRunner
@@ -269,28 +328,7 @@ def step2_agents(store_path: Path, run_id: str, out_dir: Path) -> dict:
     files = runner.persist_artifacts(batch, out_dir)
 
     # Publish into the canonical web root so the Agent Studio page can fetch them.
-    published: dict[str, str] = {}
-    public_root_env = os.getenv("AGENT_PUBLIC_ROOT", "/opt/voc-report/html")
-    public_agent_dir = Path(public_root_env) / "data" / "reddit-voc" / "agent-studio"
-    try:
-        public_agent_dir.mkdir(parents=True, exist_ok=True)
-        latest = {
-            "content_ideas": public_agent_dir / "latest-content-ideas.json",
-            "rnd_tickets": public_agent_dir / "latest-rnd-tickets.json",
-            "competitor_radar": public_agent_dir / "latest-competitor-radar.json",
-        }
-        mapping = {
-            "content_ideas": f"{run_id}-daily-content-ideas.json",
-            "rnd_tickets": f"{run_id}-daily-rnd-tickets.json",
-            "competitor_radar": f"{run_id}-daily-competitor-radar.json",
-        }
-        for key, dst in latest.items():
-            src = out_dir / mapping[key]
-            if src.exists():
-                dst.write_bytes(src.read_bytes())
-                published[key] = str(dst)
-    except OSError as exc:
-        logging.warning("agent publish to public root failed: %s", exc)
+    published = _publish_agent_artifacts(run_id, out_dir, data_root=data_root)
 
     return {
         "step": "agents",
@@ -306,7 +344,9 @@ def step2_agents(store_path: Path, run_id: str, out_dir: Path) -> dict:
     }
 
 
-def step3_merge_snapshot(run_id: str, store_path: Path, public_root: Path) -> dict:
+def step3_merge_snapshot(
+    run_id: str, store_path: Path, public_root: Path, *, data_root: Path | None = None
+) -> dict:
     """Step 3: merge the corpus into the public snapshot datasets.
 
     Selects by DATE WINDOW, not by run_id. Selecting by run_id is why a corpus
@@ -317,6 +357,11 @@ def step3_merge_snapshot(run_id: str, store_path: Path, public_root: Path) -> di
     Writes/updates posts-public.json / comments-public.json inside the base dataset
     directory, and rewrites manifest-public.json with recomputed hashes and counts
     so content and pointer stay in lockstep.
+
+    `data_root` (symlink mode) is the staged reddit-voc directory. Every join
+    below then lands inside the generation; with it None the expressions are the
+    historical ones and `public_root/data/reddit-voc` is read and written in
+    place.
     """
     from reddit_voc.storage import VocStore
 
@@ -330,14 +375,23 @@ def step3_merge_snapshot(run_id: str, store_path: Path, public_root: Path) -> di
     new_threads = store.fetch_threads_in_window(WINDOW_START, WINDOW_END)
     new_comments = store.fetch_comments_in_window(WINDOW_START, WINDOW_END)
 
-    base_binding_path = public_root / "data" / "reddit-voc" / "current-release.json"
+    # Everything the release document points at is relative to the data root, not
+    # to the site root: binding paths read `data/reddit-voc/<version>/...`. Joining
+    # them onto public_root follows the live symlink in staging mode, which is how
+    # a run that believed it was writing a private copy published to production.
+    voc_root = Path(data_root) if data_root is not None else public_root / "data" / "reddit-voc"
+    # Unconditional: the module works both as a script (its own directory is
+    # sys.path[0]) and imported by tests, which do not add scripts/ themselves.
+    sys.path.insert(0, str(ROOT / "scripts"))
+    from release_paths import manifest_path as _manifest_path
+
+    base_binding_path = voc_root / "current-release.json"
     if not base_binding_path.exists():
         return {"step": "merge_snapshot", "status": "skipped_no_release", "reason": "current-release.json missing"}
 
     release = json.loads(base_binding_path.read_text(encoding="utf-8"))
     base_rel = release.get("datasets", {}).get("base", {})
-    manifest_rel = Path(base_rel.get("manifest_path", ""))
-    manifest_abs = public_root / manifest_rel
+    manifest_abs = _manifest_path(voc_root, base_rel)
     if not manifest_abs.exists():
         return {"step": "merge_snapshot", "status": "skipped_no_manifest", "reason": f"missing {manifest_abs}"}
 
@@ -515,7 +569,7 @@ def step3_merge_snapshot(run_id: str, store_path: Path, public_root: Path) -> di
     if base_rel.get("public_manifest_sha256") != manifest_sha:
         base_rel["public_manifest_sha256"] = manifest_sha
         binding_updated = True
-        release_path = public_root / "data" / "reddit-voc" / "current-release.json"
+        release_path = voc_root / "current-release.json"
         tmp = release_path.with_suffix(".json.tmp")
         tmp.write_text(json.dumps(release, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         os.replace(tmp, release_path)
@@ -541,27 +595,35 @@ POINTER_PREREQUISITES = ("collect", "merge_snapshot", "recompute_derivatives")
 READY_STATUSES = {"ok", "success", "empty_success", "partial", "skipped_already_covered"}
 
 
-def step3_5_recompute_derivatives(public_root: Path) -> dict:
+def step3_5_recompute_derivatives(public_root: Path, *, data_root: Path | None = None) -> dict:
     """Step 3.5 (ADR-002 Phase B): recompute derivative datasets from merged snapshot.
 
     Recomputes aggregates / quarter-insights / reports daily from the full merged
     corpus, rewrites each dataset's manifest-file hashes, then updates every
     binding SHA in current-release.json. Pointer advance (Step 4) must only run
     AFTER this step succeeds — 先内容后指针.
+
+    `data_root` (symlink mode) sends every read and write into the staged
+    generation, including the binding-sync pass below and the pointer rewrite it
+    performs. Leaving it None reproduces the historical paths exactly.
     """
     sys.path.insert(0, str(ROOT))
+    sys.path.insert(0, str(ROOT / "scripts"))
     from recompute_derivatives import run_recompute
+    from release_paths import manifest_path as _manifest_path
 
-    receipt = run_recompute(public_root, dry_run=False)
+    voc_root = Path(data_root) if data_root is not None else public_root / "data" / "reddit-voc"
+
+    receipt = run_recompute(public_root, data_root=data_root, dry_run=False)
 
     # Rewrite manifest-internal file hashes for the datasets we touched, then
     # sync binding SHAs in current-release.json (same mechanism as merge_snapshot).
-    rel_path = public_root / "data" / "reddit-voc" / "current-release.json"
+    rel_path = voc_root / "current-release.json"
     release = json.loads(rel_path.read_text(encoding="utf-8"))
     bindings_updated = []
 
     base_binding = release["datasets"].get("base", {})
-    base_manifest_abs = public_root / base_binding.get("manifest_path", "")
+    base_manifest_abs = _manifest_path(voc_root, base_binding)
     if base_manifest_abs.exists():
         manifest = json.loads(base_manifest_abs.read_text(encoding="utf-8"))
         dataset_dir = base_manifest_abs.parent
@@ -575,7 +637,7 @@ def step3_5_recompute_derivatives(public_root: Path) -> dict:
     # Refresh: recompute wrote new bytes into dataset files whose manifests embed
     # their hashes; recompute each binding's manifest sha after internal-fix pass.
     for key, b in release["datasets"].items():
-        mp = public_root / b.get("manifest_path", "")
+        mp = _manifest_path(voc_root, b)
         if not mp.exists():
             continue
         # First sync internal file hashes where the manifest embeds them.
@@ -620,15 +682,41 @@ def step3_5_recompute_derivatives(public_root: Path) -> dict:
     return receipt
 
 
-def step4_advance_pointer(public_root: Path, run_id: str) -> dict:
-    """Step 4: advance current-release.json to the closed T-1 boundary."""
-    sys.path.insert(0, str(ROOT))
-    from scripts.advance_daily_t1_release import advance_current_release_to_t1
+def step4_advance_pointer(
+    public_root: Path,
+    run_id: str,
+    *,
+    data_root: Path | None = None,
+    release_doc_holder: dict | None = None,
+) -> dict:
+    """Step 4: advance current-release.json to the closed T-1 boundary.
 
-    result = advance_current_release_to_t1(
-        current_release_path=public_root / "data" / "reddit-voc" / "current-release.json",
-        status="partial",
+    In symlink mode this mutates the release document *in memory* and hands it to
+    the single commit that publishes the generation. Writing a file here would be
+    a third live pointer replace, and a failure after it would leave live
+    freshness advanced over old content.
+
+    Off mode keeps the historical atomic in-place write.
+    """
+    sys.path.insert(0, str(ROOT))
+    from scripts.advance_daily_t1_release import (
+        advance_current_release_to_t1,
+        advance_release_document,
+        release_receipt,
     )
+
+    if data_root is not None:
+        if release_doc_holder is None:
+            raise RuntimeError("advance_pointer_holder_missing")
+        document = json.loads((Path(data_root) / "current-release.json").read_text(encoding="utf-8"))
+        advance_release_document(document, status="partial")
+        release_doc_holder["document"] = document
+        result = release_receipt(document, "partial")
+    else:
+        result = advance_current_release_to_t1(
+            current_release_path=public_root / "data" / "reddit-voc" / "current-release.json",
+            status="partial",
+        )
     return {"step": "advance_pointer", "status": result.get("status"), **result}
 
 
@@ -765,7 +853,23 @@ def _collect_write_targets(public_root: Path, store_path: Path, output_dir: Path
     return targets
 
 
-def _preflight_writability(public_root: Path, store_path: Path, output_dir: Path) -> dict:
+def _is_within(path: Path, root: Path) -> bool:
+    """True when `path` is `root` or below it, without following symlinks.
+
+    Lexical on purpose: `root/data/reddit-voc` is a symlink in staging mode, and
+    resolving it would report every live-generation path as outside the tree the
+    run only reads.
+    """
+    try:
+        Path(path).relative_to(root)
+        return True
+    except ValueError:
+        return False
+
+
+def _preflight_writability(
+    public_root: Path, store_path: Path, output_dir: Path, *, mode: str = "off"
+) -> dict:
     """Fail the run BEFORE collecting if any write-target is unusable.
 
     The 10-29 07:05 run passed preflight, collected and merged 73 posts / 291
@@ -774,6 +878,13 @@ def _preflight_writability(public_root: Path, store_path: Path, output_dir: Path
     Directory-level `os.access(W_OK)` cannot see that, so check every target file
     itself: mode write bits first (a 0400 file denies everyone, root included),
     then readability (the generation copy reads what it publishes), then writability.
+
+    In symlink mode the live data tree is a read-only source: it is copied into
+    the generation and then left alone until `os.replace` swaps the link. Asserting
+    W_OK on it would reject a legitimately immutable live tree, so those targets
+    are checked for readability only, and the paths the run really must write --
+    the store, the output dir, the generations root and the symlink's parent --
+    carry the write assertions.
 
     Returns {'checked': int, 'warnings': [...]} on success; raises
     RuntimeError('pipeline_preflight_unwritable_targets: ...') with a per-path
@@ -785,11 +896,20 @@ def _preflight_writability(public_root: Path, store_path: Path, output_dir: Path
     seen: set[str] = set()
     euid = os.geteuid()
 
-    for target in _collect_write_targets(public_root, store_path, output_dir):
+    live_data = public_root / "data" / "reddit-voc"
+    targets = _collect_write_targets(public_root, store_path, output_dir)
+    # The symlink's parent must accept the atomic swap even though the link
+    # target is read-only in this mode.
+    if mode == "symlink":
+        targets = targets + [public_root / "data", public_root / "data" / "reddit-voc-generations"]
+
+    for target in targets:
         key = str(target)
         if key in seen:
             continue
         seen.add(key)
+
+        read_only = mode == "symlink" and _is_within(target, live_data)
 
         try:
             stat = target.stat()
@@ -808,29 +928,39 @@ def _preflight_writability(public_root: Path, store_path: Path, output_dir: Path
             continue
 
         checked += 1
-        mode = stat.st_mode & 0o7777
+        mode_bits = stat.st_mode & 0o7777
         is_dir = target.is_dir()
+
+        if read_only:
+            # Source for the generation copy: must be readable and traversable,
+            # never writable. Unreadable bytes cannot be published.
+            if is_dir:
+                if not (os.access(target, os.R_OK | os.X_OK)):
+                    blocked.append({"path": key, "uid": stat.st_uid, "mode": oct(mode_bits), "reason": "dir_not_readable"})
+            elif not os.access(target, os.R_OK):
+                blocked.append({"path": key, "uid": stat.st_uid, "mode": oct(mode_bits), "reason": "not_readable"})
+            continue
 
         if is_dir:
             if not os.access(target, os.W_OK | os.X_OK):
-                blocked.append({"path": key, "uid": stat.st_uid, "mode": oct(mode), "reason": "dir_not_writable"})
+                blocked.append({"path": key, "uid": stat.st_uid, "mode": oct(mode_bits), "reason": "dir_not_writable"})
             elif stat.st_uid != euid:
-                warnings.append({"path": key, "uid": stat.st_uid, "mode": oct(mode), "reason": "foreign_owner"})
+                warnings.append({"path": key, "uid": stat.st_uid, "mode": oct(mode_bits), "reason": "foreign_owner"})
             continue
 
         # Regular file. A file with no write bit set at all is a hard stop even for
         # root: that is the 0400/0600 root-owned artifact that broke 10-29.
-        if mode & 0o222 == 0:
-            blocked.append({"path": key, "uid": stat.st_uid, "mode": oct(mode), "reason": "mode_denies_write"})
+        if mode_bits & 0o222 == 0:
+            blocked.append({"path": key, "uid": stat.st_uid, "mode": oct(mode_bits), "reason": "mode_denies_write"})
             continue
         if not os.access(target, os.R_OK):
-            blocked.append({"path": key, "uid": stat.st_uid, "mode": oct(mode), "reason": "not_readable"})
+            blocked.append({"path": key, "uid": stat.st_uid, "mode": oct(mode_bits), "reason": "not_readable"})
             continue
         if not os.access(target, os.W_OK):
-            blocked.append({"path": key, "uid": stat.st_uid, "mode": oct(mode), "reason": "not_writable"})
+            blocked.append({"path": key, "uid": stat.st_uid, "mode": oct(mode_bits), "reason": "not_writable"})
             continue
         if stat.st_uid != euid:
-            warnings.append({"path": key, "uid": stat.st_uid, "mode": oct(mode), "reason": "foreign_owner"})
+            warnings.append({"path": key, "uid": stat.st_uid, "mode": oct(mode_bits), "reason": "foreign_owner"})
 
     if blocked:
         payload = json.dumps(blocked, ensure_ascii=False)
@@ -847,7 +977,24 @@ def run_pipeline(*, store_path: Path, public_root: Path, output_dir: Path, skip_
     receipts: list[dict] = []
     errors: list[dict] = []
 
-    _preflight_writability(public_root, store_path, output_dir)
+    mode = _generation_mode()
+    tx = None
+    release_doc_holder: dict = {}
+
+    def _data_root() -> Path | None:
+        """The staged generation root, or None in off mode.
+
+        Resolved at call time inside each step lambda, so a failed
+        begin_generation stops the run instead of letting the next step write the
+        live tree with data_root=None.
+        """
+        if mode == "off":
+            return None
+        if tx is None:
+            raise RuntimeError("pipeline_generation_not_started")
+        return tx.root
+
+    _preflight_writability(public_root, store_path, output_dir, mode=mode)
 
     # ADR-002 Phase B: Step 3.5 recompute_derivatives runs before pointer advance,
     # so pointer/content parity is maintained. Guard remains available as a kill-switch.
@@ -859,15 +1006,43 @@ def run_pipeline(*, store_path: Path, public_root: Path, output_dir: Path, skip_
             "reason": "PIPELINE_DISABLE_POINTER_ADVANCE=1",
         })
 
+    def _begin_generation() -> dict:
+        """Open a release generation after collection, before any data write.
+
+        Collection has already committed to SQLite, which lives outside
+        public_root on purpose: rows must survive a failed publish. Everything
+        after this point writes into the new generation, so agent-studio, the
+        merged snapshot and every derivative are published together or not at all.
+        """
+        nonlocal tx
+        sys.path.insert(0, str(ROOT / "scripts"))
+        from daily_release_transaction import begin_generation
+
+        tx = begin_generation(public_root, run_id=run_id)
+        return {
+            "step": "begin_generation",
+            "status": "ok",
+            "generation_id": tx.generation_id,
+            "root": str(tx.root),
+        }
+
     steps = [
         ("collect", lambda: step1_collect(store_path, run_id)),
-        ("agents", lambda: step2_agents(store_path, run_id, output_dir)),
-        ("merge_snapshot", lambda: step3_merge_snapshot(run_id, store_path, public_root)),
-        ("recompute_derivatives", lambda: step3_5_recompute_derivatives(public_root)),
     ]
+    if mode == "symlink":
+        steps.append(("begin_generation", _begin_generation))
+    steps.extend([
+        ("agents", lambda: step2_agents(store_path, run_id, output_dir, data_root=_data_root())),
+        ("merge_snapshot", lambda: step3_merge_snapshot(run_id, store_path, public_root, data_root=_data_root())),
+        ("recompute_derivatives", lambda: step3_5_recompute_derivatives(public_root, data_root=_data_root())),
+    ])
     if not pointer_guard:
-        steps.append(("advance_pointer", lambda: step4_advance_pointer(public_root, run_id)))
-    if not skip_feishu:
+        steps.append(("advance_pointer", lambda: step4_advance_pointer(
+            public_root, run_id, data_root=_data_root(), release_doc_holder=release_doc_holder,
+        )))
+    # In symlink mode the card is built after the commit decision, so it can never
+    # describe a generation that was not published.
+    if not skip_feishu and mode == "off":
         steps.append(("feishu_push", lambda: step5_feishu_push(run_id, report_date, receipts, output_dir)))
 
     for name, fn in steps:
@@ -898,7 +1073,73 @@ def run_pipeline(*, store_path: Path, public_root: Path, output_dir: Path, skip_
             errors.append(receipt)
         receipts.append(receipt)
 
+    commit_receipt: dict | None = None
+    if mode == "symlink":
+        # Exactly one publish point for the whole run, and it lives here rather
+        # than inside the loop: every write has finished, so the readiness
+        # contract can be judged once against the final receipts.
+        failures = [
+            r["step"] for r in receipts
+            if isinstance(r, dict)
+            and r.get("step") in POINTER_PREREQUISITES
+            and str(r.get("status")) not in READY_STATUSES
+        ]
+        advance_ok = any(
+            isinstance(r, dict) and r.get("step") == "advance_pointer" and r.get("status") == "advanced"
+            for r in receipts
+        )
+        if pointer_guard:
+            commit_receipt = {"step": "commit_generation", "status": "skipped_by_kill_switch"}
+        elif errors or tx is None or release_doc_holder.get("document") is None or failures or not advance_ok:
+            commit_receipt = {
+                "step": "commit_generation",
+                "status": "blocked_by_prerequisites",
+                "failed_prerequisites": failures,
+                "run_errors": [r.get("step") for r in errors],
+            }
+        else:
+            try:
+                tx.commit(release_doc_holder["document"])
+                commit_receipt = {
+                    "step": "commit_generation",
+                    "status": "committed",
+                    "generation_id": tx.generation_id,
+                    "root": str(tx.root),
+                }
+            except Exception as exc:
+                commit_receipt = {
+                    "step": "commit_generation",
+                    "status": "error",
+                    "error": str(exc),
+                    "traceback": traceback.format_exc()[-1500:],
+                }
+                errors.append(commit_receipt)
+        receipts.append(commit_receipt)
+
+        if not skip_feishu:
+            # After the publish decision, and not counted as a run error: the data
+            # is already live, so a card failure must not mark the release failed.
+            try:
+                receipts.append(step5_feishu_push(run_id, report_date, receipts, output_dir))
+            except Exception as exc:
+                receipts.append({
+                    "step": "feishu_push",
+                    "status": "error",
+                    "error": str(exc),
+                    "traceback": traceback.format_exc()[-1500:],
+                })
+
     finished = datetime.now(timezone.utc)
+    if mode == "symlink":
+        # A run only succeeded if it published. "partial" is not a success state
+        # here: the caller's exit code decides whether anyone investigates.
+        committed = commit_receipt is not None and commit_receipt.get("status") in (
+            "committed", "skipped_by_kill_switch",
+        )
+        status = "success" if (not errors and committed) else "failed"
+    else:
+        status = "success" if not errors else f"partial_{len(errors)}_step_errors"
+
     receipt_doc = {
         "schema_version": PIPELINE_SCHEMA,
         "run_id": run_id,
@@ -907,10 +1148,17 @@ def run_pipeline(*, store_path: Path, public_root: Path, output_dir: Path, skip_
         "window_end_utc": window_end.isoformat(),
         "started_at_utc": started.isoformat(),
         "finished_at_utc": finished.isoformat(),
-        "status": "success" if not errors else f"partial_{len(errors)}_step_errors",
+        "status": status,
         "steps": receipts,
         "errors": errors,
     }
+    if mode == "symlink":
+        receipt_doc["release_transaction"] = {
+            "mode": mode,
+            "generation_id": tx.generation_id if tx is not None else None,
+            "root": str(tx.root) if tx is not None else None,
+            "commit": commit_receipt,
+        }
     output_dir.mkdir(parents=True, exist_ok=True)
     receipt_path = output_dir / f"{run_id}-pipeline-receipt.json"
     receipt_path.write_text(json.dumps(receipt_doc, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

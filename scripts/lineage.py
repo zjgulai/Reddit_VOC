@@ -173,14 +173,17 @@ def governed_signal_projection(
     return manifest_sha_final, receipt_sha, snapshot_id
 
 
-def personas_receipt(public_root: Path, manifest_path: str) -> tuple[str, str] | None:
+def personas_receipt(manifest_abs: Path) -> tuple[str, str] | None:
     """Hash the personas dataset that actually exists, and state what was verified.
 
     The personas projection cannot be rebuilt in-repo (its upstream governed-signal
     and persona-dictionary engines are out of scope), so the receipt says exactly
     that instead of implying a fresh build.
+
+    Takes the already-resolved manifest path rather than (root, relative path)
+    so a caller cannot pair a staged data root with a public-root-relative
+    binding and quietly write into the live tree (L6-T08).
     """
-    manifest_abs = public_root / manifest_path
     if not manifest_abs.exists():
         return None
     manifest_sha = _sha_file(manifest_abs)
@@ -198,12 +201,18 @@ def personas_receipt(public_root: Path, manifest_path: str) -> tuple[str, str] |
     return manifest_sha, receipt_sha
 
 
-def ship_product_ledger(public_root: Path, ledger_path: Path) -> str | None:
-    """Copy the product entity ledger next to the data and hash the shipped copy."""
+def ship_product_ledger(data_root: Path, ledger_path: Path) -> str | None:
+    """Copy the product entity ledger next to the data and hash the shipped copy.
+
+    `data_root` is the reddit-voc directory itself (live or a staged generation).
+    The helper used to append the `data/reddit-voc` prefix internally, which
+    double-prefixed once a caller passed a generation root and wrote the live
+    lineage directory once it passed public_root.
+    """
     if not ledger_path.exists():
         return None
     payload = ledger_path.read_bytes()
-    target_dir = public_root / "data" / "reddit-voc" / "lineage"
+    target_dir = data_root / "lineage"
     target_dir.mkdir(parents=True, exist_ok=True)
     (target_dir / "product-entity-ledger.json").write_bytes(payload)
     return _sha_bytes(payload)

@@ -36,17 +36,23 @@ def calculate_t1_shanghai_window(now_utc: datetime | None = None) -> tuple[datet
     return window_start_utc, window_end_utc, data_as_of_utc
 
 
-def advance_current_release_to_t1(
+def advance_release_document(
+    current_data: dict,
     *,
-    current_release_path: Path = CURRENT_RELEASE_FILE,
     status: str = "partial",
     now_utc: datetime | None = None,
-) -> dict[str, object]:
-    """Atomically advance current-release.json freshness to latest closed T-1 window."""
-    if not current_release_path.exists():
-        raise FileNotFoundError(f"Missing {current_release_path}")
+) -> dict:
+    """Apply the T-1 freshness advance to a release document in memory.
 
-    current_data = json.loads(current_release_path.read_text(encoding="utf-8"))
+    Split out of `advance_current_release_to_t1` so the pipeline can prepare the
+    document that its single commit will publish, without touching a file. In
+    symlink mode a file write here would replace the *live* pointer, which is the
+    one thing L6-T08 exists to prevent.
+
+    Mutation order and byte output are unchanged: same window calculation, same
+    seven freshness keys, same collector_run_id fallback, same key insertion
+    order, so `json.dumps(..., indent=2)` produces identical bytes.
+    """
     w_start, w_end, as_of = calculate_t1_shanghai_window(now_utc)
 
     now = now_utc or datetime.now(timezone.utc)
@@ -64,12 +70,12 @@ def advance_current_release_to_t1(
     })
     current_data["freshness"] = freshness
     current_data["generated_at_utc"] = now.strftime("%Y-%m-%dT%H:%M:%SZ")
+    return current_data
 
-    # Atomic write to current-release.json
-    temp_path = current_release_path.with_suffix(".tmp")
-    temp_path.write_text(json.dumps(current_data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    temp_path.replace(current_release_path)
 
+def release_receipt(current_data: dict, status: str = "partial") -> dict[str, object]:
+    """The step receipt shape shared by the CLI and the pipeline."""
+    freshness = current_data.get("freshness", {})
     return {
         "status": "advanced",
         "release_id": current_data.get("release_id"),
@@ -78,6 +84,27 @@ def advance_current_release_to_t1(
         "window_end_utc": freshness["window_end_utc"],
         "freshness_status": status,
     }
+
+
+def advance_current_release_to_t1(
+    *,
+    current_release_path: Path = CURRENT_RELEASE_FILE,
+    status: str = "partial",
+    now_utc: datetime | None = None,
+) -> dict[str, object]:
+    """Atomically advance current-release.json freshness to latest closed T-1 window."""
+    if not current_release_path.exists():
+        raise FileNotFoundError(f"Missing {current_release_path}")
+
+    current_data = json.loads(current_release_path.read_text(encoding="utf-8"))
+    current_data = advance_release_document(current_data, status=status, now_utc=now_utc)
+
+    # Atomic write to current-release.json
+    temp_path = current_release_path.with_suffix(".tmp")
+    temp_path.write_text(json.dumps(current_data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    temp_path.replace(current_release_path)
+
+    return release_receipt(current_data, status)
 
 
 def main() -> int:
