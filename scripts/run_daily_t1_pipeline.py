@@ -16,6 +16,8 @@ from __future__ import annotations
 import argparse
 from dataclasses import replace
 from datetime import datetime, timedelta, timezone
+import errno
+import fcntl
 import hashlib
 import json
 import logging
@@ -1054,12 +1056,170 @@ def _preflight_writability(
     return {"checked": checked, "warnings": warnings}
 
 
+def _lock_path(public_root: Path) -> Path:
+    """Where the single-writer lock lives.
+
+    `public_root/data/` and NOT `data/reddit-voc/`: in symlink mode the latter is
+    the generation pointer, which is replaced at commit. A lock file inside it
+    would move to the new generation mid-run, so a second process would take a
+    lock on a different inode and both would proceed. It would also be published
+    with the data.
+
+    Overridable so a test (or a second site root) can point elsewhere.
+    """
+    override = os.getenv("PIPELINE_LOCK_PATH", "").strip()
+    if override:
+        return Path(override)
+    return public_root / "data" / "reddit-voc.lock"
+
+
+class PipelineLock:
+    """Exclusive, non-blocking single-writer lock for one pipeline run.
+
+    Two overlapping runs would each open a generation, then each commit -- the
+    second `os.replace` wins and the first run's tree is orphaned while the
+    site briefly serves content from a run that reported success. systemd's
+    timer only covers scheduled runs; manual re-runs are routine (there was one
+    at 19:01 on 10-29), and they can overlap a long scheduled run.
+
+    Non-blocking on purpose: a queued second run would start hours late and
+    publish stale data under a fresh timestamp. Failing fast with a distinct
+    exit code lets the operator decide.
+    """
+
+    def __init__(self, path: Path) -> None:
+        self.path = Path(path)
+        self._fd: int | None = None
+        self.acquired = False
+
+    def acquire(self) -> bool:
+        """Take the lock, or return False if another run holds it.
+
+        Only EWOULDBLOCK/EAGAIN means contention. Every other failure -- a lock
+        file owned by another user, a filesystem without flock support, I/O
+        error -- is raised, not reported as "another run is active": telling the
+        operator to wait, forever, for a run that does not exist is worse than a
+        crash that names the real problem.
+        """
+        # The parent must exist before the lock can be created; a missing
+        # directory is not a contention signal, so let it raise.
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        # O_CLOEXEC matters: this fd is inherited by every child process
+        # otherwise, and a child holding the fd keeps the flock alive after the
+        # pipeline exits, wedging all subsequent runs until the child ends.
+        flags = os.O_RDWR | os.O_CREAT | getattr(os, "O_CLOEXEC", 0)
+        try:
+            fd = os.open(self.path, flags, 0o644)
+        except PermissionError:
+            # A lock created by another user (a one-off `sudo` run is routine on
+            # this host) cannot be opened O_RDWR. Fall back to read-only: flock
+            # an existing fd does not need write access, and the file's content
+            # is never read or written.
+            try:
+                fd = os.open(self.path, os.O_RDONLY | getattr(os, "O_CLOEXEC", 0))
+            except OSError as exc:
+                raise RuntimeError(
+                    f"pipeline_lock_unusable:{self.path}:{exc.strerror}"
+                ) from exc
+        except OSError as exc:
+            raise RuntimeError(f"pipeline_lock_unusable:{self.path}:{exc.strerror}") from exc
+
+        try:
+            fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except OSError as exc:
+            os.close(fd)
+            if exc.errno in (errno.EWOULDBLOCK, errno.EAGAIN):
+                return False
+            raise RuntimeError(
+                f"pipeline_lock_unavailable:{self.path}:{exc.strerror}"
+            ) from exc
+        self._fd = fd
+        self.acquired = True
+        return True
+
+    def release(self) -> None:
+        if self._fd is None:
+            return
+        try:
+            fcntl.flock(self._fd, fcntl.LOCK_UN)
+        except OSError:
+            pass
+        finally:
+            os.close(self._fd)
+            self._fd = None
+            self.acquired = False
+
+    def __enter__(self) -> "PipelineLock":
+        # Acquire on entry. Returning self without locking made `with
+        # PipelineLock(...)` silently unlocked, which is the exact bug this class
+        # exists to prevent.
+        if not self.acquire():
+            raise RuntimeError(f"pipeline_lock_held:{self.path}")
+        return self
+
+    def __exit__(self, *_exc: object) -> None:
+        self.release()
+
+
 def run_pipeline(*, store_path: Path, public_root: Path, output_dir: Path, skip_feishu: bool = False) -> dict:
     started = datetime.now(timezone.utc)
     window_start, window_end, run_id, report_date = _t1_bounds()
     receipts: list[dict] = []
     errors: list[dict] = []
 
+    # Before any write, including collection. An aborted run must leave nothing
+    # behind: no rows, no generation, no pointer move.
+    lock = PipelineLock(_lock_path(public_root))
+    if not lock.acquire():
+        abort = {
+            "schema_version": PIPELINE_SCHEMA,
+            "run_id": run_id,
+            "report_date": report_date,
+            "window_start_utc": window_start.isoformat(),
+            "window_end_utc": window_end.isoformat(),
+            "started_at_utc": started.isoformat(),
+            "finished_at_utc": datetime.now(timezone.utc).isoformat(),
+            "status": "aborted_already_running",
+            "lock_path": str(lock.path),
+            "steps": [],
+            "errors": [],
+        }
+        logging.error("pipeline_aborted_already_running: %s", lock.path)
+        return abort
+
+    try:
+        return _run_pipeline_locked(
+            store_path=store_path,
+            public_root=public_root,
+            output_dir=output_dir,
+            skip_feishu=skip_feishu,
+            started=started,
+            window_start=window_start,
+            window_end=window_end,
+            run_id=run_id,
+            report_date=report_date,
+            receipts=receipts,
+            errors=errors,
+        )
+    finally:
+        lock.release()
+
+
+def _run_pipeline_locked(
+    *,
+    store_path: Path,
+    public_root: Path,
+    output_dir: Path,
+    skip_feishu: bool,
+    started: datetime,
+    window_start: datetime,
+    window_end: datetime,
+    run_id: str,
+    report_date: str,
+    receipts: list[dict],
+    errors: list[dict],
+) -> dict:
+    """The body of a run that holds the writer lock."""
     mode = _generation_mode()
     tx = None
     release_doc_holder: dict = {}
@@ -1298,7 +1458,15 @@ def main() -> int:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
     receipt = run_pipeline(store_path=args.store, public_root=args.public_root, output_dir=args.output_dir, skip_feishu=args.skip_feishu)
     print(json.dumps(receipt, ensure_ascii=False, indent=2))
-    return 0 if receipt["status"] == "success" else 1
+    # Exit codes are a contract for the operator and for systemd:
+    #   0 success | 1 the run failed | 3 another run holds the lock (nothing ran)
+    # 3 is distinct so a contended run is not mistaken for a data failure and
+    # investigated as one; rerunning later is the whole remedy.
+    if receipt["status"] == "success":
+        return 0
+    if receipt["status"] == "aborted_already_running":
+        return 3
+    return 1
 
 
 if __name__ == "__main__":
