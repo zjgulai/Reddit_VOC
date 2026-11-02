@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Echo-Agent 项目成果总结 · 2026-11-02</title>
+<style>
+  :root {
+    color-scheme: light;
+    --page: #f9f9f7; --surface: #fcfcfb;
+    --ink-1: #0b0b0b; --ink-2: #52514e; --ink-3: #898781;
+    --line: #e1e0d9; --axis: #c3c2b7; --ring: rgba(11,11,11,0.10);
+    --accent: #2a78d6; --accent-wash: rgba(42,120,214,0.08);
+    --good: #006300; --good-dot: #0ca30c;
+    --warn: #8a5b00; --warn-dot: #fab219;
+    --bad: #b23030; --bad-dot: #d03b3b;
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --page: #0d0d0d; --surface: #1a1a19;
+    --ink-1: #ffffff; --ink-2: #c3c2b7; --ink-3: #898781;
+    --line: #2c2c2a; --axis: #383835; --ring: rgba(255,255,255,0.10);
+    --accent: #3987e5; --accent-wash: rgba(57,135,229,0.12);
+    --good: #0ca30c; --good-dot: #0ca30c;
+    --warn: #fab219; --warn-dot: #fab219;
+    --bad: #e66767; --bad-dot: #d03b3b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--page); color: var(--ink-1);
+    font: 15px/1.75 system-ui, -apple-system, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    transition: background .2s, color .2s;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 40px 28px 80px; }
+  header.hero { border-bottom: 1px solid var(--line); padding-bottom: 24px; margin-bottom: 32px; }
+  .hero-kicker { font-size: 12px; letter-spacing: .14em; color: var(--ink-3); text-transform: uppercase; margin-bottom: 8px; }
+  h1 { font-size: 30px; line-height: 1.3; margin: 0 0 10px; font-weight: 700; }
+  .hero-meta { font-size: 13px; color: var(--ink-2); }
+  .hero-meta span { margin-right: 18px; white-space: nowrap; }
+  #themeBtn {
+    float: right; margin-left: 16px; border: 1px solid var(--ring); background: var(--surface); color: var(--ink-2);
+    border-radius: 8px; padding: 6px 14px; font-size: 13px; cursor: pointer;
+  }
+  #themeBtn:hover { color: var(--ink-1); border-color: var(--axis); }
+  h2 { font-size: 20px; margin: 48px 0 16px; padding-top: 18px; border-top: 1px solid var(--line); }
+  h2 .no { color: var(--ink-3); font-weight: 500; margin-right: 8px; font-size: 16px; }
+  h3 { font-size: 16px; margin: 28px 0 10px; }
+  p { margin: 10px 0; color: var(--ink-2); }
+  strong { color: var(--ink-1); }
+  code { background: var(--accent-wash); color: var(--ink-1); border-radius: 4px; padding: 1px 6px; font-size: .88em; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+  .lede { font-size: 16.5px; line-height: 1.85; color: var(--ink-2); border-left: 3px solid var(--accent); padding: 6px 0 6px 18px; margin: 0 0 8px; }
+  .note { font-size: 12.5px; color: var(--ink-3); line-height: 1.7; margin-top: 8px; }
+
+  /* ---- KPI stat tiles ---- */
+  .tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(225px, 1fr)); gap: 12px; margin: 20px 0 8px; }
+  .tile { background: var(--surface); border: 1px solid var(--ring); border-radius: 12px; padding: 16px 18px 14px; }
+  .tile .t-label { font-size: 12.5px; color: var(--ink-2); margin-bottom: 6px; }
+  .tile .t-value { font-size: 27px; font-weight: 600; line-height: 1.2; letter-spacing: -0.01em; }
+  .tile .t-value small { font-size: 14px; font-weight: 500; color: var(--ink-2); margin-left: 3px; }
+  .tile .t-delta { font-size: 12.5px; margin-top: 7px; color: var(--ink-3); }
+  .t-delta .up { color: var(--good); font-weight: 600; }
+  .t-delta .down { color: var(--bad); font-weight: 600; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex: none; margin-right: 5px; vertical-align: 1px; }
+  .dot.good { background: var(--good-dot); } .dot.warn { background: var(--warn-dot); } .dot.bad { background: var(--bad-dot); }
+  .pill { display: inline-block; font-size: 11px; font-weight: 600; border-radius: 999px; padding: 1px 9px; line-height: 1.7; border: 1px solid var(--ring); color: var(--ink-2); background: var(--page); }
+  .pill.ok { color: var(--good); border-color: color-mix(in srgb, var(--good-dot) 35%, transparent); }
+  .pill.part { color: var(--warn); border-color: color-mix(in srgb, var(--warn-dot) 45%, transparent); }
+
+  /* ---- tables ---- */
+  table { width: 100%; border-collapse: collapse; margin: 14px 0 8px; font-size: 13.5px; background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; overflow: hidden; }
+  th, td { text-align: left; padding: 9px 12px; vertical-align: top; border-top: 1px solid var(--line); }
+  thead th { border-top: none; font-size: 12px; color: var(--ink-3); font-weight: 600; letter-spacing: .04em; background: var(--page); }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  td .src { display: block; font-size: 12px; color: var(--ink-3); margin-top: 2px; }
+  tbody tr:hover td { background: var(--accent-wash); }
+
+  /* ---- timeline ---- */
+  .tl { margin: 18px 0 4px; padding: 0; list-style: none; position: relative; }
+  .tl::before { content: ""; position: absolute; left: 89px; top: 8px; bottom: 8px; width: 1px; background: var(--axis); }
+  .tl li { position: relative; padding: 0 0 16px 116px; }
+  .tl .d { position: absolute; left: 0; top: 1px; width: 74px; text-align: right; font-size: 12.5px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+  .tl .nd { position: absolute; left: 85px; top: 7px; width: 9px; height: 9px; border-radius: 50%; background: var(--axis); border: 2px solid var(--page); }
+  .tl li.hl .nd { background: var(--accent); }
+  .tl li.hl .d { color: var(--accent); font-weight: 600; }
+  .tl .e { font-size: 13.5px; color: var(--ink-2); }
+  .tl .e strong { display: block; }
+
+  /* ---- misc ---- */
+  .pipeline { background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 14px 18px; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 12.5px; color: var(--ink-2); overflow-x: auto; white-space: nowrap; margin: 14px 0; }
+  .pipeline b { color: var(--accent); font-weight: 600; }
+  .issue { background: var(--surface); border: 1px solid var(--ring); border-left: 3px solid var(--warn-dot); border-radius: 8px; padding: 12px 16px; margin: 10px 0; font-size: 13.5px; color: var(--ink-2); }
+  .issue b { color: var(--ink-1); }
+  .issue.closed { border-left-color: var(--good-dot); }
+  footer { margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 12px; color: var(--ink-3); line-height: 1.8; }
+  @media (max-width: 640px) {
+    .wrap { padding: 24px 16px 56px; }
+    h1 { font-size: 23px; }
+    .tl::before { left: 13px; }
+    .tl li { padding-left: 36px; }
+    .tl .d { position: static; display: block; width: auto; text-align: left; margin-bottom: 2px; }
+    .tl .nd { left: 9px; top: 26px; }
+    table { display: block; overflow-x: auto; }
+  }
+  @media print { #themeBtn { display: none; } body { background: #fff; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <button id="themeBtn" type="button">◐ 深色</button>
+  <div class="hero-kicker">Echo-Agent · Reddit VOC Intelligence · Daily Report</div>
+  <h1>项目成果总结 · 2026-11-02</h1>
+  <div class="hero-meta">
+    <span>📅 报告日期 2026-11-02 07:50 CST</span>
+    <span>🔎 增量窗口 11-01 07:45 → 11-02 07:50（零提交）</span>
+    <span>🌿 <code>v2/w1-quickwins</code> · 领先 main 24 提交</span>
+  </div>
+</header>
+
+<p class="lede">Echo-Agent 在 11-01→11-02 窗口进入<strong>零提交稳定运营日</strong>，当日最重要的增量不是新代码，而是<strong>体系自证</strong>：修复后第二个无人值守定时运行全绿（10 步、11 分钟、exit 0），且回执首次确证<strong>生产 LLM 通路真实在跑</strong>（<code>analysis_mode=llm</code> · <code>deepseek-v4-flash</code>）——昨日遗留的「LLM/模板模式未确认」问题当场关闭；产品身份解析（L1-T05）连续第 2 日实战产出非零绑定；K1「无人值守连续成功」推进到<strong>第 2 天</strong>（目标 ≥14），语料基线推进到 <strong>26,154 帖 / 102,182 评</strong>。</p>
+<p class="note">口径：所有数字标注时点与出处；各时点语料基线不混算；未复测数字标注「源文档记录值」。生产探针全程只读。</p>
+
+<h2><span class="no">§1</span>成果数字看板</h2>
+<div class="tiles">
+  <div class="tile">
+    <div class="t-label">今晨定时运行（11-02 07:05）</div>
+    <div class="t-value">10 步全绿<small>· 11.1 min</small></div>
+    <div class="t-delta"><span class="dot good"></span><span class="up">exit 0 · errors []</span> 连续第 2 天</div>
+  </div>
+  <div class="tile">
+    <div class="t-label">K1 无人值守连续成功</div>
+    <div class="t-value">第 2 天<small>/ ≥14 天</small></div>
+    <div class="t-delta"><span class="dot warn"></span>零提交·零部署变更·零人工干预</div>
+  </div>
+  <div class="tile">
+    <div class="t-label">生产 LLM 模式（今日实证）</div>
+    <div class="t-value">llm<small>deepseek-v4-flash</small></div>
+    <div class="t-delta"><span class="dot good"></span><span class="up">昨日问题 #4 关闭</span> 回执字段实测</div>
+  </div>
+  <div class="tile">
+    <div class="t-label">语料基线（data_as_of 11-01T23:00Z）</div>
+    <div class="t-value">26,154<small>帖</small> · 102,182<small>评</small></div>
+    <div class="t-delta"><span class="dot good"></span><span class="up">+56 帖 / +215 评</span> vs 11-01</div>
+  </div>
+  <div class="tile">
+    <div class="t-label">本期增量提交</div>
+    <div class="t-value">0<small>个 · 稳定运营日</small></div>
+    <div class="t-delta"><span class="dot good"></span>10-31 冲刺 15 个后进入验证期</div>
+  </div>
+  <div class="tile">
+    <div class="t-label">V2.0 工票 · 分支明确落地</div>
+    <div class="t-value">7<small>/ 105 张</small></div>
+    <div class="t-delta"><span class="dot warn"></span>其中 2 张部分落地（L5-T04 / L5-T06）</div>
+  </div>
+  <div class="tile">
+    <div class="t-label">K11 审计头条缺陷</div>
+    <div class="t-value">3 / 7<small>有工程动作</small></div>
+    <div class="t-delta"><span class="dot warn"></span>正式关闭 0/7（关闭矩阵未建立）</div>
+  </div>
+  <div class="tile">
+    <div class="t-label">产品身份解析实战（L1-T05）</div>
+    <div class="t-value">2<small>帖 · 3 bindings</small></div>
+    <div class="t-delta"><span class="dot warn"></span>连续 2 日非零 · 覆盖率仍低（2/56）</div>
+  </div>
+  <div class="tile">
+    <div class="t-label">新鲜度定时监控（07:45/12:15/20:15）</div>
+    <div class="t-value">4<small>次运行</small></div>
+    <div class="t-delta"><span class="dot warn"></span>3 次实测 exit 2 · build_receipt_missing</div>
+  </div>
+  <div class="tile">
+    <div class="t-label">今晨 Agent 出品 → 合并</div>
+    <div class="t-value">18 · 7 · 12<small>+56 帖 / +215 评</small></div>
+    <div class="t-delta"><span class="dot good"></span>选题 / 研发线索 / 竞品对比</div>
+  </div>
+  <div class="tile">
+    <div class="t-label">recompute（生产今晨）</div>
+    <div class="t-value">10.29s<small>26,154 帖</small></div>
+    <div class="t-delta"><span class="dot good"></span>优化基线 1,324s → 15.4s（86×，10-31）</div>
+  </div>
+  <div class="tile">
+    <div class="t-label">公网数据通路（11-02 实测）</div>
+    <div class="t-value">200<small>application/json</small></div>
+    <div class="t-delta"><span class="dot good"></span>指向今日代际 · generated_at 吻合</div>
+  </div>
+</div>
+<p class="note">看板数字出处：今晨运行=systemd+回执（11-02 07:05–07:16:07）；工票=TICKETS.md:3 + 11-02 核验代理逐票复核；代码/测试=11-02 本地实测（未跑用例）；性能基线承 10-31 实测并溯源复核；历史数字承前并标注「源文档记录值」。</p>
+
+<h2><span class="no">§2</span>项目概览</h2>
+<table>
+  <tbody>
+    <tr><td style="width:130px"><strong>定位</strong></td><td>Reddit 消费者之声（VOC）情报生产系统：采集 Reddit 社区讨论，产出选题、痛点、竞品、品牌健康与画像洞察，自动生成中文日报并推送</td></tr>
+    <tr><td><strong>服务对象</strong></td><td>Momcozy 业务方（产品与内容决策）</td></tr>
+    <tr><td><strong>生产入口</strong></td><td>https://radar.luteos.com（独立域名 → 43.163.92.244；11-02 实测 <code>/data/current-release.json</code> 200，指针指向今日代际）</td></tr>
+    <tr><td><strong>技术栈</strong></td><td>Python 后端（SQLite）+ React 洞察站 + 零依赖控制台 webapp + Docker/systemd + 共享 nginx</td></tr>
+    <tr><td><strong>当前阶段</strong></td><td>V2.0 转型：W1 止血主体落地并进入<strong>无人值守验证期</strong>（K1 计数中）；生产以 <strong>symlink 发布代际模式</strong>稳定日更（连续第 2 天）</td></tr>
+  </tbody>
+</table>
+
+<h2><span class="no">§3</span>本期增量与核心成果</h2>
+
+<h3>3.1 生产流水线与自动发布 <span class="pill ok">连续 2 日全绿</span></h3>
+<div class="pipeline">collect → begin_generation → agents → merge_snapshot → recompute_derivatives → advance_pointer → <b>build_stamps</b> → <b>commit_generation</b> → <b>gc_generations</b> → feishu_push</div>
+<table>
+  <thead><tr><th style="width:190px">成果</th><th>内容</th><th style="width:170px">证据</th></tr></thead>
+  <tbody>
+    <tr><td><strong>第二个全绿无人值守运行</strong></td><td>07:05:00–07:16:07 十步全绿（exit 0）：发现 66 帖、入库 66 帖/245 评 → Agent 18/7/12 → 合并 +56 帖/+215 评 → recompute（26,154 帖，anchor 11-01，10.29s）→ 指针前移（data_as_of=11-01T23:00Z）→ 7 数据集构建戳 → 代际提交 <code>daily_collect_20261102_0700</code> → GC（保留 2 代）→ 飞书 sent；回执 <code>errors: []</code></td><td>systemd exit 0 + 回执（11-02 07:42 只读读取）</td></tr>
+    <tr><td><strong>连续性证据链</strong></td><td>生产代际目录恰含 11-01/11-02 两代；相对符号链接 07:16 原子切换指向今日代际；单写者锁文件 <code>reddit-voc.lock</code> 自 10-31 常驻；公网 <code>generated_at_utc=11-01T23:16:05Z</code> 与流水线完成时刻吻合（UTC+8 即 07:16:07）</td><td>生产 ls/readlink + 公网实测（11-02）</td></tr>
+    <tr><td><strong>发布代际事务</strong><br><span class="pill">L6-T08 · P0 · W1</span></td><td>merge/recompute 只写私有代目录，live 指针全程仅一次 os.replace（同契约门禁）；失败运行报 failed 而非 partial。<strong>连续 2 日实战通过</strong>（承前，10-31 当晚启用）</td><td>4b0f2d1 · 502d29e；7 wiring 测试</td></tr>
+    <tr><td><strong>单写者锁</strong><br><span class="pill">L6-T15 · P2 · W1</span></td><td>指针同级文件非阻塞 flock（防指针替换后 inode 漂移漏锁）；争用退出码 3 与数据失败区分；对抗评审修 4 缺陷（承前）</td><td>74fca8a；10 测试</td></tr>
+    <tr><td><strong>代际 GC</strong></td><td>成功提交后 gc(keep=2)（保留上一代供回滚），失败代留作证据；今晨 GC 后恰保留 2 代，与设计一致（承前）</td><td>ddbaf9f；11-02 实测</td></tr>
+    <tr><td><strong>对照基线</strong></td><td>11-01 首个全绿 9.5 min；今日 11.1 min（Agent 产出量正常波动：37 项 vs 44 项）；10-31 07:31 exit 1 已当日修复（承前）</td><td>systemd + 回执对照</td></tr>
+  </tbody>
+</table>
+
+<h3>3.2 多 Agent 分析矩阵 <span class="pill ok">生产 LLM 实证</span></h3>
+<table>
+  <thead><tr><th style="width:190px">成果</th><th>内容</th><th style="width:170px">证据</th></tr></thead>
+  <tbody>
+    <tr><td><strong>生产 LLM 实证</strong><br><span class="pill ok">本期头号增量</span></td><td>今晨回执 <code>analysis_mode="llm"</code>、<code>llm_model="deepseek-v4-flash"</code>——10-31 接线的真实 LLM 通路连续第 2 天在生产产出分析，生产自上线以来「一直跑模板分析」的时代确认终结。代码链路（11-02 行号复核）：<code>build_agent_client()</code> 纯环境变量驱动（六个 <code>AGENT_LLM_*</code>，llm_adapter.py:233-238），缺任一关键配置返回 None → 走模板路径（:254-266 → pipeline :355-356）；:392 计算 analysis_mode、:409-412 写入回执与模型名</td><td>11-02 回执实测 + 核验代理</td></tr>
+    <tr><td><strong>回退口径修正</strong></td><td>核验代理纠错：未配置路径<strong>不写</strong> <code>llm_fallback_reason</code>（该字段仅「已配置但调用抛 AgentLLMError 后降级重跑」时写入，pipeline :359-369、:413-416）；未配置与故障降级靠 <code>analysis_mode</code>（template_offline / llm）区分。昨日报告表述不精确，本版已修正</td><td>run_daily_t1_pipeline.py:359-369、413-416</td></tr>
+    <tr><td><strong>reasoning 默认关</strong></td><td><code>disable_reasoning</code> 默认 True（llm_adapter.py:107），请求注入 <code>reasoning_effort='none'</code>；仅 <code>AGENT_LLM_REASONING=on/1/true</code> 才开启。依据：reasoning on 35.5s/2946 tok vs off 9.5s/670（:47-60 模块注释）</td><td>llm_adapter.py:47-60、107、276-284</td></tr>
+    <tr><td><strong>证据门禁（承前）</strong></td><td>竞品引文须逐字复制，门禁据实拒伪（10-31 实测 4 条拒 3）；5c506bc 修复「门禁只改报告不改产物」与回执序列化崩溃。55 测试通过（源文档记录值）</td><td>5c506bc；tests/test_agent_evidence.py</td></tr>
+    <tr><td>三个 Agent（今晨实产）</td><td>ContentScout（选题 18）/ RndVoc（研发线索 7）/ CompetitorRadar（竞品对比 12）；8 路并发 7.2s/帖（承前，c02ee20）</td><td>11-02 回执 agents 步骤</td></tr>
+    <tr><td>测试</td><td><code>tests/agents/test_llm_adapter.py</code> 现含 16 个测试（适配器 14 + batch_runner 并发 2，c02ee20 追加）——11-02 核验代理逐个数出</td><td>tests/agents/test_llm_adapter.py</td></tr>
+  </tbody>
+</table>
+
+<h3>3.3 数据与语料资产</h3>
+<table>
+  <thead><tr><th>基线时点</th><th class="num" style="width:150px">帖</th><th class="num" style="width:130px">关联评论</th><th style="width:220px">出处</th></tr></thead>
+  <tbody>
+    <tr><td><strong>2026-11-02 07:05</strong>（最新）</td><td class="num"><strong>26,154</strong></td><td class="num"><strong>102,182</strong></td><td>今晨回执 recompute inputs</td></tr>
+    <tr><td>2026-11-01 07:05</td><td class="num">26,098</td><td class="num">101,967</td><td>11-01 回执</td></tr>
+    <tr><td>2026-10-29 审计</td><td class="num">25,873</td><td class="num">100,778</td><td>audit 20261029 :91-93（11-02 核验确认）</td></tr>
+    <tr><td>2026-10-26 ADR-004 收口</td><td class="num">17,469</td><td class="num">58,296</td><td>源文档记录值</td></tr>
+    <tr><td>2026-07-16 生产验收</td><td class="num">3,494</td><td class="num">27,158</td><td>源文档记录值</td></tr>
+  </tbody>
+</table>
+<p class="note">五个基线分属不同时点，互相不可否定、不可混算。<strong>产品身份解析（L1-T05 · P1 · W2，承前）</strong>：audit P0-3 根因修复持续生效——今晨连续第 2 日实战非零（bound 2 帖 / 3 bindings / resolver_loaded=true）。<strong>诚实边界</strong>：单日合并 56 帖中仅 2 帖获得绑定（≈4%），覆盖率仍低；存量回填属 Wave 5 opt-in 任务，回填前产品家族页面仍主要反映新行。统一事实库 75,761 VOC / 82 persona / 33,752 cohort / 416,803 fact 为 17k 语料时点源文档记录值，未随 26k 基线复测。</p>
+
+<h3>3.4 公开洞察站 · 站点自证 · 监控</h3>
+<table>
+  <thead><tr><th style="width:190px">成果</th><th>内容</th><th style="width:170px">证据</th></tr></thead>
+  <tbody>
+    <tr><td><strong>公网健康（11-02 实测）</strong></td><td><code>current-release.json</code> 200 application/json；指针为相对符号链接指向今日代际；<code>generated_at_utc=2026-11-01T23:16:05Z</code> 与流水线完成时刻吻合——公网看到的就是今日代际，无缓存漂移迹象</td><td>公网实测（11-02 07:42）</td></tr>
+    <tr><td><strong>站点自证三件套</strong><br><span class="pill">L5-T02/T04/T05</span></td><td>build_receipt.py 三方印证（指针 binding SHA == manifest 字节 SHA == build.json SHA）；check_site_freshness.py 三问三源状态机；19 个测试（源文档记录值，未复测）——承前</td><td>64432c1</td></tr>
+    <tr><td><strong>定时监控</strong><br><span class="pill">L5-T06 · P0</span></td><td>每日 07:45/12:15/20:15；SuccessExitStatus=2（exit 2=发现缺陷而非故障）。<strong>至今 4 次运行</strong>：11-01 07:45/20:15 与 11-02 07:45 三次直接实测 exit 2（build_receipt_missing），11-01 12:15 正常结束未单独复核——与 run 级回执未接线缺口一致，监控按设计如实报缺</td><td>b5214d7；journalctl（11-02 探针）</td></tr>
+    <tr><td>缓存按代际收敛</td><td>数据集缓存按 release 代际键控、重校验指针（承前，8bb9c68，10-30）</td><td>8bb9c68</td></tr>
+    <tr><td>工作台控制台（承前）</td><td>三视图 + 6 JSON API；三件套 1,016 行（11-02 核验逐文件实测：index.html 198 / app.js 286 / styles.css 532）；6/6 测试（源文档记录值）</td><td>webapp/</td></tr>
+  </tbody>
+</table>
+
+<h3>3.5 投递与工程治理（要点）</h3>
+<table>
+  <tbody>
+    <tr><td style="width:190px"><strong>飞书日报</strong></td><td>今晨 feishu_push 步骤 status=sent（07:16 前后）。卡片回执传递修复（52f126d）承前：绿跑渲染「已验证」信任行。承前机制不变（源文档记录值）：prepared once / 双机器人幂等 / unknown 终态 / 翻译 fail-closed 六重门禁 / Provider 分账 / 诚实 No-Go 文化（2026-07-29）</td></tr>
+    <tr><td><strong>测试体系</strong></td><td>后端测试文件 208 个（11-02 实测，未跑用例）；上期 pytest 收集 2,264 项（11-01）承前；React 229 通过 / webapp 6/6（源文档记录值）。零提交窗口，测试资产无变化</td></tr>
+    <tr><td><strong>部署与治理</strong></td><td>deploy_manifest.py AST 导入闭包 + 内容哈希校验（承前）；config/systemd/ 4 单元（freshness×2、data-shadow×2，11-02 实测）；config/ci/ 冻结基线 + test-lanes.json</td></tr>
+    <tr><td><strong>ADR / PRD / 十条合同</strong></td><td>ADR-001~004（10-26~29）；docs/prd/ 4 件含 PRD V3.0（11-02 实测）；十条生产合同（2026-08 定稿）承前：prepared once · 翻译 fail-closed · Provider 分账 · 逐目标幂等 · unknown 终态 · 周报月报只是日聚合 · 日期由数据决定 · 公开站与日报 current 分离 · 生产 claim 以回执为准 · CI 按证据依赖分 lane</td></tr>
+  </tbody>
+</table>
+
+<h2><span class="no">§4</span>关键里程碑时间线</h2>
+<ul class="tl">
+  <li><span class="d">07-07</span><span class="nd"></span><span class="e">立项：产品规划、数据合同、运维 runbook 成套落库</span></li>
+  <li><span class="d">07-16</span><span class="nd"></span><span class="e">生产洞察站 26/26 页面验收；四格式导出验收</span></li>
+  <li><span class="d">07-29</span><span class="nd"></span><span class="e">钉钉投递验收：诚实判定 No-Go（历史实发 0 次），转入门禁化改造</span></li>
+  <li><span class="d">08-09~22</span><span class="nd"></span><span class="e">prepared 日报 + 双机器人幂等投递闭环；四次受控补推完成</span></li>
+  <li><span class="d">08-25</span><span class="nd"></span><span class="e">PROJECT_STATUS 证据截止断点（17 帖/72 评论）</span></li>
+  <li><span class="d">10-25</span><span class="nd"></span><span class="e">多 Agent 矩阵落地；金标准评测体系建立</span></li>
+  <li><span class="d">10-26</span><span class="nd"></span><span class="e">每日 T-1 流水线全链路实测成功；V3.0 PRD 发布；ADR-001</span></li>
+  <li><span class="d">10-27</span><span class="nd"></span><span class="e">radar.luteos.com 独立域名上线；ADR-002</span></li>
+  <li><span class="d">10-28</span><span class="nd"></span><span class="e">ADR-003 双通道采集；74 天历史空洞修复</span></li>
+  <li><span class="d">10-29</span><span class="nd"></span><span class="e">ADR-004 统一事实库；248 项深度审计（16 项原判定被对抗复核修正）；同日 07:05 定时失败暴露 P0-1</span></li>
+  <li><span class="d">10-30</span><span class="nd"></span><span class="e">V2.0 文档包落库（GOAL 11 KPI + 五波 + 105 票 + 六车道 spec 4,867 行）；缓存代际收敛；反虚构门禁</span></li>
+  <li><span class="d">10-31 上午</span><span class="nd"></span><span class="e">07:31 定时运行 exit 1；白天 symlink 404 事故（绝对链接悬空）</span></li>
+  <li><span class="d">10-31 冲刺</span><span class="nd"></span><span class="e"><strong>15 提交工程冲刺（13:49–22:47）</strong>代际事务接线 · LLM 适配器 · 证据门禁实效化 · 8 路并发 · 相对 symlink · 代际 GC · 单写者锁 · 站点自证三件套 · 定时监控 · 部署集推导 · recompute 86× · 产品身份解析；当晚生产切换 symlink 代际模式</span></li>
+  <li class="hl"><span class="d">11-01</span><span class="nd"></span><span class="e"><strong>07:05 修复后首个全绿无人值守定时运行</strong>（10 步 · 9.5 min · 26,098 帖）；07:45 新鲜度监控首跑（exit 2=build_receipt_missing，按设计）</span></li>
+  <li class="hl"><span class="d">11-02</span><span class="nd"></span><span class="e"><strong>第二个全绿无人值守运行 + 生产 LLM 实证</strong>（07:05–07:16 · 10 步 · 26,154 帖；回执 analysis_mode=llm · deepseek-v4-flash）；K1 计数第 2 天；L1-T05 连续第 2 日实战非零</span></li>
+</ul>
+
+<h2><span class="no">§5</span>V2.0 进度</h2>
+<p class="lede">北极星（GOAL.md:5，11-02 逐字核验）：radar.luteos.com 成为业务方可以不经复核直接用于产品与内容决策的可信仪表盘：每个展示值要么能按已发布定义从当日语料复算、要么显式标注不可用及原因，每句判断都由带 inputs/gate 的版本化结论驱动，任何一次无人值守发布失败都会在 30 分钟内红卡告警并保持上一代可服务，而不是让页面继续展示混合代际的旧结论。</p>
+<p><strong>闭环定义</strong>（GOAL.md:97/:113，11-02 逐字核验）：在最后一次代码/配置/部署变更之后，连续 14 个自然日（Asia/Shanghai）07:05 无人值守发布全部成功、零人工干预、零混合代际；窗口内 ≥2 次周级 personas 链、≥1 次月报 rollover；任一人工重跑、手改 pointer、手工修权限/文件、页面出现不可复算数字、或监控在失败时沉默，立即重置计数。</p>
+<table>
+  <thead><tr><th style="width:100px">工票</th><th style="width:110px">优先级 / Wave</th><th>内容</th><th style="width:130px">提交</th><th style="width:170px">状态</th></tr></thead>
+  <tbody>
+    <tr><td>L6-T08</td><td>P0 / W1</td><td>事务接入流水线：只写代目录、指针只替换一次</td><td><code>4b0f2d1 502d29e</code></td><td><span class="dot good"></span> 落地 · <strong>已生产启用，连续 2 日实战通过</strong></td></tr>
+    <tr><td>L6-T15</td><td>P2 / W1</td><td>单写者锁（flock 非阻塞、退出码 3）</td><td><code>74fca8a</code></td><td><span class="dot good"></span> 落地 · 10 测试 · 锁文件生产常驻</td></tr>
+    <tr><td>L1-T05</td><td>P1 / W2</td><td>日更新行解析并写入 product_bindings</td><td><code>8468fb7</code> 等</td><td><span class="dot good"></span> 落地 · <strong>连续 2 日生产计数&gt;0</strong></td></tr>
+    <tr><td>L5-T02</td><td>P1 / W3</td><td>build_receipt 模块（三方一致、不可变回执）</td><td><code>64432c1</code></td><td><span class="dot good"></span> 模块落地 · 接线不完整</td></tr>
+    <tr><td>L5-T04</td><td>P1 / W3</td><td>流水线写 7 份 build.json + run 级回执</td><td><code>64432c1</code></td><td><span class="dot warn"></span> <strong>部分落地</strong>：dataset 戳连续 2 日已写；run 级回执未接线</td></tr>
+    <tr><td>L5-T05</td><td>P0 / W3</td><td>check_site_freshness 状态机监控</td><td><code>64432c1</code></td><td><span class="dot good"></span> 落地 · 已上线，累计 4 次运行</td></tr>
+    <tr><td>L5-T06</td><td>P0 / W3</td><td>新鲜度告警装成定时服务</td><td><code>b5214d7</code></td><td><span class="dot warn"></span> <strong>部分落地</strong>：已装并实测；缺 OnFailure 告警链</td></tr>
+  </tbody>
+</table>
+<p class="note">落地=提交显式引用票号（2026-11-02 核验）。车道票数 14/20/13/26/16/16 合计 105，TICKETS 车道章节 = V2-PLAN:29-34 = 头部总数三处一致；TICKETS 波次汇总表（269）按车道重复计数不作分区引用；票面无 Wave 字段，Wave 值由 V2-PLAN R 编号清单 + specs 映射推导。另有无票号工程动作：090160c→L5-T01、e304deb→L6-T01、8bb9c68→L4 缓存系列、f2ca7a7/cd05593→L3 门禁。<strong>工票完成状态无系统化跟踪</strong>（关闭矩阵文件未建立）。K1 今日位置：第 2 天/14；K11：3/7 有工程动作（P0-1→锁+代际+监控、P0-3→产品身份解析、P2 缓存→代际键控），正式关闭 0。</p>
+
+<h2><span class="no">§6</span>已知问题与诚实边界</h2>
+<div class="issue closed"><b>✅ 本期关闭 · 昨日问题 #4「今晨 LLM/模板模式未确认」。</b>今晨回执实测 <code>analysis_mode=llm</code>、<code>llm_model=deepseek-v4-flash</code>，生产 LLM 通路确认终结模板时代。</div>
+<div class="issue"><b>1 · K1 连续成功计数第 2 天 / 14。</b>连续两日全绿，但 10-31 白天曾有 symlink 404 事故与手工修复（计数已于 11-01 重置），目标尚差 12 天。闭环口径还要求窗口内 ≥2 次周级 personas 链与 ≥1 次月报 rollover——当前仅第 2 天，周期性证据尚未发生。</div>
+<div class="issue"><b>2 · 监控持续报缺（L5-T04 未完项）。</b>run 级回执（build-receipts/&lt;run_id&gt;.json）尚未接线，监控 4 次运行中 3 次直接实测 exit 2（build_receipt_missing；11-01 12:15 未单独复核）。dataset 级构建戳已正常写入（连续 2 日 7 数据集）。</div>
+<div class="issue"><b>3 · 告警链不完整（L5-T06）。</b>service 无 OnFailure=echo-agent-alert@%n、仓库缺 alert@.service——若检查服务本身硬失败（exit 1），当前无人被告警；票面 timer 时点 &gt;08:00 与实际 07:45 不符（有意取舍）。另 TICKETS 把 L5-T05/T06 记为「P0 必须 W1 关闭」而 V2-PLAN/GOAL 排在 W3，口径冲突经 11-02 核验确认仍在。</div>
+<div class="issue"><b>4 · 产品身份解析覆盖率低。</b>L1-T05 连续 2 日生产非零，但单日绑定率仍低（今日 2/56 合并新帖 ≈4%）；存量回填未启动（Wave 5 opt-in），回填前产品家族页面仍主要反映新行。</div>
+<div class="issue"><b>5 · 工票完成无跟踪机制。</b>105 张票状态散落在提交信息与报告系列；关闭矩阵未建立，K11「正式关闭」暂无程序化判定载体。</div>
+<div class="issue"><b>6 · 源文档内部不一致 3 处</b>（11-02 核验累计）：① V2-PLAN 头部 77 canonical vs 车道表 78；② TICKETS 波次表 269 vs 头部 105（重复计数）；③ <strong>新增</strong> audit 20261029 标题「六大系统性缺陷」与实际枚举 7 条不符（P0-1~3、P1-1~3、P2；GOAL K11 按 7 项计）——引用以枚举清单与 K11 为准。</div>
+<div class="issue"><b>7 · 昨日报告口径修正 1 处</b>（11-02 核验代理发现）：<code>llm_fallback_reason</code> 并非「缺配置即记录」——未配置路径只体现为 analysis_mode=template_offline，该字段仅在「已配置但调用失败」时写入（run_daily_t1_pipeline.py:359-369、413-416）。本版已按代码事实修正。</div>
+<div class="issue"><b>8 · 历史遗留</b>（PROJECT_STATUS 2026-08-25 时点，源文档记录值）：自然 08:00 完整送达周期未证明；TikHub 评论路由 HTTP 400 上游故障；公开中文翻译剩余 527 项。</div>
+<div class="issue"><b>9 · 口径纪律。</b>五个语料基线（3,494 / 17,469 / 25,873 / 26,098 / 26,154）分属不同时点，互相不可否定、不可混算；PROJECT_STATUS 证据截止 2026-08-25，其后以 docs/v2、ADR、git 与生产回执为准。</div>
+
+<h2><span class="no">§7</span>证据索引</h2>
+<table>
+  <thead><tr><th style="width:200px">主题</th><th>路径 / 命令</th></tr></thead>
+  <tbody>
+    <tr><td>上一份报告（增量基线）</td><td><code>reports/Echo-项目成果总结-20261101.md</code></td></tr>
+    <tr><td>项目状态与交接</td><td><code>PROJECT_STATUS.md</code>（证据截止 2026-08-25）</td></tr>
+    <tr><td>V2.0 目标 / KPI / 闭环</td><td><code>docs/v2/GOAL.md</code>（北极星 :5；K1 :13；K11 :23；W2/W3 映射 :47/:61；M6-CLOSURE :97；闭环定义 :113——11-02 逐字核验）</td></tr>
+    <tr><td>五波计划 / 工票</td><td><code>docs/v2/V2-PLAN.md</code>（车道表 :29-34）· <code>docs/v2/TICKETS.md</code>（总数 :3；P0 表 :23-38；L1-T05 :165-184；L5-T02~06 :1660-1770；L6-T08 :2152-2172；L6-T15 :2304-2320——11-02 逐票复核）</td></tr>
+    <tr><td>六车道规格 / ADR / PRD / 审计</td><td><code>docs/v2/specs/L1-L6.md</code>（合计 4,867 行：680/988/881/955/689/674，11-02 实测）· <code>docs/adr/ADR-001~004</code>（4 件）· <code>docs/prd/</code>（4 件）· <code>docs/audit/radar-metrics-refresh-audit-20261029.md</code>（头条缺陷枚举 :62-116；基线 25,873 帖 :91-93）</td></tr>
+    <tr><td>发布代际事务</td><td><code>scripts/daily_release_transaction.py</code> · <code>release_paths.py</code> · <code>run_daily_t1_pipeline.py</code> · <code>tests/test_daily_release_transaction.py</code> · <code>test_daily_pipeline_transaction_wiring.py</code></td></tr>
+    <tr><td>站点自证与监控</td><td><code>scripts/build_receipt.py</code> · <code>check_site_freshness.py</code> · <code>config/systemd/echo-agent-freshness.{service,timer}</code> · <code>tests/test_build_receipt.py</code> · <code>test_check_site_freshness.py</code></td></tr>
+    <tr><td>LLM 通路 / 门禁 / 解析 / 锁</td><td><code>src/reddit_voc/agents/llm_adapter.py</code>（ENV :233-238、reasoning :47-60/:107/:276-284、build_agent_client :254-266）· <code>run_daily_t1_pipeline.py</code>（analysis_mode :392/:409、llm_model :411-412、fallback :359-369/:413-416）· <code>tests/agents/test_llm_adapter.py</code>（16 测试）· <code>tests/test_agent_evidence.py</code> · <code>tests/test_merge_product_bindings.py</code> · <code>tests/test_daily_pipeline_lock.py</code></td></tr>
+    <tr><td>性能修复</td><td><code>scripts/recompute_derivatives.py</code> · <code>tests/test_recompute_parity.py</code>（提交 62c7b59 实测数据）</td></tr>
+    <tr><td>后端 / 脚本规模</td><td><code>src/reddit_voc/</code>（111 文件 / 86,871 行）· <code>scripts/</code>（170 个 .py）· <code>tests/</code>（208 个测试文件）· <code>webapp/static/</code>（198/286/532 行）—— 2026-11-02 实测</td></tr>
+    <tr><td>今晨生产证据（只读探针，11-02 07:41–07:50 CST）</td><td>systemd echo-agent-daily.service exit 0（07:16:07）· 回执 /opt/echo-agent-bot/outputs/daily_collect_20261102_0700-pipeline-receipt.json（errors: []；agents 步骤 analysis_mode="llm"、llm_model="deepseek-v4-flash"）· echo-agent-freshness.service exit 2（11-02 07:45）· 生产代际目录恰 2 代 + 相对符号链接指向 daily_collect_20261102_0700 · 公网 radar.luteos.com /data/current-release.json → 200 application/json（generated_at_utc=2026-11-01T23:16:05Z）</td></tr>
+  </tbody>
+</table>
+
+<footer>
+  Echo-Agent（Reddit VOC）项目成果总结 · 2026-11-02 版 · 依据 2026-11-01 版结构做增量更新<br>
+  生成方式：4 个并行核验代理（docs/v2 口径 / audit 条目 / 仓库统计 / LLM 适配器代码事实，100 次工具调用、0 错误）+ 生产只读探针（SSH systemd/journalctl/回执字段/公网通路，全程未写生产）· 单文件自包含 HTML，浅色/深色双主题，零外部依赖
+</footer>
+
+</div>
+<script>
+  (function () {
+    var btn = document.getElementById('themeBtn');
+    function setTheme(t) {
+      document.documentElement.setAttribute('data-theme', t);
+      btn.textContent = t === 'dark' ? '☀ 浅色' : '◐ 深色';
+      try { localStorage.setItem('echo-report-theme', t); } catch (e) {}
+    }
+    var saved = null;
+    try { saved = localStorage.getItem('echo-report-theme'); } catch (e) {}
+    if (saved) setTheme(saved);
+    else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) setTheme('dark');
+    btn.addEventListener('click', function () {
+      var cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      setTheme(cur);
+    });
+  })();
+</script>
+</body>
+</html>

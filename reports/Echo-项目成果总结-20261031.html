@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Echo-Agent（Reddit VOC）项目成果总结 · 2026-10-31</title>
+<style>
+  /* ── dataviz reference palette (roles, light+dark) ─────────────── */
+  .viz-root {
+    color-scheme: light;
+    --surface-1:      #fcfcfb;
+    --surface-2:      #f4f3f0;
+    --text-primary:   #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted:     #8a887f;
+    --border:         #e3e1da;
+    --accent:         #2a78d6;  /* series-1 blue */
+    --good:           #0ca30c;
+    --warning:        #b97a00;  /* darkened for light-surface contrast; icon+label always */
+    --serious:        #c25a2e;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) .viz-root {
+      color-scheme: dark;
+      --surface-1:      #1a1a19;
+      --surface-2:      #232322;
+      --text-primary:   #ffffff;
+      --text-secondary: #c3c2b7;
+      --text-muted:     #8a887f;
+      --border:         #3a3a37;
+      --accent:         #3987e5;
+      --good:           #0ca30c;
+      --warning:        #fab219;
+      --serious:        #ec835a;
+    }
+  }
+  :root[data-theme="dark"] .viz-root {
+    color-scheme: dark;
+    --surface-1:      #1a1a19;
+    --surface-2:      #232322;
+    --text-primary:   #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted:     #8a887f;
+    --border:         #3a3a37;
+    --accent:         #3987e5;
+    --good:           #0ca30c;
+    --warning:        #fab219;
+    --serious:        #ec835a;
+  }
+  :root[data-theme="light"] .viz-root {
+    color-scheme: light;
+    --surface-1:      #fcfcfb;
+    --surface-2:      #f4f3f0;
+    --text-primary:   #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted:     #8a887f;
+    --border:         #e3e1da;
+    --accent:         #2a78d6;
+    --good:           #0ca30c;
+    --warning:        #b97a00;
+    --serious:        #c25a2e;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--surface-2);
+    color: var(--text-primary);
+    line-height: 1.65;
+    padding: 24px 16px 64px;
+  }
+  .viz-root {
+    max-width: 1060px;
+    margin: 0 auto;
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 40px 44px 48px;
+  }
+
+  /* ── header ────────────────────────────────────────────────────── */
+  header { border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 28px; }
+  h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.3; }
+  .subtitle { color: var(--text-secondary); font-size: 14px; margin-top: 6px; }
+  .meta-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .chip {
+    font-size: 12px; color: var(--text-secondary);
+    background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: 999px; padding: 2px 10px;
+  }
+  .chip.accent { color: var(--accent); border-color: var(--accent); }
+
+  /* ── hero statement ────────────────────────────────────────────── */
+  .hero {
+    background: var(--surface-2); border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0; padding: 16px 20px; margin: 24px 0 8px;
+    font-size: 15px;
+  }
+
+  /* ── sections ──────────────────────────────────────────────────── */
+  h2 {
+    font-size: 19px; font-weight: 700; margin: 40px 0 14px;
+    padding-top: 22px; border-top: 1px solid var(--border);
+  }
+  h2 .secno { color: var(--accent); margin-right: 8px; }
+  h3 { font-size: 15.5px; font-weight: 650; margin: 22px 0 10px; }
+  p { margin: 10px 0; color: var(--text-primary); }
+  .muted { color: var(--text-secondary); font-size: 13.5px; }
+  code {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 12.5px; background: var(--surface-2);
+    border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px;
+  }
+  ul.plain { margin: 8px 0 8px 20px; }
+  ul.plain li { margin: 5px 0; font-size: 13.5px; }
+
+  /* ── KPI stat tiles (dataviz stat-tile contract) ───────────────── */
+  .kpi-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 12px; margin: 18px 0 6px;
+  }
+  .kpi {
+    background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px 16px 12px;
+  }
+  .kpi .label { font-size: 12.5px; color: var(--text-secondary); }
+  .kpi .value {
+    font-size: 27px; font-weight: 600; line-height: 1.25;
+    margin-top: 3px; letter-spacing: -0.01em;
+    /* proportional figures — NOT tabular-nums on standalone values */
+  }
+  .kpi .unit { font-size: 13px; font-weight: 500; color: var(--text-secondary); margin-left: 2px; }
+  .kpi .note { font-size: 11.5px; color: var(--text-muted); margin-top: 4px; line-height: 1.5; }
+
+  /* ── tables ────────────────────────────────────────────────────── */
+  .tbl-wrap { overflow-x: auto; margin: 14px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+  caption {
+    caption-side: top; text-align: left; font-size: 13px;
+    color: var(--text-secondary); padding-bottom: 8px; font-weight: 600;
+  }
+  th {
+    text-align: left; font-weight: 600; font-size: 12.5px;
+    color: var(--text-secondary); border-bottom: 2px solid var(--border);
+    padding: 8px 12px; white-space: nowrap;
+  }
+  td { border-bottom: 1px solid var(--border); padding: 9px 12px; vertical-align: top; }
+  td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }  /* tabular only in columns */
+  tr:last-child td { border-bottom: none; }
+  th:first-child, td:first-child { padding-left: 0; }
+  th:last-child, td:last-child { padding-right: 0; }
+
+  /* ── status (icon + label, never color alone) ──────────────────── */
+  .status { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; font-weight: 600; white-space: nowrap; }
+  .status .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+  .status.good    { color: var(--good); }
+  .status.good .dot { background: var(--good); }
+  .status.warning { color: var(--warning); }
+  .status.warning .dot { background: var(--warning); }
+  .status.serious { color: var(--serious); }
+  .status.serious .dot { background: var(--serious); }
+  .status.pending { color: var(--text-secondary); }
+  .status.pending .dot { background: var(--text-muted); }
+
+  /* ── timeline ──────────────────────────────────────────────────── */
+  .timeline { list-style: none; margin: 14px 0; }
+  .timeline li {
+    display: flex; gap: 14px; padding: 9px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .timeline li:last-child { border-bottom: none; }
+  .timeline .date {
+    flex: 0 0 108px; font-variant-numeric: tabular-nums;
+    font-size: 13px; color: var(--accent); font-weight: 600; padding-top: 1px;
+  }
+  .timeline .event { flex: 1; font-size: 13.5px; }
+  .timeline .event b { font-weight: 650; }
+
+  /* ── conclusion blockquote ─────────────────────────────────────── */
+  blockquote {
+    border-left: 3px solid var(--accent); background: var(--surface-2);
+    border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 12px 0;
+    font-size: 14px; color: var(--text-primary);
+  }
+
+  /* ── footer note ───────────────────────────────────────────────── */
+  .foot { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 12.5px; color: var(--text-muted); }
+
+  @media (max-width: 640px) {
+    .viz-root { padding: 24px 18px 32px; }
+    h1 { font-size: 22px; }
+    .kpi .value { font-size: 23px; }
+    .timeline .date { flex-basis: 92px; }
+  }
+  @media print {
+    body { background: #fff; padding: 0; }
+    .viz-root { border: none; max-width: none; }
+  }
+</style>
+</head>
+<body>
+<div class="viz-root">
+
+<header>
+  <h1>Echo-Agent（Reddit VOC）项目成果总结</h1>
+  <p class="subtitle">采集 → 多 Agent 分析 → 派生计算 → 版本化发布 → 投递 → 公开洞察站的完整生产链</p>
+  <div class="meta-row">
+    <span class="chip accent">报告日期 2026-10-31</span>
+    <span class="chip">范围：2026-07-07 立项至今</span>
+    <span class="chip">生产入口 radar.luteos.com</span>
+    <span class="chip">当前阶段 V2.0 · Wave 1</span>
+  </div>
+  <p class="muted" style="margin-top:10px">口径说明：文中数字均标注时点与出处；三个语料基线分属不同时点，不做跨时点混算；数字为源文档记录值，本报告未做当日复测。</p>
+</header>
+
+<div class="hero">
+  <b>一句话总结</b> — Echo-Agent 已把面向 Momcozy 的 Reddit 消费者洞察，从一次性脚本演进为
+  <b>采集 → 多 Agent 分析 → 派生计算 → 版本化发布 → 飞书/钉钉投递 → 公开洞察站</b>的完整生产链（radar.luteos.com，每日 07:05 自动运行），
+  并于 2026-10-29 完成 248 项深度审计后，以 105 张工票、六车道、五波次的 V2.0 计划进入“可信仪表盘”转型阶段（Wave 1 进行中）。
+</div>
+
+<!-- ═══ 01 KPI ═══ -->
+<h2 id="kpi"><span class="secno">01</span>成果数字看板</h2>
+<div class="kpi-grid">
+  <div class="kpi">
+    <div class="label">语料基线</div>
+    <div class="value">25,873</div>
+    <div class="note">帖 / 关联评论 100,778 · data_as_of 2026-10-28 审计时点</div>
+  </div>
+  <div class="kpi">
+    <div class="label">后端代码规模</div>
+    <div class="value">86,509<span class="unit">行</span></div>
+    <div class="note">110 个 Python 文件 · src/reddit_voc</div>
+  </div>
+  <div class="kpi">
+    <div class="label">CLI 命令面</div>
+    <div class="value">42</div>
+    <div class="note">31 主命令 + 11 回填命令</div>
+  </div>
+  <div class="kpi">
+    <div class="label">核心业务 Agent</div>
+    <div class="value">3<span class="unit">+1</span></div>
+    <div class="note">ContentScout / RndVoc / CompetitorRadar + 批处理编排器</div>
+  </div>
+  <div class="kpi">
+    <div class="label">工程脚本</div>
+    <div class="value">204</div>
+    <div class="note">build_ 61 / validate_ 43 / run_ 12 …</div>
+  </div>
+  <div class="kpi">
+    <div class="label">测试规模</div>
+    <div class="value">2,200<span class="unit">+</span></div>
+    <div class="note">后端 pytest 收集 2,200 · React 229 通过 · webapp 6/6</div>
+  </div>
+  <div class="kpi">
+    <div class="label">事实库重建产出</div>
+    <div class="value">75,761</div>
+    <div class="note">条 VOC · 82 persona · 416,803 fact 行（ADR-004，17k 语料时点）</div>
+  </div>
+  <div class="kpi">
+    <div class="label">采集产能提升</div>
+    <div class="value">≈300<span class="unit">×</span></div>
+    <div class="note">单分片 4 帖/0 评 → 1,200 帖/3,275 评（ADR-003 双通道）</div>
+  </div>
+  <div class="kpi">
+    <div class="label">V2.0 工票</div>
+    <div class="value">105</div>
+    <div class="note">P0 16 / P1 67 / P2 13 / P3 9 · 0 张无测试</div>
+  </div>
+</div>
+
+<!-- ═══ 02 概览 ═══ -->
+<h2 id="overview"><span class="secno">02</span>项目概览</h2>
+<div class="tbl-wrap"><table>
+  <tbody>
+    <tr><td style="width:120px"><b>定位</b></td><td>Reddit 消费者之声（VOC）情报生产系统：采集 Reddit 社区讨论，产出选题、痛点、竞品、品牌健康与画像洞察，自动生成中文日报并推送</td></tr>
+    <tr><td><b>服务对象</b></td><td>Momcozy 业务方（产品与内容决策）</td></tr>
+    <tr><td><b>生产入口</b></td><td><code>https://radar.luteos.com</code>（独立域名，DNS → 43.163.92.244）</td></tr>
+    <tr><td><b>技术栈</b></td><td>Python 后端（SQLite 运行时存储）+ React 洞察站 + 零依赖控制台 webapp + Docker/systemd + 共享 nginx</td></tr>
+    <tr><td><b>当前阶段</b></td><td>V2.0 Wave 1（止血：可信发布、失败可见、缓存收敛），分支 <code>v2/w1-quickwins</code></td></tr>
+  </tbody>
+</table></div>
+
+<!-- ═══ 03 成果详述 ═══ -->
+<h2 id="domains"><span class="secno">03</span>核心成果分域</h2>
+
+<h3>3.1 生产流水线与自动发布 <span class="status good"><span class="dot"></span>已投产</span></h3>
+<p>systemd timer <code>echo-agent-daily.timer</code> 每日 07:05 Asia/Shanghai 自动触发，六步编排：</p>
+<p><code>collect</code> → <code>agents</code>（三 Agent 批处理）→ <code>merge_snapshot</code> → <code>recompute_derivatives</code> → <code>advance_pointer</code> → <code>feishu_push</code></p>
+<ul class="plain">
+  <li>T-1 数据窗口在 23:00 UTC（北京时间 07:00）闭合；run_id 形如 <code>daily_collect_YYYYMMDD_0700</code>；每次指针推进写入 7 个 freshness 字段。</li>
+  <li>首次全链路实测（2026-10-26）：采集 10 帖 → Agent 产出 7 项选题 → 快照合并 9 新帖 → 指针前移 → 飞书卡片推送成功。</li>
+  <li>失败路径：飞书红卡告警（第二通道），不出现“已验证”字样——仅精确成功回执可标已验证。</li>
+  <li><b>发布代际事务（进行中）</b>：<code>daily_release_transaction.py</code>（459 行）+ <code>release_paths.py</code>（101 行）实现私有副本 staging + 单次原子 symlink 切换，杜绝 2026-10-29 事故式的混合代际发布。当前接线中，5 个 wiring 测试已通过。</li>
+</ul>
+
+<h3>3.2 多 Agent 分析矩阵 <span class="status good"><span class="dot"></span>已投产</span></h3>
+<div class="tbl-wrap"><table>
+  <thead><tr><th>Agent</th><th>职责</th><th>产出</th></tr></thead>
+  <tbody>
+    <tr><td>ContentScoutAgent</td><td>社媒选题侦察</td><td>content-ideas（选题清单）</td></tr>
+    <tr><td>RndVocAgent</td><td>硬件缺陷与改款 CAPA 分析</td><td>rnd-tickets（研发工单线索）</td></tr>
+    <tr><td>CompetitorRadarAgent</td><td>竞品攻防与品牌转移</td><td>competitor-radar（竞品雷达）</td></tr>
+    <tr><td>AgentBatchRunner</td><td>增量语料自动分流、原子产出三类成果集</td><td>批处理编排</td></tr>
+  </tbody>
+</table></div>
+<ul class="plain">
+  <li><b>引用证据门禁</b>：帖子与引文发布前强制校验，杜绝虚构证据（2026-10-31 提交 <code>f2ca7a7</code>、<code>cd05593</code>）；卡片披露模板模式。</li>
+  <li><b>金标准评测</b>：<code>tests/agents/test_agent_evals.py</code> 评测驱动体系，10 项 Agent 单元与评测测试通过。</li>
+</ul>
+
+<h3>3.3 数据与语料资产 <span class="status good"><span class="dot"></span>持续增长</span></h3>
+<ul class="plain">
+  <li><b>当前基线</b>：25,873 帖 / 100,778 关联评论（2026-10-29 审计时点）。历史验收基线：2026-07-16 为 3,494 帖 / 27,158 评；2026-10-26 事实库收口时为 17,469 帖 / 58,296 评。三个数字为不同时点的真实快照。</li>
+  <li><b>采集双通道（ADR-003）</b>：归档回溯 + 实时兜底。74 天历史空洞补齐；单分片产能 4 帖/0 评 → 1,200 帖/3,275 评；评论/帖比 2.8 → 9.0；单日 T-1 采集约 600 条、成本约 $0.7。</li>
+  <li><b>统一事实库（ADR-004）</b>：<code>content_entity</code> 收口唯一事实库，personas/insights 由事实投影重建——75,761 VOC、82 persona、33,752 cohort 分配（7 月的 3.4 倍）、416,803 fact 行。</li>
+  <li><b>身份治理（RC3 封账，2026-07-15）</b>：Reddit ID 交叉去重 global_known=1,340，相对 221 基线净新增 1,119。</li>
+</ul>
+
+<h3>3.4 公开洞察站与前端工作台 <span class="status good"><span class="dot"></span>已上线</span></h3>
+<p><b>公开洞察站（radar.luteos.com，React）</b></p>
+<ul class="plain">
+  <li>只读消费 versioned public release；7 个数据集 manifest SHA-256 与 release 绑定一致。</li>
+  <li>2026-07-16 生产验收：26/26 桌面/移动页面、13 条公网路由、8 个公开制品、20 条安全 404、CSV/PDF/PPTX/DOCX 四格式真实下载全通过。</li>
+  <li>2026-08-09 P2B/P2C 晋级：13/13 路由双视口通过；38 个历史周期（日报 14 / 周报 12 / 月报 12）可回看。</li>
+  <li>2026-10-29 审计确认：07:05 流水线新增 73 帖/291 评、0 翻倍，9 条前端路由 0 错误。</li>
+</ul>
+<p><b>工作台控制台（webapp/，Reddit VOC Console）</b></p>
+<ul class="plain">
+  <li>单页三视图：采集模块 / 数据看板（全文筛选、帖子明细、评论整合抽屉）/ 舆情洞察（故事线、三类分布图、HTML 报告预览）。</li>
+  <li>6 个 JSON API；零外部 CDN 依赖（合计约 1,016 行）；Docker 单容器（127.0.0.1:18337→8080），与后端解耦、只读不触发采集；6 项单元测试全部通过。</li>
+</ul>
+
+<h3>3.5 投递与通知（钉钉 / 飞书） <span class="status warning"><span class="dot"></span>门禁化运行</span></h3>
+<ul class="plain">
+  <li><b>prepared once, send frozen bytes</b>：日报拆为 prepare（只读快照 → DeepSeek 翻译 → 语义校验 → immutable bundle）与 send（只发送冻结字节）两段。</li>
+  <li><b>双机器人幂等投递</b>：同一 outbox 按 primary/secondary 独立发送，独立锁、ledger、DB projection；unknown 是终态，禁止自动重发。2026-08-12/15/21/22 四次受控补推全部完成且未发生重发。</li>
+  <li><b>翻译门禁（fail-closed）</b>：DeepSeek 翻译标题/正文/评论，CJK、原文相等、占位符、受保护实体、确定性、五维语义六重门禁；任一失败整份禁发。</li>
+  <li><b>Provider 分账</b>：采集、翻译、发送各自记录独立 append-only hash-chain attempt ledger。</li>
+  <li><b>飞书双卡</b>：早报卡 v4（加粗结论 + Top-3 选题，评审迭代 4 版）+ 失败红卡告警。</li>
+  <li><b>诚实边界</b>：2026-07-29 钉钉验收记录历史实发 0 次、判定 No-Go——“生产 claim 以终态回执为准”。</li>
+</ul>
+
+<h3>3.6 工程治理与质量保障 <span class="status good"><span class="dot"></span>体系化</span></h3>
+<p><b>十条生产合同</b>：prepared once / 翻译 fail-closed / Provider 与 delivery 分账 / 逐目标幂等 / unknown 是终态 / 周报月报只是日聚合 / 日期由数据决定 / 公开站与日报 current 分离 / 生产 claim 以回执为准 / CI 按证据依赖分 lane。</p>
+<ul class="plain">
+  <li><b>测试</b>：后端双 lane（repository 144 模块 1,642 通过 + local-artifact 38 模块 379 通过）；冻结 release 回归 263/263；G6R6 生产终态复核 28/28。</li>
+  <li><b>安全</b>：credential 受限文件读取、日志不落 secret 派生值；激活事务 shared lock + CAS + journal + marker-last；Git 外隔离 credential 与生产库。</li>
+  <li><b>ADR</b>：ADR-001 多 Agent 架构（10-26）→ ADR-002 指针诚实化与每日全量重算（10-27）→ ADR-003 双通道采集（10-28）→ ADR-004 统一事实库（10-29）。</li>
+  <li><b>PRD V3.0</b>（10-26 定稿）：双端形态——飞书长连接智能体 + 桌面作战工作台。</li>
+</ul>
+
+<!-- ═══ 04 时间线 ═══ -->
+<h2 id="timeline"><span class="secno">04</span>关键里程碑时间线</h2>
+<ul class="timeline">
+  <li><span class="date">2026-07-07</span><span class="event"><b>立项</b>：产品规划、数据合同、运维 runbook 成套落库</span></li>
+  <li><span class="date">2026-07-14~15</span><span class="event"><b>数据治理攻坚</b>：标签修复、源融合审计；RC3 全源身份封账</span></li>
+  <li><span class="date">2026-07-16</span><span class="event"><b>生产洞察站验收</b>：26/26 页面；四格式导出验收</span></li>
+  <li><span class="date">2026-07-29</span><span class="event"><b>钉钉投递验收</b>：诚实判定 No-Go（历史实发 0 次），转入门禁化改造</span></li>
+  <li><span class="date">2026-08-09</span><span class="event"><b>MECE 现状审计</b>；P2B 生产原子晋级（13/13 路由）；P2C 观测报告历史（38 周期）</span></li>
+  <li><span class="date">2026-08-12~22</span><span class="event"><b>prepared 日报 + 双机器人投递闭环</b>：四次受控补推完成；G6R5 年度 365 时隙调度构建</span></li>
+  <li><span class="date">2026-08-25</span><span class="event"><b>PROJECT_STATUS 断点</b>：annual parent authority 缺陷根因修复并原子激活</span></li>
+  <li><span class="date">2026-10-14</span><span class="event"><b>深度审计</b>（reddit-voc-deep-audit）</span></li>
+  <li><span class="date">2026-10-25</span><span class="event"><b>多 Agent 矩阵落地</b>：三 Agent + 批处理；金标准评测体系建立</span></li>
+  <li><span class="date">2026-10-26</span><span class="event"><b>T-1 流水线全链路实测成功</b>；V3.0 PRD 定稿；ADR-001</span></li>
+  <li><span class="date">2026-10-27</span><span class="event"><b>radar.luteos.com 独立域名上线</b>（七项隔离验证全过）；ADR-002</span></li>
+  <li><span class="date">2026-10-28</span><span class="event"><b>ADR-003 双通道采集</b>；74 天数据空洞修复</span></li>
+  <li><span class="date">2026-10-29</span><span class="event"><b>ADR-004 统一事实库</b>；248 项深度审计（16 项原判定被对抗复核修正）</span></li>
+  <li><span class="date">2026-10-30</span><span class="event"><b>V2.0 文档包落库</b>：GOAL（11 KPI）+ V2-PLAN（五波）+ TICKETS（105 张）+ 六车道 spec（4,867 行）；<code>v2/w1-quickwins</code> 分支开启</span></li>
+  <li><span class="date">2026-10-31</span><span class="event"><b>Agent 反虚构门禁提交</b>；发布代际事务接线中（5 个 wiring 测试通过，未提交）</span></li>
+</ul>
+
+<!-- ═══ 05 V2.0 ═══ -->
+<h2 id="v2"><span class="secno">05</span>V2.0 转型进行时</h2>
+<blockquote><b>北极星</b>：radar.luteos.com 成为业务方可以不经复核直接用于产品与内容决策的可信仪表盘——每个展示值要么能按已发布定义从当日语料复算、要么显式标注不可用及原因；每句判断都由带 inputs/gate 的版本化结论驱动；任何一次无人值守发布失败都会在 30 分钟内红卡告警并保持上一代可服务。</blockquote>
+<p class="muted">审计驱动：2026-10-29 深度审计 248 项检查、6 轮对抗复核、16 项原判定被修正；78 项输入问题 MECE 归并为 77 项 canonical。</p>
+<div class="tbl-wrap"><table>
+  <caption>六车道（按工件接缝切分，吸收 4 处跨道重复）</caption>
+  <thead><tr><th>车道</th><th>职责</th><th class="num">问题数</th><th class="num">票据数</th></tr></thead>
+  <tbody>
+    <tr><td>L1 数据生产层</td><td>语料/数据集字节与生产者前置条件</td><td class="num">13</td><td class="num">14</td></tr>
+    <tr><td>L2 计算正确性层</td><td>数值口径、周期基线、公式</td><td class="num">16</td><td class="num">20</td></tr>
+    <tr><td>L3 结论生成层</td><td>判断句文本、inputs、门禁</td><td class="num">7</td><td class="num">13</td></tr>
+    <tr><td>L4 交付与消费层</td><td>前端消费、缓存、校验、渲染</td><td class="num">18</td><td class="num">26</td></tr>
+    <tr><td>L5 可观测与治理层</td><td>构建回执、血缘、新鲜度监控</td><td class="num">12</td><td class="num">16</td></tr>
+    <tr><td>L6 运行可靠性层</td><td>编排、锁、preflight、原子发布</td><td class="num">12</td><td class="num">16</td></tr>
+  </tbody>
+</table></div>
+<ul class="plain">
+  <li><b>执行结构</b>：11 项 KPI（K1 自动刷新断裂天数 → K11 审计缺陷关闭率）· 五波次（W1 止血 → W2 数字口径 → W3 溯源监控 → W4 结论画像 → W5 覆盖规模化）· 105 张工票（7 层依赖拓扑 46/23/15/13/2/2/4，无循环）。</li>
+  <li><b>闭环定义</b>：连续 14 个自然日 07:05 无人值守发布全绿、零人工干预。</li>
+  <li><b>当前进度</b>：分支领先 main 9 个提交；Wave 1 的 8 张 P0 已有主体代码落地（4 张有通过测试）；未提交部分推进 L6-T08 事务接线与 L6-T03 路径解析；分支累计 +10,755 行。</li>
+</ul>
+
+<!-- ═══ 06 已知问题 ═══ -->
+<h2 id="issues"><span class="secno">06</span>已知问题与诚实边界</h2>
+<p>项目以“生产 claim 以终态回执为准”为文化，以下问题被主动记录而非掩盖：</p>
+<div class="tbl-wrap"><table>
+  <thead><tr><th>类别</th><th>内容</th><th>状态</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>V2 审计头条缺陷</td>
+      <td>7 项 P0/P1：自动刷新断裂（10-29 事故，发现时延约 11.7 小时）、画像面板 0.00%、topic 当 SPU、完整度漏计 61.4%、月报环比跳月、结论句硬编码（9 处禁语）、前端缓存永不失效</td>
+      <td><span class="status pending"><span class="dot"></span>已映射工票，Wave 1 关闭中</span></td>
+    </tr>
+    <tr>
+      <td>历史遗留</td>
+      <td>自然 08:00 完整送达周期尚未证明（多次为受控补推）；TikHub 评论路由 HTTP 400 上游故障；公开站 data current 曾停在 08-10 线；公开中文翻译剩余 527 项</td>
+      <td><span class="status pending"><span class="dot"></span>PROJECT_STATUS 2026-08-25 时点记录</span></td>
+    </tr>
+    <tr>
+      <td>口径风险</td>
+      <td>PROJECT_STATUS.md 证据截止 2026-08-25，10 月后状态以 docs/v2、ADR 与 git 历史为准；三个语料基线（3,494 / 17,469 / 25,873）分属不同时点</td>
+      <td><span class="status warning"><span class="dot"></span>阅读时须区分时点</span></td>
+    </tr>
+  </tbody>
+</table></div>
+
+<!-- ═══ 07 证据索引 ═══ -->
+<h2 id="evidence"><span class="secno">07</span>证据索引</h2>
+<div class="tbl-wrap"><table>
+  <tbody>
+    <tr><td style="width:170px">项目状态与交接</td><td><code>PROJECT_STATUS.md</code>（证据截止 2026-08-25）</td></tr>
+    <tr><td>V2.0 目标 / 计划 / 工票</td><td><code>docs/v2/GOAL.md</code> · <code>docs/v2/V2-PLAN.md</code> · <code>docs/v2/TICKETS.md</code></td></tr>
+    <tr><td>六车道规格</td><td><code>docs/v2/specs/L1.md</code> ~ <code>L6.md</code>（4,867 行）</td></tr>
+    <tr><td>架构决策 / 产品形态</td><td><code>docs/adr/ADR-001~004</code> · <code>docs/prd/PRD-V3.0-Echo-Agent-Platform.md</code></td></tr>
+    <tr><td>深度审计</td><td><code>docs/audit/radar-metrics-refresh-audit-20261029.md</code></td></tr>
+    <tr><td>代码 / 脚本 / 控制台</td><td><code>src/reddit_voc/</code>（110 文件）· <code>scripts/</code>（204 个）· <code>webapp/</code></td></tr>
+    <tr><td>T-1 流水线 / 发布事务</td><td><code>scripts/run_daily_t1_pipeline.py</code> · <code>scripts/advance_daily_t1_release.py</code> · <code>scripts/daily_release_transaction.py</code> · <code>scripts/release_paths.py</code></td></tr>
+    <tr><td>生产部署</td><td><code>docs/production-deployment-and-dingtalk-acceptance-20260729.md</code></td></tr>
+  </tbody>
+</table></div>
+
+<p class="foot">报告由 8 个并行读取代理扫描全部文档与代码后汇总生成 · 生成日期 2026-10-31 · 同内容 Markdown 版：<code>reports/Echo-项目成果总结-20261031.md</code></p>
+
+</div>
+</body>
+</html>
