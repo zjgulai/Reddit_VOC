@@ -1,0 +1,3223 @@
+{
+  "schema_version": "echo_agent_v2_closure_matrix_v1",
+  "source": "docs/v2/TICKETS.md",
+  "note": "Evidence only. owner_signoff stays null; formally_closed is not inferred from commits or tests.",
+  "summary": {
+    "total": 105,
+    "commit_referenced": 7,
+    "named_test_present": 6,
+    "named_test_missing": 62,
+    "evidence_complete": 3,
+    "no_evidence": 95,
+    "formally_closed": 0
+  },
+  "tickets": [
+    {
+      "ticket_id": "L1-T01",
+      "lane": "L1",
+      "title": "quarter-insights v2：画像 VOC id 桥、血缘键改名、回执状态与 conclusions 槽位（一次 schema bump）",
+      "priority": "P0",
+      "wave": null,
+      "named_tests": [
+        "tests/test_quarter_persona_scope.py::test_assignment_ids_are_gone_from_personas_block",
+        "tests/test_quarter_persona_scope.py::test_double_prefixed_comment_id_is_rejected",
+        "tests/test_quarter_persona_scope.py::test_main_voc_ids_use_persona_namespace",
+        "tests/test_recompute_parity.py::test_quarter_insights_matches_frozen_schema"
+      ],
+      "commit_references": [],
+      "test_status": "partial",
+      "test_details": [
+        {
+          "node": "tests/test_quarter_persona_scope.py::test_assignment_ids_are_gone_from_personas_block",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_quarter_persona_scope.py::test_double_prefixed_comment_id_is_rejected",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_quarter_persona_scope.py::test_main_voc_ids_use_persona_namespace",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_parity.py::test_quarter_insights_matches_frozen_schema",
+          "status": "present"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L1-T02",
+      "lane": "L1",
+      "title": "canonical 投影切到 v1，并把被服务 base manifest 绑进 inputs",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [
+        "tests/test_mb_chain_driver.py::test_canonical_v1_binds_served_base_manifest",
+        "tests/test_mb_chain_driver.py::test_canonical_v1_passes_real_validator_on_fixture",
+        "tests/test_mb_chain_driver.py::test_projection_fails_closed_on_missing_parent_post",
+        "tests/test_mb_chain_driver.py::test_projection_never_claims_passed_receipt"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_mb_chain_driver.py::test_canonical_v1_binds_served_base_manifest",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_mb_chain_driver.py::test_canonical_v1_passes_real_validator_on_fixture",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_mb_chain_driver.py::test_projection_fails_closed_on_missing_parent_post",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_mb_chain_driver.py::test_projection_never_claims_passed_receipt",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L1-T03",
+      "lane": "L1",
+      "title": "每周 personas 整链驱动：base 绑定、链回执、部署清单与 systemd timer",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [
+        "tests/test_weekly_personas_chain.py::test_chain_detects_base_drift",
+        "tests/test_weekly_personas_chain.py::test_chain_is_byte_deterministic",
+        "tests/test_weekly_personas_chain.py::test_chain_receipt_binds_base_manifest",
+        "tests/test_weekly_personas_chain.py::test_deploy_manifest_covers_all_imports",
+        "tests/test_weekly_personas_chain.py::test_publish_updates_only_personas_binding"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_weekly_personas_chain.py::test_chain_detects_base_drift",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_weekly_personas_chain.py::test_chain_is_byte_deterministic",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_weekly_personas_chain.py::test_chain_receipt_binds_base_manifest",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_weekly_personas_chain.py::test_deploy_manifest_covers_all_imports",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_weekly_personas_chain.py::test_publish_updates_only_personas_binding",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L1-T04",
+      "lane": "L1",
+      "title": "删除伪造 personas 回执，改为引用真实 reddit_voc_personas_validation_v3",
+      "priority": "P2",
+      "wave": null,
+      "named_tests": [
+        "tests/test_lineage_personas_receipt.py::test_fake_receipt_is_rejected",
+        "tests/test_lineage_personas_receipt.py::test_frozen_snapshot_reports_not_validated",
+        "tests/test_lineage_personas_receipt.py::test_receipt_is_written_outside_dataset_tree",
+        "tests/test_lineage_personas_receipt.py::test_validated_receipt_is_cited"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_lineage_personas_receipt.py::test_fake_receipt_is_rejected",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_lineage_personas_receipt.py::test_frozen_snapshot_reports_not_validated",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_lineage_personas_receipt.py::test_receipt_is_written_outside_dataset_tree",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_lineage_personas_receipt.py::test_validated_receipt_is_cited",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L1-T05",
+      "lane": "L1",
+      "title": "日更为新行解析并写入 product_bindings（含 S9 Pro 家族）",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [
+        "tests/test_merge_product_bindings.py::test_exact_spu_requires_approved_evidence",
+        "tests/test_merge_product_bindings.py::test_momcozy_s9_pro_binds_product_family",
+        "tests/test_merge_product_bindings.py::test_normalize_preserves_existing_bindings",
+        "tests/test_merge_product_bindings.py::test_unbound_text_stays_empty"
+      ],
+      "commit_references": [
+        "8468fb700b8e",
+        "d5b80f8c2aa3"
+      ],
+      "test_status": "present",
+      "test_details": [
+        {
+          "node": "tests/test_merge_product_bindings.py::test_exact_spu_requires_approved_evidence",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_merge_product_bindings.py::test_momcozy_s9_pro_binds_product_family",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_merge_product_bindings.py::test_normalize_preserves_existing_bindings",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_merge_product_bindings.py::test_unbound_text_stays_empty",
+          "status": "present"
+        }
+      ],
+      "evidence_status": "commit+named_test",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L1-T06",
+      "lane": "L1",
+      "title": "新行按自身文本打标、评论资格改为 governed-pending、字典版本触发器",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [
+        "tests/test_merge_tagging.py::test_dictionary_hash_drift_fails_closed",
+        "tests/test_merge_tagging.py::test_new_comment_is_pending_not_false",
+        "tests/test_merge_tagging.py::test_new_post_is_tagged_from_own_text",
+        "tests/test_merge_tagging.py::test_public_dictionary_projection_matches_csv",
+        "tests/test_merge_tagging.py::test_template_tags_do_not_bleed"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_merge_tagging.py::test_dictionary_hash_drift_fails_closed",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_merge_tagging.py::test_new_comment_is_pending_not_false",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_merge_tagging.py::test_new_post_is_tagged_from_own_text",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_merge_tagging.py::test_public_dictionary_projection_matches_csv",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_merge_tagging.py::test_template_tags_do_not_bleed",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L1-T07",
+      "lane": "L1",
+      "title": "base 身份诚实化：generated_at 推进、lineage_mode/content_revision、日更血缘文档与指针同步",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [
+        "tests/test_base_lineage.py::test_daily_lineage_binds_previous_manifest",
+        "tests/test_base_lineage.py::test_generated_at_advances_and_is_idempotent_per_run",
+        "tests/test_base_lineage.py::test_manifest_inputs_key_set_unchanged",
+        "tests/test_base_lineage.py::test_pointer_base_lineage_binding_updated",
+        "tests/test_base_lineage.py::test_recompute_fails_on_base_binding_mismatch"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_base_lineage.py::test_daily_lineage_binds_previous_manifest",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_base_lineage.py::test_generated_at_advances_and_is_idempotent_per_run",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_base_lineage.py::test_manifest_inputs_key_set_unchanged",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_base_lineage.py::test_pointer_base_lineage_binding_updated",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_base_lineage.py::test_recompute_fails_on_base_binding_mismatch",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L1-T08",
+      "lane": "L1",
+      "title": "reports：attested 数据集只读保护 + 孤儿 history 归档",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [
+        "tests/test_recompute_reports_guard.py::test_archive_moves_not_deletes",
+        "tests/test_recompute_reports_guard.py::test_attested_manifest_is_skipped",
+        "tests/test_recompute_reports_guard.py::test_skipped_reports_leave_bytes_unchanged",
+        "tests/test_recompute_reports_guard.py::test_unattested_manifest_is_rebuilt"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_recompute_reports_guard.py::test_archive_moves_not_deletes",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_reports_guard.py::test_attested_manifest_is_skipped",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_reports_guard.py::test_skipped_reports_leave_bytes_unchanged",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_reports_guard.py::test_unattested_manifest_is_rebuilt",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L1-T09",
+      "lane": "L1",
+      "title": "insights 降级：提交 owner attestation、CI 校验被引用 attestation 均可解析",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [
+        "tests/test_attested_inputs.py::test_every_cited_attestation_is_committed",
+        "tests/test_attested_inputs.py::test_missing_attestation_fails_ci"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_attested_inputs.py::test_every_cited_attestation_is_committed",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_attested_inputs.py::test_missing_attestation_fails_ci",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L1-T10",
+      "lane": "L1",
+      "title": "casebook 历史化：180 天复核节拍、删除 July 死默认、周链逾期告警",
+      "priority": "P2",
+      "wave": null,
+      "named_tests": [
+        "tests/test_casebook_review_due.py::test_builder_requires_explicit_inputs",
+        "tests/test_casebook_review_due.py::test_review_due_is_180_days_after_generated_at",
+        "tests/test_casebook_review_due.py::test_weekly_receipt_reports_overdue_casebook"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_casebook_review_due.py::test_builder_requires_explicit_inputs",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_casebook_review_due.py::test_review_due_is_180_days_after_generated_at",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_casebook_review_due.py::test_weekly_receipt_reports_overdue_casebook",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L1-T11",
+      "lane": "L1",
+      "title": "保留 record_authority 并加 step3 守卫（daily_collect_* 必须 governed_base）",
+      "priority": "P2",
+      "wave": null,
+      "named_tests": [
+        "tests/test_merge_record_authority.py::test_pipeline_rows_keep_governed_base",
+        "tests/test_merge_record_authority.py::test_step3_guard_rejects_workbook_label",
+        "tests/test_merge_record_authority.py::test_workbook_rows_untouched"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_merge_record_authority.py::test_pipeline_rows_keep_governed_base",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_merge_record_authority.py::test_step3_guard_rejects_workbook_label",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_merge_record_authority.py::test_workbook_rows_untouched",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L1-T12",
+      "lane": "L1",
+      "title": "发布前 content_entity 包含断言（SQL EXCEPT，零缺口才写 manifest）",
+      "priority": "P2",
+      "wave": null,
+      "named_tests": [
+        "tests/test_step3_containment.py::test_containment_gap_fails_before_manifest_write",
+        "tests/test_step3_containment.py::test_containment_ok_passes"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_step3_containment.py::test_containment_gap_fails_before_manifest_write",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_step3_containment.py::test_containment_ok_passes",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L1-T13",
+      "lane": "L1",
+      "title": "is_bot 不再伪造 false：未知为 null，机器人检测状态显式化为 unavailable",
+      "priority": "P2",
+      "wave": null,
+      "named_tests": [
+        "tests/test_merge_comment_eligibility.py::test_comment_field_set_unchanged",
+        "tests/test_merge_comment_eligibility.py::test_explicit_boolean_is_preserved",
+        "tests/test_merge_comment_eligibility.py::test_new_comment_is_bot_unknown"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_merge_comment_eligibility.py::test_comment_field_set_unchanged",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_merge_comment_eligibility.py::test_explicit_boolean_is_preserved",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_merge_comment_eligibility.py::test_new_comment_is_bot_unknown",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L1-T14",
+      "lane": "L1",
+      "title": "评论字节区间索引 comments-index-public.json（manifest.comments_index 绑定）",
+      "priority": "P3",
+      "wave": null,
+      "named_tests": [
+        "tests/test_comments_index.py::test_index_is_rebuilt_when_comments_change",
+        "tests/test_comments_index.py::test_manifest_file_set_unchanged",
+        "tests/test_comments_index.py::test_range_count_per_post_at_most_three",
+        "tests/test_comments_index.py::test_ranges_slice_exact_rows"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_comments_index.py::test_index_is_rebuilt_when_comments_change",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_comments_index.py::test_manifest_file_set_unchanged",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_comments_index.py::test_range_count_per_post_at_most_three",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_comments_index.py::test_ranges_slice_exact_rows",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L2-T01",
+      "lane": "L2",
+      "title": "修正月报环比基线与六期链，并给环比加低样本门禁",
+      "priority": "P0",
+      "wave": "W2",
+      "named_tests": [
+        "tests/test_recompute_parity.py::test_brand_health_contribution_matches_js_rounding",
+        "tests/test_recompute_reports_bundle.py",
+        "tests/test_recompute_reports_bundle.py::test_low_sample_comparison_is_provisional_with_reason",
+        "tests/test_recompute_reports_bundle.py::test_monthly_mom_uses_august_baseline",
+        "tests/test_recompute_reports_bundle.py::test_monthly_previous_period_is_immediately_preceding_month",
+        "tests/test_recompute_reports_bundle.py::test_period_chain_monthly_is_consecutive",
+        "tests/test_recompute_reports_bundle.py::test_period_step_rejects_skipped_month"
+      ],
+      "commit_references": [],
+      "test_status": "partial",
+      "test_details": [
+        {
+          "node": "tests/test_recompute_parity.py::test_brand_health_contribution_matches_js_rounding",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_recompute_reports_bundle.py",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_reports_bundle.py::test_low_sample_comparison_is_provisional_with_reason",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_reports_bundle.py::test_monthly_mom_uses_august_baseline",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_reports_bundle.py::test_monthly_previous_period_is_immediately_preceding_month",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_reports_bundle.py::test_period_chain_monthly_is_consecutive",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_reports_bundle.py::test_period_step_rejects_skipped_month",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L2-T02",
+      "lane": "L2",
+      "title": "撤回 RV-BR-05/04 同名改义，恢复注册表身份并标 unavailable",
+      "priority": "P0",
+      "wave": "W2",
+      "named_tests": [
+        "tests/test_recompute_reports_bundle.py",
+        "tests/test_recompute_reports_bundle.py::test_computed_indicators_preserve_registry_unit_and_name",
+        "tests/test_recompute_reports_bundle.py::test_observed_voc_type_matches_scope",
+        "tests/test_recompute_reports_bundle.py::test_rv_br_04_is_unavailable_not_positive_share",
+        "tests/test_recompute_reports_bundle.py::test_rv_br_05_is_unavailable_not_redefined"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_recompute_reports_bundle.py",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_reports_bundle.py::test_computed_indicators_preserve_registry_unit_and_name",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_reports_bundle.py::test_observed_voc_type_matches_scope",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_reports_bundle.py::test_rv_br_04_is_unavailable_not_positive_share",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_reports_bundle.py::test_rv_br_05_is_unavailable_not_redefined",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L2-T03",
+      "lane": "L2",
+      "title": "产品家族/品类/精确 SPU 只用 product_bindings 聚合，无绑定即 unavailable",
+      "priority": "P0",
+      "wave": "W2",
+      "named_tests": [
+        "tests/test_recompute_derivatives_metrics.py",
+        "tests/test_recompute_derivatives_metrics.py::test_new_product_rankings_use_product_bindings",
+        "tests/test_recompute_derivatives_metrics.py::test_new_product_unavailable_when_no_bindings",
+        "tests/test_recompute_derivatives_metrics.py::test_product_family_ids_are_binding_ids_not_topics",
+        "tests/test_recompute_parity.py",
+        "tests/test_recompute_parity.py::test_quarter_insights_matches_frozen_schema"
+      ],
+      "commit_references": [],
+      "test_status": "partial",
+      "test_details": [
+        {
+          "node": "tests/test_recompute_derivatives_metrics.py",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_derivatives_metrics.py::test_new_product_rankings_use_product_bindings",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_derivatives_metrics.py::test_new_product_unavailable_when_no_bindings",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_derivatives_metrics.py::test_product_family_ids_are_binding_ids_not_topics",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_parity.py",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_recompute_parity.py::test_quarter_insights_matches_frozen_schema",
+          "status": "present"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L2-T04",
+      "lane": "L2",
+      "title": "GEO 恢复 canonical 定义：distinct decision-topic posts + topic rankings",
+      "priority": "P1",
+      "wave": "W2",
+      "named_tests": [
+        "tests/test_recompute_derivatives_metrics.py",
+        "tests/test_recompute_derivatives_metrics.py::test_geo_decision_count_is_distinct_posts",
+        "tests/test_recompute_derivatives_metrics.py::test_geo_ignores_comments_and_competitor_only_vocs",
+        "tests/test_recompute_derivatives_metrics.py::test_geo_rankings_use_topic_ids",
+        "tests/test_recompute_parity.py"
+      ],
+      "commit_references": [],
+      "test_status": "partial",
+      "test_details": [
+        {
+          "node": "tests/test_recompute_derivatives_metrics.py",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_derivatives_metrics.py::test_geo_decision_count_is_distinct_posts",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_derivatives_metrics.py::test_geo_ignores_comments_and_competitor_only_vocs",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_derivatives_metrics.py::test_geo_rankings_use_topic_ids",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_parity.py",
+          "status": "present"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L2-T05",
+      "lane": "L2",
+      "title": "brand-health.json 输出 governed sample 计数（帖子/评论/已分类/总 VOC）",
+      "priority": "P1",
+      "wave": "W2",
+      "named_tests": [
+        "tests/test_brand_health_lean.py",
+        "tests/test_brand_health_lean.py::test_brand_health_sample_counts_match_governed_vocs",
+        "tests/test_brand_health_lean.py::test_brand_health_sample_excludes_bots"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_brand_health_lean.py",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_brand_health_lean.py::test_brand_health_sample_counts_match_governed_vocs",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_brand_health_lean.py::test_brand_health_sample_excludes_bots",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L2-T06",
+      "lane": "L2",
+      "title": "品牌健康四维改为公开数据可复现的 50/50 grain 公式，并声明 proxy",
+      "priority": "P1",
+      "wave": "W2",
+      "named_tests": [
+        "tests/test_brand_health_lean.py",
+        "tests/test_brand_health_lean.py::test_dimension_carries_definition_and_proxy_flags",
+        "tests/test_brand_health_lean.py::test_overall_equals_half_up_mean_of_dimensions",
+        "tests/test_brand_health_lean.py::test_product_experience_uses_product_bound_classified",
+        "tests/test_brand_health_lean.py::test_reputation_is_signed_balance_50_50_grain",
+        "tests/test_recompute_parity.py",
+        "tests/test_recompute_parity.py::test_brand_health_projection_is_self_consistent"
+      ],
+      "commit_references": [],
+      "test_status": "partial",
+      "test_details": [
+        {
+          "node": "tests/test_brand_health_lean.py",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_brand_health_lean.py::test_dimension_carries_definition_and_proxy_flags",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_brand_health_lean.py::test_overall_equals_half_up_mean_of_dimensions",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_brand_health_lean.py::test_product_experience_uses_product_bound_classified",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_brand_health_lean.py::test_reputation_is_signed_balance_50_50_grain",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_parity.py",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_recompute_parity.py::test_brand_health_projection_is_self_consistent",
+          "status": "present"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L2-T07",
+      "lane": "L2",
+      "title": "报告 brand_health 行补齐 value/display/unit，并显式标注 all-history 口径",
+      "priority": "P1",
+      "wave": "W2",
+      "named_tests": [
+        "tests/test_recompute_reports_bundle.py",
+        "tests/test_recompute_reports_bundle.py::test_monthly_brand_health_flags_all_observed_history",
+        "tests/test_recompute_reports_bundle.py::test_period_brand_health_qualified_value_is_renderable",
+        "tests/test_recompute_reports_bundle.py::test_raw_observed_not_duplicated_as_available",
+        "tests/test_recompute_reports_bundle.py::test_report_brand_health_rows_have_value_and_display"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_recompute_reports_bundle.py",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_reports_bundle.py::test_monthly_brand_health_flags_all_observed_history",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_reports_bundle.py::test_period_brand_health_qualified_value_is_renderable",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_reports_bundle.py::test_raw_observed_not_duplicated_as_available",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_reports_bundle.py::test_report_brand_health_rows_have_value_and_display",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L2-T08",
+      "lane": "L2",
+      "title": "机器人评论计数移到品牌过滤之前，reports governed 过滤排除 bot",
+      "priority": "P1",
+      "wave": "W2",
+      "named_tests": [
+        "tests/test_recompute_derivatives_metrics.py",
+        "tests/test_recompute_derivatives_metrics.py::test_automation_comments_counts_bots_before_brand_filter",
+        "tests/test_recompute_reports_bundle.py::test_reports_governed_vocs_exclude_bots"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_recompute_derivatives_metrics.py",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_derivatives_metrics.py::test_automation_comments_counts_bots_before_brand_filter",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_reports_bundle.py::test_reports_governed_vocs_exclude_bots",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L2-T09",
+      "lane": "L2",
+      "title": "未接入的自动化/版务证据显式标 unavailable，不显示裸 0",
+      "priority": "P1",
+      "wave": "W2",
+      "named_tests": [
+        "tests/test_recompute_derivatives_metrics.py",
+        "tests/test_recompute_derivatives_metrics.py::test_automation_coverage_reflects_classification_absence",
+        "tests/test_recompute_derivatives_metrics.py::test_reputation_coverage_marks_moderation_unavailable"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_recompute_derivatives_metrics.py",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_derivatives_metrics.py::test_automation_coverage_reflects_classification_absence",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_derivatives_metrics.py::test_reputation_coverage_marks_moderation_unavailable",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L2-T10",
+      "lane": "L2",
+      "title": "抽出共享 event_business_date，reports/derivatives 统一上海业务日",
+      "priority": "P1",
+      "wave": "W2",
+      "named_tests": [
+        "tests/test_event_time.py",
+        "tests/test_event_time.py::test_event_business_date_converts_utc_to_shanghai",
+        "tests/test_event_time.py::test_event_business_date_prefers_source_calendar_date",
+        "tests/test_event_time.py::test_event_business_date_returns_none_on_invalid",
+        "tests/test_recompute_reports_bundle.py",
+        "tests/test_recompute_reports_bundle.py::test_daily_report_count_matches_shanghai_fixture",
+        "tests/test_recompute_reports_bundle.py::test_reports_period_uses_shanghai_business_date"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_event_time.py",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_event_time.py::test_event_business_date_converts_utc_to_shanghai",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_event_time.py::test_event_business_date_prefers_source_calendar_date",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_event_time.py::test_event_business_date_returns_none_on_invalid",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_reports_bundle.py",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_reports_bundle.py::test_daily_report_count_matches_shanghai_fixture",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_reports_bundle.py::test_reports_period_uses_shanghai_business_date",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L2-T11",
+      "lane": "L2",
+      "title": "品牌实体规范化（读路径）：按 config/brands.json 聚合，同一 brand_id 唯一",
+      "priority": "P1",
+      "wave": "W2",
+      "named_tests": [
+        "tests/test_site_aggregates.py",
+        "tests/test_site_aggregates.py::test_brand_mention_share_dedupes_per_post",
+        "tests/test_site_aggregates.py::test_brand_sample_mentions_are_canonical",
+        "tests/test_site_aggregates.py::test_producers_agree_on_brand_heavy_corpus",
+        "tests/test_site_aggregates.py::test_producers_agree_on_representative_corpus"
+      ],
+      "commit_references": [],
+      "test_status": "partial",
+      "test_details": [
+        {
+          "node": "tests/test_site_aggregates.py",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_site_aggregates.py::test_brand_mention_share_dedupes_per_post",
+          "status": "node_missing"
+        },
+        {
+          "node": "tests/test_site_aggregates.py::test_brand_sample_mentions_are_canonical",
+          "status": "node_missing"
+        },
+        {
+          "node": "tests/test_site_aggregates.py::test_producers_agree_on_brand_heavy_corpus",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_site_aggregates.py::test_producers_agree_on_representative_corpus",
+          "status": "present"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L2-T12",
+      "lane": "L2",
+      "title": "新行品牌提及改用 brands.find_brands（写路径）",
+      "priority": "P1",
+      "wave": "W2",
+      "named_tests": [
+        "tests/test_merge_brand_extraction.py",
+        "tests/test_merge_brand_extraction.py::test_competitor_ids_beyond_hardcoded_six_are_detected",
+        "tests/test_merge_brand_extraction.py::test_merge_keeps_canonical_labels",
+        "tests/test_merge_brand_extraction.py::test_new_post_uses_canonical_brand_ids"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_merge_brand_extraction.py",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_merge_brand_extraction.py::test_competitor_ids_beyond_hardcoded_six_are_detected",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_merge_brand_extraction.py::test_merge_keeps_canonical_labels",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_merge_brand_extraction.py::test_new_post_uses_canonical_brand_ids",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L2-T13",
+      "lane": "L2",
+      "title": "发布 observation_window 与边界后计数（披露，不截断）",
+      "priority": "P1",
+      "wave": "W2",
+      "named_tests": [
+        "tests/test_observation_window.py",
+        "tests/test_observation_window.py::test_events_after_data_as_of_counts_posts_and_comments",
+        "tests/test_observation_window.py::test_no_observation_window_without_data_as_of",
+        "tests/test_observation_window.py::test_refresh_base_manifest_publishes_observation_window"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_observation_window.py",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_observation_window.py::test_events_after_data_as_of_counts_posts_and_comments",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_observation_window.py::test_no_observation_window_without_data_as_of",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_observation_window.py::test_refresh_base_manifest_publishes_observation_window",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L2-T14",
+      "lane": "L2",
+      "title": "拆分评论分母：Base 显式资格 / governed VOC / 总关联评论",
+      "priority": "P1",
+      "wave": "W2",
+      "named_tests": [
+        "tests/test_site_aggregates.py",
+        "tests/test_site_aggregates.py::test_comment_population_conservation",
+        "tests/test_site_aggregates.py::test_headline_publishes_comment_populations",
+        "tests/test_site_aggregates.py::test_producers_agree_on_representative_corpus"
+      ],
+      "commit_references": [],
+      "test_status": "partial",
+      "test_details": [
+        {
+          "node": "tests/test_site_aggregates.py",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_site_aggregates.py::test_comment_population_conservation",
+          "status": "node_missing"
+        },
+        {
+          "node": "tests/test_site_aggregates.py::test_headline_publishes_comment_populations",
+          "status": "node_missing"
+        },
+        {
+          "node": "tests/test_site_aggregates.py::test_producers_agree_on_representative_corpus",
+          "status": "present"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L2-T15",
+      "lane": "L2",
+      "title": "reports 增加 drivers 输入块（L3-P6 的 L2 半边）",
+      "priority": "P1",
+      "wave": "W2",
+      "named_tests": [
+        "tests/test_recompute_reports_bundle.py",
+        "tests/test_recompute_reports_bundle.py::test_drivers_block_is_empty_when_no_vocs",
+        "tests/test_recompute_reports_bundle.py::test_drivers_block_matches_governed_period_vocs"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_recompute_reports_bundle.py",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_reports_bundle.py::test_drivers_block_is_empty_when_no_vocs",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_reports_bundle.py::test_drivers_block_matches_governed_period_vocs",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L2-T16",
+      "lane": "L2",
+      "title": "新增独立非 RV 指标 competitor_context_share（不再复用 RV-BR-05）",
+      "priority": "P2",
+      "wave": "W5",
+      "named_tests": [
+        "tests/test_recompute_derivatives_metrics.py",
+        "tests/test_recompute_derivatives_metrics.py::test_competitor_context_share_intersects_competitor_ids",
+        "tests/test_recompute_derivatives_metrics.py::test_competitor_context_share_reports_numerator_denominator",
+        "tests/test_recompute_parity.py"
+      ],
+      "commit_references": [],
+      "test_status": "partial",
+      "test_details": [
+        {
+          "node": "tests/test_recompute_derivatives_metrics.py",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_derivatives_metrics.py::test_competitor_context_share_intersects_competitor_ids",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_derivatives_metrics.py::test_competitor_context_share_reports_numerator_denominator",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_parity.py",
+          "status": "present"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L2-T17",
+      "lane": "L2",
+      "title": "GEO 增加独立竞品榜（competitor_rankings / competitor_mention_pairs）",
+      "priority": "P2",
+      "wave": "W5",
+      "named_tests": [
+        "tests/test_recompute_derivatives_metrics.py",
+        "tests/test_recompute_derivatives_metrics.py::test_competitor_mention_pairs_are_pairs_not_posts",
+        "tests/test_recompute_derivatives_metrics.py::test_geo_competitor_rankings_use_canonical_ids",
+        "tests/test_recompute_parity.py"
+      ],
+      "commit_references": [],
+      "test_status": "partial",
+      "test_details": [
+        {
+          "node": "tests/test_recompute_derivatives_metrics.py",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_derivatives_metrics.py::test_competitor_mention_pairs_are_pairs_not_posts",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_derivatives_metrics.py::test_geo_competitor_rankings_use_canonical_ids",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_parity.py",
+          "status": "present"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L2-T18",
+      "lane": "L2",
+      "title": "同比：daily 7 日替代窗口 + 上年同周/同月基线",
+      "priority": "P3",
+      "wave": "W5",
+      "named_tests": [
+        "tests/test_recompute_reports_bundle.py",
+        "tests/test_recompute_reports_bundle.py::test_daily_yoy_emits_seven_day_proxy",
+        "tests/test_recompute_reports_bundle.py::test_proxy_payload_passes_client_contract_shape",
+        "tests/test_recompute_reports_bundle.py::test_yoy_unavailable_when_no_historic_data"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_recompute_reports_bundle.py",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_reports_bundle.py::test_daily_yoy_emits_seven_day_proxy",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_reports_bundle.py::test_proxy_payload_passes_client_contract_shape",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_reports_bundle.py::test_yoy_unavailable_when_no_historic_data",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L2-T19",
+      "lane": "L2",
+      "title": "183 天窗口首月桶只统计 >= start_date 的事件",
+      "priority": "P3",
+      "wave": "W5",
+      "named_tests": [
+        "tests/test_recompute_derivatives_metrics.py",
+        "tests/test_recompute_derivatives_metrics.py::test_rolling_183_excludes_events_before_start_date",
+        "tests/test_recompute_derivatives_metrics.py::test_rolling_183_totals_equal_bucket_sums",
+        "tests/test_recompute_parity.py::test_window_totals_equal_bucket_sums"
+      ],
+      "commit_references": [],
+      "test_status": "partial",
+      "test_details": [
+        {
+          "node": "tests/test_recompute_derivatives_metrics.py",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_derivatives_metrics.py::test_rolling_183_excludes_events_before_start_date",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_derivatives_metrics.py::test_rolling_183_totals_equal_bucket_sums",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_parity.py::test_window_totals_equal_bucket_sums",
+          "status": "present"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L2-T20",
+      "lane": "L2",
+      "title": "cohort 映射对齐 analyzer 实际 topic",
+      "priority": "P3",
+      "wave": "W5",
+      "named_tests": [
+        "tests/test_recompute_derivatives_metrics.py",
+        "tests/test_recompute_derivatives_metrics.py::test_cohort_mapping_covers_all_analyzer_topics",
+        "tests/test_recompute_derivatives_metrics.py::test_customer_service_is_not_scenario_adapter",
+        "tests/test_recompute_parity.py",
+        "tests/test_recompute_parity.py::test_quarter_insights_matches_frozen_schema"
+      ],
+      "commit_references": [],
+      "test_status": "partial",
+      "test_details": [
+        {
+          "node": "tests/test_recompute_derivatives_metrics.py",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_derivatives_metrics.py::test_cohort_mapping_covers_all_analyzer_topics",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_derivatives_metrics.py::test_customer_service_is_not_scenario_adapter",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_parity.py",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_recompute_parity.py::test_quarter_insights_matches_frozen_schema",
+          "status": "present"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L3-T01",
+      "lane": "L3",
+      "title": "前端两形态接受窗口：conclusions 校验器与可选键容忍",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [],
+      "commit_references": [],
+      "test_status": "none",
+      "test_details": [],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L3-T02",
+      "lane": "L3",
+      "title": "conclusions.py：模板注册表、样本/语义/占位符门禁与回放渲染",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [
+        "tests/fixtures/conclusions/brand_health_missing.json",
+        "tests/fixtures/conclusions/brand_health_tied.json",
+        "tests/fixtures/conclusions/monthly_2026_09_tiny.json",
+        "tests/fixtures/conclusions/quarter_insights_fit_flip.json",
+        "tests/fixtures/conclusions/zero_drivers.json",
+        "tests/test_conclusions.py",
+        "tests/test_conclusions.py::test_brand_health_dimension_tie_is_not_a_spread_claim",
+        "tests/test_conclusions.py::test_competitor_gap_semantics_mismatch_is_insufficient",
+        "tests/test_conclusions.py::test_conclusion_ids_unique_and_versioned_per_dataset",
+        "tests/test_conclusions.py::test_conclusion_records_have_exact_keys_and_no_forbidden_keys",
+        "tests/test_conclusions.py::test_conclusions_are_deterministic_for_fixed_generated_at",
+        "tests/test_conclusions.py::test_gate_thresholds_are_frozen_in_policy_version",
+        "tests/test_conclusions.py::test_low_sample_monthly_suppresses_advice",
+        "tests/test_conclusions.py::test_missing_brand_health_emits_unavailable_sentence",
+        "tests/test_conclusions.py::test_placeholder_leader_is_insufficient",
+        "tests/test_conclusions.py::test_product_family_claim_requires_product_family_evidence_kind",
+        "tests/test_conclusions.py::test_template_render_round_trip_matches_sentence",
+        "tests/test_conclusions.py::test_zero_observed_never_emits_directive"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/fixtures/conclusions/brand_health_missing.json",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/fixtures/conclusions/brand_health_tied.json",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/fixtures/conclusions/monthly_2026_09_tiny.json",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/fixtures/conclusions/quarter_insights_fit_flip.json",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/fixtures/conclusions/zero_drivers.json",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_conclusions.py",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_conclusions.py::test_brand_health_dimension_tie_is_not_a_spread_claim",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_conclusions.py::test_competitor_gap_semantics_mismatch_is_insufficient",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_conclusions.py::test_conclusion_ids_unique_and_versioned_per_dataset",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_conclusions.py::test_conclusion_records_have_exact_keys_and_no_forbidden_keys",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_conclusions.py::test_conclusions_are_deterministic_for_fixed_generated_at",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_conclusions.py::test_gate_thresholds_are_frozen_in_policy_version",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_conclusions.py::test_low_sample_monthly_suppresses_advice",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_conclusions.py::test_missing_brand_health_emits_unavailable_sentence",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_conclusions.py::test_placeholder_leader_is_insufficient",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_conclusions.py::test_product_family_claim_requires_product_family_evidence_kind",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_conclusions.py::test_template_render_round_trip_matches_sentence",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_conclusions.py::test_zero_observed_never_emits_directive",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L3-T03",
+      "lane": "L3",
+      "title": "quarter_insights 结论生成：29 条槽位、排名派生、占位符与自动化披露",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [
+        "tests/test_conclusions.py",
+        "tests/test_conclusions.py::test_automation_not_populated_is_disclosed",
+        "tests/test_conclusions.py::test_conclusions_are_deterministic_for_fixed_generated_at",
+        "tests/test_conclusions.py::test_pain_leader_gap_derives_from_ranking_not_constants",
+        "tests/test_conclusions.py::test_placeholder_leader_is_insufficient",
+        "tests/test_conclusions.py::test_quarter_actions_are_gated_when_sample_below_threshold",
+        "tests/test_conclusions.py::test_quarter_insights_conclusions_cover_every_required_slot",
+        "tests/test_recompute_parity.py",
+        "tests/test_recompute_parity.py::test_quarter_insights_matches_frozen_schema"
+      ],
+      "commit_references": [],
+      "test_status": "partial",
+      "test_details": [
+        {
+          "node": "tests/test_conclusions.py",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_conclusions.py::test_automation_not_populated_is_disclosed",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_conclusions.py::test_conclusions_are_deterministic_for_fixed_generated_at",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_conclusions.py::test_pain_leader_gap_derives_from_ranking_not_constants",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_conclusions.py::test_placeholder_leader_is_insufficient",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_conclusions.py::test_quarter_actions_are_gated_when_sample_below_threshold",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_conclusions.py::test_quarter_insights_conclusions_cover_every_required_slot",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_parity.py",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_recompute_parity.py::test_quarter_insights_matches_frozen_schema",
+          "status": "present"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L3-T04",
+      "lane": "L3",
+      "title": "brand_health 结论生成：generated_at_utc、5 条槽位与四维分档",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [
+        "tests/test_conclusions.py",
+        "tests/test_conclusions.py::test_brand_health_dimension_tie_is_not_a_spread_claim",
+        "tests/test_conclusions.py::test_conclusions_are_deterministic_for_fixed_generated_at",
+        "tests/test_conclusions.py::test_missing_brand_health_emits_unavailable_sentence",
+        "tests/test_conclusions.py::test_quarter_insights_conclusions_cover_every_required_slot",
+        "tests/test_recompute_parity.py",
+        "tests/test_recompute_parity.py::test_brand_health_projection_is_self_consistent"
+      ],
+      "commit_references": [],
+      "test_status": "partial",
+      "test_details": [
+        {
+          "node": "tests/test_conclusions.py",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_conclusions.py::test_brand_health_dimension_tie_is_not_a_spread_claim",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_conclusions.py::test_conclusions_are_deterministic_for_fixed_generated_at",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_conclusions.py::test_missing_brand_health_emits_unavailable_sentence",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_conclusions.py::test_quarter_insights_conclusions_cover_every_required_slot",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_parity.py",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_recompute_parity.py::test_brand_health_projection_is_self_consistent",
+          "status": "present"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L3-T05",
+      "lane": "L3",
+      "title": "reports 结论生成：report 版本字段、14/15 条槽位与语义门禁",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [
+        "tests/test_conclusions.py",
+        "tests/test_conclusions.py::test_competitor_gap_semantics_mismatch_is_insufficient",
+        "tests/test_conclusions.py::test_low_sample_monthly_suppresses_advice",
+        "tests/test_conclusions.py::test_zero_observed_never_emits_directive",
+        "tests/test_reports_bundle_conclusions.py",
+        "tests/test_reports_bundle_conclusions.py::test_report_conclusion_sentences_replay_from_inputs",
+        "tests/test_reports_bundle_conclusions.py::test_report_conclusions_are_present_for_all_grains",
+        "tests/test_reports_bundle_conclusions.py::test_report_driver_conclusions_unavailable_without_drivers_block",
+        "tests/test_reports_bundle_conclusions.py::test_report_generated_at_is_byte_stable"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_conclusions.py",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_conclusions.py::test_competitor_gap_semantics_mismatch_is_insufficient",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_conclusions.py::test_low_sample_monthly_suppresses_advice",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_conclusions.py::test_zero_observed_never_emits_directive",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_reports_bundle_conclusions.py",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_reports_bundle_conclusions.py::test_report_conclusion_sentences_replay_from_inputs",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_reports_bundle_conclusions.py::test_report_conclusions_are_present_for_all_grains",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_reports_bundle_conclusions.py::test_report_driver_conclusions_unavailable_without_drivers_block",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_reports_bundle_conclusions.py::test_report_generated_at_is_byte_stable",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L3-T06",
+      "lane": "L3",
+      "title": "洞察页改为按 conclusion_id 查表：summary / 解释 / 行动",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [],
+      "commit_references": [],
+      "test_status": "none",
+      "test_details": [],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L3-T07",
+      "lane": "L3",
+      "title": "概览页：四个决策入口与优先行动改为结论查表",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [],
+      "commit_references": [],
+      "test_status": "none",
+      "test_details": [],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L3-T08",
+      "lane": "L3",
+      "title": "品牌健康卡：删除 isMomcozyPost 估算，改渲染 bh.* 结论",
+      "priority": "P2",
+      "wave": null,
+      "named_tests": [],
+      "commit_references": [],
+      "test_status": "none",
+      "test_details": [],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L3-T09",
+      "lane": "L3",
+      "title": "报告叙事路径可用性化：删除 sparkline.direction 回退与恒真同比 token",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [],
+      "commit_references": [],
+      "test_status": "none",
+      "test_details": [],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L3-T10",
+      "lane": "L3",
+      "title": "报告叙事全部改读 report.conclusions：删除 live base 驱动诊断",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [],
+      "commit_references": [],
+      "test_status": "none",
+      "test_details": [],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L3-T11",
+      "lane": "L3",
+      "title": "语义门禁跨页断言：净情感差、产品家族/SPU、自动化披露",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [],
+      "commit_references": [],
+      "test_status": "none",
+      "test_details": [],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L3-T12",
+      "lane": "L3",
+      "title": "全站结论同一性与禁语扫描：Playwright + vitest",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [],
+      "commit_references": [],
+      "test_status": "none",
+      "test_details": [],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L3-T13",
+      "lane": "L3",
+      "title": "删除 legacy 文案分支：结论成为唯一真相",
+      "priority": "P3",
+      "wave": null,
+      "named_tests": [],
+      "commit_references": [],
+      "test_status": "none",
+      "test_details": [],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L4-T01",
+      "lane": "L4",
+      "title": "release.ts：指针 5 分钟 TTL 重验证、并发合并、拒绝不缓存、refreshCurrentRelease",
+      "priority": "P0",
+      "wave": null,
+      "named_tests": [],
+      "commit_references": [],
+      "test_status": "none",
+      "test_details": [],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L4-T02",
+      "lane": "L4",
+      "title": "releaseKeyedCache 模块 + service.ts 四个缓存改为发布键（含 summary 漏 reset 修复）",
+      "priority": "P0",
+      "wave": null,
+      "named_tests": [],
+      "commit_references": [],
+      "test_status": "none",
+      "test_details": [],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L4-T03",
+      "lane": "L4",
+      "title": "brandHealth / quarterInsights / casebook 值缓存改为发布键缓存",
+      "priority": "P0",
+      "wave": null,
+      "named_tests": [],
+      "commit_references": [],
+      "test_status": "none",
+      "test_details": [],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L4-T04",
+      "lane": "L4",
+      "title": "personas / reports / insights 缓存改为发布键；报表与洞察刷新按钮先刷新指针",
+      "priority": "P0",
+      "wave": null,
+      "named_tests": [],
+      "commit_references": [],
+      "test_status": "none",
+      "test_details": [],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L4-T05",
+      "lane": "L4",
+      "title": "useReleaseAwareData：挂载/可见/10 分钟轮询/失败重试，并接入七个 useReddit* hook",
+      "priority": "P0",
+      "wave": null,
+      "named_tests": [],
+      "commit_references": [],
+      "test_status": "none",
+      "test_details": [],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L4-T06",
+      "lane": "L4",
+      "title": "画像分布改用季度 cohort 计数，合计只在分母自证时显示 100.00%",
+      "priority": "P0",
+      "wave": null,
+      "named_tests": [],
+      "commit_references": [],
+      "test_status": "none",
+      "test_details": [],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L4-T07",
+      "lane": "L4",
+      "title": "报告品牌健康行：score/value 双形态 + 唯一归一化 + 严格校验",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [],
+      "commit_references": [],
+      "test_status": "none",
+      "test_details": [],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L4-T08",
+      "lane": "L4",
+      "title": "报告品牌健康周期口径：全观测历史不再标“本月”",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [],
+      "commit_references": [],
+      "test_status": "none",
+      "test_details": [],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L4-T09",
+      "lane": "L4",
+      "title": "周期结束标签统一绑定 report.period.end（页面/海报/治理四处）",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [],
+      "commit_references": [],
+      "test_status": "none",
+      "test_details": [],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L4-T10",
+      "lane": "L4",
+      "title": "覆盖分档展示四档并守恒，删除死代码 SnapshotBoundaryPanel",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [],
+      "commit_references": [],
+      "test_status": "none",
+      "test_details": [],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L4-T11",
+      "lane": "L4",
+      "title": "概览页分层绑定：产品家族用 family_rankings、品类用 category_rankings",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [],
+      "commit_references": [],
+      "test_status": "none",
+      "test_details": [],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L4-T12",
+      "lane": "L4",
+      "title": "删除客户端现编样本量，改读投影 sample 字段",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [],
+      "commit_references": [],
+      "test_status": "none",
+      "test_details": [],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L4-T13",
+      "lane": "L4",
+      "title": "分析页净情感观察分与品牌健康口碑消歧",
+      "priority": "P3",
+      "wave": null,
+      "named_tests": [],
+      "commit_references": [],
+      "test_status": "none",
+      "test_details": [],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L4-T14",
+      "lane": "L4",
+      "title": "搜索页显示标签字典版本与校验和前缀",
+      "priority": "P3",
+      "wave": null,
+      "named_tests": [],
+      "commit_references": [],
+      "test_status": "none",
+      "test_details": [],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L4-T15",
+      "lane": "L4",
+      "title": "洞察页解除 insights 门禁、删除 allowlist、改为守恒计数与双信任模式",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [],
+      "commit_references": [],
+      "test_status": "none",
+      "test_details": [],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L4-T16",
+      "lane": "L4",
+      "title": "治理标签成熟度跟随数据，不再禁止晋级",
+      "priority": "P2",
+      "wave": null,
+      "named_tests": [],
+      "commit_references": [],
+      "test_status": "none",
+      "test_details": [],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L4-T17",
+      "lane": "L4",
+      "title": "证据链接携带发布代与数据边界，缺帖给出两代解释",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [],
+      "commit_references": [],
+      "test_status": "none",
+      "test_details": [],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L4-T18",
+      "lane": "L4",
+      "title": "casebook dossier 渲染复核到期与逾期徽标",
+      "priority": "P2",
+      "wave": null,
+      "named_tests": [],
+      "commit_references": [],
+      "test_status": "none",
+      "test_details": [],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L4-T19",
+      "lane": "L4",
+      "title": "辅助数据集缺失绑定时失败关闭（移除 7 月夹具回退）",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [],
+      "commit_references": [],
+      "test_status": "none",
+      "test_details": [],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L4-T20",
+      "lane": "L4",
+      "title": "新鲜度条：60 秒数据年龄时钟、实时 recency、观测边界警示",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [],
+      "commit_references": [],
+      "test_status": "none",
+      "test_details": [],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L4-T21",
+      "lane": "L4",
+      "title": "画像证据惰性化：persona-tags 19.5MB 仅在“加载证据”时请求",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [],
+      "commit_references": [],
+      "test_status": "none",
+      "test_details": [],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L4-T22",
+      "lane": "L4",
+      "title": "Agent Studio：删除 07:05 文案，显示真实生成时间，刷新不整页重载",
+      "priority": "P3",
+      "wave": null,
+      "named_tests": [],
+      "commit_references": [],
+      "test_status": "none",
+      "test_details": [],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L4-T23",
+      "lane": "L4",
+      "title": "删除硬编码判断句，改为数据派生句并接受 conclusions[]",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [],
+      "commit_references": [],
+      "test_status": "none",
+      "test_details": [],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L4-T24",
+      "lane": "L4",
+      "title": "评论按字节区间读取：comment_index 双路径 + LRU + 回退确认",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [],
+      "commit_references": [],
+      "test_status": "none",
+      "test_details": [],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L4-T25",
+      "lane": "L4",
+      "title": "洞察页与报表页改用摘要投影，不再下载 70MB 核心帖子",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [],
+      "commit_references": [],
+      "test_status": "none",
+      "test_details": [],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L4-T26",
+      "lane": "L4",
+      "title": "证据陈旧判定收紧：仅缺帖 + 边界不同才告警",
+      "priority": "P2",
+      "wave": null,
+      "named_tests": [],
+      "commit_references": [],
+      "test_status": "none",
+      "test_details": [],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L5-T01",
+      "lane": "L5",
+      "title": "早报卡片任何非 success 一律未验证并红标；回执优先取内存",
+      "priority": "P0",
+      "wave": null,
+      "named_tests": [
+        "tests/test_morning_brief_card.py",
+        "tests/test_morning_brief_card.py::test_card_is_red_and_unverified_when_receipt_status_is_partial",
+        "tests/test_morning_brief_card.py::test_card_is_unverified_when_receipt_missing",
+        "tests/test_morning_brief_card.py::test_card_names_failed_step",
+        "tests/test_morning_brief_card.py::test_card_never_reports_verified_for_partial_1_step_errors",
+        "tests/test_morning_brief_card.py::test_card_uses_in_memory_receipt_not_disk"
+      ],
+      "commit_references": [],
+      "test_status": "present",
+      "test_details": [
+        {
+          "node": "tests/test_morning_brief_card.py",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_morning_brief_card.py::test_card_is_red_and_unverified_when_receipt_status_is_partial",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_morning_brief_card.py::test_card_is_unverified_when_receipt_missing",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_morning_brief_card.py::test_card_names_failed_step",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_morning_brief_card.py::test_card_never_reports_verified_for_partial_1_step_errors",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_morning_brief_card.py::test_card_uses_in_memory_receipt_not_disk",
+          "status": "present"
+        }
+      ],
+      "evidence_status": "named_test_only",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L5-T02",
+      "lane": "L5",
+      "title": "build_receipt 模块：每数据集 build.json + run 级回执，create-new 不可变",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [
+        "tests/fixtures/build_receipt/minimal_public_root/",
+        "tests/test_build_receipt.py",
+        "tests/test_build_receipt.py::test_frozen_dataset_stamp_allows_null_generated_at",
+        "tests/test_build_receipt.py::test_receipt_lists_every_release_dataset",
+        "tests/test_build_receipt.py::test_receipt_write_is_immutable_on_conflict",
+        "tests/test_build_receipt.py::test_run_id_must_match_client_safe_pattern",
+        "tests/test_build_receipt.py::test_stamp_manifest_sha_matches_manifest_bytes"
+      ],
+      "commit_references": [
+        "64432c19ac88"
+      ],
+      "test_status": "partial",
+      "test_details": [
+        {
+          "node": "tests/fixtures/build_receipt/minimal_public_root/",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_build_receipt.py",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_build_receipt.py::test_frozen_dataset_stamp_allows_null_generated_at",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_build_receipt.py::test_receipt_lists_every_release_dataset",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_build_receipt.py::test_receipt_write_is_immutable_on_conflict",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_build_receipt.py::test_run_id_must_match_client_safe_pattern",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_build_receipt.py::test_stamp_manifest_sha_matches_manifest_bytes",
+          "status": "present"
+        }
+      ],
+      "evidence_status": "commit_only",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L5-T03",
+      "lane": "L5",
+      "title": "三个数据集目录校验器允许 build.json（否则下次重建必挂）",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [
+        "tests/test_dataset_build_stamp_allowlist.py",
+        "tests/test_dataset_build_stamp_allowlist.py::test_insights_public_wrapper_allows_build_stamp",
+        "tests/test_dataset_build_stamp_allowlist.py::test_persona_dataset_inventory_allows_build_stamp",
+        "tests/test_dataset_build_stamp_allowlist.py::test_persona_dataset_inventory_rejects_unknown_extra_file",
+        "tests/test_dataset_build_stamp_allowlist.py::test_reports_output_inventory_tolerates_build_stamp_only"
+      ],
+      "commit_references": [],
+      "test_status": "partial",
+      "test_details": [
+        {
+          "node": "tests/test_dataset_build_stamp_allowlist.py",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_dataset_build_stamp_allowlist.py::test_insights_public_wrapper_allows_build_stamp",
+          "status": "node_missing"
+        },
+        {
+          "node": "tests/test_dataset_build_stamp_allowlist.py::test_persona_dataset_inventory_allows_build_stamp",
+          "status": "node_missing"
+        },
+        {
+          "node": "tests/test_dataset_build_stamp_allowlist.py::test_persona_dataset_inventory_rejects_unknown_extra_file",
+          "status": "node_missing"
+        },
+        {
+          "node": "tests/test_dataset_build_stamp_allowlist.py::test_reports_output_inventory_tolerates_build_stamp_only",
+          "status": "node_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L5-T04",
+      "lane": "L5",
+      "title": "流水线写入 7 份 build.json 与 run 回执（失败也留证）",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [
+        "tests/test_pipeline_build_receipts.py",
+        "tests/test_pipeline_build_receipts.py::test_pipeline_writes_stamp_for_every_release_dataset",
+        "tests/test_pipeline_build_receipts.py::test_receipt_collision_does_not_overwrite",
+        "tests/test_pipeline_build_receipts.py::test_receipt_is_written_when_a_step_errors",
+        "tests/test_pipeline_build_receipts.py::test_receipt_release_block_matches_pointer"
+      ],
+      "commit_references": [
+        "56a5469e349e"
+      ],
+      "test_status": "partial",
+      "test_details": [
+        {
+          "node": "tests/test_pipeline_build_receipts.py",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_pipeline_build_receipts.py::test_pipeline_writes_stamp_for_every_release_dataset",
+          "status": "node_missing"
+        },
+        {
+          "node": "tests/test_pipeline_build_receipts.py::test_receipt_collision_does_not_overwrite",
+          "status": "node_missing"
+        },
+        {
+          "node": "tests/test_pipeline_build_receipts.py::test_receipt_is_written_when_a_step_errors",
+          "status": "node_missing"
+        },
+        {
+          "node": "tests/test_pipeline_build_receipts.py::test_receipt_release_block_matches_pointer",
+          "status": "node_missing"
+        }
+      ],
+      "evidence_status": "commit_only",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L5-T05",
+      "lane": "L5",
+      "title": "定时新鲜度监控 check_site_freshness.py：状态机 + 逐数据集自证 + 红卡/心跳/去重",
+      "priority": "P0",
+      "wave": null,
+      "named_tests": [
+        "tests/fixtures/freshness/",
+        "tests/test_check_site_freshness.py",
+        "tests/test_check_site_freshness.py::test_alert_is_deduped_per_state_transition",
+        "tests/test_check_site_freshness.py::test_feishu_card_header_is_red_for_stalled",
+        "tests/test_check_site_freshness.py::test_fresh_release_with_matching_receipt_is_fresh",
+        "tests/test_check_site_freshness.py::test_heartbeat_is_sent_once_per_shanghai_day",
+        "tests/test_check_site_freshness.py::test_manifest_sha_mismatch_is_failed_not_fresh",
+        "tests/test_check_site_freshness.py::test_missing_build_receipt_after_deadline_is_stalled",
+        "tests/test_check_site_freshness.py::test_missing_build_stamp_is_failed_not_fresh",
+        "tests/test_check_site_freshness.py::test_partial_build_status_is_not_fresh"
+      ],
+      "commit_references": [],
+      "test_status": "partial",
+      "test_details": [
+        {
+          "node": "tests/fixtures/freshness/",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_check_site_freshness.py",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_check_site_freshness.py::test_alert_is_deduped_per_state_transition",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_check_site_freshness.py::test_feishu_card_header_is_red_for_stalled",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_check_site_freshness.py::test_fresh_release_with_matching_receipt_is_fresh",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_check_site_freshness.py::test_heartbeat_is_sent_once_per_shanghai_day",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_check_site_freshness.py::test_manifest_sha_mismatch_is_failed_not_fresh",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_check_site_freshness.py::test_missing_build_receipt_after_deadline_is_stalled",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_check_site_freshness.py::test_missing_build_stamp_is_failed_not_fresh",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_check_site_freshness.py::test_partial_build_status_is_not_fresh",
+          "status": "present"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L5-T06",
+      "lane": "L5",
+      "title": "新鲜度告警单元入库并在服务器装起来",
+      "priority": "P0",
+      "wave": null,
+      "named_tests": [
+        "tests/test_systemd_units.py",
+        "tests/test_systemd_units.py::test_execstart_script_exists",
+        "tests/test_systemd_units.py::test_freshness_timer_starts_after_daily_close",
+        "tests/test_systemd_units.py::test_freshness_unit_has_onfailure_and_success_exit_status",
+        "tests/test_systemd_units.py::test_units_are_lowercase_safe"
+      ],
+      "commit_references": [
+        "b5214d765f38"
+      ],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_systemd_units.py",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_systemd_units.py::test_execstart_script_exists",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_systemd_units.py::test_freshness_timer_starts_after_daily_close",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_systemd_units.py::test_freshness_unit_has_onfailure_and_success_exit_status",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_systemd_units.py::test_units_are_lowercase_safe",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "commit_only",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L5-T07",
+      "lane": "L5",
+      "title": "发布前门禁改为基于 build stamp，可在生产工件模型上运行",
+      "priority": "P2",
+      "wave": null,
+      "named_tests": [
+        "tests/test_validate_reddit_daily_site_refresh.py",
+        "tests/test_validate_reddit_daily_site_refresh.py::test_rejects_a_non_24_hour_business_window",
+        "tests/test_validate_reddit_daily_site_refresh.py::test_rejects_derivative_dataset_with_wrong_base_source_sha",
+        "tests/test_validate_reddit_daily_site_refresh.py::test_rejects_missing_build_stamp",
+        "tests/test_validate_reddit_daily_site_refresh.py::test_validates_current_daily_candidate"
+      ],
+      "commit_references": [],
+      "test_status": "partial",
+      "test_details": [
+        {
+          "node": "tests/test_validate_reddit_daily_site_refresh.py",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_validate_reddit_daily_site_refresh.py::test_rejects_a_non_24_hour_business_window",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_validate_reddit_daily_site_refresh.py::test_rejects_derivative_dataset_with_wrong_base_source_sha",
+          "status": "node_missing"
+        },
+        {
+          "node": "tests/test_validate_reddit_daily_site_refresh.py::test_rejects_missing_build_stamp",
+          "status": "node_missing"
+        },
+        {
+          "node": "tests/test_validate_reddit_daily_site_refresh.py::test_validates_current_daily_candidate",
+          "status": "present"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L5-T08",
+      "lane": "L5",
+      "title": "血缘槽位改名到它真正哈希的工件（brand-health + reports 锁步）",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [
+        "tests/test_lineage_slot_names.py",
+        "tests/test_lineage_slot_names.py::test_every_source_slot_hashes_the_artifact_its_name_claims",
+        "tests/test_lineage_slot_names.py::test_missing_tag_dictionary_fails_closed",
+        "tests/test_recompute_parity.py"
+      ],
+      "commit_references": [],
+      "test_status": "partial",
+      "test_details": [
+        {
+          "node": "tests/test_lineage_slot_names.py",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_lineage_slot_names.py::test_every_source_slot_hashes_the_artifact_its_name_claims",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_lineage_slot_names.py::test_missing_tag_dictionary_fails_closed",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_parity.py",
+          "status": "present"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L5-T09",
+      "lane": "L5",
+      "title": "finalize_lineage：brand-health / quarter-insights 引用本次最终 reports manifest",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [
+        "tests/test_lineage_finalization.py",
+        "tests/test_lineage_finalization.py::test_brand_health_cites_final_reports_manifest_sha",
+        "tests/test_lineage_finalization.py::test_finalize_is_idempotent",
+        "tests/test_lineage_finalization.py::test_finalize_is_not_called_when_reports_build_fails",
+        "tests/test_lineage_finalization.py::test_finalize_preserves_canonical_bytes",
+        "tests/test_lineage_finalization.py::test_quarter_insights_cites_final_reports_manifest_sha"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_lineage_finalization.py",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_lineage_finalization.py::test_brand_health_cites_final_reports_manifest_sha",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_lineage_finalization.py::test_finalize_is_idempotent",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_lineage_finalization.py::test_finalize_is_not_called_when_reports_build_fails",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_lineage_finalization.py::test_finalize_preserves_canonical_bytes",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_lineage_finalization.py::test_quarter_insights_cites_final_reports_manifest_sha",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L5-T10",
+      "lane": "L5",
+      "title": "让 deterministic_full_byte_replay / independent_validation_status 变成真的",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [
+        "tests/fixtures/reports_template/",
+        "tests/test_reports_bundle_validation.py",
+        "tests/test_reports_bundle_validation.py::test_build_raises_before_publish_on_failed_check",
+        "tests/test_reports_bundle_validation.py::test_receipt_checks_block_has_all_four_flags",
+        "tests/test_reports_bundle_validation.py::test_replay_flag_is_false_when_a_template_byte_changes",
+        "tests/test_reports_bundle_validation.py::test_replay_flag_is_true_when_canonical_and_live_templates_agree",
+        "tests/test_reports_bundle_validation.py::test_status_is_pending_when_manifest_hash_wrong"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/fixtures/reports_template/",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_reports_bundle_validation.py",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_reports_bundle_validation.py::test_build_raises_before_publish_on_failed_check",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_reports_bundle_validation.py::test_receipt_checks_block_has_all_four_flags",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_reports_bundle_validation.py::test_replay_flag_is_false_when_a_template_byte_changes",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_reports_bundle_validation.py::test_replay_flag_is_true_when_canonical_and_live_templates_agree",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_reports_bundle_validation.py::test_status_is_pending_when_manifest_hash_wrong",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L5-T11",
+      "lane": "L5",
+      "title": "boundaries 声明与总分推导对齐，客户端复算总分",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [
+        "tests/test_brand_health_boundary.py",
+        "tests/test_brand_health_boundary.py::test_boundary_declares_overall_derived_from_axes_true",
+        "tests/test_brand_health_boundary.py::test_overall_equals_half_up_mean_of_four_dimensions"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_brand_health_boundary.py",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_brand_health_boundary.py::test_boundary_declares_overall_derived_from_axes_true",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_brand_health_boundary.py::test_overall_equals_half_up_mean_of_four_dimensions",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L5-T12",
+      "lane": "L5",
+      "title": "freshness 的 status / net_new / coverage 来自本次运行回执",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [
+        "tests/test_freshness_contract.py",
+        "tests/test_freshness_contract.py::test_advance_refuses_without_run_evidence",
+        "tests/test_freshness_contract.py::test_coverage_comes_from_merge_receipt",
+        "tests/test_freshness_contract.py::test_net_new_equals_merge_receipt_deltas",
+        "tests/test_freshness_contract.py::test_status_empty_success_on_zero_delta",
+        "tests/test_freshness_contract.py::test_status_full_when_no_partial_posts",
+        "tests/test_freshness_contract.py::test_status_partial_when_partial_posts_present"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_freshness_contract.py",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_freshness_contract.py::test_advance_refuses_without_run_evidence",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_freshness_contract.py::test_coverage_comes_from_merge_receipt",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_freshness_contract.py::test_net_new_equals_merge_receipt_deltas",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_freshness_contract.py::test_status_empty_success_on_zero_delta",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_freshness_contract.py::test_status_full_when_no_partial_posts",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_freshness_contract.py::test_status_partial_when_partial_posts_present",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L5-T13",
+      "lane": "L5",
+      "title": "单一 T-1 切割函数，四个调用点统一（含 8760 采样）",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [
+        "tests/test_t1_window.py",
+        "tests/test_t1_window.py::test_all_call_sites_agree_over_8760_hourly_samples",
+        "tests/test_t1_window.py::test_period_end_date_is_shanghai_close_date_minus_one_day",
+        "tests/test_t1_window.py::test_recompute_anchor_matches_window_at_0030_shanghai",
+        "tests/test_t1_window.py::test_window_is_closed_23utc_to_23utc"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_t1_window.py",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_t1_window.py::test_all_call_sites_agree_over_8760_hourly_samples",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_t1_window.py::test_period_end_date_is_shanghai_close_date_minus_one_day",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_t1_window.py::test_recompute_anchor_matches_window_at_0030_shanghai",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_t1_window.py::test_window_is_closed_23utc_to_23utc",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L5-T14",
+      "lane": "L5",
+      "title": "base / reports manifest 与 agent-studio 产物的构建时间",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [
+        "tests/test_build_timestamps.py",
+        "tests/test_build_timestamps.py::test_aggregates_payload_keys_unchanged",
+        "tests/test_build_timestamps.py::test_base_manifest_generated_at_advances",
+        "tests/test_build_timestamps.py::test_reports_manifest_carries_generated_at"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_build_timestamps.py",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_build_timestamps.py::test_aggregates_payload_keys_unchanged",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_build_timestamps.py::test_base_manifest_generated_at_advances",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_build_timestamps.py::test_reports_manifest_carries_generated_at",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L5-T15",
+      "lane": "L5",
+      "title": "brand-health manifest 构建时间（生产者与客户端锁步）",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [],
+      "commit_references": [],
+      "test_status": "none",
+      "test_details": [],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L5-T16",
+      "lane": "L5",
+      "title": "状态文案诚实化：哈希校验 ≠ 数据新鲜；Agent Studio 显示真实产出时间",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [],
+      "commit_references": [],
+      "test_status": "none",
+      "test_details": [],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L6-T01",
+      "lane": "L6",
+      "title": "文件级写前检查：可写位 + 可读性 + 完整目标清单",
+      "priority": "P0",
+      "wave": null,
+      "named_tests": [
+        "tests/test_daily_pipeline_preflight.py::test_accepts_writable_tree",
+        "tests/test_daily_pipeline_preflight.py::test_checks_base_lineage_subdir",
+        "tests/test_daily_pipeline_preflight.py::test_checks_store_sqlite_file",
+        "tests/test_daily_pipeline_preflight.py::test_rejects_readonly_file_in_writable_dir",
+        "tests/test_daily_pipeline_preflight.py::test_rejects_unreadable_file_in_writable_dir",
+        "tests/test_daily_pipeline_preflight.py::test_run_pipeline_fails_before_step1"
+      ],
+      "commit_references": [],
+      "test_status": "present",
+      "test_details": [
+        {
+          "node": "tests/test_daily_pipeline_preflight.py::test_accepts_writable_tree",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_daily_pipeline_preflight.py::test_checks_base_lineage_subdir",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_daily_pipeline_preflight.py::test_checks_store_sqlite_file",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_daily_pipeline_preflight.py::test_rejects_readonly_file_in_writable_dir",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_daily_pipeline_preflight.py::test_rejects_unreadable_file_in_writable_dir",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_daily_pipeline_preflight.py::test_run_pipeline_fails_before_step1",
+          "status": "present"
+        }
+      ],
+      "evidence_status": "named_test_only",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L6-T02",
+      "lane": "L6",
+      "title": "编排层离线夹具与端到端骨架",
+      "priority": "P3",
+      "wave": null,
+      "named_tests": [
+        "tests/test_daily_pipeline_harness.py::test_end_to_end_publish_on_fixture_corpus",
+        "tests/test_daily_pipeline_harness.py::test_fixture_build_is_offline",
+        "tests/test_daily_pipeline_harness.py::test_fixture_tree_satisfies_release_contract"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_daily_pipeline_harness.py::test_end_to_end_publish_on_fixture_corpus",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_daily_pipeline_harness.py::test_fixture_build_is_offline",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_daily_pipeline_harness.py::test_fixture_tree_satisfies_release_contract",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L6-T03",
+      "lane": "L6",
+      "title": "从 release binding 解析 base 数据集目录",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [
+        "tests/test_recompute_base_binding.py::test_dataset_dir_helper_handles_generation_root",
+        "tests/test_recompute_base_binding.py::test_relocate_rejects_parent_traversal",
+        "tests/test_recompute_base_binding.py::test_run_recompute_reads_base_version_from_release",
+        "tests/test_recompute_base_binding.py::test_unbound_dataset_dir_is_untouched"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_recompute_base_binding.py::test_dataset_dir_helper_handles_generation_root",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_base_binding.py::test_relocate_rejects_parent_traversal",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_base_binding.py::test_run_recompute_reads_base_version_from_release",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_recompute_base_binding.py::test_unbound_dataset_dir_is_untouched",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L6-T04",
+      "lane": "L6",
+      "title": "早报 builder 从 release binding 解析 quarter-insights",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [
+        "tests/test_morning_brief_paths.py::test_builders_have_no_hardcoded_quarter_version",
+        "tests/test_morning_brief_paths.py::test_morning_brief_reads_quarter_path_from_release"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_morning_brief_paths.py::test_builders_have_no_hardcoded_quarter_version",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_morning_brief_paths.py::test_morning_brief_reads_quarter_path_from_release",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L6-T05",
+      "lane": "L6",
+      "title": "真实 run 身份：run_id / run_kind / collector_run_id / release_id",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [
+        "tests/test_run_identity.py::test_collector_run_id_equals_pipeline_run_id",
+        "tests/test_run_identity.py::test_release_id_advances_per_commit",
+        "tests/test_run_identity.py::test_run_id_matches_release_safe_identifier",
+        "tests/test_run_identity.py::test_run_kind_defaults_and_override",
+        "tests/test_run_identity.py::test_two_runs_get_distinct_ids_and_receipts"
+      ],
+      "commit_references": [
+        "56a5469e349e"
+      ],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_run_identity.py::test_collector_run_id_equals_pipeline_run_id",
+          "status": "node_missing"
+        },
+        {
+          "node": "tests/test_run_identity.py::test_release_id_advances_per_commit",
+          "status": "node_missing"
+        },
+        {
+          "node": "tests/test_run_identity.py::test_run_id_matches_release_safe_identifier",
+          "status": "node_missing"
+        },
+        {
+          "node": "tests/test_run_identity.py::test_run_kind_defaults_and_override",
+          "status": "node_missing"
+        },
+        {
+          "node": "tests/test_run_identity.py::test_two_runs_get_distinct_ids_and_receipts",
+          "status": "node_missing"
+        }
+      ],
+      "evidence_status": "commit_only",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L6-T06",
+      "lane": "L6",
+      "title": "绑定同步白名单 + 版本一致性断言",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [
+        "tests/test_daily_pipeline_binding_sync.py::test_base_lineage_sha_is_never_rewritten",
+        "tests/test_daily_pipeline_binding_sync.py::test_missing_produced_manifest_raises",
+        "tests/test_daily_pipeline_binding_sync.py::test_only_reports_lineage_updated",
+        "tests/test_daily_pipeline_binding_sync.py::test_produced_version_mismatch_raises",
+        "tests/test_daily_pipeline_binding_sync.py::test_rejects_foreign_manifest"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_daily_pipeline_binding_sync.py::test_base_lineage_sha_is_never_rewritten",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_daily_pipeline_binding_sync.py::test_missing_produced_manifest_raises",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_daily_pipeline_binding_sync.py::test_only_reports_lineage_updated",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_daily_pipeline_binding_sync.py::test_produced_version_mismatch_raises",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_daily_pipeline_binding_sync.py::test_rejects_foreign_manifest",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L6-T07",
+      "lane": "L6",
+      "title": "代际事务模块：复制种子、原子 symlink 切换、回滚与 gc",
+      "priority": "P0",
+      "wave": null,
+      "named_tests": [
+        "tests/test_daily_release_transaction.py::test_commit_refuses_to_replace_real_directory",
+        "tests/test_daily_release_transaction.py::test_commit_rejects_dataset_version_change",
+        "tests/test_daily_release_transaction.py::test_commit_switches_symlink_atomically",
+        "tests/test_daily_release_transaction.py::test_failed_build_leaves_live_tree_byte_identical",
+        "tests/test_daily_release_transaction.py::test_gc_keeps_current_and_previous",
+        "tests/test_daily_release_transaction.py::test_insufficient_disk_raises",
+        "tests/test_daily_release_transaction.py::test_restore_returns_previous_generation",
+        "tests/test_daily_release_transaction.py::test_stage_write_does_not_inherit_live_inode"
+      ],
+      "commit_references": [],
+      "test_status": "present",
+      "test_details": [
+        {
+          "node": "tests/test_daily_release_transaction.py::test_commit_refuses_to_replace_real_directory",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_daily_release_transaction.py::test_commit_rejects_dataset_version_change",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_daily_release_transaction.py::test_commit_switches_symlink_atomically",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_daily_release_transaction.py::test_failed_build_leaves_live_tree_byte_identical",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_daily_release_transaction.py::test_gc_keeps_current_and_previous",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_daily_release_transaction.py::test_insufficient_disk_raises",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_daily_release_transaction.py::test_restore_returns_previous_generation",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_daily_release_transaction.py::test_stage_write_does_not_inherit_live_inode",
+          "status": "present"
+        }
+      ],
+      "evidence_status": "named_test_only",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L6-T08",
+      "lane": "L6",
+      "title": "事务接入流水线：step2/3/3.5/4 只写代目录，指针只替换一次",
+      "priority": "P0",
+      "wave": null,
+      "named_tests": [
+        "tests/test_daily_pipeline_transaction_wiring.py::test_agent_studio_written_into_generation",
+        "tests/test_daily_pipeline_transaction_wiring.py::test_failure_at_recompute_leaves_live_tree_byte_identical",
+        "tests/test_daily_pipeline_transaction_wiring.py::test_generation_mode_off_keeps_legacy_paths",
+        "tests/test_daily_pipeline_transaction_wiring.py::test_merge_and_recompute_write_only_into_generation",
+        "tests/test_daily_pipeline_transaction_wiring.py::test_pointer_written_exactly_once_per_run"
+      ],
+      "commit_references": [
+        "4b0f2d13e209",
+        "502d29eb40a4"
+      ],
+      "test_status": "present",
+      "test_details": [
+        {
+          "node": "tests/test_daily_pipeline_transaction_wiring.py::test_agent_studio_written_into_generation",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_daily_pipeline_transaction_wiring.py::test_failure_at_recompute_leaves_live_tree_byte_identical",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_daily_pipeline_transaction_wiring.py::test_generation_mode_off_keeps_legacy_paths",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_daily_pipeline_transaction_wiring.py::test_merge_and_recompute_write_only_into_generation",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_daily_pipeline_transaction_wiring.py::test_pointer_written_exactly_once_per_run",
+          "status": "present"
+        }
+      ],
+      "evidence_status": "commit+named_test",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L6-T09",
+      "lane": "L6",
+      "title": "通用步骤依赖门禁",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [
+        "tests/test_daily_pipeline_gating.py::test_advance_blocked_when_recompute_error",
+        "tests/test_daily_pipeline_gating.py::test_collect_failure_still_allows_merge_recovery",
+        "tests/test_daily_pipeline_gating.py::test_feishu_runs_after_failure",
+        "tests/test_daily_pipeline_gating.py::test_recompute_skipped_when_merge_failed"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_daily_pipeline_gating.py::test_advance_blocked_when_recompute_error",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_daily_pipeline_gating.py::test_collect_failure_still_allows_merge_recovery",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_daily_pipeline_gating.py::test_feishu_runs_after_failure",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_daily_pipeline_gating.py::test_recompute_skipped_when_merge_failed",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L6-T10",
+      "lane": "L6",
+      "title": "失败语义与退出码：非异常失败计入 failed",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [
+        "tests/test_daily_pipeline_status.py::test_feishu_send_failure_is_warning_when_data_published",
+        "tests/test_daily_pipeline_status.py::test_main_exit_code_nonzero_on_failed",
+        "tests/test_daily_pipeline_status.py::test_receipt_schema_is_v2",
+        "tests/test_daily_pipeline_status.py::test_skipped_no_posts_is_not_failure",
+        "tests/test_daily_pipeline_status.py::test_skipped_no_release_is_failure"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_daily_pipeline_status.py::test_feishu_send_failure_is_warning_when_data_published",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_daily_pipeline_status.py::test_main_exit_code_nonzero_on_failed",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_daily_pipeline_status.py::test_receipt_schema_is_v2",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_daily_pipeline_status.py::test_skipped_no_posts_is_not_failure",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_daily_pipeline_status.py::test_skipped_no_release_is_failure",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L6-T11",
+      "lane": "L6",
+      "title": "失败告警卡 builder + step5 分支",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [
+        "tests/test_pipeline_failure_card.py::test_card_header_is_red_and_names_run_id",
+        "tests/test_pipeline_failure_card.py::test_card_lists_failed_steps_and_error_excerpt",
+        "tests/test_pipeline_failure_card.py::test_cli_dry_run_emits_card"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_pipeline_failure_card.py::test_card_header_is_red_and_names_run_id",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_pipeline_failure_card.py::test_card_lists_failed_steps_and_error_excerpt",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_pipeline_failure_card.py::test_cli_dry_run_emits_card",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L6-T12",
+      "lane": "L6",
+      "title": "发布后断言 + 指针回滚",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [
+        "tests/test_assert_published_release.py::test_all_assertions_pass_on_consistent_generation",
+        "tests/test_assert_published_release.py::test_brand_health_score_must_equal_reports_row",
+        "tests/test_assert_published_release.py::test_generation_id_mismatch_fails",
+        "tests/test_assert_published_release.py::test_manifest_sha_mismatch_fails",
+        "tests/test_assert_published_release.py::test_pointer_restored_on_assertion_failure"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_assert_published_release.py::test_all_assertions_pass_on_consistent_generation",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_assert_published_release.py::test_brand_health_score_must_equal_reports_row",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_assert_published_release.py::test_generation_id_mismatch_fails",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_assert_published_release.py::test_manifest_sha_mismatch_fails",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_assert_published_release.py::test_pointer_restored_on_assertion_failure",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L6-T13",
+      "lane": "L6",
+      "title": "回执先写后发卡 + public_root 贯通 + verified 语义",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [
+        "tests/test_morning_brief_card_receipt.py::test_card_uses_passed_receipt_status",
+        "tests/test_morning_brief_card_receipt.py::test_final_receipt_written_after_feishu",
+        "tests/test_morning_brief_card_receipt.py::test_first_run_builds_v4_card_without_receipt_file",
+        "tests/test_morning_brief_card_receipt.py::test_step5_uses_pipeline_public_root",
+        "tests/test_morning_brief_card_receipt.py::test_verified_requires_success_status"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_morning_brief_card_receipt.py::test_card_uses_passed_receipt_status",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_morning_brief_card_receipt.py::test_final_receipt_written_after_feishu",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_morning_brief_card_receipt.py::test_first_run_builds_v4_card_without_receipt_file",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_morning_brief_card_receipt.py::test_step5_uses_pipeline_public_root",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_morning_brief_card_receipt.py::test_verified_requires_success_status",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L6-T14",
+      "lane": "L6",
+      "title": "发布窗口门禁：捕获窗口 + 语料覆盖 + 不回退",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [
+        "tests/test_publish_gate.py::test_advance_blocked_when_corpus_has_no_event_in_window",
+        "tests/test_publish_gate.py::test_allow_uncovered_window_warns_but_does_not_advance",
+        "tests/test_publish_gate.py::test_pointer_never_regresses",
+        "tests/test_publish_gate.py::test_scheduled_run_boundary_is_stable",
+        "tests/test_publish_gate.py::test_window_uses_capture_not_wall_clock"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_publish_gate.py::test_advance_blocked_when_corpus_has_no_event_in_window",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_publish_gate.py::test_allow_uncovered_window_warns_but_does_not_advance",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_publish_gate.py::test_pointer_never_regresses",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_publish_gate.py::test_scheduled_run_boundary_is_stable",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_publish_gate.py::test_window_uses_capture_not_wall_clock",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L6-T15",
+      "lane": "L6",
+      "title": "单写者锁",
+      "priority": "P2",
+      "wave": null,
+      "named_tests": [
+        "tests/test_daily_pipeline_lock.py::test_lock_path_outside_generation_symlink",
+        "tests/test_daily_pipeline_lock.py::test_lock_released_on_failure",
+        "tests/test_daily_pipeline_lock.py::test_second_run_aborts_before_collect"
+      ],
+      "commit_references": [
+        "74fca8a5a9cb"
+      ],
+      "test_status": "present",
+      "test_details": [
+        {
+          "node": "tests/test_daily_pipeline_lock.py::test_lock_path_outside_generation_symlink",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_daily_pipeline_lock.py::test_lock_released_on_failure",
+          "status": "present"
+        },
+        {
+          "node": "tests/test_daily_pipeline_lock.py::test_second_run_aborts_before_collect",
+          "status": "present"
+        }
+      ],
+      "evidence_status": "commit+named_test",
+      "owner_signoff": null
+    },
+    {
+      "ticket_id": "L6-T16",
+      "lane": "L6",
+      "title": "systemd unit 入库",
+      "priority": "P1",
+      "wave": null,
+      "named_tests": [
+        "tests/test_systemd_units.py::test_alert_unit_invokes_failure_card_cli",
+        "tests/test_systemd_units.py::test_daily_timer_schedule_and_persistence",
+        "tests/test_systemd_units.py::test_service_execstart_matches_repo_entrypoint",
+        "tests/test_systemd_units.py::test_service_onfailure_and_timeout"
+      ],
+      "commit_references": [],
+      "test_status": "missing",
+      "test_details": [
+        {
+          "node": "tests/test_systemd_units.py::test_alert_unit_invokes_failure_card_cli",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_systemd_units.py::test_daily_timer_schedule_and_persistence",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_systemd_units.py::test_service_execstart_matches_repo_entrypoint",
+          "status": "file_missing"
+        },
+        {
+          "node": "tests/test_systemd_units.py::test_service_onfailure_and_timeout",
+          "status": "file_missing"
+        }
+      ],
+      "evidence_status": "none",
+      "owner_signoff": null
+    }
+  ]
+}

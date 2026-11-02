@@ -183,8 +183,8 @@ def test_alert_is_deduped_per_state_transition(tmp_path: Path) -> None:
     first, reason = mon.should_notify(doc, state, now_utc=NOW, heartbeat=False)
     assert first is True and reason == "state_changed"
 
-    # Same state again: silence.
-    state = {"last_state": doc["state"]}
+    # Same state and same failure codes: silence.
+    state = {"last_state": doc["state"], "last_failure_codes": doc["failures"]}
     again, _ = mon.should_notify(doc, state, now_utc=NOW, heartbeat=False)
     assert again is False
 
@@ -194,18 +194,46 @@ def test_alert_is_deduped_per_state_transition(tmp_path: Path) -> None:
     assert moved is True and reason == "state_changed"
 
 
+def test_failure_code_change_speaks_with_a_stable_state(tmp_path: Path) -> None:
+    """`failed A -> failed B` is a new incident, not a duplicate."""
+    doc = {
+        "state": "failed",
+        "failures": ["build_receipt_missing"],
+        "healthy": False,
+    }
+    state = {
+        "last_state": "failed",
+        "last_failure_codes": ["release_manifest_sha_mismatch:base"],
+    }
+    send, reason = mon.should_notify(doc, state, now_utc=NOW, heartbeat=False)
+    assert send is True
+    assert reason == "failure_codes_changed"
+
+    same = {
+        "last_state": "failed",
+        "last_failure_codes": ["build_receipt_missing"],
+    }
+    send, reason = mon.should_notify(doc, same, now_utc=NOW, heartbeat=False)
+    assert send is False
+    assert reason == "unchanged"
+
+
 def test_heartbeat_is_sent_once_per_shanghai_day(tmp_path: Path) -> None:
     """A green heartbeat proves the monitor is alive, at most once a day."""
     site = make_site(tmp_path)
     doc = mon.observe_site(site["public_root"], now_utc=NOW)
-    state = {"last_state": doc["state"]}
+    state = {"last_state": doc["state"], "last_failure_codes": doc["failures"]}
 
     # First heartbeat today: send.
     send, reason = mon.should_notify(doc, state, now_utc=NOW, heartbeat=True)
     assert send is True and reason == "heartbeat"
 
     # Second call the same Shanghai day: quiet.
-    state = {"last_state": doc["state"], "last_heartbeat_date": "2026-10-31"}
+    state = {
+        "last_state": doc["state"],
+        "last_failure_codes": doc["failures"],
+        "last_heartbeat_date": "2026-10-31",
+    }
     same_day = NOW.replace(hour=15)  # still 2026-10-31 in Shanghai
     send, _ = mon.should_notify(doc, state, now_utc=same_day, heartbeat=True)
     assert send is False

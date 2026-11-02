@@ -317,6 +317,10 @@ def save_state(path: Path, state: Mapping[str, Any]) -> None:
     os.replace(temporary, path)
 
 
+def _failure_codes(document: Mapping[str, Any]) -> tuple[str, ...]:
+    return tuple(sorted(str(code) for code in (document.get("failures") or [])))
+
+
 def should_notify(
     document: Mapping[str, Any],
     state: Mapping[str, Any],
@@ -324,17 +328,25 @@ def should_notify(
     now_utc: datetime,
     heartbeat: bool,
 ) -> tuple[bool, str]:
-    """Send on state transition, or one heartbeat per Shanghai day.
+    """Send on state or failure-code transition, or one heartbeat per day.
 
     A monitor that alerts every run gets muted, and a muted monitor is the same
     as none. Repeated identical states stay quiet; a state that changes speaks
-    immediately.
+    immediately. The failure-code set is part of the identity: `failed:
+    build_receipt_missing` and `failed: release_manifest_sha_mismatch` are
+    different incidents even though both have state `failed`.
     """
     previous = str(state.get("last_state") or "")
     current = str(document.get("state") or "")
+    previous_codes = tuple(
+        sorted(str(code) for code in (state.get("last_failure_codes") or []))
+    )
+    current_codes = _failure_codes(document)
 
     if current != previous:
         return True, "state_changed"
+    if current_codes != previous_codes:
+        return True, "failure_codes_changed"
 
     if heartbeat:
         today = now_utc.astimezone(SHANGHAI_TZ).date().isoformat()
@@ -404,8 +416,13 @@ def main() -> int:
         except Exception as exc:  # noqa: BLE001 — monitoring must not crash on a card
             result = {"notified": False, "reason": reason, "error": str(exc)}
 
-    state["last_state"] = document["state"]
-    if notify:
+    # Only advance the dedup state when the card was actually sent (or the
+    # caller explicitly asked for a no-notify evaluation). If the send failed,
+    # keep the previous state so the next run retries the incident instead of
+    # silencing it for the rest of the day.
+    if notify and (args.no_notify or result.get("notified")):
+        state["last_state"] = document["state"]
+        state["last_failure_codes"] = list(_failure_codes(document))
         state["last_sent_at_utc"] = _utc_z(now)
         if reason == "heartbeat":
             state["last_heartbeat_date"] = now.astimezone(SHANGHAI_TZ).date().isoformat()
