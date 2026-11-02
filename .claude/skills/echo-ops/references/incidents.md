@@ -218,7 +218,8 @@
 ### F-02 链接共享被误判为协作者授权
 - **症状**：复核 agent 报 PR 主表 403，主线实测 200；只信一方会得出“Echo 无权限”或“Echo 是协作者”的错误结论。
 - **根因**：端点语义不同：base 元数据 `link_share_entity=tenant_editable`、`external_access=true`，但 `permissions/{token}/members` 返回 403/1063004。
-- **防线**：每条访问结论写清端点、机制（link-share vs collaborator）、HTTP/code；PR 侧两张表仍 `anyone_can_edit`，建议改指定协作者。
+- **修复**：2026-11-03 用 Vicky bot（PR Agent 应用）对两张表执行 `external_access=false`、`link_share_entity=tenant_readable`、`security_entity=anyone_can_view`，回读确认；Echo 应用与当前 user 身份 PATCH 均 403，说明“能读”不等于“能管”。
+- **防线**：每条访问结论写清端点、机制（link-share vs collaborator）、HTTP/code；改权限前先用可管理身份 dry-run；显式协作者名单由业务方分配。
 
 ### F-03 SSH 凭据猜测与生产读取越界
 - **症状**：11-01 核验先试不存在的 `zhoujian_pem`，再试两把 key/两个用户；随后权限分类器拦截进一步生产文件读取。
