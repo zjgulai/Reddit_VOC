@@ -1,9 +1,32 @@
+import importlib
+import os
 import unittest
+from unittest.mock import patch
 
 from reddit_voc.feishu_ws_bot import generate_agent_reply
 
 
 class FeishuWsBotTests(unittest.TestCase):
+    def test_import_is_safe_without_credentials(self) -> None:
+        """pytest collection must not require production secrets."""
+        with patch.dict(os.environ, {}, clear=True):
+            module = importlib.reload(importlib.import_module("reddit_voc.feishu_ws_bot"))
+            self.assertIsNone(module.lark_client)
+
+    def test_credentials_fail_fast_when_missing(self) -> None:
+        module = importlib.import_module("reddit_voc.feishu_ws_bot")
+        with patch.dict(os.environ, {}, clear=True):
+            with self.assertRaises(SystemExit):
+                module._credentials()
+
+    def test_credentials_are_read_from_environment(self) -> None:
+        module = importlib.import_module("reddit_voc.feishu_ws_bot")
+        with patch.dict(
+            os.environ,
+            {"FEISHU_APP_ID": "cli_test", "FEISHU_APP_SECRET": "secret_test"},
+            clear=True,
+        ):
+            self.assertEqual(module._credentials(), ("cli_test", "secret_test"))
     def test_default_greeting(self) -> None:
         reply = generate_agent_reply("")
         self.assertIn("Echo-Agent", reply)

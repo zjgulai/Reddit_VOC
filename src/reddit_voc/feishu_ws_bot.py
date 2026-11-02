@@ -23,15 +23,38 @@ logger = logging.getLogger("reddit_voc.feishu_ws")
 # Credentials come from the environment only. A hardcoded fallback published the
 # App Secret into a candidate commit (caught in pre-commit review 2026-10-29);
 # the pattern is fail-fast-empty so a missing secret stops startup, never leaks.
-APP_ID = os.getenv("FEISHU_APP_ID", "")
-APP_SECRET = os.getenv("FEISHU_APP_SECRET", "")
-if not APP_ID or not APP_SECRET:
-    raise SystemExit(
-        "FEISHU_APP_ID and FEISHU_APP_SECRET must be set in the environment"
-    )
+#
+# The check runs at startup, not at import: importing this module must be safe
+# for offline tests and for any process that only needs `generate_agent_reply`.
+APP_ID = ""
+APP_SECRET = ""
+lark_client = None
 
-# Initialize standard OpenAPI client for sending replies
-lark_client = lark.Client.builder().app_id(APP_ID).app_secret(APP_SECRET).log_level(lark.LogLevel.INFO).build()
+
+def _credentials() -> tuple[str, str]:
+    """Read credentials at the process boundary, never at module import."""
+    app_id = os.getenv("FEISHU_APP_ID", "").strip()
+    app_secret = os.getenv("FEISHU_APP_SECRET", "").strip()
+    if not app_id or not app_secret:
+        raise SystemExit(
+            "FEISHU_APP_ID and FEISHU_APP_SECRET must be set in the environment"
+        )
+    return app_id, app_secret
+
+
+def _client() -> "lark.Client":
+    """Build the OpenAPI client on first use, after credentials are read."""
+    global lark_client
+    if lark_client is None:
+        app_id, app_secret = _credentials()
+        lark_client = (
+            lark.Client.builder()
+            .app_id(app_id)
+            .app_secret(app_secret)
+            .log_level(lark.LogLevel.INFO)
+            .build()
+        )
+    return lark_client
 
 
 def generate_agent_reply(raw_text: str) -> str:
@@ -120,7 +143,7 @@ def handle_message(data: P2ImMessageReceiveV1) -> None:
         )
         .build()
     )
-    resp = lark_client.im.v1.message.reply(req)
+    resp = _client().im.v1.message.reply(req)
     if not resp.success():
         logger.error("Failed to reply message %s: code=%s, msg=%s", message_id, resp.code, resp.msg)
     else:
@@ -129,6 +152,7 @@ def handle_message(data: P2ImMessageReceiveV1) -> None:
 
 def start_ws_client() -> None:
     """Start the Feishu WebSocket long-connection event loop."""
+    app_id, app_secret = _credentials()
     event_handler = (
         lark.EventDispatcherHandler.builder("", "")
         .register_p2_im_message_receive_v1(handle_message)
@@ -136,8 +160,8 @@ def start_ws_client() -> None:
     )
 
     ws_client = lark.ws.Client(
-        app_id=APP_ID,
-        app_secret=APP_SECRET,
+        app_id=app_id,
+        app_secret=app_secret,
         event_handler=event_handler,
         log_level=lark.LogLevel.INFO,
     )
