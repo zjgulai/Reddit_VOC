@@ -124,7 +124,7 @@ python3 scripts/check_site_freshness.py \
 7. **V3 产品缺口**：飞书机器人/工作台双轨已成型，但飞书四类意图回复是硬编码示例（声称 3,591 篇/2026-10-26，生产为 26,154 帖/11-01）、搜索抽屉 Copilot 三按钮是 `alert()` 假按钮、TikTok/Instagram/Facebook/独立站博客四渠道仍是 PRD 承诺而非已交付；
 8. **告警去重过粗**：freshness 只按 `last_state` 去重，`failed A → failed B` 不触发新告警；应改为 `(state, sorted(failure_codes))`；
 9. **L5-T03 定时炸弹**：三个数据集校验器已放行 `build.json`（2026-11-02 代码修复，待部署）；部署前下一次离手重建仍可能因 undeclared file 失败；
-10. **凭据**：`FEISHU_APP_SECRET` 曾硬编码并发生租户表枚举；代码已改 env-only，但密钥轮换未验证；PR 侧两张表仍 `tenant_editable`/`anyone_can_edit`；
+10. **凭据**：`FEISHU_APP_SECRET` 曾硬编码并发生租户表枚举；代码已改 env-only，但轮换只能在飞书开放平台控制台重置，当前未完成；PR 侧 `KfXrb10…` 仍 `tenant_editable`/`anyone_can_edit`，Echo 应用与当前 user 身份 PATCH 均 403，需表 owner 执行收紧；
 11. **报告与调度**：`reports/` 未纳入 git；Lody 日报调度 7 天后是否过期待验证；11-02 日报 07:52 已生成，但仍把 K1 写成“第 2 天”（回执无 `run_kind`）。
 
 ## 8. 相关测试

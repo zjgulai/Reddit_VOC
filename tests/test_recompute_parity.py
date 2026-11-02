@@ -10,6 +10,7 @@ import hashlib
 import importlib.util
 import json
 import math
+import os
 from datetime import date, datetime
 from pathlib import Path
 from unittest.mock import patch
@@ -25,6 +26,14 @@ spec.loader.exec_module(rd)
 
 @pytest.fixture(scope="module")
 def snapshot():
+    # This fixture downloads the live 69MB posts + 202MB comments snapshots.
+    # The repository lane must stay hermetic and fast; in CI it is skipped and
+    # the same engine is exercised by the local-artifact lane / production runs.
+    if os.getenv("CI"):
+        pytest.skip(
+            "recompute parity needs the live production snapshot; "
+            "covered by the local-artifact lane"
+        )
     import urllib.request
     base = "https://radar.luteos.com/data/reddit-voc/reddit_voc_site_snapshot_20260723_v3_daily_001"
 
