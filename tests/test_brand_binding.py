@@ -107,3 +107,39 @@ def test_reason_is_always_populated_for_a_bound_post() -> None:
         if assessment.is_bound():
             assert assessment.reason.endswith("_in_product_context")
             assert assessment.mentions
+
+
+def test_fortnite_post_with_willow_and_pump_shotgun_is_not_a_pump_post() -> None:
+    """The 2026-11-02 production false positive: Willow + Pump Shotgun + shield potion."""
+    assessment = assess_brand_binding(
+        "Willow is such a fun drop spot",
+        "I landed at Willow, hit a 200 with the Pump Shotgun, then popped a shield "
+        "potion and clutched the Victory Royale.",
+        "r/FortNiteBR",
+    )
+    assert assessment.binding == "brand_unbound"
+    assert assessment.reason == "non_product_domain_context"
+    assert "Willow" in assessment.mentions
+
+
+def test_buynothing_gift_post_with_a_real_brand_is_not_voc_evidence() -> None:
+    """The other 2026-11-02 false positive: a r/PDXBuyNothing giveaway, not a review."""
+    assessment = assess_brand_binding(
+        "Miscellaneous Baby Stuff",
+        "Giving away a Medela pump and some Philips bottles. Porch pickup only.",
+        "r/PDXBuyNothing",
+    )
+    assert assessment.binding == "brand_unbound"
+    assert assessment.reason == "transaction_listing"
+    assert "Medela" in assessment.mentions
+
+
+def test_gaming_veto_does_not_block_a_real_pump_comparison() -> None:
+    """The veto is context-specific: a normal pumping post still binds."""
+    assessment = assess_brand_binding(
+        "Willow 3.0 vs Spectra S1",
+        "I pumped with both for a month. Willow is quieter but the suction on Spectra "
+        "is stronger for me and my supply went up.",
+        "r/ExclusivelyPumping",
+    )
+    assert assessment.binding == "competitor_sentence_bound"

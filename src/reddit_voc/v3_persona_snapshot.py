@@ -787,6 +787,18 @@ def _load_json(path: Path) -> object:
     return value
 
 
+def _allowed_root_files(expected_names: set[str]) -> set[str]:
+    """The manifest's files plus the two artifacts the producer may add.
+
+    `manifest.json` is the declaration itself; `build.json` is the pipeline's
+    build stamp (L5-T02/T04). A stamp is optional for an out-of-band rebuild,
+    but when the daily pipeline has written one the validator must not treat it
+    as an undeclared file — otherwise the next manual rebuild fails after the
+    data has already been published.
+    """
+    return expected_names | {"manifest.json", "build.json"}
+
+
 def validate_v3_persona_snapshot(
     personas_dir: Path,
     *,
@@ -918,7 +930,8 @@ def validate_v3_persona_snapshot(
         for path in root.rglob("*")
         if path.is_file() and not path.is_symlink()
     }
-    if actual_files != expected_names | {"manifest.json"}:
+    required_files = expected_names | {"manifest.json"}
+    if not required_files <= actual_files <= _allowed_root_files(expected_names):
         raise PersonaSnapshotError("persona snapshot contains undeclared files")
     actual_directories = {
         path.relative_to(root).as_posix()

@@ -59,18 +59,60 @@ def _shanghai_now() -> datetime:
     return datetime.now(SHANGHAI_TZ)
 
 
-def _t1_bounds() -> tuple[datetime, datetime, str, str]:
-    """Return (window_start_utc, window_end_utc, run_id, report_date) for latest closed T-1."""
-    now_utc = datetime.now(timezone.utc)
+SCHEDULED_WINDOW_MINUTES = (6 * 60 + 35, 7 * 60 + 35)  # 07:05 CST ± 30 minutes
+
+
+def _run_identity(sh_now: datetime) -> tuple[str, str, str]:
+    """Return (run_id, run_kind, trigger) for one invocation.
+
+    The old run id was `daily_collect_YYYYMMDD_0700`: two runs on the same day
+    produced the same id, so the second receipt overwrote the first and the
+    closure metric could not tell a scheduled run from a manual one. The id now
+    carries the start time to the second; the kind is inferred from the same
+    Shanghai clock the timer uses, so a manual rerun at noon is not counted as
+    an unattended success.
+    """
+    run_id = f"daily_collect_{sh_now:%Y%m%d_%H%M%S}"
+    seconds = sh_now.hour * 3600 + sh_now.minute * 60 + sh_now.second
+    scheduled = (
+        SCHEDULED_WINDOW_MINUTES[0] * 60
+        <= seconds
+        <= SCHEDULED_WINDOW_MINUTES[1] * 60
+    )
+    run_kind = "scheduled" if scheduled else "manual"
+    trigger = "systemd_timer" if scheduled else "manual_cli"
+    return run_id, run_kind, trigger
+
+
+def _unique_run_id(base: str, output_dir: Path) -> str:
+    """Make a same-second rerun get its own receipt instead of a collision.
+
+    The id is time-based, but two invocations can start within the same second
+    (a retry, or a test). The first keeps the clean id; later ones get `-2`,
+    `-3`, ... so `write_build_receipt` never has to overwrite evidence.
+    """
+    candidate = base
+    index = 2
+    while (output_dir / f"{candidate}-pipeline-receipt.json").exists():
+        candidate = f"{base}-{index}"
+        index += 1
+    return candidate
+
+
+def _t1_bounds(
+    now_utc: datetime | None = None,
+) -> tuple[datetime, datetime, str, str, str, str]:
+    """Return (window_start, window_end, run_id, report_date, run_kind, trigger)."""
+    now_utc = now_utc or datetime.now(timezone.utc)
     close = now_utc.replace(hour=23, minute=0, second=0, microsecond=0)
     if close > now_utc:
         close -= timedelta(days=1)
     window_end = close
     window_start = close - timedelta(days=1)
-    sh_now = _shanghai_now()
+    sh_now = now_utc.astimezone(SHANGHAI_TZ)
     report_date = sh_now.strftime("%Y-%m-%d")
-    run_id = f"daily_collect_{sh_now:%Y%m%d}_0700"
-    return window_start, window_end, run_id, report_date
+    run_id, run_kind, trigger = _run_identity(sh_now)
+    return window_start, window_end, run_id, report_date, run_kind, trigger
 
 
 def step1_collect(store_path: Path, run_id: str) -> dict:
@@ -622,7 +664,9 @@ def step3_merge_snapshot(
             "event_time_precision": "instant",
             # Product identity from the comment's own body. Comments are half the
             # VOC surface; resolving posts only would leave every reply unbound.
-            "product_bindings": _product_bindings(body),
+            # Reuse the value computed above: calling the helper again would
+            # resolve the comment twice and double-count product_binding_total.
+            "product_bindings": comment_bindings,
             "parent_id": c.get("parent_id"),
             "matched_keywords": c.get("matched_keywords") or [],
             "is_bot": False,
@@ -820,6 +864,58 @@ def step3_5_recompute_derivatives(public_root: Path, *, data_root: Path | None =
     return receipt
 
 
+def _write_run_build_receipt(
+    *,
+    public_root: Path,
+    mode: str,
+    tx,
+    release_doc: dict | None,
+    receipt_doc: dict,
+    period_end_utc: str,
+) -> dict:
+    """Write `build-receipts/<run_id>.json` for this run.
+
+    In symlink mode the receipt is written inside the staged generation, so a
+    successful commit publishes it with the data it describes. A failed run's
+    generation is kept as evidence; the live tree still points at the previous
+    generation and therefore does not claim the failed run. In off mode the
+    receipt goes into the live data root, preserving the historical behavior.
+    """
+    from build_receipt import write_build_receipt
+
+    if mode == "symlink":
+        if tx is None:
+            raise RuntimeError("run_receipt_generation_missing")
+        root = Path(tx.root)
+    else:
+        root = public_root / "data" / "reddit-voc"
+
+    if release_doc is None:
+        # A failed run may stop before step4, so the advanced document does not
+        # exist. The generation still carries the seed pointer; bind the failed
+        # receipt to that tree so the evidence is not silently dropped. The
+        # receipt's status=failed prevents it from being read as a publish.
+        try:
+            release_doc = json.loads(
+                (root / "current-release.json").read_text(encoding="utf-8")
+            )
+        except (OSError, ValueError):
+            return {"step": "write_build_receipt", "status": "skipped_no_release"}
+
+    path = write_build_receipt(
+        root,
+        str(receipt_doc["run_id"]),
+        release=release_doc,
+        status=str(receipt_doc["status"]),
+        period_end_utc=period_end_utc,
+        started_at_utc=receipt_doc.get("started_at_utc"),
+        finished_at_utc=receipt_doc.get("finished_at_utc"),
+        steps=receipt_doc.get("steps") or [],
+        errors=receipt_doc.get("errors") or [],
+    )
+    return {"step": "write_build_receipt", "status": "ok", "path": str(path)}
+
+
 def step4_advance_pointer(
     public_root: Path,
     run_id: str,
@@ -847,13 +943,14 @@ def step4_advance_pointer(
         if release_doc_holder is None:
             raise RuntimeError("advance_pointer_holder_missing")
         document = json.loads((Path(data_root) / "current-release.json").read_text(encoding="utf-8"))
-        advance_release_document(document, status="partial")
+        advance_release_document(document, status="partial", run_id=run_id)
         release_doc_holder["document"] = document
         result = release_receipt(document, "partial")
     else:
         result = advance_current_release_to_t1(
             current_release_path=public_root / "data" / "reddit-voc" / "current-release.json",
             status="partial",
+            run_id=run_id,
         )
     return {"step": "advance_pointer", "status": result.get("status"), **result}
 
@@ -1228,7 +1325,8 @@ class PipelineLock:
 
 def run_pipeline(*, store_path: Path, public_root: Path, output_dir: Path, skip_feishu: bool = False) -> dict:
     started = datetime.now(timezone.utc)
-    window_start, window_end, run_id, report_date = _t1_bounds()
+    window_start, window_end, run_id, report_date, run_kind, trigger = _t1_bounds(started)
+    run_id = _unique_run_id(run_id, output_dir)
     receipts: list[dict] = []
     errors: list[dict] = []
 
@@ -1239,6 +1337,8 @@ def run_pipeline(*, store_path: Path, public_root: Path, output_dir: Path, skip_
         abort = {
             "schema_version": PIPELINE_SCHEMA,
             "run_id": run_id,
+            "run_kind": run_kind,
+            "trigger": trigger,
             "report_date": report_date,
             "window_start_utc": window_start.isoformat(),
             "window_end_utc": window_end.isoformat(),
@@ -1262,6 +1362,8 @@ def run_pipeline(*, store_path: Path, public_root: Path, output_dir: Path, skip_
             window_start=window_start,
             window_end=window_end,
             run_id=run_id,
+            run_kind=run_kind,
+            trigger=trigger,
             report_date=report_date,
             receipts=receipts,
             errors=errors,
@@ -1280,6 +1382,8 @@ def _run_pipeline_locked(
     window_start: datetime,
     window_end: datetime,
     run_id: str,
+    run_kind: str,
+    trigger: str,
     report_date: str,
     receipts: list[dict],
     errors: list[dict],
@@ -1493,6 +1597,8 @@ def _run_pipeline_locked(
             live_receipt = {
                 "schema_version": PIPELINE_SCHEMA,
                 "run_id": run_id,
+                "run_kind": run_kind,
+                "trigger": trigger,
                 "report_date": report_date,
                 "status": "success" if not errors else "failed",
                 "steps": list(receipts),
@@ -1524,6 +1630,8 @@ def _run_pipeline_locked(
     receipt_doc = {
         "schema_version": PIPELINE_SCHEMA,
         "run_id": run_id,
+        "run_kind": run_kind,
+        "trigger": trigger,
         "report_date": report_date,
         "window_start_utc": window_start.isoformat(),
         "window_end_utc": window_end.isoformat(),
@@ -1540,6 +1648,43 @@ def _run_pipeline_locked(
             "root": str(tx.root) if tx is not None else None,
             "commit": commit_receipt,
         }
+    # L5-T04: a run-level receipt is the evidence the freshness monitor reads.
+    # It is written after the commit decision (so its steps include the commit)
+    # and inside the generation (so a successful publish carries it). A failed
+    # write is an error, not a warning: the run's evidence is incomplete.
+    release_doc = None
+    if not pointer_guard:
+        if mode == "symlink":
+            release_doc = release_doc_holder.get("document")
+        else:
+            try:
+                release_doc = json.loads(
+                    (public_root / "data" / "reddit-voc" / "current-release.json")
+                    .read_text(encoding="utf-8")
+                )
+            except (OSError, ValueError):
+                release_doc = None
+    try:
+        run_receipt_step = _write_run_build_receipt(
+            public_root=public_root,
+            mode=mode,
+            tx=tx,
+            release_doc=release_doc,
+            receipt_doc=receipt_doc,
+            period_end_utc=window_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
+        )
+    except Exception as exc:  # noqa: BLE001 - the run must report incomplete evidence
+        run_receipt_step = {
+            "step": "write_build_receipt",
+            "status": "error",
+            "error": str(exc),
+        }
+        errors.append(run_receipt_step)
+        receipt_doc["status"] = "failed"
+        receipt_doc["errors"] = errors
+        logging.error("run build receipt failed: %s", exc)
+    receipt_doc["steps"].append(run_receipt_step)
+
     output_dir.mkdir(parents=True, exist_ok=True)
     receipt_path = output_dir / f"{run_id}-pipeline-receipt.json"
     receipt_path.write_text(json.dumps(receipt_doc, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

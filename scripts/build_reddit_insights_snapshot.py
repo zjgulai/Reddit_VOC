@@ -1136,6 +1136,7 @@ def write_v3_public_insights_wrapper(
         "insights.json",
         "manifest.json",
         "validation-receipt.json",
+        "build.json",
     }:
         raise V3InsightsBuildError("public insights output contains undeclared entries")
     _v3_write_exact(output_dir / "insights.json", insights)

@@ -42,7 +42,26 @@ _TRANSACTION_TERMS = (
 )
 
 _TRANSACTION_SUBREDDIT = re.compile(
-    r"(classified|forsale|buysell|marketplace|swap|deals?)", re.IGNORECASE
+    r"(classified|forsale|buysell|marketplace|swap|deals?|"
+    r"buynothing|buy_nothing|freecycle|dumpsterdiving|giveaway)",
+    re.IGNORECASE,
+)
+
+# A game can contain the same words as a pump post: "Willow" is a Fortnite
+# location, "Pump Shotgun" and "shield potion" are items. The product-domain
+# vocabulary above is deliberately broad, so a gaming context must veto it
+# before a brand mention becomes VOC evidence. The 2026-11-02 production run
+# generated a "Bunker hatch / latch fracture" R&D ticket from exactly such a
+# post (r/FortNiteBR, title containing Willow, body containing Pump Shotgun).
+_GAMING_TERMS = (
+    "fortnite", "victory royale", "battle royale", "pump shotgun",
+    "shield potion", "v-bucks", "vbucks", "loadout", "respawn",
+    "battle pass", "loot drop", "squad wipe", "chapter 6", "season 6",
+)
+_GAMING_SUBREDDIT = re.compile(
+    r"(fortnite|gaming|gamers|leagueoflegends|valorant|dota|minecraft|"
+    r"pokemon|genshin|callofduty|apexlegends)",
+    re.IGNORECASE,
 )
 
 
@@ -68,6 +87,13 @@ def assess_brand_binding(title: str, content: str, subreddit: str = "") -> Brand
         return BrandAssessment("brand_unbound", (), "no_brand_alias")
 
     mentions = tuple(sorted({display_name(bid) for bid in hits}))
+
+    if _GAMING_SUBREDDIT.search(subreddit or "") or any(
+        term in lowered for term in _GAMING_TERMS
+    ):
+        # e.g. a Fortnite post containing "Willow", "Pump Shotgun" and
+        # "shield potion": every word is real, none of it is a breast pump.
+        return BrandAssessment("brand_unbound", mentions, "non_product_domain_context")
 
     if not any(term in lowered for term in _DOMAIN_TERMS):
         # e.g. a house in "Willow Glen": the brand word is there, the product

@@ -2438,6 +2438,7 @@ def _v3_assert_output_inventory(
     *,
     exact: bool,
     allowed_empty_directories: set[str] | None = None,
+    allowed_extra_files: set[str] | None = None,
 ) -> None:
     expected_directories = {
         parent.as_posix()
@@ -2460,10 +2461,14 @@ def _v3_assert_output_inventory(
     allowed_directories = expected_directories | (allowed_empty_directories or set())
     if actual_directories - allowed_directories:
         raise V3ReportsBuildError(f"{label} contains undeclared directories")
+    # `build.json` is written by the daily pipeline after the dataset is
+    # produced. It is optional for an out-of-band rebuild, but when present it
+    # must not be mistaken for an undeclared file.
+    comparable_files = actual_files - set(allowed_extra_files or ())
     file_set_invalid = (
-        actual_files != expected_files
+        comparable_files != expected_files
         if exact
-        else bool(actual_files - expected_files)
+        else bool(comparable_files - expected_files)
     )
     if file_set_invalid:
         raise V3ReportsBuildError(f"{label} contains undeclared files")
@@ -2487,6 +2492,7 @@ def write_v3_reports_snapshot(
         "current",
         "manifest.json",
         "report-index.json",
+        "build.json",
     }
     if has_business_history:
         history_root = output_dir / "history"
@@ -2509,6 +2515,7 @@ def write_v3_reports_snapshot(
         "V3 output root",
         exact=False,
         allowed_empty_directories=allowed_empty_directories,
+        allowed_extra_files={"build.json"},
     )
     _v3_write_exact(output_dir / "report-index.json", index)
     for name, document in sorted(reports.items()):
@@ -2520,6 +2527,7 @@ def write_v3_reports_snapshot(
         "V3 output root",
         exact=True,
         allowed_empty_directories=allowed_empty_directories,
+        allowed_extra_files={"build.json"},
     )
     return manifest
 
@@ -3466,6 +3474,7 @@ def write_v3_public_reports_wrapper(
     allowed = {
         "archive",
         "business-history-index.json",
+        "build.json",
         "current",
         "history",
         "manifest.json",
@@ -3487,6 +3496,7 @@ def write_v3_public_reports_wrapper(
         "public reports output",
         exact=False,
         allowed_empty_directories={"history"},
+        allowed_extra_files={"build.json"},
     )
     for name, document in sorted(reports.items()):
         _v3_write_exact(
@@ -3501,6 +3511,7 @@ def write_v3_public_reports_wrapper(
         "public reports output",
         exact=True,
         allowed_empty_directories={"history"},
+        allowed_extra_files={"build.json"},
     )
     return manifest
 

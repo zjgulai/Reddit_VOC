@@ -321,3 +321,92 @@ def test_step3_output_passes_the_frontend_contract(tmp_path: Path) -> None:
 
     # Every record the file carries has the field as a list, whatever its source.
     assert all(isinstance(p.get("product_bindings"), list) for p in posted)
+
+
+def test_step3_counts_a_comment_binding_once(tmp_path: Path) -> None:
+    """A comment with one binding must add exactly one to the receipt total.
+
+    The post path was fixed in 465df60; the comment path still called
+    `_product_bindings(body)` twice, so one resolved comment incremented the
+    counter twice (11-01 production: total=4 for 2 posts + 1 comment). The test
+    asserts the persisted comment, not just the helper's return value.
+    """
+    from datetime import datetime, timezone
+
+    from reddit_voc.models import RedditComment, RedditThread
+    from reddit_voc.storage import VocStore
+
+    import run_daily_t1_pipeline as pipeline
+
+    public_root = tmp_path / "html"
+    data_root = public_root / "data" / "reddit-voc"
+    dataset = "reddit_voc_site_snapshot_demo_v1"
+    dataset_dir = data_root / dataset
+    dataset_dir.mkdir(parents=True)
+    (dataset_dir / "posts-public.json").write_text("[]\n", encoding="utf-8")
+    (dataset_dir / "comments-public.json").write_text("[]\n", encoding="utf-8")
+    manifest = {
+        "dataset_version": dataset,
+        "canonical_counts": {"posts": 0, "linked_comments": 0},
+        "projection_counts": {"public_posts": 0, "public_linked_comments": 0},
+        "files": {
+            "posts-public.json": {"sha256": "", "bytes": 0},
+            "comments-public.json": {"sha256": "", "bytes": 0},
+        },
+    }
+    (dataset_dir / "manifest-public.json").write_text(
+        json.dumps(manifest), encoding="utf-8"
+    )
+    (dataset_dir / "tag-dictionary-public.json").write_text('{"rules": []}', encoding="utf-8")
+    release = {
+        "schema_version": "reddit_voc_current_release_v2",
+        "release_id": "demo",
+        "datasets": {
+            "base": {
+                "dataset_version": dataset,
+                "manifest_path": f"data/reddit-voc/{dataset}/manifest-public.json",
+                "public_manifest_sha256": "",
+            }
+        },
+    }
+    (data_root / "current-release.json").write_text(json.dumps(release), encoding="utf-8")
+
+    store_path = tmp_path / "store.sqlite3"
+    store = VocStore(store_path)
+    store.migrate()
+    run_id = "daily_collect_test_0700"
+    created = datetime(2026, 10, 30, 4, 0, tzinfo=timezone.utc)
+    store.upsert_thread(RedditThread(
+        post_id="p-s9",
+        run_id=run_id,
+        raw_capture_id="c1",
+        subreddit="r/ExclusivelyPumping",
+        title="Momcozy S9 Pro after two weeks",
+        source_url="https://www.reddit.com/r/ExclusivelyPumping/comments/p-s9/",
+        created_at_utc=created,
+        selftext="The Momcozy S9 Pro is comfortable and the suction is fine.",
+        matched_keywords=["momcozy"],
+        media_urls=[],
+    ))
+    store.upsert_comment(RedditComment(
+        comment_id="c-s9",
+        post_id="p-s9",
+        run_id=run_id,
+        raw_capture_id="c2",
+        body="Momcozy S9 Pro works well for me too.",
+        created_at_utc=created,
+        parent_id="t3_p-s9",
+    ))
+
+    receipt = pipeline.step3_merge_snapshot(run_id, store_path, public_root)
+
+    assert receipt["status"] == "ok", receipt
+    assert receipt["product_bound_posts"] == 1
+    assert receipt["product_bound_comments"] == 1
+    # Exactly one binding per record: the comment must not be resolved twice.
+    assert receipt["product_bindings_total"] == 2, receipt
+
+    comments = json.loads((dataset_dir / "comments-public.json").read_text(encoding="utf-8"))
+    merged = next(c for c in comments if c.get("comment_id") == "c-s9")
+    assert len(merged["product_bindings"]) == 1
+    assert merged["product_bindings"][0]["brand_id"] == "momcozy"

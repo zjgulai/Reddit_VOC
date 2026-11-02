@@ -270,6 +270,8 @@ def test_merge_and_recompute_write_only_into_generation(site, monkeypatch) -> No
     merged = json.loads((committed / DATASET / "posts-public.json").read_text(encoding="utf-8"))
     assert [p["post_id"] for p in merged] == ["p-live-1"]
     assert (committed / "recompute-sentinel.json").exists()
+    # L5-T04: the published generation carries this run's evidence.
+    assert (committed / "build-receipts" / f"{receipt['run_id']}.json").is_file()
 
     # Live generation is exactly as it was before the run.
     assert tx.tree_digest(site["live_gen"]) == live_digest
@@ -370,6 +372,11 @@ def test_failure_at_recompute_leaves_live_tree_byte_identical(site, monkeypatch)
     assert failed, receipt["errors"]
     commit = receipt["release_transaction"]["commit"]
     assert commit["status"] == "blocked_by_prerequisites"
+    # L5-T04: a failed run still leaves evidence in its private generation.
+    private = Path(receipt["release_transaction"]["root"])
+    run_receipt = private / "build-receipts" / f"{receipt['run_id']}.json"
+    assert run_receipt.is_file(), receipt
+    assert json.loads(run_receipt.read_text(encoding="utf-8"))["status"] == "failed"
 
 
 def test_generation_mode_off_keeps_legacy_paths(site, monkeypatch) -> None:

@@ -41,6 +41,7 @@ def advance_release_document(
     *,
     status: str = "partial",
     now_utc: datetime | None = None,
+    run_id: str | None = None,
 ) -> dict:
     """Apply the T-1 freshness advance to a release document in memory.
 
@@ -49,9 +50,9 @@ def advance_release_document(
     symlink mode a file write here would replace the *live* pointer, which is the
     one thing L6-T08 exists to prevent.
 
-    Mutation order and byte output are unchanged: same window calculation, same
-    seven freshness keys, same collector_run_id fallback, same key insertion
-    order, so `json.dumps(..., indent=2)` produces identical bytes.
+    `run_id` is the pipeline's real identity (start time to the second). The
+    standalone CLI keeps the historical date-only fallback when it is omitted,
+    so existing callers and byte-order tests remain valid.
     """
     w_start, w_end, as_of = calculate_t1_shanghai_window(now_utc)
 
@@ -66,7 +67,7 @@ def advance_release_document(
         "data_as_of_utc": as_of.strftime("%Y-%m-%dT%H:%M:%SZ"),
         "window_start_utc": w_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
         "window_end_utc": w_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "collector_run_id": f"daily_collect_{current_date_str}_0700",
+        "collector_run_id": run_id or f"daily_collect_{current_date_str}_0700",
     })
     current_data["freshness"] = freshness
     current_data["generated_at_utc"] = now.strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -91,13 +92,16 @@ def advance_current_release_to_t1(
     current_release_path: Path = CURRENT_RELEASE_FILE,
     status: str = "partial",
     now_utc: datetime | None = None,
+    run_id: str | None = None,
 ) -> dict[str, object]:
     """Atomically advance current-release.json freshness to latest closed T-1 window."""
     if not current_release_path.exists():
         raise FileNotFoundError(f"Missing {current_release_path}")
 
     current_data = json.loads(current_release_path.read_text(encoding="utf-8"))
-    current_data = advance_release_document(current_data, status=status, now_utc=now_utc)
+    current_data = advance_release_document(
+        current_data, status=status, now_utc=now_utc, run_id=run_id
+    )
 
     # Atomic write to current-release.json
     temp_path = current_release_path.with_suffix(".tmp")
@@ -111,11 +115,13 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Advance Reddit VOC current-release to T-1")
     parser.add_argument("--current-release", type=Path, default=CURRENT_RELEASE_FILE)
     parser.add_argument("--status", choices=["full", "partial"], default="partial")
+    parser.add_argument("--run-id", default=None, help="pipeline run id; defaults to date-only")
     args = parser.parse_args()
 
     result = advance_current_release_to_t1(
         current_release_path=args.current_release,
         status=args.status,
+        run_id=args.run_id,
     )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
