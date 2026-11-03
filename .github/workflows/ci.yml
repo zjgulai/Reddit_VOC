@@ -45,7 +45,7 @@ jobs:
       - name: Verify current workbench release lock
         run: python scripts/verify_workbench_lock.py
       - name: Run repository-contained backend tests
-        run: python scripts/run_backend_test_lane.py repository
+        run: python scripts/run_backend_test_lane.py repository --enforce-known-failures
 
   frontend:
     runs-on: ubuntu-latest
