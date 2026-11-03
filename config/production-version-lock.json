@@ -37,5 +37,9 @@
   },
   "observed_at": "2026-10-29T03:30:00Z",
   "production_host": "101.34.52.232",
-  "schema_version": "reddit-voc-production-version-lock-v1"
+  "schema_version": "reddit-voc-production-version-lock-v1",
+  "status": "legacy_retired",
+  "superseded_by": "config/production-workbench-lock.json",
+  "superseded_at": "2026-11-03T12:15:00Z",
+  "note": "Retired Docker daily-report/insights stack on 101.34.52.232. The current workbench runs on 43.163.92.244 via radar.luteos.com; see config/production-workbench-lock.json."
 }

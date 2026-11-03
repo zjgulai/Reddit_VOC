@@ -42,6 +42,8 @@ jobs:
           --public-root ref/UI/momcozy-reddit-workbench/public
       - name: Verify production release lock against source
         run: python scripts/verify_version_consistency.py
+      - name: Verify current workbench release lock
+        run: python scripts/verify_workbench_lock.py
       - name: Run repository-contained backend tests
         run: python scripts/run_backend_test_lane.py repository
 
