@@ -1,0 +1,468 @@
+{
+  "generated_at_utc": "2026-11-03T10:52:02Z",
+  "public_url": "https://radar.luteos.com/data/reddit-voc/current-release.json",
+  "data": {
+    "public_root": "/opt/voc-report/html",
+    "output_root": "/opt/echo-agent-bot/outputs",
+    "daily_service": {
+      "TimeoutStartUSec": "1h",
+      "Result": "success",
+      "ExecMainExitTimestamp": "Tue 2026-11-03 07:14:02 CST",
+      "ExecMainStatus": "0",
+      "ActiveState": "inactive"
+    },
+    "daily_timer": {
+      "Result": "success",
+      "ActiveState": "active"
+    },
+    "freshness_timer": {
+      "Result": "success",
+      "ActiveState": "active"
+    },
+    "receipt_path": "/opt/echo-agent-bot/outputs/daily_collect_20261103_070500-pipeline-receipt.json",
+    "receipt": {
+      "schema_version": "echo_agent_daily_pipeline_receipt_v1",
+      "run_id": "daily_collect_20261103_070500",
+      "run_kind": "scheduled",
+      "trigger": "systemd_timer",
+      "report_date": "2026-11-03",
+      "window_start_utc": "2026-11-01T23:00:00+00:00",
+      "window_end_utc": "2026-11-02T23:00:00+00:00",
+      "started_at_utc": "2026-11-02T23:05:00.057620+00:00",
+      "finished_at_utc": "2026-11-02T23:14:02.770773+00:00",
+      "status": "success",
+      "steps": [
+        {
+          "step": "collect",
+          "status": "success",
+          "run_id": "daily_collect_20261103_070500",
+          "discovered_posts": 59,
+          "ingested_threads": 59,
+          "ingested_comments": 282,
+          "issues": []
+        },
+        {
+          "step": "begin_generation",
+          "status": "ok",
+          "generation_id": "daily_collect_20261103_070500",
+          "root": "/opt/voc-report/html/data/reddit-voc-generations/daily_collect_20261103_070500/reddit-voc"
+        },
+        {
+          "step": "agents",
+          "status": "ok",
+          "run_id": "daily_collect_20261103_070500",
+          "content_ideas": 15,
+          "rnd_tickets": 4,
+          "competitor_comparisons": 13,
+          "artifacts": {
+            "content_ideas": "/opt/echo-agent-bot/outputs/daily_collect_20261103_070500-daily-content-ideas.json",
+            "rnd_tickets": "/opt/echo-agent-bot/outputs/daily_collect_20261103_070500-daily-rnd-tickets.json",
+            "competitor_radar": "/opt/echo-agent-bot/outputs/daily_collect_20261103_070500-daily-competitor-radar.json"
+          },
+          "published": {
+            "content_ideas": "/opt/voc-report/html/data/reddit-voc-generations/daily_collect_20261103_070500/reddit-voc/agent-studio/latest-content-ideas.json",
+            "rnd_tickets": "/opt/voc-report/html/data/reddit-voc-generations/daily_collect_20261103_070500/reddit-voc/agent-studio/latest-rnd-tickets.json",
+            "competitor_radar": "/opt/voc-report/html/data/reddit-voc-generations/daily_collect_20261103_070500/reddit-voc/agent-studio/latest-competitor-radar.json"
+          },
+          "evidence_gate": {
+            "checked": 34,
+            "dropped": 0,
+            "kept": 34,
+            "examples": [],
+            "competitor_radar_results": {
+              "records": 13,
+              "items": 22,
+              "items_with_evidence": 22
+            },
+            "rnd_voc_results": {
+              "records": 4,
+              "items": 12,
+              "items_with_evidence": 12
+            }
+          },
+          "analysis_mode": "llm",
+          "llm_model": "deepseek-v4-flash"
+        },
+        {
+          "step": "merge_snapshot",
+          "status": "ok",
+          "run_id": "daily_collect_20261103_070500",
+          "new_posts_added": 58,
+          "new_comments_added": 280,
+          "product_bound_posts": 2,
+          "product_bound_comments": 11,
+          "product_bindings_total": 17,
+          "product_resolver_loaded": true,
+          "total_posts_in_snapshot": 26212,
+          "total_comments_in_snapshot": 102462,
+          "manifest_sha256": "21f2b9c22598b06db0f46ac7044b13140df4336247347063f5c1212c15f7acee",
+          "binding_updated": true,
+          "dataset_dir": "/opt/voc-report/html/data/reddit-voc-generations/daily_collect_20261103_070500/reddit-voc/reddit_voc_site_snapshot_20260723_v3_daily_001"
+        },
+        {
+          "engine": "recompute_derivatives_v1",
+          "anchor_date": "2026-11-02",
+          "inputs": {
+            "posts": 26212,
+            "comments": 102462
+          },
+          "outputs": [
+            {
+              "file": "aggregates-public.json",
+              "sha256": "cae41321e610072630ff39a70fbde0d0242269a691a75a81d4aafd83e1ecdcab"
+            },
+            {
+              "file": "reddit_voc_quarter_insights_20260723_public_v1/quarter-insights.json",
+              "sha256": "5bc9ca0ffa283539d8e0b23f4090adccfb15277c899315ca7eafabe887de3d42"
+            },
+            {
+              "file": "reddit_voc_brand_health_20260723_public_v1/brand-health.json",
+              "sha256": "631109c17163d4516c0140f336e78ab94a26f9c6e38b5be66ea235d9c06a8697",
+              "overall_score": 75.69
+            },
+            {
+              "file": "reddit_voc_reports_20261028_v3_aa80df7f4be9_history6_observed_comparisons/public/manifest.json",
+              "sha256": "34afb8bc2496603cfc0d99696621ca07e97097c5105c1dec86fad6a53367f592",
+              "lineage_manifest_sha256": "c18a6bd47bc3045899faace5e8e9c3c472d53b0eed2079b14c1806fad045ecc9",
+              "files": 10
+            }
+          ],
+          "elapsed_seconds": 10.16,
+          "dry_run": false,
+          "reports_lineage_manifest_sha256": "c18a6bd47bc3045899faace5e8e9c3c472d53b0eed2079b14c1806fad045ecc9",
+          "step": "recompute_derivatives",
+          "status": "ok",
+          "bindings_updated": [
+            "base",
+            "reports",
+            "brand_health",
+            "quarter_insights"
+          ]
+        },
+        {
+          "step": "advance_pointer",
+          "status": "advanced",
+          "release_id": "reddit_voc_release_20260723_daily_v2",
+          "data_as_of_utc": "2026-11-02T23:00:00Z",
+          "window_start_utc": "2026-11-01T23:00:00Z",
+          "window_end_utc": "2026-11-02T23:00:00Z",
+          "freshness_status": "partial"
+        },
+        {
+          "step": "build_stamps",
+          "status": "ok",
+          "datasets": [
+            "base",
+            "brand_health",
+            "casebook",
+            "insights",
+            "personas",
+            "quarter_insights",
+            "reports"
+          ]
+        },
+        {
+          "step": "commit_generation",
+          "status": "committed",
+          "generation_id": "daily_collect_20261103_070500",
+          "root": "/opt/voc-report/html/data/reddit-voc-generations/daily_collect_20261103_070500/reddit-voc"
+        },
+        {
+          "step": "gc_generations",
+          "status": "ok",
+          "removed": [
+            "daily_collect_20261101_0700"
+          ],
+          "kept": 2
+        },
+        {
+          "step": "feishu_push",
+          "status": "sent",
+          "msg": "success"
+        },
+        {
+          "step": "write_build_receipt",
+          "status": "ok",
+          "path": "/opt/voc-report/html/data/reddit-voc-generations/daily_collect_20261103_070500/reddit-voc/build-receipts/daily_collect_20261103_070500.json"
+        }
+      ],
+      "errors": [],
+      "release_transaction": {
+        "mode": "symlink",
+        "generation_id": "daily_collect_20261103_070500",
+        "root": "/opt/voc-report/html/data/reddit-voc-generations/daily_collect_20261103_070500/reddit-voc",
+        "commit": {
+          "step": "commit_generation",
+          "status": "committed",
+          "generation_id": "daily_collect_20261103_070500",
+          "root": "/opt/voc-report/html/data/reddit-voc-generations/daily_collect_20261103_070500/reddit-voc"
+        }
+      }
+    },
+    "pointer": {
+      "path": "/opt/voc-report/html/data/reddit-voc",
+      "is_symlink": true,
+      "exists": true,
+      "link_target": "reddit-voc-generations/daily_collect_20261103_070500/reddit-voc",
+      "relative": true,
+      "resolved": "/opt/voc-report/html/data/reddit-voc-generations/daily_collect_20261103_070500/reddit-voc"
+    },
+    "generations": [
+      "daily_collect_20261102_0700",
+      "daily_collect_20261103_070500"
+    ],
+    "pointer_sha256": "101e1ea1cabe7f51a3cc4d303617a91bc1dd790f4f2f6aeb18383d2ce76b1ab8",
+    "pointer_document": {
+      "schema_version": "reddit_voc_current_release_v2",
+      "release_id": "reddit_voc_release_20260723_daily_v2",
+      "generated_at_utc": "2026-11-02T23:14:00Z",
+      "datasets": {
+        "base": {
+          "dataset_version": "reddit_voc_site_snapshot_20260723_v3_daily_001",
+          "manifest_path": "data/reddit-voc/reddit_voc_site_snapshot_20260723_v3_daily_001/manifest-public.json",
+          "public_manifest_sha256": "329e76b21c192b65129afdce27da98440d69bf3c75641424cae2a446d77ffe0d",
+          "lineage_manifest_sha256": "486a39cccf924ba4815c6fcb88284ae2756f0db34bf367d087bb0a87e301e4af"
+        },
+        "insights": {
+          "dataset_version": "reddit_voc_insights_20261028_v3_aa80df7f4be9_rb895eac754fd",
+          "manifest_path": "data/reddit-voc/reddit_voc_insights_20261028_v3_aa80df7f4be9_rb895eac754fd/public/manifest.json",
+          "public_manifest_sha256": "e4f7d11a43e1b6fc5c75f696aca81f19aaf909e2e070bb31dc9eb133f086bd47",
+          "lineage_manifest_sha256": "ae0b143c5e02ba51e1f27349e6dd144803314a781bf944ccd0accfdce986d07d"
+        },
+        "reports": {
+          "dataset_version": "reddit_voc_reports_20261028_v3_aa80df7f4be9_history6_observed_comparisons",
+          "manifest_path": "data/reddit-voc/reddit_voc_reports_20261028_v3_aa80df7f4be9_history6_observed_comparisons/public/manifest.json",
+          "public_manifest_sha256": "34afb8bc2496603cfc0d99696621ca07e97097c5105c1dec86fad6a53367f592",
+          "lineage_manifest_sha256": "c18a6bd47bc3045899faace5e8e9c3c472d53b0eed2079b14c1806fad045ecc9"
+        },
+        "personas": {
+          "dataset_version": "reddit_voc_personas_20261028_v1",
+          "manifest_path": "data/reddit-voc/reddit_voc_personas_20261028_v1/manifest.json",
+          "public_manifest_sha256": "9e3ff36b028b1dae6b1fdbc19afaadf77429aa8180292d34af487c4b2b23c6fb",
+          "lineage_manifest_sha256": "9e3ff36b028b1dae6b1fdbc19afaadf77429aa8180292d34af487c4b2b23c6fb"
+        },
+        "brand_health": {
+          "dataset_version": "reddit_voc_brand_health_20260723_public_v1",
+          "manifest_path": "data/reddit-voc/reddit_voc_brand_health_20260723_public_v1/manifest.json",
+          "public_manifest_sha256": "b64f1b26d7d457be230ac2dab54c1147bcd092dd8a15e5014eed0e16cc758f88",
+          "lineage_manifest_sha256": "83625ca2a375f25b4a2ebc6ab7f0330d01c687bc7ce15fbdf387fc8b37eaeeca"
+        },
+        "quarter_insights": {
+          "dataset_version": "reddit_voc_quarter_insights_20260723_public_v1",
+          "manifest_path": "data/reddit-voc/reddit_voc_quarter_insights_20260723_public_v1/manifest.json",
+          "public_manifest_sha256": "bac840654851a89aafa9878291ade4a8ac47ce89502ccf561eb6652980e97c4c",
+          "lineage_manifest_sha256": "ee2e3bc2fbea8f0b4b41907f40c1609946d0b3899f174ab97ddcb86a754a6bd1"
+        },
+        "casebook": {
+          "dataset_version": "reddit_voc_casebook_20260716_public_a1",
+          "manifest_path": "data/reddit-voc/reddit_voc_casebook_20260716_public_a1/manifest.json",
+          "public_manifest_sha256": "8e79fe8c86e08e60b693ca93f3ca6560476bec53a979c67ed8120d00ec121126",
+          "lineage_manifest_sha256": "8e79fe8c86e08e60b693ca93f3ca6560476bec53a979c67ed8120d00ec121126"
+        }
+      },
+      "freshness": {
+        "status": "partial",
+        "timezone": "Asia/Shanghai",
+        "data_as_of_utc": "2026-11-02T23:00:00Z",
+        "window_start_utc": "2026-11-01T23:00:00Z",
+        "window_end_utc": "2026-11-02T23:00:00Z",
+        "collector_run_id": "daily_collect_20261103_070500",
+        "source_batch_id": "server_snapshot_20260706_20260723",
+        "center_snapshot_id": "reddit_voc_center_20260723_v3_canonical_v2",
+        "net_new": {
+          "comments": 246,
+          "posts": 56,
+          "repaired_parent_links": 0,
+          "updated_historical_posts": 139
+        },
+        "coverage": {
+          "full_posts": 7,
+          "partial_posts": 5,
+          "unresolved_continuations": 5
+        }
+      },
+      "cases": {
+        "dataset_version": "case_catalog_20260715_v1",
+        "manifest_path": "data/cases/manifest.v1.json",
+        "public_manifest_sha256": "6a233c0ef7fb207c9d3cd62b5920730686149911cfae3ad8af2a1d7fead6b969",
+        "index_path": "data/cases/case-index.v1.json",
+        "index_sha256": "a1da92f832fafb357da234d01fcb50abfb55b945d784d54f6d1d3b34e555cd68",
+        "stock_content_preserved": true,
+        "approved_delta_count": 0
+      },
+      "boundaries": {
+        "case_gallery_stock_preserved": true,
+        "collector_isolation_required": true,
+        "login_required": false
+      }
+    },
+    "build_receipts_exists": true,
+    "freshness": {
+      "schema_version": "echo_agent_site_freshness_v1",
+      "evaluated_at_utc": "2026-11-03T10:52:01.935884Z",
+      "state": "partial",
+      "release_id": "reddit_voc_release_20260723_daily_v2",
+      "freshness_status": "partial",
+      "data_as_of_utc": "2026-11-02T23:00:00Z",
+      "expected_period_end_utc": "2026-11-02T23:00:00Z",
+      "deadline_utc": "2026-11-03T00:30:00Z",
+      "lag_seconds": 42721,
+      "slo_seconds": 5400,
+      "slo_met": false,
+      "run_id": "daily_collect_20261103_070500",
+      "datasets": {
+        "base": {
+          "ok": true,
+          "manifest_sha256": "329e76b21c192b65129afdce27da98440d69bf3c75641424cae2a446d77ffe0d",
+          "manifest_path": "reddit_voc_site_snapshot_20260723_v3_daily_001/manifest-public.json"
+        },
+        "insights": {
+          "ok": true,
+          "manifest_sha256": "e4f7d11a43e1b6fc5c75f696aca81f19aaf909e2e070bb31dc9eb133f086bd47",
+          "manifest_path": "reddit_voc_insights_20261028_v3_aa80df7f4be9_rb895eac754fd/public/manifest.json"
+        },
+        "reports": {
+          "ok": true,
+          "manifest_sha256": "34afb8bc2496603cfc0d99696621ca07e97097c5105c1dec86fad6a53367f592",
+          "manifest_path": "reddit_voc_reports_20261028_v3_aa80df7f4be9_history6_observed_comparisons/public/manifest.json"
+        },
+        "personas": {
+          "ok": true,
+          "manifest_sha256": "9e3ff36b028b1dae6b1fdbc19afaadf77429aa8180292d34af487c4b2b23c6fb",
+          "manifest_path": "reddit_voc_personas_20261028_v1/manifest.json"
+        },
+        "brand_health": {
+          "ok": true,
+          "manifest_sha256": "b64f1b26d7d457be230ac2dab54c1147bcd092dd8a15e5014eed0e16cc758f88",
+          "manifest_path": "reddit_voc_brand_health_20260723_public_v1/manifest.json"
+        },
+        "quarter_insights": {
+          "ok": true,
+          "manifest_sha256": "bac840654851a89aafa9878291ade4a8ac47ce89502ccf561eb6652980e97c4c",
+          "manifest_path": "reddit_voc_quarter_insights_20260723_public_v1/manifest.json"
+        },
+        "casebook": {
+          "ok": true,
+          "manifest_sha256": "8e79fe8c86e08e60b693ca93f3ca6560476bec53a979c67ed8120d00ec121126",
+          "manifest_path": "reddit_voc_casebook_20260716_public_a1/manifest.json"
+        }
+      },
+      "failures": [],
+      "healthy": true,
+      "notification": {
+        "notified": false
+      }
+    },
+    "disk": {
+      "total": 528304590848,
+      "used": 306928975872,
+      "free": 199777824768,
+      "free_percent": 37.81
+    }
+  },
+  "checks": [
+    {
+      "status": "PASS",
+      "id": "systemd",
+      "detail": "Result=success exit=0 at Tue 2026-11-03 07:14:02 CST"
+    },
+    {
+      "status": "PASS",
+      "id": "daily_timer",
+      "detail": "echo-agent-daily.timer active"
+    },
+    {
+      "status": "PASS",
+      "id": "receipt",
+      "detail": "daily_collect_20261103_070500 status=success"
+    },
+    {
+      "status": "PASS",
+      "id": "steps",
+      "detail": "10/10 steps reached their success state"
+    },
+    {
+      "status": "PASS",
+      "id": "k1_run_kind",
+      "detail": "run_kind=scheduled trigger=systemd_timer"
+    },
+    {
+      "status": "PASS",
+      "id": "llm_mode",
+      "detail": "analysis_mode=llm model=deepseek-v4-flash gate=34/0/34"
+    },
+    {
+      "status": "PASS",
+      "id": "pointer",
+      "detail": "relative symlink -> reddit-voc-generations/daily_collect_20261103_070500/reddit-voc"
+    },
+    {
+      "status": "PASS",
+      "id": "generations",
+      "detail": "2 kept: daily_collect_20261102_0700, daily_collect_20261103_070500"
+    },
+    {
+      "status": "PASS",
+      "id": "freshness",
+      "detail": "state=partial healthy"
+    },
+    {
+      "status": "PASS",
+      "id": "build_stamps",
+      "detail": "7/7 datasets self-proved"
+    },
+    {
+      "status": "WARN",
+      "id": "freshness_status",
+      "detail": "pointer freshness=partial (coverage gap)"
+    },
+    {
+      "status": "PASS",
+      "id": "l5_t04_build_receipts",
+      "detail": "build-receipts/ present"
+    },
+    {
+      "status": "PASS",
+      "id": "product_bindings",
+      "detail": "posts=2 comments=11 records=17"
+    },
+    {
+      "status": "PASS",
+      "id": "public_content_type",
+      "detail": "application/json"
+    },
+    {
+      "status": "PASS",
+      "id": "public_bytes",
+      "detail": "sha256 matches the generation pointer (101e1ea1cabe…)"
+    },
+    {
+      "status": "PASS",
+      "id": "public_run_id",
+      "detail": "collector_run_id=daily_collect_20261103_070500"
+    },
+    {
+      "status": "PASS",
+      "id": "public_generated_at",
+      "detail": "2026-11-02T23:14:00Z"
+    },
+    {
+      "status": "PASS",
+      "id": "public_data_as_of",
+      "detail": "2026-11-02T23:00:00Z"
+    },
+    {
+      "status": "PASS",
+      "id": "disk",
+      "detail": "37.81% free (186 GiB)"
+    }
+  ],
+  "summary": {
+    "PASS": 18,
+    "FAIL": 0,
+    "FIND": 0,
+    "WARN": 1,
+    "SKIP": 0
+  },
+  "exit_code": 0
+}
