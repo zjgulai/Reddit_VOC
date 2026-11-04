@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Echo-Agent 项目成果总结 · 2026-11-04</title>
+<style>
+  :root {
+    color-scheme: light;
+    --page: #f9f9f7; --surface: #fcfcfb;
+    --ink-1: #0b0b0b; --ink-2: #52514e; --ink-3: #898781;
+    --line: #e1e0d9; --axis: #c3c2b7; --ring: rgba(11,11,11,0.10);
+    --accent: #2a78d6; --accent-wash: rgba(42,120,214,0.08);
+    --good: #006300; --good-dot: #0ca30c;
+    --warn: #8a5b00; --warn-dot: #fab219;
+    --bad: #b23030; --bad-dot: #d03b3b;
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --page: #0d0d0d; --surface: #1a1a19;
+    --ink-1: #ffffff; --ink-2: #c3c2b7; --ink-3: #898781;
+    --line: #2c2c2a; --axis: #383835; --ring: rgba(255,255,255,0.10);
+    --accent: #3987e5; --accent-wash: rgba(57,135,229,0.12);
+    --good: #0ca30c; --good-dot: #0ca30c;
+    --warn: #fab219; --warn-dot: #fab219;
+    --bad: #e66767; --bad-dot: #d03b3b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--page); color: var(--ink-1);
+    font: 15px/1.75 system-ui, -apple-system, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    transition: background .2s, color .2s;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 40px 28px 80px; }
+  header.hero { border-bottom: 1px solid var(--line); padding-bottom: 24px; margin-bottom: 32px; }
+  .hero-kicker { font-size: 12px; letter-spacing: .14em; color: var(--ink-3); text-transform: uppercase; margin-bottom: 8px; }
+  h1 { font-size: 30px; line-height: 1.3; margin: 0 0 10px; font-weight: 700; }
+  .hero-meta { font-size: 13px; color: var(--ink-2); }
+  .hero-meta span { margin-right: 18px; white-space: nowrap; }
+  #themeBtn {
+    float: right; margin-left: 16px; border: 1px solid var(--ring); background: var(--surface); color: var(--ink-2);
+    border-radius: 8px; padding: 6px 14px; font-size: 13px; cursor: pointer;
+  }
+  #themeBtn:hover { color: var(--ink-1); border-color: var(--axis); }
+  h2 { font-size: 20px; margin: 48px 0 16px; padding-top: 18px; border-top: 1px solid var(--line); }
+  h2 .no { color: var(--ink-3); font-weight: 500; margin-right: 8px; font-size: 16px; }
+  h3 { font-size: 16px; margin: 28px 0 10px; }
+  p { margin: 10px 0; color: var(--ink-2); }
+  strong { color: var(--ink-1); }
+  code { background: var(--accent-wash); color: var(--ink-1); border-radius: 4px; padding: 1px 6px; font-size: .88em; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; overflow-wrap: anywhere; }
+  .lede { font-size: 16.5px; line-height: 1.85; color: var(--ink-2); border-left: 3px solid var(--accent); padding: 6px 0 6px 18px; margin: 0 0 8px; }
+  .note { font-size: 12.5px; color: var(--ink-3); line-height: 1.7; margin-top: 8px; }
+
+  /* ---- KPI stat tiles ---- */
+  .tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(225px, 1fr)); gap: 12px; margin: 20px 0 8px; }
+  .tile { background: var(--surface); border: 1px solid var(--ring); border-radius: 12px; padding: 16px 18px 14px; }
+  .tile .t-label { font-size: 12.5px; color: var(--ink-2); margin-bottom: 6px; }
+  .tile .t-value { font-size: 27px; font-weight: 600; line-height: 1.2; letter-spacing: -0.01em; }
+  .tile .t-value small { font-size: 14px; font-weight: 500; color: var(--ink-2); margin-left: 3px; }
+  .tile .t-delta { font-size: 12.5px; margin-top: 7px; color: var(--ink-3); }
+  .t-delta .up { color: var(--good); font-weight: 600; }
+  .t-delta .down { color: var(--bad); font-weight: 600; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex: none; margin-right: 5px; vertical-align: 1px; }
+  .dot.good { background: var(--good-dot); } .dot.warn { background: var(--warn-dot); } .dot.bad { background: var(--bad-dot); }
+  .pill { display: inline-block; font-size: 11px; font-weight: 600; border-radius: 999px; padding: 1px 9px; line-height: 1.7; border: 1px solid var(--ring); color: var(--ink-2); background: var(--page); }
+  .pill.ok { color: var(--good); border-color: color-mix(in srgb, var(--good-dot) 35%, transparent); }
+  .pill.part { color: var(--warn); border-color: color-mix(in srgb, var(--warn-dot) 45%, transparent); }
+
+  /* ---- tables ---- */
+  table { width: 100%; border-collapse: collapse; margin: 14px 0 8px; font-size: 13.5px; background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; overflow: hidden; }
+  th, td { text-align: left; padding: 9px 12px; vertical-align: top; border-top: 1px solid var(--line); }
+  thead th { border-top: none; font-size: 12px; color: var(--ink-3); font-weight: 600; letter-spacing: .04em; background: var(--page); }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  td .src { display: block; font-size: 12px; color: var(--ink-3); margin-top: 2px; }
+  tbody tr:hover td { background: var(--accent-wash); }
+
+  /* ---- timeline ---- */
+  .tl { margin: 18px 0 4px; padding: 0; list-style: none; position: relative; }
+  .tl::before { content: ""; position: absolute; left: 89px; top: 8px; bottom: 8px; width: 1px; background: var(--axis); }
+  .tl li { position: relative; padding: 0 0 16px 116px; }
+  .tl .d { position: absolute; left: 0; top: 1px; width: 74px; text-align: right; font-size: 12.5px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+  .tl .nd { position: absolute; left: 85px; top: 7px; width: 9px; height: 9px; border-radius: 50%; background: var(--axis); border: 2px solid var(--page); }
+  .tl li.hl .nd { background: var(--accent); }
+  .tl li.hl .d { color: var(--accent); font-weight: 600; }
+  .tl .e { font-size: 13.5px; color: var(--ink-2); }
+  .tl .e strong { display: block; }
+
+  /* ---- misc ---- */
+  .pipeline { background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 14px 18px; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 12.5px; color: var(--ink-2); overflow-x: auto; white-space: nowrap; margin: 14px 0; }
+  .pipeline b { color: var(--accent); font-weight: 600; }
+  .issue { background: var(--surface); border: 1px solid var(--ring); border-left: 3px solid var(--warn-dot); border-radius: 8px; padding: 12px 16px; margin: 10px 0; font-size: 13.5px; color: var(--ink-2); }
+  .issue b { color: var(--ink-1); }
+  .issue.closed { border-left-color: var(--good-dot); }
+  .issue.fix { border-left-color: var(--bad-dot); }
+  footer { margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 12px; color: var(--ink-3); line-height: 1.8; }
+  @media (max-width: 640px) {
+    .wrap { padding: 24px 16px 56px; }
+    h1 { font-size: 23px; }
+    .tl::before { left: 13px; }
+    .tl li { padding-left: 36px; }
+    .tl .d { position: static; display: block; width: auto; text-align: left; margin-bottom: 2px; }
+    .tl .nd { left: 9px; top: 26px; }
+    table { display: block; overflow-x: auto; }
+  }
+  @media print { #themeBtn { display: none; } body { background: #fff; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <button id="themeBtn" type="button">◐ 深色</button>
+  <div class="hero-kicker">Echo-Agent · Reddit VOC Intelligence · Daily Report</div>
+  <h1>项目成果总结 · 2026-11-04</h1>
+  <div class="hero-meta">
+    <span>📅 报告日期 2026-11-04 07:58 CST · <strong>单版交付（今日无生产回执级验收）</strong></span>
+    <span>🔎 增量窗口 11-03 18:55 → 11-04 07:58（3 提交 / 2 PR 合并 / 1 PR 待并）</span>
+    <span>🌿 <code>main</code>=<code>65319f8</code>（PR #3 已并）· PR #4 <strong>OPEN · CI 全绿</strong> · 分支 <code>ops/known-failures-gate</code></span>
+  </div>
+</header>
+
+<p class="lede">Echo-Agent 在 11-03 晚间完成 <strong>治理冲刺第三批</strong>：已验收报告与合并记录经 <strong>PR #2 入 main</strong>；<strong>生产快照锁</strong>（7 数据集 SHA + 指针 SHA 钉死现网 radar.luteos.com，旧锁标记退役）经 <strong>PR #3 入 main</strong>；<strong>known-failures 冻结基线接入 CI</strong>（基线外新失败即红、基线损坏 fail-closed）经 <strong>PR #4 开放待并</strong>（CI 全绿，1,893 passed / 8 skipped）。今晨 07:05 定时运行照常完成——公网指针 07:14:16 CST 推进至新代际（<code>daily_collect_20261104_070500</code>，T-1 窗口正确），<strong>K1 初步第 2 天 / 14</strong>（回执级待验收：今日无 SSH 通道）。<strong>本期最重要的核验产出是口径修正</strong>：公网指针 <code>freshness.net_new</code>（+56 帖/+246 评）被证实为 <strong>2026-07-23 批量纳入快照的冻结值</strong>——日链路没有任何代码写入该字段，昨日 MD 误引为当日净增；11-03 真实日增以回执为准 <strong>+58 帖/+280 评（26,212 帖/102,462 评）</strong>。最大风险：PR #4 无任何人工 review 记录即处可并状态，且门禁的「放行路径」未在 CI 端到端实证。</p>
+<p class="note">口径：所有数字标注时点与出处；各时点语料基线不混算；未复测数字标注「源文档记录值」。本版边界：今日 <code>ECHO_SSH_KEY</code> 未设置，<code>verify_daily_run.py</code> 生产回执核验未执行——运行事实仅凭公网指针只读探针（11-04 07:42 cache-bust 实测），回执级字段全部待验收。本报告为只读分析，未改动生产。</p>
+
+<h2><span class="no">§1</span>本期增量速览（11-03 18:55 → 11-04 07:58）</h2>
+<table>
+  <thead><tr><th style="width:34px" class="num">#</th><th style="width:44%">增量</th><th>证据</th></tr></thead>
+  <tbody>
+    <tr><td class="num">1</td><td><strong>昨日验收报告与合并记录入 main</strong>（9b45082 → PR #2）：11-03 版报告 md/html + PR1 合并方案 + 验收回执共 4 文件 +1,304 行，20:12 CST 合并；main CI <code>41633719366</code> 全绿</td><td><code>gh pr view 2</code> mergedAt=2026-11-03T12:12:08Z · git show 9b45082 --stat</td></tr>
+    <tr><td class="num">2</td><td><strong>生产快照锁落库 + 旧锁退役</strong>（65319f8 → PR #3，已并）：<code>production-workbench-lock.json</code> 钉死 host <code>43.163.92.244</code>、指针 SHA <code>101e1ea1…</code>、7 数据集 manifest SHA（observed 11-03 18:52 CST）；<code>verify_workbench_lock.py</code> 164 行（schema 校验 + <code>--public-url</code> 现网比对，exit 0/1/2）+ 94 行测试；CI 新增本地锁校验步骤（<code>"status": "valid"</code>）；旧 version-lock 加 <code>legacy_retired</code> 声明性退役</td><td><code>config/production-workbench-lock.json:2-50</code> · <code>verify_workbench_lock.py:43-160</code> · 65319f8 diff（+316/−1）· run 41639666726</td></tr>
+    <tr><td class="num">3</td><td><strong>known-failures 冻结基线接入 CI</strong>（5b6e009 → PR #4，OPEN 待并）：repository lane 解析 pytest JUnit，失败集合与 <code>config/ci/known-failures.json</code> 精确 node-id 比对——<strong>基线外新失败 exit 1 / 全部在册 exit 0 / 基线损坏 exit 2 fail-closed</strong>；lane 加 <code>--enforce-known-failures</code>；基线 1 genuine + 34 lane_isolation（10-30 冻结）；PR CI 全绿</td><td><code>config/ci/known-failures.json</code> · 5b6e009 diff（3 文件 +193/−6）· run <code>41643216714</code>（backend 9m40s：1,893 passed / 8 skipped / 0 失败）</td></tr>
+    <tr><td class="num">4</td><td><strong>今晨 07:05 定时运行（第 4 个连续代际）</strong>：指针 07:14:16 CST 推进；<code>collector_run_id=daily_collect_20261104_070500</code>（带秒格式连续第 3 天）；T-1 窗口与 data_as_of 正确；4 数据集 manifest SHA 推进（+reports 双 SHA）；build-receipts 公网 403（存在性信号）。<strong>回执级字段待验收（无 SSH）</strong></td><td>公网 <code>current-release.json</code>（cache-bust 11-04 07:42）· 字段级 diff vs 11-03 验收回执 pointer_document（10 字段变化，全部符合日更模式）</td></tr>
+    <tr><td class="num">5</td><td><strong>口径修正（本期最重要核验产出）</strong>：指针 <code>freshness.net_new</code>（+56/+246/139/0）为 <strong>2026-07-23 批量纳入冻结快照</strong>——日链路仅前移 freshness 7 字段，net_new 无日写入者；昨日 MD「+56/+246」更正为回执实测 <strong>+58/+280</strong>，「26,210/102,428 推算」撤回为已验收 <strong>26,212/102,462</strong>（昨日 HTML 已修正，MD 本版补齐）。今日日增未测</td><td><code>advance_daily_t1_release.py:60-73</code>（7 字段清单）· 11-03 回执 steps[3]（58/280）· net_new 核验代理证据链</td></tr>
+    <tr><td class="num">6</td><td><strong>测试资产 +1 文件</strong>：<code>test_verify_workbench_lock.py</code>（94 行新文件）+ <code>test_backend_test_lane.py</code> 扩 50 行；测试文件 213 → 214；scripts 171 → 172</td><td>本地实测（11-04 07:45）· 65319f8 / 5b6e009 diff</td></tr>
+  </tbody>
+</table>
+
+<h2><span class="no">§2</span>成果数字看板</h2>
+<div class="tiles">
+  <div class="tile">
+    <div class="t-label">今晨定时运行（11-04 07:05）</div>
+    <div class="t-value">≤9m16s<small>07:05 → 07:14:16 指针推进</small></div>
+    <div class="t-delta"><span class="dot warn"></span><span class="up">第 4 个连续代际</span> · 回执级待验收</div>
+  </div>
+  <div class="tile">
+    <div class="t-label">K1 无人值守连续成功</div>
+    <div class="t-value">第 2 天<small>/ 14 · 初步</small></div>
+    <div class="t-delta"><span class="dot warn"></span>指针新代际 + 唯一 run_id；<code>run_kind</code> 待验收</div>
+  </div>
+  <div class="tile">
+    <div class="t-label">语料基线（最新 · 已验收）</div>
+    <div class="t-value">26,212<small>帖 / 102,462 评</small></div>
+    <div class="t-delta"><span class="dot good"></span><span class="up">11-03 回执实测</span> · 撤回昨日推算值</div>
+  </div>
+  <div class="tile">
+    <div class="t-label">本期增量提交</div>
+    <div class="t-value">3<small>2 并入 main · 1 待并（PR #4）</small></div>
+    <div class="t-delta"><span class="dot good"></span>docs 1 · ops 1 · ci 1（11-03 19:16–21:18）</div>
+  </div>
+  <div class="tile">
+    <div class="t-label">PR / CI 状态</div>
+    <div class="t-value">2 并 · 1 待并<small>近 5 runs 全 success</small></div>
+    <div class="t-delta"><span class="dot warn"></span><span class="down">PR #4 无任何已提交 review</span></div>
+  </div>
+  <div class="tile">
+    <div class="t-label">T0 批次进度</div>
+    <div class="t-value">8+½<small>完成 / 1 受阻 / 4 未做</small></div>
+    <div class="t-delta"><span class="dot good"></span><span class="up">T0-6 半落地</span>：锁已并 · 门禁待并</div>
+  </div>
+  <div class="tile">
+    <div class="t-label">生产快照锁（新落库）</div>
+    <div class="t-value">7+1<small>数据集 SHA + 指针 SHA</small></div>
+    <div class="t-delta"><span class="dot good"></span><span class="up">CI 本地校验 valid</span> · 快照语义（无日更写入者）</div>
+  </div>
+  <div class="tile">
+    <div class="t-label">known-failures 门禁（新）</div>
+    <div class="t-value">1+34<small>genuine + lane_isolation 基线</small></div>
+    <div class="t-delta"><span class="dot warn"></span>待 PR #4 合并生效 · 放行路径未 CI 实证</div>
+  </div>
+  <div class="tile">
+    <div class="t-label">K11 审计头条缺陷</div>
+    <div class="t-value">0<small>/ 7 正式关闭（承前）</small></div>
+    <div class="t-delta"><span class="dot bad"></span>矩阵与 GOAL schema 差距未动</div>
+  </div>
+  <div class="tile">
+    <div class="t-label">代码规模</div>
+    <div class="t-value">86,934<small>行 · 111 文件（持平）</small></div>
+    <div class="t-delta"><span class="dot good"></span><span class="up">scripts 172（+1）· tests 214（+1）</span></div>
+  </div>
+  <div class="tile">
+    <div class="t-label">分支状态</div>
+    <div class="t-value">+1<small>提交领先 main（+193/−6）</small></div>
+    <div class="t-delta"><span class="dot good"></span><code>main=65319f8</code> · PR #4 head <code>5b6e009</code></div>
+  </div>
+  <div class="tile">
+    <div class="t-label">公网数据通路</div>
+    <div class="t-value">200<small>application/json · 07:14 代际</small></div>
+    <div class="t-delta"><span class="dot good"></span>build-receipts 403 存在性信号（承前口径）</div>
+  </div>
+  <div class="tile">
+    <div class="t-label">口径修正（本期产出）</div>
+    <div class="t-value">+58/+280<small>11-03 真实日增（回执）</small></div>
+    <div class="t-delta"><span class="dot fix" style="background:var(--bad-dot)"></span><span class="down">指针 net_new=07-23 冻结快照，禁引为日增</span></div>
+  </div>
+</div>
+<p class="note">出处：今晨运行=公网指针（11-04 07:42 cache-bust）；锁与门禁=65319f8/5b6e009 落库文件+核查代理行号复核；代码/测试/分支=11-04 本地实测；K1/回执类=待验收（SSH 不可用）；历史数字承前并标注「源文档记录值」。</p>
+
+<h2><span class="no">§3</span>项目概览</h2>
+<table>
+  <tbody>
+    <tr><td style="width:120px"><strong>定位</strong></td><td>Reddit 消费者之声（VOC）情报生产系统：采集 Reddit 社区讨论，产出选题、痛点、竞品、品牌健康与画像洞察，自动生成中文日报并推送（README 自述为 "local implementation for Momcozy Reddit VOC monitoring"，本行为综合概括）</td></tr>
+    <tr><td><strong>服务对象</strong></td><td>Momcozy 业务方（产品与内容决策）</td></tr>
+    <tr><td><strong>生产入口</strong></td><td><code>https://radar.luteos.com</code>（独立域名 → 43.163.92.244；11-04 07:42 实测 <code>/data/current-release.json</code> 200 application/json，指针指向 07:14 代际；根路径 200 text/html）</td></tr>
+    <tr><td><strong>技术栈</strong></td><td>Python 后端（SQLite 运行时存储）+ React 洞察站 + 零依赖控制台 webapp + systemd 部署 + 共享 nginx；<strong>本起新增</strong>：生产快照锁（<code>config/</code>）与 known-failures 门禁（<code>config/ci/</code>）</td></tr>
+    <tr><td><strong>当前阶段</strong></td><td>V2.0 转型：W1 已合并后的<strong>治理收尾期</strong>——T0 批次 8 完成 + T0-6 半落地；K1 第 2 天（初步）；生产以 symlink 发布代际模式连续第 4 天日更</td></tr>
+    <tr><td><strong>分支</strong></td><td><code>ops/known-failures-gate</code>，领先 main <strong>1 提交</strong>（3 文件，+193/−6；2026-11-04 07:45 实测 HEAD <code>5b6e009</code>）；<code>main=origin/main=65319f8</code>；PR #4 开放待并</td></tr>
+  </tbody>
+</table>
+
+<h2><span class="no">§4</span>核心成果分域详述</h2>
+
+<h3>4.1 生产流水线与自动发布（本期：第 4 个连续代际；回执级验收空缺）</h3>
+<ul>
+  <li><strong>今晨运行（07:05 触发）</strong>：公网指针 07:14:16 CST 推进至新代际，<code>collector_run_id=daily_collect_20261104_070500</code>（带秒 run_id 格式连续第 3 天生效）；T-1 窗口 11-02T23:00Z→11-03T23:00Z、data_as_of=11-03T23:00Z 语义正确；7 数据集中 base / brand_health / quarter_insights / reports（public+lineage 双 SHA）共 5 个 manifest SHA 前进，insights / personas / casebook 未变（非日更数据集，正常）。字段级 diff 对照昨日验收回执 pointer_document：<strong>10 个字段变化，全部符合日更推进模式，无异常字段</strong>。systemd 退出码、<code>run_kind</code>、10 步状态、LLM 模式、feishu_push、Agent 产出量——<strong>今日全部不可读</strong>（无 SSH 通道），待验收。</li>
+  <li><strong>真实日增（口径修正后）</strong>：11-03 日增为 <strong>+58 帖/+280 评</strong>（merge 回执 steps[3] 实测）；<strong>今日（11-04）日增未测</strong>——公网 build-receipts 403、无 SSH，本版不列数字。</li>
+  <li><strong>生产快照锁（65319f8）</strong>：以 11-03 18:52 CST 验收回执为源，钉死 host、公网域名、数据路径、指针 SHA <code>101e1ea1…</code>、run_id、窗口、7 数据集 dataset_version + public_manifest_sha256。<code>verify_workbench_lock.py</code> 两级校验：本地 schema 校验（CI 裸跑即此模式）+ <code>--public-url</code> 现网比对（响应体 SHA + release_id / generated_at / collector_run_id / data_as_of 5 项）。退出码 0=有效 / 1=mismatch / 2=不可评估。<strong>已知边界</strong>：锁是快照——今晨指针已前进一代，<code>--public-url</code> 现跑必然 mismatch；CI 只做本地校验，<strong>现网漂移不会红</strong>；锁无日更写入者（详见 §7 #4）。</li>
+  <li><strong>对照基线（承前）</strong>：11-01 首个全绿 9.5 分钟、11-02 11.1 分钟、11-03 9 分 02 秒（回执实测）、今日 ≤9 分 16 秒（指针推算，待验收）。</li>
+</ul>
+
+<h3>4.2 多 Agent 分析矩阵（本期：无工程改动，运行证据不可读）</h3>
+<ul>
+  <li>窗口内无 Agent 矩阵代码改动。生产 LLM 通路（<code>analysis_mode=llm</code>、<code>deepseek-v4-flash</code>）11-01/11-02/11-03 连续三日回执实证；<strong>今日不可读</strong>（无回执通道），本版不写「第 N 天」。</li>
+  <li>语义准入止血（56a5469，承前）：游戏语境否决与交易/赠物 subreddit 规则在产；「同帖不再误报」的回执级复核今日不可执行（11-03 报告已知问题 #5 的验收动作空缺）。</li>
+</ul>
+
+<h3>4.3 数据与语料资产（本期：基线口径修正）</h3>
+<ul>
+  <li><strong>最新基线（已验收）</strong>：<strong>26,212 帖 / 102,462 评</strong>（11-03 回执 recompute inputs，data_as_of=2026-11-02T23:00Z）。今日回执不可读，<strong>本版不推算新基线</strong>——宁缺毋假。</li>
+  <li><strong>历史基线（互不可比、不混算）</strong>：3,494/27,158（2026-07-16 验收，源文档记录值）；17,469/58,296（10-26 ADR-004 收口，记录值）；25,873/100,778（10-29 审计）；26,098/101,967（11-01 回执）；26,154/102,182（11-02 回执）；26,212/102,462（11-03 回执）。<strong>昨日 MD 的「26,210/102,428 推算」基于误引的 net_new，就此撤回</strong>。</li>
+  <li><strong>net_new 字段定性（本版核验结论）</strong>：公网指针 <code>freshness.net_new</code>（+56/+246/139/0）是 2026-07-23 <code>server_snapshot_20260706_20260723</code> 批量纳入时的冻结快照。日常链路中 <code>advance_daily_t1_release.py</code> 仅前移 freshness 7 字段，begin_generation 复制整棵 live 树、commit 原样写回——<strong>没有任何代码路径按日更新 net_new</strong>。后续报告与监控引用「日增」一律以 merge 回执（<code>new_posts_added</code>/<code>new_comments_added</code>）为准，禁引指针 net_new。</li>
+</ul>
+
+<h3>4.4 公开洞察站与监控</h3>
+<ul>
+  <li><strong>公网健康（11-04 07:42 实测）</strong>：<code>current-release.json</code> 200 application/json，指向 07:14:16 CST 代际；<code>release_id</code> 不变（承前口径：非日变标识）；<code>build-receipts/daily_collect_20261104_070500.json</code> 公网 403（与 11-03/11-02 模式一致的存在性信号，内容验证需回执通道）。coverage 7/5/5 承前非测量值（L5-T12 缺口未动）。</li>
+  <li><strong>新鲜度监控</strong>：计划 07:45/12:15/20:15 三班（承前）；<strong>今日运行结果不可观测</strong>（状态文件在服务端，无 SSH；公网无该路径，探针 404）。11-03 的 07:45 <code>partial</code> + 去重键生效为已验收记录值。</li>
+  <li><strong>告警链缺口（承前）</strong>：<code>alert@.service</code> 与 <code>OnFailure=</code> 仍缺（T0-3 未做）。</li>
+</ul>
+
+<h3>4.5 投递与通知</h3>
+<ul>
+  <li><strong>今日飞书日报推送</strong>：待验收（feishu_push 步骤状态不可读）。</li>
+  <li><strong>承前机制不变</strong>（源文档记录值）：prepared once / 双机器人幂等、unknown 终态、翻译 fail-closed 六重门禁；feishu ws bot 四类意图硬编码示例的产品诚实性缺口仍未修（T2-1 待做）。</li>
+</ul>
+
+<h3>4.6 工程治理与质量保障（本期重点：生产快照锁 + known-failures 门禁）</h3>
+<ul>
+  <li><strong>生产快照锁（65319f8，PR #3 已并）</strong>：把「当前工作台就是锁里这份」从口头约定变为 config 可校验对象。CI backend job 新增步骤「Verify current workbench release lock」（本地 schema 校验模式，run 41639666726 步骤日志 <code>"status": "valid"</code>）。<strong>核验修正三处</strong>：① 锁钉的是指针 SHA 与 7 数据集 SHA，<strong>不含 git commit SHA</strong>；② 锁文件本身无 checks 字段——19 项 checks 属于其来源回执 verify-20261103-postmerge.json；③ 脚本 docstring 提及的 <code>--check</code> 参数<strong>并未实现</strong>（argparse 无此参数，实测 exit 2）——记入源文档不一致 #9。</li>
+  <li><strong>旧锁退役是声明性的（核验修正）</strong>：<code>production-version-lock.json</code> 尾部加 <code>legacy_retired</code>/<code>superseded_by</code>/<code>note</code>，但其 host 字段仍指 101.34.52.232，且 CI 的「Verify production release lock against source」步骤<strong>仍在对它跑本地校验</strong>（不读 legacy_retired）——旧栈校验未拆除，只是标记退役。</li>
+  <li><strong>known-failures 门禁（5b6e009，PR #4 待并）</strong>：repository lane 从「有失败就红」升级为「与冻结基线精确比对」——基线 <code>config/ci/known-failures.json</code>（10-30 逐模块在干净 worktree 实测冻结，1 genuine + 34 lane_isolation，另记 not_baseline 两类非缺陷说明）。语义：<strong>基线外任何新失败 → exit 1 红</strong>；全部在册 → exit 0；基线文件损坏 → exit 2 fail-closed。PR #4 CI 实跑 1,893 passed / 8 skipped / 0 失败（status=clean）——注意这意味着<strong>「在册失败被放行」路径尚未在 CI 端到端实证</strong>（CI 本身没有失败可放行），唯一端到端证据是提交信息中的本地实测 1,899 passed / 1 known failure（本地 Python 3.14.7 vs CI 3.12）。</li>
+  <li><strong>T0-6 映射（本版核查）</strong>：周报 T0-6 =「known-failures 被 CI 读取」+「版本锁指向现网」两半句。前者=5b6e009（待并），后者=65319f8（已并）。<strong>合并 PR #4 后 T0-6 可按周报验收语义标完成</strong>，T0 批次变为 9 完成/1 受阻/4 未做。残留：周报写的验收命令 <code>verify_version_consistency.py --check-production</code> 从未实现——若照抄会形成假证据，本版以 verify_workbench_lock.py 的实际能力为准（记入源文档不一致 #10）。</li>
+  <li><strong>关闭矩阵可复现性缺口（本版新发现）</strong>：<code>build_v2_closure_matrix.py</code> 默认区间 <code>main..HEAD</code>，PR 逐个合并后重跑会把历史 commit 引用清零（当前 <code>--check</code> 已从 7 evidence_complete/3/95 退化为 0/0/99）——矩阵现有落库文件仍有效，但<strong>再生成即失真</strong>，需改显式基线。</li>
+  <li><strong>测试资产</strong>：214 个测试文件（+1：test_verify_workbench_lock 94 行）；test_backend_test_lane.py 扩 50 行；repository lane CI 端 1,893 passed / 8 skipped（run 41643216714）。</li>
+  <li><strong>十条生产合同（承前）</strong>与 ADR-001~004、PRD 4 件承前不变。</li>
+</ul>
+
+<h2><span class="no">§5</span>关键里程碑时间线</h2>
+<ul class="tl">
+  <li><span class="d">07-07</span><span class="nd"></span><span class="e"><strong>立项</strong>：产品规划、数据合同、运维 runbook 成套落库</span></li>
+  <li><span class="d">07-14~16</span><span class="nd"></span><span class="e"><strong>数据治理攻坚</strong>；RC3 全源身份封账；生产洞察站 26/26 页面验收</span></li>
+  <li><span class="d">07-29</span><span class="nd"></span><span class="e"><strong>钉钉投递验收 No-Go</strong>（历史实发 0 次），转入门禁化改造</span></li>
+  <li><span class="d">08-09~25</span><span class="nd"></span><span class="e"><strong>MECE 审计</strong>；prepared 日报 + 双机器人幂等闭环；PROJECT_STATUS 证据断点（08-25）</span></li>
+  <li><span class="d">10-14~26</span><span class="nd"></span><span class="e"><strong>深度审计；多 Agent 矩阵落地；每日 T-1 流水线全链路实测成功</strong>；V3.0 PRD；ADR-001</span></li>
+  <li><span class="d">10-27~28</span><span class="nd"></span><span class="e"><strong>radar.luteos.com 独立域名上线</strong>；ADR-002/003；74 天空洞修复</span></li>
+  <li><span class="d">10-29</span><span class="nd"></span><span class="e"><strong>ADR-004 统一事实库</strong>；248 项深度审计；同日 07:05 定时运行失败暴露 P0-1</span></li>
+  <li><span class="d">10-30</span><span class="nd"></span><span class="e"><strong>V2.0 文档包落库</strong>（GOAL 11 KPI + 105 票 + 六车道 spec 4,867 行）；<strong>known-failures 基线同日冻结</strong>（against e2b04b5——10-30 冻结、11-03 才接入 CI）</span></li>
+  <li><span class="d">10-31</span><span class="nd"></span><span class="e"><strong>15 提交工程冲刺</strong>：代际事务、LLM 适配器、证据门禁、8 路并发、相对 symlink、GC、单写者锁、站点自证、recompute 86×、产品身份解析；当晚切 symlink 模式</span></li>
+  <li><span class="d">11-01~02</span><span class="nd"></span><span class="e"><strong>首个/第二个全绿无人值守运行</strong>（9.5 / 11.1 min）；生产 LLM 实证；只读验收 16 PASS/2 FIND/1 WARN</span></li>
+  <li><span class="d">11-03 凌晨</span><span class="nd"></span><span class="e"><strong>T0 冲刺一、二批（23:44–02:24）</strong>：测量载体接线、报告/运维 skill 入库、CI 快照守卫、关闭矩阵落库、告警去重修复、4 文件生产部署；07:05 首个部署后定时运行（9m02s exit 0）——K1 第 1 天</span></li>
+  <li><span class="d">11-03</span><span class="nd"></span><span class="e"><strong>PR #1 fast-forward 合并（15:25 CST，main 28a167f）</strong>；18:55 CST 只读验收 18 PASS/0 FIND/1 WARN；已验收版报告定稿</span></li>
+  <li class="hl"><span class="d">11-03 晚</span><span class="nd"></span><span class="e"><strong>治理冲刺第三批（19:16–21:30）</strong>：9b45082 已验收报告入 main（PR #2，20:12 CST 并）；65319f8 生产快照锁 + 旧锁退役（PR #3，20:54 CST 并）；5b6e009 known-failures CI 门禁（PR #4 开放，CI run 41643216714 全绿）</span></li>
+  <li class="hl"><span class="d">11-04</span><span class="nd"></span><span class="e"><strong>第 4 个连续日更代际（07:05–07:14:16）</strong>：指针推进，<code>daily_collect_20261104_070500</code>；K1 第 2 天/14（初步，回执级待验收）；net_new 口径修正核验完成</span></li>
+</ul>
+
+<h2><span class="no">§6</span>V2.0 进度</h2>
+<h3>北极星（GOAL.md:5，11-03 逐字核验承前）</h3>
+<p>radar.luteos.com 成为业务方可以不经复核直接用于产品与内容决策的可信仪表盘：每个展示值要么能按已发布定义从当日语料复算、要么显式标注不可用及原因，每句判断都由带 inputs/gate 的版本化结论驱动，任何一次无人值守发布失败都会在 30 分钟内红卡告警并保持上一代可服务，而不是让页面继续展示混合代际的旧结论。</p>
+
+<h3>车道与工票（承前）</h3>
+<p>L1 14 / L2 20 / L3 13 / L4 26 / L5 16 / L6 16，合计 105（TICKETS 车道章节 = V2-PLAN:29-34 = 头部总数三处一致；波次汇总表 269 为重复计数不作分区引用）。<strong>关闭矩阵不收 T0 票</strong>（只收 TICKETS.md 的 105 张 L 票），窗口内两提交无 L 票号，矩阵无需更新。</p>
+
+<h3>T0 批次进度（11-04 更新）</h3>
+<table>
+  <thead><tr><th style="width:110px">状态</th><th style="width:190px">项</th><th>说明</th></tr></thead>
+  <tbody>
+    <tr><td><span class="pill ok">完成 ×8</span></td><td>T0-00 / T0-1 / T0-2 / T0-4 / T0-5 / T0-7 / T0-8 / T0-9 + CI 修复</td><td>承前口径不变</td></tr>
+    <tr><td><span class="pill part">半落地 ×1</span></td><td><strong>T0-6</strong></td><td>「版本锁指向现网」半句已并入 main（65319f8，workbench 锁）；「known-failures 被 CI 读取」半句 PR #4 待并。<strong>合并即按周报验收语义完成</strong></td></tr>
+    <tr><td><span class="pill part">受阻 ×1</span></td><td>T0-0</td><td>secret 轮换需开放平台控制台；pre-commit scan 与盘点 allowlist 未建（承前）</td></tr>
+    <tr><td><span class="pill part">未做 ×4</span></td><td>T0-3 / T0-10 / T0-11 / T0-12</td><td>告警链 / 依赖门禁与 off 模式语义 / 发布后断言与篡改回滚 / 自证字段字面值（承前）</td></tr>
+  </tbody>
+</table>
+
+<h3>关键 KPI（GOAL.md，承前）</h3>
+<table>
+  <thead><tr><th style="width:230px">KPI</th><th style="width:180px">基线</th><th style="width:200px">目标</th><th>今日位置</th></tr></thead>
+  <tbody>
+    <tr><td>K1 自动刷新断裂 / 无人值守连续成功</td><td>断裂 1 天 / 连续 0 天（10-29 事故）</td><td>0 天 / ≥14 自然日零人工干预</td><td><strong>第 2 天 / 14（初步）</strong>——公网指针新代际 + 唯一 run_id 为凭；run_kind 回执级待验收</td></tr>
+    <tr><td>K11 审计头条缺陷关闭率</td><td>0/7</td><td>7/7</td><td><strong>0/7</strong>（承前；矩阵 schema 差距未动）</td></tr>
+  </tbody>
+</table>
+
+<h3>闭环定义（GOAL.md:111/:113，承前）</h3>
+<p>连续 14 个自然日 07:05 无人值守发布全绿 + A–E 五组信号每日成立。<strong>本版位置</strong>：A 组信号（receipt/run_kind/run_id/指针单写/build stamp 三方一致）今日仅指针与 build stamp 侧可观测，回执侧待验收；B–E 组缺口未动。本版新增两块 A 组邻域基建：<strong>快照锁</strong>（把「现网是哪一份」钉死，补指向性证据）与 <strong>known-failures 门禁</strong>（把 CI 红绿语义从「有失败」收紧为「有新失败」）。</p>
+
+<h2><span class="no">§7</span>已知问题与诚实边界</h2>
+
+<div class="issue fix"><b>本期更正 2 项（对昨日 MD 报告）。</b>① §增量#2 与 §4.3 的「净增 +56/+246」更正为回执实测 <b>+58/+280</b>；② §4.3 的「26,210 帖/102,428 评（推算待验收）」撤回，基线为已验收 <b>26,212/102,462</b>。根因：把指针 <code>freshness.net_new</code>（2026-07-23 冻结快照）误读为当日增量；昨日 HTML 版已在当日修正，MD 本版补齐同步。</div>
+<div class="issue closed"><b>本期关闭 1 项。</b>昨日问题 #6 中「T0-6 未做」→ 半落地（PR #3 已并、PR #4 待并）。</div>
+
+<div class="issue"><b>1 · K1 第 2 天 / 14（初步）。</b>凭公网指针新代际（07:14:16 CST）+ 唯一 collector_run_id；闭环要求的 <code>run_kind=scheduled</code> 回执字段、systemd 退出码今日未验收。若后续验收发现异常，K1 以验收为准并可能重置。B–E 组信号（GOAL:113）尚无载体或未开工（承前）。</div>
+<div class="issue"><b>2 · 今日验收范围受限（本版最大边界）。</b><code>ECHO_SSH_KEY</code> 未设置、ssh 无该主机别名配置，<code>verify_daily_run.py</code> 未执行——systemd 结果、10 步状态、LLM 模式、feishu_push、Agent 产出量、产品绑定、freshness 监控三班全部不可读。运行事实仅凭公网指针只读探针（字段级 diff 与日更模式完全吻合，但这不等价于回执验收）。</div>
+<div class="issue"><b>3 · net_new 冻结快照（本期定性）。</b>公网指针 <code>freshness.net_new</code> 无日写入者，永不可引用为单日增量；「updated_historical_posts=139」同理为快照值（今日起统一禁引）。</div>
+<div class="issue"><b>4 · workbench 锁是快照而非连续校验（本期新边界）。</b>锁签发于 11-03 18:52 CST，今晨指针已前进一代——<code>--public-url</code> 现跑必然 mismatch（exit 1，快照语义下属预期）；CI 仅裸跑本地 schema 校验，<b>现网漂移不会红</b>；锁无日更写入者。若按「持续一致」解释周报 T0-6 验收，则需日更锁或把 <code>--public-url</code> 纳入 CI，二者均未做。</div>
+<div class="issue"><b>5 · known-failures 门禁三项残留（本期新发现）。</b>① 放行路径未在 CI 端到端实证（CI 实跑 0 失败，无「在册失败被放行」实例；唯一证据是提交信息本地实测）；② 34 条 lane_isolation 在 11-02/11-03 记录中已不再失败——<b>基线宽于现存债务</b>，这些精确 node-id 的未来回归会被静默放行，且无 stale-entry 清理检查；③ 基线是 PR 可修改的仓库文件，无哈希/签名/CODEOWNERS 保护——理论上可用「把新失败写成 known」自证绿色。</div>
+<div class="issue"><b>6 · T0 剩余。</b>T0-6 待 PR #4 合并（合并前不标完成）；T0-0 secret 轮换受阻（控制台）；T0-3 告警链（<code>alert@.service</code>/<code>OnFailure=</code> 缺）、T0-10、T0-11、T0-12 未做（承前）。周报 T0-6 验收命令 <code>--check-production</code> 未实现（见 #8-⑩）。</div>
+<div class="issue"><b>7 · 关闭矩阵与 GOAL K11 schema 不符（承前）+ 可复现性新缺口。</b>items[] 差距、summary 对账 68≠105、wave 85/105 null 均承前；<b>新增</b>：生成器默认区间 <code>main..HEAD</code>，PR 合并后重跑矩阵即清零历史证据（当前 <code>--check</code> 已退化 0/0/99），需改显式基线后才可安全再生成。</div>
+<div class="issue"><b>8 · 源文档内部不一致累计 10 处</b>（承前 8 + 新增 2）：① V2-PLAN 77 vs 78；② TICKETS 波次表 269 vs 105；③ audit 标题「六大」vs 枚举 7 条；④ 矩阵 summary 对账 68≠105；⑤ 矩阵 schema vs GOAL K11 items[]；⑥ GOAL 与 audit 引用同一代码行号不一致；⑦ 矩阵 wave 字段与 TICKETS 口径不对齐；⑧ V2-PLAN 车道表缺车道编号前缀。<b>新增</b> ⑨ <code>verify_workbench_lock.py</code> docstring :9 提及 <code>--check</code> 模式，argparse :120-124 未定义（实测 exit 2）；⑩ 周报 T0-6 验收命令 <code>verify_version_consistency.py --check-production</code> 在仓库中不存在。</div>
+<div class="issue"><b>9 · 历史遗留（PROJECT_STATUS 2026-08-25 时点，源文档记录值）。</b>自然 08:00 完整送达周期未证明；TikHub 评论路由 HTTP 400 上游故障；公开中文翻译剩余 527 项。另承前：Copilot 三假按钮、飞书四类意图硬编码示例（产品诚实性 P0，T2-1 未做）。</div>
+<div class="issue"><b>10 · 口径纪律。</b>六个语料基线（3,494 / 17,469 / 25,873 / 26,098 / 26,154 / 26,212）分属不同时点，互相不可否定、不可混算；<b>指针 net_new 与「推算基线」两类数字自本版起禁用</b>（前者是冻结快照，后者在回执不可读时无基点）；PROJECT_STATUS 证据截止 2026-08-25，其后以 docs/v2、ADR、git 与生产回执为准。今日回执不可读，故本版不列：日增、Agent 产出量、LLM 模式、feishu 推送、产品绑定、新鲜度监控结果——宁缺毋假。</div>
+
+<h2><span class="no">§8</span>证据索引</h2>
+<table>
+  <thead><tr><th style="width:220px">主题</th><th>路径 / 命令</th></tr></thead>
+  <tbody>
+    <tr><td>上一份报告（增量基线）</td><td><code>reports/Echo-项目成果总结-20261103.md</code>（已入 git，main 9b45082）</td></tr>
+    <tr><td>本周复盘与 T0 批次定义</td><td><code>reports/Echo-周报复盘与下一批方案-20261102.md</code> §6.0/§6.1（T0-6 验收语义源）</td></tr>
+    <tr><td>V2.0 目标 / KPI / 闭环</td><td><code>docs/v2/GOAL.md</code>（北极星 :5；K1 :13；K11 :23；闭环 :111/:113——承前逐字核验）</td></tr>
+    <tr><td>五波计划 / 工票</td><td><code>docs/v2/V2-PLAN.md</code>（车道表 :29-34）· <code>docs/v2/TICKETS.md</code></td></tr>
+    <tr><td>工票关闭矩阵</td><td><code>docs/audit/v2-closure-matrix.json</code>（105 票）· <code>scripts/build_v2_closure_matrix.py</code>（默认区间 main..HEAD，可复现性缺口见 §7 #7）</td></tr>
+    <tr><td><strong>生产快照锁（新）</strong></td><td><code>config/production-workbench-lock.json</code>（:2-19 标量、:20-49 七数据集、:50 source）· <code>scripts/verify_workbench_lock.py</code>（validate :43-89、compare_public :92-116、exit :127-160）· <code>tests/test_verify_workbench_lock.py</code>（94 行）· 旧锁退役 <code>config/production-version-lock.json:38-44</code>（65319f8）</td></tr>
+    <tr><td><strong>known-failures 门禁（新）</strong></td><td><code>config/ci/known-failures.json</code>（schema v1；recorded_at 2026-10-30 against e2b04b5；genuine 1 / lane_isolation 34 / not_baseline 2）· <code>scripts/run_backend_test_lane.py</code>（JUnit 解析与基线比对，5b6e009 +147 行）· <code>tests/test_backend_test_lane.py</code>（+50 行）· <code>.github/workflows/ci.yml</code>（<code>--enforce-known-failures</code>）</td></tr>
+    <tr><td>11-03 验收回执（本版基点）</td><td><code>reports/evidence/verify-20261103-postmerge.json</code>（steps[3] new_posts_added=58 / new_comments_added=280；summary 18 PASS/0 FIND/1 WARN；pointer_sha256=101e1ea1…）——workbench 锁的直接来源</td></tr>
+    <tr><td>net_new 口径证据链</td><td><code>scripts/advance_daily_t1_release.py:60-73</code>（advance 仅前移 7 字段）· <code>scripts/build_reddit_center_delta_receipt.py:190-196</code>（net_new 真实计算处）· <code>scripts/build_reddit_data_release.py:343-366</code>（唯一指针 freshness 写入者，生产不调用）</td></tr>
+    <tr><td>PR / CI / 合并</td><td>PR #2 <code>docs/20261103-verified-report</code> → main <code>9b45082</code>（2026-11-03T12:12:08Z）· PR #3 <code>ops/workbench-lock</code> → main <code>65319f8</code>（T12:54:27Z）· <strong>PR #4 <code>ops/known-failures-gate</code> OPEN·MERGEABLE·CLEAN（head 5b6e009）</strong>· run <code>41643216714</code> 全绿（backend 9m40s：1,893 passed / 8 skipped）· run <code>41639666726</code>（main，锁校验 <code>"status": "valid"</code>）· tag <code>v2.1-w1-20261102</code></td></tr>
+    <tr><td>后端 / 脚本规模</td><td><code>src/reddit_voc/</code>（111 文件 / 86,934 行）· <code>scripts/</code>（172 个 .py）· <code>tests/</code>（214 个测试文件）· <code>webapp/static/</code>（198/286/532 行）—— 2026-11-04 07:45 本地实测</td></tr>
+    <tr><td>今晨公网证据（只读 cache-bust 探针，11-04 07:42 CST）</td><td><code>https://radar.luteos.com/data/reddit-voc/current-release.json?cb=&lt;ts&gt;</code> → 200 application/json（<code>generated_at_utc=2026-11-03T23:14:16Z</code>；<code>collector_run_id=daily_collect_20261104_070500</code>；window/data_as_of 推进正确；<code>net_new</code> 仍为 +56/+246 冻结快照——<strong>禁引为日增</strong>）· <code>build-receipts/daily_collect_20261104_070500.json</code> → 403（存在性信号）· 根路径 200 text/html</td></tr>
+    <tr><td>运维 skill 与验收工具</td><td><code>.claude/skills/echo-ops/</code>（<code>verify_daily_run.py</code> 519 行）——<strong>今日未执行</strong>（ECHO_SSH_KEY 未设置），下轮验收需先恢复密钥通道</td></tr>
+  </tbody>
+</table>
+
+<footer>
+  Echo-Agent（Reddit VOC）项目成果总结 · 2026-11-04 版（生成于 2026-11-04 07:58 CST）<br>
+  本报告为只读分析：未改动项目代码、未执行生产写入、未推送外部 · 今日无生产回执级验收（SSH 密钥不可用），凡「待验收」条目以下轮验收为准 · 单文件自包含 HTML，浅色/深色双主题，零外部依赖
+</footer>
+
+</div>
+<script>
+  (function () {
+    var btn = document.getElementById('themeBtn');
+    function setTheme(t) {
+      document.documentElement.setAttribute('data-theme', t);
+      btn.textContent = t === 'dark' ? '☀ 浅色' : '◐ 深色';
+      try { localStorage.setItem('echo-report-theme', t); } catch (e) {}
+    }
+    var saved = null;
+    try { saved = localStorage.getItem('echo-report-theme'); } catch (e) {}
+    if (saved) setTheme(saved);
+    else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) setTheme('dark');
+    btn.addEventListener('click', function () {
+      var cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      setTheme(cur);
+    });
+  })();
+</script>
+</body>
+</html>
