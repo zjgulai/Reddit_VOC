@@ -166,7 +166,12 @@ class OpenAICompatibleAgentClient:
 
         content, fenced = strip_code_fence(content)
         try:
-            json.loads(content)
+            # Models occasionally put a raw control character (often a newline)
+            # inside a JSON string. Strict JSON rejects it, but the value is
+            # recoverable; re-serialize so the agents' strict json.loads() sees
+            # valid JSON instead of falling back to templates for the whole batch.
+            parsed = json.loads(content, strict=False)
+            content = json.dumps(parsed, ensure_ascii=False, separators=(",", ":"))
         except ValueError as exc:
             raise AgentLLMError(f"{phase}: content is not valid JSON: {exc}") from exc
 
