@@ -103,6 +103,21 @@ def test_parses_a_valid_completion_and_exposes_content() -> None:
     assert sent["max_tokens"] >= 4096, "reasoning tokens count against the budget"
 
 
+def test_raw_control_character_is_repaired_and_canonicalized() -> None:
+    """The 2026-11-04 content_scouting fallback: a raw newline inside a string."""
+    raw = json.dumps(VALID).replace(
+        '"seal tolerance"', '"seal tolerance\nsecond line"'
+    )
+    with pytest.raises(ValueError):
+        json.loads(raw)  # strict JSON rejects it; the adapter must not.
+    client, _ = _client([_envelope(raw)])
+
+    result = client.complete_json(phase="rnd_voc", user_payload=MESSAGES)
+    parsed = json.loads(result.content)
+    assert parsed["engineering_summary"] == "seal tolerance\nsecond line"
+    assert "\\n" in result.content
+
+
 def test_truncated_output_is_reported_as_truncation_not_bad_json() -> None:
     """max_tokens=700 produced exactly this on a real call."""
     truncated = '{"defects":[{"defect_id":"DEF-M5-001","component":"顶部硅胶密封圈'
