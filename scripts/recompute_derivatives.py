@@ -167,7 +167,9 @@ def _make_bucket(items: list[dict], date_str: str) -> dict:
         "bucket": date_str,
         "classified_vocs": len(classified),
         "comment_context_vocs": len(comment_vocs),
-        "negative_rate": round(len(negative) * 100 / len(classified), 2) if classified else None,
+        # _rate, not round(): this value must satisfy the client's JS Math.round
+        # parity contract; round(len/len, 2) breaks it at .5 boundaries.
+        "negative_rate": _rate(len(negative), len(classified)) if classified else None,
         "negative_vocs": len(negative),
         "post_vocs": len(post_vocs),
         "total_vocs": total,
@@ -667,7 +669,12 @@ def recompute_quarter_insights(
 def _rate(negative: int, classified: int) -> float | None:
     if not classified:
         return None
-    return round(negative * 10_000 / classified) / 100
+    # Half-up rounding, matching JS Math.round in the client contract
+    # (`negative_rate === Math.round(negative_vocs * 1e4 / classified_vocs) / 100`):
+    # Python's round() is banker's rounding, so round(312.5) == 312 while
+    # Math.round(312.5) == 313. At a .5 boundary the two disagree (2026-11-04:
+    # 2/64 = 312.5 -> 3.12 vs 3.13) and the workbench refuses to render.
+    return math.floor(negative * 10_000 / classified + 0.5) / 100
 
 
 def _topic_rankings(vocs: list[dict], topics: tuple[str, ...]) -> list[dict]:
