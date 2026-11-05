@@ -41,6 +41,12 @@ ROOT = Path(__file__).resolve().parents[1]
 ENTRY_POINTS = (
     "scripts/run_daily_t1_pipeline.py",
     "scripts/check_site_freshness.py",
+    # The two Feishu bot services run as their own systemd units and are not
+    # imported by the pipeline; without being listed, none of their imports
+    # (reply_engine, feishu_bot) would reach the deploy set — the same
+    # incomplete-deploy shape this tool was built to prevent.
+    "scripts/server_feishu_ws.py",
+    "scripts/server_feishu_bot.py",
 )
 
 # Directories whose local modules are resolved by name (sibling imports).
