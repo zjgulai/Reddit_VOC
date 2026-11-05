@@ -82,11 +82,30 @@ def profile_hashes() -> dict:
 
 
 def _event_date(record: dict) -> str | None:
+    """Shanghai business calendar date (mirrors recompute_derivatives._event_date).
+
+    The report is labelled Asia/Shanghai and the client's own period filter
+    (`operational.ts businessCalendarDate`) buckets by Shanghai day, so slicing
+    records by the UTC date prefix published "Momcozy 新帖 8 条" next to
+    breakdowns summing 9 and mixed two day boundaries on the same page
+    (2026-11-05 audit P0). Falling back to a UTC-prefix slice only for
+    unparseable timestamps would silently reintroduce the mismatch, so an
+    unparseable timestamp yields None and the record stays out of the period.
+    """
+    preferred = record.get("source_calendar_date")
+    if preferred:
+        return str(preferred)
     for key in ("event_created_at_utc", "created_at_utc"):
         value = record.get(key)
         if not value:
             continue
-        return str(value)[:10]
+        try:
+            dt = datetime.fromisoformat(str(value).replace("Z", "+00:00")).astimezone(
+                timezone(timedelta(hours=8))
+            )
+        except ValueError:
+            return None
+        return dt.date().isoformat()
     return None
 
 
