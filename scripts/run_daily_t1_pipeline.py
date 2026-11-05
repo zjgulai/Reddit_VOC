@@ -1013,7 +1013,7 @@ def step5_feishu_push(
     builder_error = None
     try:
         sys.path.insert(0, str(ROOT / "tools" / "feishu-card" / "builders"))
-        from build_morning_brief_v4 import build_card
+        from build_morning_brief_v5 import build_card
 
         card = build_card(output_dir, public_root, run_id, receipt=receipt)
     except Exception as exc:  # noqa: BLE001 — fallback card keeps the push alive
