@@ -15,7 +15,7 @@ import { LineChart, PieChart } from '../charts';
 import SectionCard from '../SectionCard';
 import { RankedBarList } from '../../features/redditSnapshot/RankedBarList';
 import { buildSnapshotEvidenceHref } from '../../features/redditSnapshot/evidenceLinks';
-import { formatDateTime, formatTopic, SENTIMENT_LABELS } from '../../features/redditSnapshot/format';
+import { decodeHtmlEntities, formatDateTime, formatTopic, SENTIMENT_LABELS } from '../../features/redditSnapshot/format';
 import { derivePeriodMetrics } from '../../features/redditSnapshot/operational';
 import type {
   ReportPeriod,
@@ -191,7 +191,11 @@ export default function OperationalReportSupplement({
   const negativeRate = indicatorById(report, 'RV-BR-02');
   const netSentiment = indicatorById(report, 'RV-BR-03');
   const recommendationRate = indicatorById(report, 'RV-BR-04');
-  const competitorGap = indicatorById(report, 'RV-BR-05');
+  // RV-BR-05 是"竞品语境占比"（含 Momcozy 自身任何 mentioned_brands 的 VOC 份额，
+  // 当前样本恒为 100%）。它不是净情感差：RV-BR-03 未在报告指标里，把占比当
+  // "净情感高 Xpp" 渲染是在编造业务影响结论（2026-11-05 审计 P1）。只能按
+  // 指标本名陈述占比事实。
+  const competitorContextShare = indicatorById(report, 'RV-BR-05');
   const urgency = indicatorById(report, 'RV-IN-01');
   const acceleration = indicatorById(report, 'RV-IN-05');
   const productIssueRate = indicatorById(report, 'RV-PS-02');
@@ -225,7 +229,7 @@ export default function OperationalReportSupplement({
     indicatorFact(observation, true),
     indicatorFact(negativeRate, true),
     indicatorFact(netSentiment, true),
-    indicatorFact(competitorGap),
+    indicatorFact(competitorContextShare),
     indicatorFact(acceleration, true),
   ]).slice(0, 5);
   const driverFacts = uniqueStrings([
@@ -245,10 +249,8 @@ export default function OperationalReportSupplement({
       down: '负向证据占比较基期回落，但仍需跟踪高互动负面线程。',
       flat: '负向证据占比基本稳定，重点看结构而不是总量。',
     }),
-    competitorGap && numeric(competitorGap.current.value) !== null
-      ? numeric(competitorGap.current.value)! >= 0
-        ? `Momcozy 净情感较同样本竞品高 ${Math.abs(numeric(competitorGap.current.value)!).toFixed(2)}pp；这是 Reddit 样本差，不是市场份额。`
-        : `Momcozy 净情感较同样本竞品低 ${Math.abs(numeric(competitorGap.current.value)!).toFixed(2)}pp；需复核差距来自哪些主题。`
+    competitorContextShare && numeric(competitorContextShare.current.value) !== null
+      ? `竞品语境占比 ${numeric(competitorContextShare.current.value)!.toFixed(2)}%（含 Momcozy 自身品牌提及的 VOC 份额）；净情感差指标当前不可用，不作竞品差表述。`
       : null,
     context.negativePosts > 0
       ? `${contextLabel}包含 ${context.negativePosts} 条负面帖子和 ${context.highSeverityPosts} 条高严重度帖子。`
@@ -271,13 +273,13 @@ export default function OperationalReportSupplement({
       ? uniqueStrings([
           topCommunity ? `${story.actionHorizon}将社区抽检重点放在 ${topCommunity.label}，同步跟踪高互动线程。` : null,
           topProduct ? `围绕 ${topProduct.label} 汇总产品问题与推荐表达，形成产品/内容联合复盘。` : null,
-          competitorGap ? '复核 Momcozy 与竞品净情感差的主题来源，避免把同样本差异误读为市场份额。' : null,
+          competitorContextShare ? '复核竞品语境占比口径与样本构成，避免把品牌提及覆盖误读为市场份额。' : null,
           commonEvidenceAction,
           '将本周证据与上周行动清单逐项对照；当前数据包未含行动回写，不自动生成完成率。',
         ]).slice(0, 4)
       : uniqueStrings([
           topProduct ? `${story.actionHorizon}把 ${topProduct.label} 作为产品体验与内容策略的优先复盘范围。` : null,
-          competitorGap ? '把竞品净情感差纳入月度品牌复盘，并拆解到主题、品类与社区。' : null,
+          competitorContextShare ? '把竞品语境构成纳入月度品牌复盘，并拆解到主题、品类与社区。' : null,
           topCommunity ? `资源规划优先覆盖 ${topCommunity.label}，但仅以真实讨论与证据质量为依据。` : null,
           commonEvidenceAction,
           '把品牌健康度、净情感、负向率与异常加速度列为下月固定复盘指标。',
@@ -486,7 +488,7 @@ export default function OperationalReportSupplement({
           {report.grain !== 'daily' && observationTrend.length > 1 ? (
             <div className="mt-3 border-t border-border-divider pt-3">
               <div className="mb-2 flex items-center justify-between gap-4">
-                <p className="text-caption font-medium text-foreground-secondary">同粒度完整周期声量趋势</p>
+                <p className="text-caption font-medium text-foreground-secondary">同粒度闭合周期声量趋势（截至 {observationTrend[observationTrend.length - 1]?.label ?? ''}，不含当前报告期）</p>
                 <p className="text-tiny text-foreground-muted">{comparisonPhrase(observation!, true).replace(/[（）]/g, '') || '趋势序列'}</p>
               </div>
               <LineChart
@@ -504,7 +506,7 @@ export default function OperationalReportSupplement({
           {observationTrend.length > 1 ? (
             <SectionCard
               title="声量趋势"
-              subtitle={`同粒度完整周期 · ${comparisonPhrase(observation!, true).replace(/[（）]/g, '') || '趋势序列'}`}
+              subtitle={`同粒度闭合周期 · 截至 ${observationTrend[observationTrend.length - 1]?.label ?? ''}，不含当前报告期 ${report.period?.start?.slice(5) ?? ''} · ${comparisonPhrase(observation!, true).replace(/[（）]/g, '') || '趋势序列'}`}
               tag="舆情"
               icon={<TrendingUp className="h-5 w-5 text-primary" strokeWidth={1.5} />}
             >
@@ -591,7 +593,7 @@ export default function OperationalReportSupplement({
                   <div className="flex flex-wrap items-center gap-2 text-tiny text-foreground-muted">
                     <span>r/{post.subreddit || 'unknown'}</span><span>·</span><time dateTime={post.created_at_utc}>{formatDateTime(post.created_at_utc)}</time><span>·</span><span>{SENTIMENT_LABELS[post.analysis.sentiment_label]}</span>
                   </div>
-                  <h3 className="mt-1.5 line-clamp-2 text-body-sm font-medium text-foreground">{post.title}</h3>
+                  <h3 className="mt-1.5 line-clamp-2 text-body-sm font-medium text-foreground">{decodeHtmlEntities(post.title)}</h3>
                   <p className="mt-1 text-tiny text-foreground-muted">Score {post.score} · {post.linked_comment_count} 条关联评论</p>
                 </Link>
               ))}
@@ -629,7 +631,8 @@ export default function OperationalReportSupplement({
             ? '历史采集完整性按数据所有者确认 100% 执行；帖子与评论共同进入治理后的 VOC 指标，但帖子仍保持独立分析。所有比较均为 Reddit 同口径样本，不代表市场份额、销量或 NPS。'
             : '当前日历周期已闭合，但历史采集覆盖未获数据所有者完整性证明；同环比与六期趋势按同源同口径观测值展示，仅用于运营判断，不代表全量市场趋势。'}</p>
         </div>
-        <div className="flex shrink-0 items-center gap-2 text-tiny text-foreground-muted">
+        <div className="flex shrink-0 items-center gap-2 text-tiny text-foreground-muted" aria-label="关键指标速览">
+          <span className="font-medium">指标速览：</span>
           {recommendationRate ? <span>推荐表达 {formatReportIndicatorValue(recommendationRate)}</span> : null}
           {urgency ? <span>紧急度 {formatReportIndicatorValue(urgency)}</span> : null}
           {acceleration ? <span>加速度 {formatReportIndicatorValue(acceleration)}</span> : null}

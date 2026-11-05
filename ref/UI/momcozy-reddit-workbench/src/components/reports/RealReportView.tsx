@@ -35,6 +35,7 @@ import {
   type MetricComparisonValue,
 } from '../../features/redditSnapshot/MetricComparisonCard';
 import {
+  decodeHtmlEntities,
   formatDateTime,
   formatPainPoint,
   formatSeriesLabel,
@@ -208,7 +209,7 @@ function AttentionList({ report }: { report: RedditReport }) {
                   <span className="rounded-badge bg-status-warningBg px-2 py-0.5 text-status-warning">{item.severity}</span>
                   <span className="rounded-badge bg-status-errorBg px-2 py-0.5 text-status-error">{SENTIMENT_LABELS[item.sentiment]}</span>
                 </div>
-                <h3 className="mt-1.5 line-clamp-2 text-body-sm font-medium text-foreground group-hover:text-primary">{item.title}</h3>
+                <h3 className="mt-1.5 line-clamp-2 text-body-sm font-medium text-foreground group-hover:text-primary">{decodeHtmlEntities(item.title)}</h3>
                 <p className="mt-1 text-tiny text-foreground-muted">{item.score} 分 · {item.linked_comment_count} 条关联评论</p>
               </div>
               <ExternalLink className="mt-1 h-4 w-4 shrink-0 text-foreground-muted group-hover:text-primary" strokeWidth={1.5} />
@@ -245,7 +246,7 @@ function EvidenceList({ report }: { report: RedditReport }) {
               <time dateTime={post.created_at_utc}>{formatDateTime(post.created_at_utc)}</time>
             </div>
             <div className="mt-1.5 flex items-start justify-between gap-3">
-              <h3 className="line-clamp-2 text-body-sm font-medium text-foreground group-hover:text-primary">{post.title}</h3>
+              <h3 className="line-clamp-2 text-body-sm font-medium text-foreground group-hover:text-primary">{decodeHtmlEntities(post.title)}</h3>
               <ExternalLink className="mt-0.5 h-4 w-4 shrink-0 text-foreground-muted group-hover:text-primary" strokeWidth={1.5} />
             </div>
             <p className="mt-1 text-tiny text-foreground-muted">{post.score} 分 · {post.linked_comment_count} 条关联评论</p>

@@ -24,6 +24,17 @@ import {
   crossPageReconciliationAttributes,
 } from '../../features/redditSnapshot/crossPageReconciliation';
 import { buildSnapshotEvidenceHref } from '../../features/redditSnapshot/evidenceLinks';
+
+// 证据卡的标题来自季度投影的审核理由码。生产者若只给内部码（如
+// product_evaluation_signal，2026-11-05 审计发现五张卡同名），按此映射转成
+// 中文；未收录的码原样显示，新码出现时不会丢信息。
+const EVIDENCE_REASON_LABELS: Record<string, string> = {
+  product_evaluation_signal: '产品评价信号',
+  competitor_comparison_signal: '竞品比较信号',
+  pain_point_observed: '痛点观察',
+  negative_or_high_severity_signal: '负面或高严重度信号',
+  purchase_decision_signal: '购买决策信号',
+};
 import type {
   QuarterInsightEvidence,
   QuarterInsightRanking,
@@ -204,7 +215,7 @@ function buildThemeViewModel(
     ...common,
     artifactThemeId: 'geo',
     managementQuestion: '如何把 Reddit 上的真实决策问题转成可信、可检索、可被生成式引擎引用的内容资产？',
-    summary: `季度内识别 ${formatNumber(themes.geo.comparison_decision_posts)} 条 Momcozy 比较或决策帖子，其中竞品比较 ${formatNumber(rankingValue(themes.geo.rankings, 'competitor_comparison'))} 条。`,
+    summary: `季度内识别 ${formatNumber(themes.geo.comparison_decision_posts)} 条 Momcozy 比较或决策帖子（竞品比较 ${formatNumber(rankingValue(themes.geo.rankings, 'competitor_comparison'))} 条、购买决策 ${formatNumber(rankingValue(themes.geo.rankings, 'purchase_decision'))} 条），下方品牌分布按帖子级竞品归属统计。`,
     signals: [
       { label: '比较与决策帖子', value: formatNumber(themes.geo.comparison_decision_posts), note: '按帖子级决策主题规则识别' },
       { label: '竞品比较问题', value: formatNumber(rankingValue(themes.geo.rankings, 'competitor_comparison')), note: '适合构建透明、可核查的对比回答' },
@@ -212,7 +223,7 @@ function buildThemeViewModel(
     ],
     rankings: [{
       title: '用户决策问题结构',
-      note: '这是内容选题信号，不是搜索量、AI 可见度或转化率。',
+      note: '主题行按帖子级决策主题计数；品牌行按帖子-品牌对计数（一帖可提及多品牌），不是市场份额。',
       items: themes.geo.rankings,
     }],
     evidence: themes.geo.evidence,
@@ -319,7 +330,7 @@ function EvidenceList({
         >
           <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-tiny font-semibold text-primary shadow-sm">{index + 1}</span>
           <span className="min-w-0 flex-1">
-            <span className="block text-caption font-semibold leading-relaxed text-foreground">{item.reason}</span>
+            <span className="block text-caption font-semibold leading-relaxed text-foreground">{EVIDENCE_REASON_LABELS[item.reason] ?? item.reason}</span>
             <span className="mt-1 block font-mono text-tiny text-foreground-muted">
               帖子编号 {item.post_id}{item.comment_id ? ` · 评论编号 ${item.comment_id}` : ''}
             </span>

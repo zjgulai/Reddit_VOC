@@ -29,6 +29,7 @@ import {
   SnapshotPageLayout,
 } from '../features/redditSnapshot/SnapshotPageLayout';
 import {
+  decodeHtmlEntities,
   formatDateTime,
   formatTopic,
   SENTIMENT_LABELS,
@@ -86,8 +87,8 @@ function PostList({
                     {severityLabels[post.analysis.severity] ?? post.analysis.severity}
                   </span>
                 </div>
-                <h3 className="mt-2 text-body font-semibold leading-snug text-foreground">{post.title}</h3>
-                <p className="mt-2 line-clamp-2 text-body-sm leading-6 text-foreground-secondary">{post.content}</p>
+                <h3 className="mt-2 text-body font-semibold leading-snug text-foreground">{decodeHtmlEntities(post.title)}</h3>
+                <p className="mt-2 line-clamp-2 text-body-sm leading-6 text-foreground-secondary">{decodeHtmlEntities(post.content)}</p>
                 <div className="mt-3 flex flex-wrap gap-2 text-tiny">
                   <span className="rounded-badge bg-primary-light px-2 py-0.5 text-primary">{formatTopic(post.analysis.topic)}</span>
                   {product && (

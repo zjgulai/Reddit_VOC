@@ -198,7 +198,11 @@ export default function ReportIndicatorMonitor({
           {visibleIndicators.length} 项可计算
         </span>
       </div>
-      <div className="mt-5 grid gap-4 xl:grid-cols-2 2xl:grid-cols-3">
+      {/* 列数跟随分组数：只有 1 个分组时 xl:grid-cols-2 会让右半张卡整块空白。 */}
+      <div
+        className="mt-5 grid gap-4"
+        style={{ gridTemplateColumns: `repeat(${Math.min(groups.length || 1, 3)}, minmax(0, 1fr))` }}
+      >
         {groups.map((group) => (
           <section key={group.id} className="rounded-card border border-border-divider px-4 py-3">
             <h4 className="text-caption font-semibold text-foreground-secondary">{group.label}</h4>

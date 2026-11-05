@@ -25,6 +25,7 @@ import {
   SnapshotPageLayout,
 } from '../features/redditSnapshot/SnapshotPageLayout';
 import {
+  decodeHtmlEntities,
   formatConfidence,
   formatDateTime,
   formatPseudonym,
@@ -196,10 +197,10 @@ function SnapshotPostDialog({
           <div className="min-w-0">
             <p className="text-tiny text-foreground-muted">r/{post.subreddit || 'unknown'} · {formatPseudonym(post.author_pseudonym)}</p>
             <h2 id="snapshot-post-dialog-title" className="mt-1 text-h3 text-foreground">
-              {post.translation?.title_zh || post.title}
+              {post.translation?.title_zh || decodeHtmlEntities(post.title)}
             </h2>
             {post.translation ? (
-              <p className="mt-1 line-clamp-2 text-caption text-foreground-muted" lang="en">英文原题：{post.title}</p>
+              <p className="mt-1 line-clamp-2 text-caption text-foreground-muted" lang="en">英文原题：{decodeHtmlEntities(post.title)}</p>
             ) : null}
           </div>
           <button
@@ -268,12 +269,12 @@ function SnapshotPostDialog({
               {post.translation ? <span className="text-tiny text-blue-700">AI 翻译，未人工复核</span> : null}
             </div>
             <p className="whitespace-pre-wrap text-body-sm leading-7 text-foreground-secondary">
-              {post.translation?.content_zh || post.content || '该帖子没有可用正文。'}
+              {post.translation?.content_zh || decodeHtmlEntities(post.content) || '该帖子没有可用正文。'}
             </p>
             {post.translation && post.content ? (
               <details className="mt-3 rounded-card border border-border-divider p-3 text-caption text-foreground-muted">
                 <summary className="cursor-pointer font-medium text-foreground-secondary">查看英文原文</summary>
-                <p className="mt-2 whitespace-pre-wrap leading-6" lang="en">{post.content}</p>
+                <p className="mt-2 whitespace-pre-wrap leading-6" lang="en">{decodeHtmlEntities(post.content)}</p>
               </details>
             ) : null}
           </section>
@@ -896,8 +897,8 @@ export default function SnapshotSearch() {
                       <span>·</span>
                       <time dateTime={post.created_at_utc}>{formatDateTime(post.created_at_utc)}</time>
                     </div>
-                    <h2 className="mt-1.5 text-body font-semibold leading-snug text-foreground hover:text-primary">{post.title}</h2>
-                    <p className="mt-2 line-clamp-2 text-body-sm leading-6 text-foreground-secondary">{post.content || '无可用正文'}</p>
+                    <h2 className="mt-1.5 text-body font-semibold leading-snug text-foreground hover:text-primary">{decodeHtmlEntities(post.title)}</h2>
+                    <p className="mt-2 line-clamp-2 text-body-sm leading-6 text-foreground-secondary">{decodeHtmlEntities(post.content) || '无可用正文'}</p>
                     <div className="mt-3 flex flex-wrap items-center gap-2 text-tiny">
                       <span className={`rounded-badge px-2 py-0.5 ${sentimentStyles[post.analysis.sentiment_label]}`}>{SENTIMENT_LABELS[post.analysis.sentiment_label]}</span>
                       <span className={`rounded-badge px-2 py-0.5 font-medium ${post.analysis.severity === 'high' ? 'bg-status-errorBg text-status-error font-semibold' : 'bg-status-warningBg text-status-warning'}`}>

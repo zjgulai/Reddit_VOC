@@ -126,6 +126,21 @@ function rankedQuarterItems(rows: QuarterInsightRanking[], detail: string) {
   }));
 }
 
+// exact_spu_rankings 必须是真实 SPU 级证据。当生产者只给出主题级计数（与
+// product_rankings 完全同值）时，把它当成 SPU 展示就是"家族冒充精确 SPU"——
+// 返回空数组，让卡片渲染诚实空态。family_only_ids 里有对应 _family 后缀时
+// 同样视为无 SPU 数据。
+function dedupeSpuRankings(
+  exactSpu: QuarterInsightRanking[],
+  productRankings: QuarterInsightRanking[],
+): QuarterInsightRanking[] {
+  if (exactSpu.length === 0) return [];
+  const sameAsProduct =
+    exactSpu.length === productRankings.length &&
+    exactSpu.every((row, index) => row.id === productRankings[index]?.id && row.count === productRankings[index]?.count);
+  return sameAsProduct ? [] : exactSpu;
+}
+
 function DashboardStoryMap({
   topDriver,
   riskCount,
@@ -459,8 +474,19 @@ export default function SnapshotDashboard() {
 
   const painRankings = quarterData.themes.pain.rankings;
   const reputationRankings = quarterData.themes.reputation.rankings;
+  // 家族/品类/SPU 是三层不同的口径：family_rankings 是产品家族、category_rankings
+  // 是品类议题、exact_spu_rankings 只有已批准的精确 SPU。历史 bug：家族列绑了
+  // product_rankings（主题计数），而 exact_spu_rankings 的生产者把主题计数原样
+  // 复制进来，两列同值——家族证据冒充了精确 SPU。SPU 无真实数据时显示空态。
+  const familyRankings = quarterData.themes.new_product.family_rankings;
+  const categoryRankings = quarterData.themes.new_product.category_rankings;
+  // product_rankings 是主题级计数（问题排查/产品评价），仍用于"产品归因下钻"
+  // 行动卡等主题语境；家族/品类/SPU 三列各自绑定对应口径。
   const productRankings = quarterData.themes.new_product.product_rankings;
-  const exactSpuRankings = quarterData.themes.new_product.exact_spu_rankings;
+  const exactSpuRankings = dedupeSpuRankings(
+    quarterData.themes.new_product.exact_spu_rankings,
+    quarterData.themes.new_product.product_rankings,
+  );
 
   const topCompetitor = dashboardWindow.top_competitor;
   const topBrands = [
@@ -549,7 +575,7 @@ export default function SnapshotDashboard() {
         <DashboardStoryMap
           topDriver={painRankings[0]?.label ?? '待继续观察'}
           riskCount={quarterData.themes.reputation.high_severity_vocs}
-          topProduct={productRankings[0]?.label ?? '待继续观察'}
+          topProduct={categoryRankings[0]?.label ?? productRankings[0]?.label ?? '待继续观察'}
           topCompetitor={topCompetitor.label}
           opportunityCount={quarterData.themes.geo.comparison_decision_posts}
         />
@@ -603,14 +629,20 @@ export default function SnapshotDashboard() {
       <div className="grid gap-6 xl:grid-cols-2">
         <section id="product-opportunity" className="scroll-mt-24" aria-labelledby="product-opportunity-title">
           <SectionCard title="品类机会" subtitle="最近季度已确认品牌关联 VOC；产品家族与精确 SPU 分层展示，不把家族证据冒充精确 SPU" tag="品类" icon={<PackageSearch className="h-5 w-5 text-primary" strokeWidth={1.5} />}>
-            <div className="grid gap-6 md:grid-cols-2">
+            <div className="grid gap-6 md:grid-cols-3">
+              <div>
+                <h3 className="mb-3 text-body-sm font-semibold text-foreground">品类</h3>
+                <RankedBarList items={rankedQuarterItems(categoryRankings, '· 品类议题证据')} />
+              </div>
               <div>
                 <h3 className="mb-3 text-body-sm font-semibold text-foreground">产品家族</h3>
-                <RankedBarList items={rankedQuarterItems(productRankings, '· 产品家族证据')} />
+                <RankedBarList items={rankedQuarterItems(familyRankings, '· 产品家族证据')} />
               </div>
               <div>
                 <h3 className="mb-3 text-body-sm font-semibold text-foreground">精确 SPU</h3>
-                <RankedBarList items={rankedQuarterItems(exactSpuRankings, '· 已批准精确 SPU 证据')} />
+                {exactSpuRankings.length > 0
+                  ? <RankedBarList items={rankedQuarterItems(exactSpuRankings, '· 已批准精确 SPU 证据')} />
+                  : <p className="text-body-sm text-foreground-muted">暂无已批准的精确 SPU 映射；产品家族证据不冒充精确 SPU。</p>}
               </div>
             </div>
           </SectionCard>

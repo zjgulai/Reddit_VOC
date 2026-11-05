@@ -78,6 +78,13 @@ export default function BarChart({ data, title, height = 280, onDataClick }: Bar
               tick={{ fontSize: 12, fill: '#6B7280' }}
               axisLine={{ stroke: '#E5E7EB' }}
               tickLine={false}
+              // recharts 默认 interval 会丢弃放不下的类别标签（1280px 下 6 根柱
+              // 只显示 4 个标签）。类别轴数量有限，强制逐个显示并倾斜，保证
+              // 柱与标签一一对应；文本按柱中心旋转，不用默认死角度。
+              interval={0}
+              angle={data.length > 5 ? -24 : 0}
+              textAnchor={data.length > 5 ? 'end' : 'middle'}
+              height={data.length > 5 ? 58 : undefined}
             />
             <YAxis
               tick={{ fontSize: 12, fill: '#6B7280' }}

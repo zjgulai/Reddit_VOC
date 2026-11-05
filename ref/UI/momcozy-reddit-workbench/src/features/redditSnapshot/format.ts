@@ -103,3 +103,35 @@ export function formatConfidence(value: number): string {
 export function formatPseudonym(value: string | null | undefined): string {
   return value ?? '匿名用户（无可用作者）';
 }
+
+const NAMED_HTML_ENTITIES: Record<string, string> = {
+  amp: '&',
+  lt: '<',
+  gt: '>',
+  quot: '"',
+  apos: "'",
+  nbsp: ' ',
+};
+
+const HTML_ENTITY_PATTERN = /&(#x?[0-9a-fA-F]+|[a-zA-Z]+);/g;
+
+/**
+ * Reddit 原始抓取把 HTML 实体原样留在正文里（`&#32; submitted by &#32;`、
+ * `&amp;`、`&#39;`）。数据字节被 manifest SHA 锁定不能改写，展示层统一解码。
+ * 未知实体原样保留，避免把无害文本误转。仅接受完整的实体形式；独立的 & 不受影响。
+ */
+export function decodeHtmlEntities(value: string): string {
+  if (!value.includes('&')) return value;
+  return value.replace(HTML_ENTITY_PATTERN, (match, body: string) => {
+    if (body[0] === '#') {
+      const code = body[1] === 'x' || body[1] === 'X'
+        ? Number.parseInt(body.slice(2), 16)
+        : Number.parseInt(body.slice(1), 10);
+      if (!Number.isFinite(code) || code < 0x20 || code > 0x10ffff || (code >= 0xd800 && code <= 0xdfff)) {
+        return match;
+      }
+      return String.fromCodePoint(code);
+    }
+    return NAMED_HTML_ENTITIES[body.toLowerCase()] ?? match;
+  });
+}

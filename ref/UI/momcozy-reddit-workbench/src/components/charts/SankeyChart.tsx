@@ -93,8 +93,13 @@ function computeSankeyLayout(
     nodeValue.set(n.id, Math.max(outVal, inVal, 1));
   }
 
-  // Compute column x positions
-  const usableWidth = width - nodeWidth;
+  // Compute column x positions. The first and last columns draw their text
+  // labels OUTSIDE the node rect (anchor end/start), so reserve a label gutter
+  // on each side -- without it, long community/sentiment names extend past the
+  // SVG edge and get clipped entirely (2026-11-05 audit: first/last column
+  // labels invisible at 1280px).
+  const labelGutter = 92;
+  const usableWidth = width - nodeWidth - labelGutter * 2;
   const colSpacing = columns.length > 1 ? usableWidth / (columns.length - 1) : usableWidth;
 
   // Compute node heights proportional to values
@@ -119,7 +124,7 @@ function computeSankeyLayout(
       const color = n.color || DEFAULT_NODE_COLORS[c % DEFAULT_NODE_COLORS.length];
       nodeRects.push({
         ...n,
-        x: c * colSpacing,
+        x: labelGutter + c * colSpacing,
         y,
         w: nodeWidth,
         h,
