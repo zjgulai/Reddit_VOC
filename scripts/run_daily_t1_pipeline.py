@@ -955,6 +955,28 @@ def step4_advance_pointer(
     return {"step": "advance_pointer", "status": result.get("status"), **result}
 
 
+def _build_query_index_step(run_id: str) -> dict:
+    """Post-publish rebuild of the release-pinned query index (T6').
+
+    Non-critical by design: returns status=skipped/failed with a reason rather
+    than raising, so the publish receipt stays green (K1) while the bot keeps
+    serving the previous generation's index. Index freshness self-identifies
+    via its pinned release token, so a stale index is detectable, never lying.
+    """
+    receipt: dict = {"step": "build_query_index", "run_id": run_id}
+    try:
+        sys.path.insert(0, str(ROOT))
+        from scripts.build_query_index import build as build_index
+
+        output = ROOT / "outputs" / "query-index" / "query-index.sqlite3"
+        result = build_index(output)
+        receipt.update(status="ok", **result)
+    except Exception as exc:  # noqa: BLE001 — non-critical step
+        receipt.update(status="failed", reason=f"{type(exc).__name__}: {exc}")
+        logging.warning("query index rebuild failed (non-critical): %s", exc)
+    return receipt
+
+
 def step5_feishu_push(
     run_id: str,
     report_date: str,
@@ -1452,6 +1474,12 @@ def _run_pipeline_locked(
         steps.append(("advance_pointer", lambda: step4_advance_pointer(
             public_root, run_id, data_root=_data_root(), release_doc_holder=release_doc_holder,
         )))
+    # Release-pinned query index (T6'): built from the freshly published
+    # generation so @Echo 问数 serves the same data_as_of the site does.
+    # Non-critical: a failed build must not fail the publish receipt (K1), the
+    # bot keeps serving the previous index until the next successful rebuild.
+    if not pointer_guard:
+        steps.append(("build_query_index", lambda: _build_query_index_step(run_id)))
     # In symlink mode the card is built after the commit decision, so it can never
     # describe a generation that was not published.
     if not skip_feishu and mode == "off":

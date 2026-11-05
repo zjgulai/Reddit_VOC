@@ -48,15 +48,23 @@ class IntentRoutingTests(unittest.TestCase):
         self.assertIn("103,012", reply)
 
     def test_all_four_intents_route(self) -> None:
+        # Entity-shaped queries deliberately outrank keyword intents (T6'
+        # wiring), so intent samples must not name a resolvable product.
         samples = {
             "content_strategy": "最近有什么好的选题",
-            "product_engineering": "M5 的噪音抱怨，需要改款建议",
+            "product_engineering": "密封圈质量问题，给点改款建议",
             "competitor": "和 Elvie 对比一下",
             "daily_report": "给我看看今天的日报",
         }
         for intent in INTENTS:
             reply = _reply(samples[intent["slot"]])
             self.assertIn(intent["body"].split("】")[0].replace("【", "【"), reply, intent["slot"])
+
+    def test_entity_query_outranks_intent(self) -> None:
+        # "M5 … 改款" names a product: the query service answers it, not the
+        # keyword template. Without the index this falls back to templates.
+        reply = _reply("M5 的噪音抱怨，需要改款建议")
+        self.assertIn("Echo 实体问数", reply)
 
     def test_daily_report_uses_release_backed_date(self) -> None:
         reply = _reply("今日动态")
