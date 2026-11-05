@@ -3,24 +3,19 @@
   "production_host": "43.163.92.244",
   "public_url": "https://radar.luteos.com",
   "data_path": "/opt/voc-report/html/data/reddit-voc",
-  "observed_at": "2026-11-03T10:52:02Z",
+  "observed_at": "2026-11-04T23:44:12Z",
   "release_id": "reddit_voc_release_20260723_daily_v2",
-  "run_id": "daily_collect_20261103_070500",
-  "pointer_sha256": "101e1ea1cabe7f51a3cc4d303617a91bc1dd790f4f2f6aeb18383d2ce76b1ab8",
-  "generated_at_utc": "2026-11-02T23:14:00Z",
-  "data_as_of_utc": "2026-11-02T23:00:00Z",
-  "window_start_utc": "2026-11-01T23:00:00Z",
-  "window_end_utc": "2026-11-02T23:00:00Z",
+  "run_id": "daily_collect_20261105_070500",
+  "pointer_sha256": "f33f62cccad73eed370300b7160056c4c37479205e4ce9ce66a1e49c5195c688",
+  "generated_at_utc": "2026-11-04T23:13:17Z",
+  "data_as_of_utc": "2026-11-04T23:00:00Z",
+  "window_start_utc": "2026-11-03T23:00:00Z",
+  "window_end_utc": "2026-11-04T23:00:00Z",
   "freshness_status": "partial",
-  "coverage": {
-    "full_posts": 7,
-    "partial_posts": 5,
-    "unresolved_continuations": 5
-  },
   "datasets": {
     "base": {
       "dataset_version": "reddit_voc_site_snapshot_20260723_v3_daily_001",
-      "public_manifest_sha256": "329e76b21c192b65129afdce27da98440d69bf3c75641424cae2a446d77ffe0d"
+      "public_manifest_sha256": "84e5e520a14130820fcbf6eeb94da2e7d8696d709014034c1b6c95769170c1ba"
     },
     "insights": {
       "dataset_version": "reddit_voc_insights_20261028_v3_aa80df7f4be9_rb895eac754fd",
@@ -28,7 +23,7 @@
     },
     "reports": {
       "dataset_version": "reddit_voc_reports_20261028_v3_aa80df7f4be9_history6_observed_comparisons",
-      "public_manifest_sha256": "34afb8bc2496603cfc0d99696621ca07e97097c5105c1dec86fad6a53367f592"
+      "public_manifest_sha256": "98687bd9f012b63c7e3a9ef24dcf141562c8f91c0f90d74bcfe0d2ada424646c"
     },
     "personas": {
       "dataset_version": "reddit_voc_personas_20261028_v1",
@@ -36,16 +31,16 @@
     },
     "brand_health": {
       "dataset_version": "reddit_voc_brand_health_20260723_public_v1",
-      "public_manifest_sha256": "b64f1b26d7d457be230ac2dab54c1147bcd092dd8a15e5014eed0e16cc758f88"
+      "public_manifest_sha256": "50c2d2b378c6f66f498a73cda03c1c80f0925079b46816bf65cadf4365cfe1cb"
     },
     "quarter_insights": {
       "dataset_version": "reddit_voc_quarter_insights_20260723_public_v1",
-      "public_manifest_sha256": "bac840654851a89aafa9878291ade4a8ac47ce89502ccf561eb6652980e97c4c"
+      "public_manifest_sha256": "e1feace42b0edd19c972549adca623f40948e63f54b1a23f8fb65c33ae7b3af9"
     },
     "casebook": {
       "dataset_version": "reddit_voc_casebook_20260716_public_a1",
       "public_manifest_sha256": "8e79fe8c86e08e60b693ca93f3ca6560476bec53a979c67ed8120d00ec121126"
     }
   },
-  "source": "reports/evidence/verify-20261103-postmerge.json"
+  "source": "reports/evidence/verify-20261105.json"
 }

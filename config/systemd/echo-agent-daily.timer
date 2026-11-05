@@ -1,0 +1,11 @@
+# Source of truth: fetched from production /etc/systemd/system/echo-agent-daily.timer 2026-11-05.
+[Unit]
+Description=Echo-Agent Daily T-1 Pipeline schedule (07:05 Asia/Shanghai)
+
+[Timer]
+OnCalendar=*-*-* 07:05:00 Asia/Shanghai
+Persistent=true
+Unit=echo-agent-daily.service
+
+[Install]
+WantedBy=timers.target

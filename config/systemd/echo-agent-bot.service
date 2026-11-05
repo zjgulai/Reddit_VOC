@@ -1,0 +1,20 @@
+# Source of truth: fetched from production /etc/systemd/system/echo-agent-bot.service 2026-11-05.
+# Deploy: scripts/deploy_systemd_units.sh. Secrets are placeholders.
+[Unit]
+Description=Echo-Agent Feishu Bot Event Service
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/opt/echo-agent-bot
+Environment="PYTHONPATH=/opt/echo-agent-bot"
+Environment="FEISHU_APP_ID=cli_aa1d3c178db85d23"
+Environment="FEISHU_APP_SECRET={{FEISHU_APP_SECRET}}"
+Environment="FEISHU_PORT=18342"
+ExecStart=/usr/bin/python3 /opt/echo-agent-bot/server_feishu_bot.py
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

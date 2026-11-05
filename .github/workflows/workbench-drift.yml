@@ -1,0 +1,53 @@
+name: Workbench lock drift
+
+on:
+  schedule:
+    # 07:40 Asia/Shanghai daily — after the 07:35 freshness deadline and the
+    # 06:35-07:35 deploy freeze window, before the workday starts.
+    - cron: "40 23 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: workbench-drift
+  cancel-in-progress: false
+
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Compare committed lock against the served pointer
+        id: check
+        # Fails (exit 1) on mismatch or drift — that is the signal, not a bug.
+        run: |
+          python scripts/verify_workbench_lock.py --public-url https://radar.luteos.com \
+            --json-out drift-receipt.json || echo "drift=true" >> "$GITHUB_OUTPUT"
+      - name: File or update the drift issue
+        if: steps.check.outputs.drift == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BODY=$(cat drift-receipt.json)
+          EXISTING=$(gh issue list --state open --label workbench-drift --json number --jq '.[0].number' || true)
+          if [ -n "$EXISTING" ]; then
+            gh issue comment "$EXISTING" --body "Drift still present at $(date -u +%FT%TZ):
+          \`\`\`json
+          $BODY
+          \`\`\`"
+          else
+            gh issue create --label workbench-drift \
+              --title "Workbench lock drift: committed lock ≠ served pointer" \
+              --body "The browser-verified lock lags the live generation. Verify the current generation in a browser, then refresh via \`python scripts/refresh_workbench_lock.py --receipt reports/evidence/verify-YYYYMMDD.json\` and commit the lock change (PR).
+
+          \`\`\`json
+          $BODY
+          \`\`\`"
+          fi

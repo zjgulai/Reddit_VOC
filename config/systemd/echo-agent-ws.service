@@ -1,0 +1,19 @@
+# Source of truth: fetched from production /etc/systemd/system/echo-agent-ws.service 2026-11-05.
+# Deploy: scripts/deploy_systemd_units.sh (runbook below). Secrets are placeholders.
+[Unit]
+Description=Echo-Agent Feishu WebSocket Bot Service
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/opt/echo-agent-bot
+Environment="PYTHONPATH=/opt/echo-agent-bot"
+Environment="FEISHU_APP_ID=cli_aa1d3c178db85d23"
+Environment="FEISHU_APP_SECRET={{FEISHU_APP_SECRET}}"
+ExecStart=/usr/bin/python3 /opt/echo-agent-bot/server_feishu_ws.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
