@@ -89,6 +89,18 @@ def validate_lock(lock: Mapping[str, Any]) -> list[str]:
     return sorted(set(errors))
 
 
+def _normalize_public_url(url: str) -> str:
+    """Accept either the site root or the pointer path itself.
+
+    The served pointer lives at ``<site>/data/reddit-voc/current-release.json``;
+    appending the cache-buster to a bare site root would fetch HTML and fail to
+    parse, so complete the path here. An explicit pointer URL is kept as-is.
+    """
+    if url.rstrip("/").endswith("current-release.json"):
+        return url
+    return url.rstrip("/") + "/data/reddit-voc/current-release.json"
+
+
 def _fetch_pointer(url: str, timeout: int = 20) -> tuple[str, dict[str, Any]]:
     separator = "&" if "?" in url else "?"
     request = urllib.request.Request(
@@ -141,7 +153,7 @@ def main() -> int:
 
     if not errors and args.public_url:
         try:
-            sha, pointer = _fetch_pointer(args.public_url)
+            sha, pointer = _fetch_pointer(_normalize_public_url(args.public_url))
         except (urllib.error.URLError, OSError, ValueError) as exc:
             result.update(status="unevaluable", error=f"public_fetch_failed:{exc}")
             print(json.dumps(result, ensure_ascii=False, indent=2))

@@ -1,0 +1,94 @@
+{
+  "baseline_taken_at": "2026-11-05T17:20+08:00",
+  "source": [
+    "https://pmo.luteos.com/api/export.csv",
+    "https://pmo.luteos.com/api/backup.json"
+  ],
+  "cap_map": {
+    "69": "多渠道数据查询/due 11-09",
+    "70": "风险指数&机会洞察/due 11-13/milestone",
+    "71": "拖拉式多维分析/due 11-15",
+    "72": "自动化品类洞察报告/due 11-16/milestone"
+  },
+  "caps_snapshot": [
+    {
+      "id": 69,
+      "name": "多渠道数据查询",
+      "progress_pct": 85,
+      "start_date": "2026-10-15",
+      "end_date": "2026-11-09",
+      "is_milestone": false,
+      "status": "进行中"
+    },
+    {
+      "id": 70,
+      "name": "风险指数&机会洞察",
+      "progress_pct": 75,
+      "start_date": "2026-10-20",
+      "end_date": "2026-11-13",
+      "is_milestone": true,
+      "status": "进行中"
+    },
+    {
+      "id": 71,
+      "name": "拖拉式多维分析",
+      "progress_pct": 65,
+      "start_date": "2026-10-25",
+      "end_date": "2026-11-15",
+      "is_milestone": false,
+      "status": "进行中"
+    },
+    {
+      "id": 72,
+      "name": "自动化品类洞察报告",
+      "progress_pct": 65,
+      "start_date": "2026-10-20",
+      "end_date": "2026-11-16",
+      "is_milestone": true,
+      "status": "进行中"
+    }
+  ],
+  "business_actions_seed": [
+    {
+      "id": 1,
+      "expert": "Echo",
+      "created_at": "2026-11-03T16:35:38.996876Z"
+    },
+    {
+      "id": 2,
+      "expert": "守衡",
+      "created_at": "2026-11-03T16:35:38.997032Z"
+    },
+    {
+      "id": 3,
+      "expert": "Shopify",
+      "created_at": "2026-11-03T16:35:38.997101Z"
+    },
+    {
+      "id": 4,
+      "expert": "Emily",
+      "created_at": "2026-11-03T16:35:38.997161Z"
+    },
+    {
+      "id": 5,
+      "expert": "Vicky",
+      "created_at": "2026-11-03T16:35:38.997217Z"
+    },
+    {
+      "id": 6,
+      "expert": "Market",
+      "created_at": "2026-11-03T16:35:38.997269Z"
+    }
+  ],
+  "sop_candidate_echo": {
+    "id": 6,
+    "weekly_ask_count": 19,
+    "weekly_card_rejects": null,
+    "rework_rate_pct": 16,
+    "stage": null,
+    "target_workbench_sop": "radar/business.luteos.com SpuBinding 自动映射与品类机会报告",
+    "due_date": "2026-11-16"
+  },
+  "seed_note": "business_actions 全部为 2026-11-03 同批 seed；Stage 3 统计不得采用；X7 已请求 PMO 澄清",
+  "export_csv_echo_rows": 4
+}

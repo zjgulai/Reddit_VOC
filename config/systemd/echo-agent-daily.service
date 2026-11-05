@@ -1,0 +1,18 @@
+# Source of truth: fetched from production /etc/systemd/system/echo-agent-daily.service 2026-11-05.
+# Deploy: scripts/deploy_systemd_units.sh. Secrets are placeholders.
+[Unit]
+Description=Echo-Agent Daily T-1 Pipeline (one-shot)
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=ubuntu
+WorkingDirectory=/opt/echo-agent-bot
+Environment="PYTHONPATH=/opt/echo-agent-bot:/opt/echo-agent-bot/scripts"
+Environment="FEISHU_APP_ID=cli_aa1d3c178db85d23"
+Environment="FEISHU_APP_SECRET={{FEISHU_APP_SECRET}}"
+EnvironmentFile=/home/ubuntu/.reddit-voc/secrets/agent-llm.env
+Environment="PIPELINE_GENERATION_MODE=symlink"
+Environment="APIFY_API_KEY={{APIFY_API_KEY}}"
+ExecStart=/usr/bin/python3 /opt/echo-agent-bot/scripts/run_daily_t1_pipeline.py
+TimeoutStartSec=3600
