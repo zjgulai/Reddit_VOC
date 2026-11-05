@@ -512,23 +512,63 @@ def recompute_quarter_insights(
         for tid, count in product_rank.most_common(10)
     ] or [{"id": "unspecified", "label": "Unspecified", "count": 0}]
 
+    # exact_spu_rankings must be real SPU-level evidence, not topic counts
+    # copy-pasted from product_rankings (the 2026-11-05 audit caught the client
+    # rendering both columns identical while claiming "已批准精确 SPU 证据").
+    # Count governed VOCs that carry an approved spu_exact binding, keyed by
+    # spu_id so renames cannot split a row; VOCs without one stay out, and the
+    # client renders an honest empty state via family_only_ids + fallback.
+    spu_rank = Counter()
+    for v in in_quarter:
+        bindings = v.get("product_bindings") or []
+        seen_spus = {
+            str(b.get("exact_spu").get("spu_id"))
+            for b in bindings
+            if isinstance(b.get("exact_spu"), dict) and b.get("exact_spu", {}).get("spu_id")
+        }
+        for spu_id in seen_spus:
+            spu_rank[spu_id] += 1
+    spu_names = {}
+    for v in in_quarter:
+        for b in (v.get("product_bindings") or []):
+            spu = b.get("exact_spu")
+            if isinstance(spu, dict) and spu.get("spu_id") and spu.get("spu_name"):
+                spu_names.setdefault(str(spu["spu_id"]), spu["spu_name"])
+    exact_spu_rankings = [
+        {"id": sid, "label": spu_names.get(sid, sid), "count": count}
+        for sid, count in spu_rank.most_common(10)
+    ] or [{"id": "no_approved_spu", "label": "暂无已批准精确 SPU 映射", "count": 0}]
+
     geo_vocs = [
         v for v in in_quarter
         if (v.get("analysis") or {}).get("topic") == "purchase_decision" or _comp_brands(v)
     ]
-    # Rank only POST-level competitor assignments and derive the total from the
-    # rankings themselves, so "GEO 问题总量与排名不守恒" can never trigger.
+    # The client renders this block as "用户决策问题结构" and reads the row ids
+    # `competitor_comparison` / `purchase_decision` for its 竞品比较问题 /
+    # 购买决策问题 cards, so those two topic rows MUST be present alongside the
+    # per-brand rows -- a brand-only list made both cards read 0 while the
+    # headline claimed 98 posts (2026-11-05 audit). Count post-level topics
+    # once per post, brands per (post, brand) pair as before, then derive the
+    # headline from the topic rows so the "GEO 问题总量与排名不守恒" contract
+    # stays satisfiable.
+    geo_post_topics = Counter()
     geo_rank = Counter()
     for v in geo_vocs:
         if v["_kind"] != "post":
             continue
+        topic = (v.get("analysis") or {}).get("topic")
+        if topic in ("competitor_comparison", "purchase_decision"):
+            geo_post_topics[topic] += 1
         for brand in _comp_brands(v):
             geo_rank[brand] += 1
     geo_rankings = [
+        {"id": "competitor_comparison", "label": TOPIC_LABELS["competitor_comparison"], "count": geo_post_topics["competitor_comparison"]},
+        {"id": "purchase_decision", "label": TOPIC_LABELS["purchase_decision"], "count": geo_post_topics["purchase_decision"]},
+    ] + [
         {"id": bid, "label": COMPETITOR_LABELS(bid), "count": count}
         for bid, count in geo_rank.most_common(10)
     ] or [{"id": TOP_COMPETITOR_FALLBACK, "label": "无竞品观测", "count": 0}]
-    comparison_decision_posts = sum(row["count"] for row in geo_rankings)
+    comparison_decision_posts = geo_post_topics["competitor_comparison"] + geo_post_topics["purchase_decision"]
 
     method_note = (
         "口径：治理品牌事实确认的 Momcozy post_voc + 已关联该帖的 comment_context_voc；"
@@ -551,7 +591,7 @@ def recompute_quarter_insights(
         },
         "new_product": {
             "category_rankings": _topic_rankings(in_quarter, ("product_evaluation",)),
-            "exact_spu_rankings": _topic_rankings(in_quarter, ("product_evaluation", "troubleshooting")),
+            "exact_spu_rankings": exact_spu_rankings,
             "family_rankings": _topic_rankings(in_quarter, ("troubleshooting",)),
             "product_rankings": product_rankings,
             "family_only_ids": sorted({f"{tid}_family" for tid, _ in product_rank.most_common(5)})
