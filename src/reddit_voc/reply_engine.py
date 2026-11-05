@@ -18,8 +18,11 @@ from __future__ import annotations
 
 import json
 import logging
+import os
+import re
 import urllib.request
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any, Mapping
 
 logger = logging.getLogger("reddit_voc.reply_engine")
@@ -184,15 +187,121 @@ def _facts_available(facts: CorpusFacts) -> bool:
     return facts.source != "unavailable" and facts.posts > 0
 
 
+def _format_query_answer(answer) -> str:
+    """Render a query_service QueryAnswer as a Feishu text reply.
+
+    The reply states the binding level and coverage explicitly (the PMO
+    acceptance language for 11-09), lists top pain points, and closes with
+    evidence links — never a bare number without its denominator.
+    """
+    level_label = {
+        "spu_exact": "精确 SPU 级",
+        "product_family": "产品家族级",
+        "category": "品类级",
+    }.get(answer.level, answer.level)
+    lines = [
+        f"📊 【Echo 实体问数 · {level_label}】",
+        "",
+        f"• 数据截至：{answer.data_as_of_utc.replace('T', ' ')[:16] if answer.data_as_of_utc else '未知'} (UTC)",
+        f"• 覆盖：{answer.posts} 篇帖子 / {answer.vocs} 条评论，其中负面 {answer.negative} 条",
+    ]
+    if answer.spu_id:
+        lines.append(f"• 精确 SPU：{answer.spu_id}")
+    if answer.family_id:
+        lines.append(f"• 产品家族：{answer.family_id}")
+    if answer.note:
+        lines.append(f"• 说明：{answer.note}")
+    if answer.top_pain_points:
+        pain = "、".join(f"{tag}({count})" for tag, count in answer.top_pain_points[:5])
+        lines.append(f"• 高频痛点：{pain}")
+    if answer.evidence:
+        lines.append("• 差评证据（最新 3 条）：")
+        for item in answer.evidence:
+            lines.append(f"  - {item['created_at_utc'][:10]} {item['permalink']}")
+    lines.append("")
+    lines.append("（数字口径：仅统计有 product_binding 的语料，其余帖子的提及不计入本回答的覆盖分母）")
+    return "\n".join(lines)
+
+
+def _log_query(query: str, source: str, answer=None, reply_kind: str = "template") -> None:
+    """Append one line to the local query log (T7: Stage 3 evidence input).
+
+    Fields follow plan §3 T7: source=real_user|golden|test; Stage 3 stats
+    count real_user only. Logging failures must never break the reply.
+    """
+    try:
+        from datetime import datetime, timezone
+
+        log_dir = Path(os.getenv("ECHO_QUERY_LOG_DIR", "outputs/query-log"))
+        log_dir.mkdir(parents=True, exist_ok=True)
+        entry = {
+            "ts_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+            "source": source,
+            "query": query,
+            "reply_kind": reply_kind,
+        }
+        if answer is not None:
+            entry["entity_level"] = answer.level
+            entry["spu_id"] = answer.spu_id
+            entry["family_id"] = answer.family_id
+            entry["coverage"] = {"posts": answer.posts, "vocs": answer.vocs, "negative": answer.negative}
+            entry["release_token"] = answer.release_token
+        with (log_dir / f"queries-{datetime.now(timezone.utc).strftime('%Y%m%d')}.jsonl").open("a", encoding="utf-8") as fh:
+            fh.write(json.dumps(entry, ensure_ascii=False) + "\n")
+    except Exception:  # noqa: BLE001 — telemetry must not break replies
+        logger.warning("query log write failed", exc_info=True)
+
+
+def _looks_like_entity_query(text: str) -> bool:
+    """Cheap pre-check before touching the query service.
+
+    A question is entity-shaped when it names a known family alias or a
+    ledger SPU id; generic feedback words (差评/对比/…) only count when a
+    product-noun co-occurs, so plain intent questions like "和 Elvie 对比
+    一下" stay on the keyword templates (Elvie is not an Echo entity).
+    """
+    lowered = text.lower()
+    if re.search(r"(?i)\bspu\d{6}\b", text):
+        return True
+    if any(alias in lowered for alias in ("m5", "m9", "m6", "s12", "v1 pro", "v2 pro", "s9", "air1", "air 1")):
+        return True
+    product_noun = re.search(r"(吸奶器|穿戴|泵|pump|momcozy)", lowered)
+    feedback_word = re.search(r"(差评|抱怨|痛点|反馈|口碑|评价|原话|好用|难用|对比)", lowered)
+    return bool(product_noun and feedback_word)
+
+
+def _try_entity_query(clean_text: str, source: str):
+    """Resolve an entity-scoped question against the query index, if available.
+
+    Returns (reply_text, answer) on a hit, or (None, None) when the index is
+    absent/unreadable — the caller then falls through to template routing.
+    """
+    index_path = Path(os.getenv("ECHO_QUERY_INDEX", "outputs/query-index/query-index.sqlite3"))
+    if not index_path.exists():
+        return None, None
+    try:
+        from reddit_voc.query_service import query_entity
+
+        answer = query_entity(clean_text, index_path=index_path)
+    except Exception:  # noqa: BLE001 — a broken index must not break the bot
+        logger.warning("query service failed; falling back to template routing", exc_info=True)
+        return None, None
+    if answer.level == "unavailable":
+        return _format_query_answer(answer), answer
+    return _format_query_answer(answer), answer
+
+
 def generate_agent_reply(
     raw_text: str,
     facts: CorpusFacts | None = None,
     use_cache: bool = True,
+    source: str = "real_user",
 ) -> str:
-    """Single reply entry: intent routing + release-backed facts.
+    """Single reply entry: entity query first, then intent routing + facts.
 
     ``facts`` allows tests (and future callers) to inject a fixed profile;
     by default the served release is consulted once per process and cached.
+    ``source`` tags the query log entry (real_user|golden|test).
     """
     clean_text = raw_text.replace("@_user_1", "").strip()
     resolved = facts if facts is not None else _resolve_facts(use_cache=use_cache)
@@ -200,7 +309,16 @@ def generate_agent_reply(
     dashboard_url = resolved.dashboard_url
 
     if not clean_text:
+        _log_query("", source, reply_kind="welcome")
         return WELCOME_TEMPLATE.format(corpus_line=corpus_line)
+
+    # Entity-scoped questions outrank keyword intents: "M5 的差评" must hit
+    # the query service, not the product-engineering template.
+    if _looks_like_entity_query(clean_text):
+        reply, answer = _try_entity_query(clean_text, source)
+        if reply is not None:
+            _log_query(clean_text, source, answer=answer, reply_kind="entity_query")
+            return reply
 
     query = clean_text.lower()
     for intent in INTENTS:
@@ -209,8 +327,10 @@ def generate_agent_reply(
                 data_as_of_display=resolved.data_as_of_display or "未知（发布信息暂不可用）",
                 dashboard_url=dashboard_url,
             )
+            _log_query(clean_text, source, reply_kind="intent:" + intent["slot"])
             return body
 
+    _log_query(clean_text, source, reply_kind="fallback")
     return FALLBACK_TEMPLATE.format(
         query=clean_text,
         corpus_line=corpus_line,
