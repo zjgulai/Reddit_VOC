@@ -642,7 +642,17 @@ export function validatePublicQuarterInsightsData(value: unknown): PublicQuarter
   const geo = exactKeys(themes.geo, ['comparison_decision_posts', 'evidence', 'method', 'rankings'], 'quarter insights themes.geo');
   const geoCount = nonNegativeInteger(geo.comparison_decision_posts, 'quarter insights themes.geo.comparison_decision_posts');
   const geoRankings = validateRankings(geo.rankings, 'quarter insights themes.geo.rankings');
-  assertContract(geoRankings.reduce((sum, ranking) => sum + ranking.count, 0) === geoCount, 'GEO问题总量与排名不守恒');
+  // The rankings list mixes two row kinds: decision-topic rows
+  // (competitor_comparison / purchase_decision, which partition the headline
+  // count) and per-brand rows (a post can mention several brands, so brand
+  // rows are an orthogonal view, not a partition). Only the topic rows
+  // conserve the headline; summing brand rows too made an honest producer
+  // impossible and forced the 0/0-vs-98 contradiction seen on 2026-11-05.
+  const GEO_TOPIC_ROW_IDS = new Set(['competitor_comparison', 'purchase_decision']);
+  assertContract(
+    geoRankings.filter((row) => GEO_TOPIC_ROW_IDS.has(row.id)).reduce((sum, ranking) => sum + ranking.count, 0) === geoCount,
+    'GEO问题总量与排名不守恒',
+  );
   validateEvidence(geo.evidence, 'quarter insights themes.geo.evidence');
   nonEmptyString(geo.method, 'quarter insights themes.geo.method');
 

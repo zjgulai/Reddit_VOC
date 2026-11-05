@@ -176,7 +176,9 @@ export function SnapshotLoadingPage({ icon, title }: Pick<SnapshotPageLayoutProp
         <LoaderCircle className="h-7 w-7 animate-spin text-primary" strokeWidth={1.5} />
         <div>
           <p className="text-body-sm font-medium text-foreground">加载真实数据</p>
-          <p className="mt-1 text-caption text-foreground-muted">不会回退到 Mock 数据</p>
+          <p className="mt-1 text-caption text-foreground-muted">
+            完整快照需一次性下载并做 SHA-256 完整性校验（约 15–80 MB，通常 10–30 秒）；不会回退到 Mock 数据
+          </p>
         </div>
       </div>
     </SnapshotPageLayout>
