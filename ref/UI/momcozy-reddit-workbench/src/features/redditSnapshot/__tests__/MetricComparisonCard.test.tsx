@@ -21,7 +21,7 @@ describe('MetricComparisonCard', () => {
 
     expect(screen.getByText('42')).toBeInTheDocument();
     expect(screen.getByText(/\+12\.5%/)).toHaveClass('text-status-error');
-    expect(screen.getByRole('img', { name: '帖子观察量上升趋势' })).toHaveAttribute('data-trend-direction', 'up');
+    expect(screen.getByRole('img', { name: '帖子观察量上升趋势（六期闭合期，不含当前报告期）' })).toHaveAttribute('data-trend-direction', 'up');
     expect(screen.getByText('—')).toBeInTheDocument();
   });
 
@@ -35,7 +35,7 @@ describe('MetricComparisonCard', () => {
         series={[{ label: '07-14', value: 12 }, { label: '07-15', value: 8 }]}
       />,
     );
-    expect(screen.getByRole('img', { name: '负向观察量下降趋势' })).toHaveAttribute('data-trend-direction', 'down');
+    expect(screen.getByRole('img', { name: '负向观察量下降趋势（六期闭合期，不含当前报告期）' })).toHaveAttribute('data-trend-direction', 'down');
 
     rerender(
       <MetricComparisonCard

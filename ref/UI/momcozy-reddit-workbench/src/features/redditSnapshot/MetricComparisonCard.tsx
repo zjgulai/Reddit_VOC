@@ -100,7 +100,9 @@ function TrendSparkline({
       viewBox="0 0 100 40"
       className="h-12 w-28 overflow-visible"
       role="img"
-      aria-label={`${title}${direction === 'up' ? '上升' : direction === 'down' ? '下降' : direction === 'flat' ? '持平' : '不可用'}趋势`}
+      // sparkline 画的是闭合期序列（不含当前报告期），与左侧"环比"（当前期 vs
+      // 前期）时间窗不同，方向可能相反——标签里写明窗口，避免读成同一口径。
+      aria-label={`${title}${direction === 'up' ? '上升' : direction === 'down' ? '下降' : direction === 'flat' ? '持平' : '不可用'}趋势（六期闭合期，不含当前报告期）`}
       data-trend-direction={direction}
     >
       {paths.map((path, index) => (

@@ -124,11 +124,14 @@ function baseDataScope(core: RedditSnapshotSummary): GovernanceState {
   const full = core.aggregates.coverage_grade.full ?? 0;
   const partial = core.aggregates.coverage_grade.partial ?? 0;
   const postOnly = core.aggregates.coverage_grade.post_only ?? 0;
+  // source_observed 是覆盖口径的第四类（无关联评论、仅作来源观察的帖子）；
+  // 漏掉它会让拆分合计远小于帖子总数，与数据证据抽屉自相矛盾。
+  const sourceObserved = core.aggregates.coverage_grade.source_observed ?? 0;
   const incomplete = partial + postOnly;
   return state(
     incomplete > 0 ? 'provisional' : 'verified',
     '数据范围',
-    `${core.manifest.canonical_counts.posts.toLocaleString('zh-CN')} 帖子 · ${core.manifest.canonical_counts.linked_comments.toLocaleString('zh-CN')} 关联评论；完整帖子与评论 ${full.toLocaleString('zh-CN')} / 部分评论上下文 ${partial.toLocaleString('zh-CN')} / 仅帖子 ${postOnly.toLocaleString('zh-CN')}。`,
+    `${core.manifest.canonical_counts.posts.toLocaleString('zh-CN')} 帖子 · ${core.manifest.canonical_counts.linked_comments.toLocaleString('zh-CN')} 关联评论；完整帖子与评论 ${full.toLocaleString('zh-CN')} / 部分评论上下文 ${partial.toLocaleString('zh-CN')} / 仅帖子 ${postOnly.toLocaleString('zh-CN')} / 来源观察 ${sourceObserved.toLocaleString('zh-CN')}。`,
   );
 }
 
