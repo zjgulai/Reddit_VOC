@@ -137,7 +137,11 @@ function IndicatorRow({ indicator }: { indicator: V3ReportIndicator }) {
           <MetricHelpPopover
             label={indicator.name_cn}
             align="left"
-            definition={`${indicator.name_cn}（${indicator.metric_id}）来自受治理报告产物。`}
+            definition={
+              indicator.metric_id === 'RV-BR-01'
+                ? `${indicator.name_cn}（${indicator.metric_id}）：本期 Momcozy 新帖 + 关联到这些新帖的评论；历史帖的新增评论不计入观察量（见"本期活动拆分"卡）。`
+                : `${indicator.name_cn}（${indicator.metric_id}）来自受治理报告产物。`
+            }
             notes={[
               indicator.comparison_help.text,
               ...indicator.comparisons.period_over_period.reason_codes.map((reason) => `环比：${reason}`),
