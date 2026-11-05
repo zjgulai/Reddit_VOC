@@ -17,6 +17,7 @@ from typing import Any, Iterable, Mapping
 from zoneinfo import ZoneInfo
 
 from reddit_voc.analyzer import analyze_text
+from reddit_voc.rates import half_up_percent
 from reddit_voc.v3_integrity_snapshot import canonical_json_document, sha256_bytes
 
 
@@ -335,7 +336,7 @@ def _sentiment(counter: Mapping[str, int]) -> dict[str, Any]:
         "negative": negative,
         "missing": missing,
         "classified": classified,
-        "negative_rate": round(negative * 100 / classified, 2) if classified else None,
+        "negative_rate": half_up_percent(negative, classified),
         "negative_rate_denominator": "classified",
         "negative_rate_unit": "percent",
     }
@@ -1027,7 +1028,7 @@ def _validate_window(window: Any, *, expected_id: str, expected_days: int, ancho
         raise QuarterInsightsPublicProjectionError("dashboard Momcozy summary is invalid")
     if momcozy["post_vocs"] + momcozy["comment_context_vocs"] != momcozy["total_vocs"]:
         raise QuarterInsightsPublicProjectionError("dashboard Momcozy VOC counts do not reconcile")
-    expected_rate = round(momcozy["negative_vocs"] * 100 / momcozy["classified_vocs"], 2) if momcozy["classified_vocs"] else None
+    expected_rate = half_up_percent(momcozy["negative_vocs"], momcozy["classified_vocs"])
     if momcozy["negative_rate"] != expected_rate:
         raise QuarterInsightsPublicProjectionError("dashboard negative rate is invalid")
     top = window.get("top_competitor")
@@ -1055,7 +1056,7 @@ def _validate_window(window: Any, *, expected_id: str, expected_days: int, ancho
             raise QuarterInsightsPublicProjectionError("dashboard bucket fields are invalid")
         if bucket["post_vocs"] + bucket["comment_context_vocs"] != bucket["total_vocs"]:
             raise QuarterInsightsPublicProjectionError("dashboard bucket VOC counts do not reconcile")
-        rate = round(bucket["negative_vocs"] * 100 / bucket["classified_vocs"], 2) if bucket["classified_vocs"] else None
+        rate = half_up_percent(bucket["negative_vocs"], bucket["classified_vocs"])
         if bucket["negative_rate"] != rate:
             raise QuarterInsightsPublicProjectionError("dashboard bucket negative rate is invalid")
         bucket_id = bucket.get("bucket")
@@ -1156,7 +1157,7 @@ def _validate_data_semantics(data: Mapping[str, Any]) -> None:
     )):
         raise QuarterInsightsPublicProjectionError("Momcozy sentiment counts are invalid")
     classified = sentiment["positive"] + sentiment["neutral"] + sentiment["negative"]
-    expected_rate = round(sentiment["negative"] * 100 / classified, 2) if classified else None
+    expected_rate = half_up_percent(sentiment["negative"], classified)
     if (
         sentiment["classified"] != classified
         or classified + sentiment["missing"] != momcozy["total_vocs"]
