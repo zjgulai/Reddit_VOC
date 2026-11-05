@@ -81,10 +81,50 @@ def test_negative_rate_math_consistent(snapshot):
     for w in qi["dashboard_windows"]:
         m = w["momcozy"]
         if m["classified_vocs"]:
-            expected = round(m["negative_vocs"] * 10_000 / m["classified_vocs"]) / 100
+            expected = math.floor(m["negative_vocs"] * 10_000 / m["classified_vocs"] + 0.5) / 100
             assert m["negative_rate"] == expected
         else:
             assert m["negative_rate"] is None
+
+
+def test_rate_matches_js_math_round_at_half_boundary():
+    """The client contract is `Math.round(negative_vocs * 1e4 / classified_vocs) / 100`.
+
+    Python's round() is banker's rounding: round(312.5) == 312 while
+    Math.round(312.5) == 313. 2026-11-04 hit exactly that boundary (2/64) and the
+    workbench refused to render with "dashboard_windows[0].buckets[6]页面占比公式
+    不一致". Producers must round half-up like JS, not half-even.
+    """
+    # JS Math.round semantics for every N/64 family boundary case:
+    for negative, classified, expected in [
+        (2, 64, 3.13),    # 312.5 -> 313: the exact production failure
+        (1, 8, 12.5),     # 1250.0 -> 1250: exact integer stays put
+        (1, 3, 33.33),    # 3333.33 -> 3333
+        (2, 3, 66.67),    # 6666.67 -> 6667
+        (1, 6, 16.67),    # 1666.67 -> 1667
+        (0, 5, 0.0),
+    ]:
+        assert rd._rate(negative, classified) == expected, (negative, classified)
+
+    # The value served on 2026-11-04 must satisfy the JS formula verbatim.
+    rate = rd._rate(2, 64)
+    assert rate == round(2 * 1e4 / 64) / 100 or rate == math.floor(2 * 1e4 / 64 + 0.5) / 100
+    assert math.floor(2 * 1e4 / 64 + 0.5) / 100 == 3.13
+
+
+def test_make_bucket_rate_matches_js_parity():
+    """Bucket-level negative_rate (the field that broke the dashboard) uses the
+    same JS Math.round parity as window summaries, never banker's rounding."""
+    items = [
+        {"_kind": "post", "analysis": {"sentiment_label": "negative"}},
+        {"_kind": "post", "analysis": {"sentiment_label": "positive"}},
+    ] + [
+        {"_kind": "comment", "analysis": {"sentiment_label": "neutral"}}
+        for _ in range(62)
+    ]
+    bucket = rd._make_bucket(items, "2026-11-04")
+    assert bucket["negative_vocs"] == 1 and bucket["classified_vocs"] == 64
+    assert bucket["negative_rate"] == 1.56  # 156.25 -> 156 half-up, not 156 half-even-equivalent
 
 
 def test_window_totals_equal_bucket_sums(snapshot):
